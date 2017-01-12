@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <!-- <link rel="stylesheet" href="../css/jasny-bootstrap.css"> -->
+
+    <link rel="stylesheet" href="../css/bootstrap-responsive.min.css">
+    <!-- <link rel="stylesheet" href="../css/jasny-bootstrap-responsive.css"> -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/layout.css" />
+
+    <script src="../js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+    <script src="../js/vendor/jsapi.js"></script>
+    <script src="../js/vendor/jquery-2.2.4.min.js"></script>
+    <script src="../js/vendor/jquery.json-2.3.min.js"></script>
+    <script src="../js/vendor/bootstrap.min.js"></script>
+    <!-- <script src="../js/vendor/jasny-bootstrap.js"></script> -->
+    <script src="../js/jah/config.js"></script>
+    <script src="../js/jah/system.js"></script>
+    <script src="../js/jah/type/dataExt.js"></script>
+    <script src="../js/jah/type/typecast.js"></script>
+    <script src="../js/jah/type/type.js"></script>
+    <!-- Para montar o form, não precisa do resource.
+         Só está aqui o caso de um input fazer referência a algum resource    -->
+    <script src="../js/jah/resource.js"></script>
+    <script src="../js/jah/ui/page.js"></script>
+
+<script type="text/javascript">
+     google.setOnLoadCallback(function() {
+         ERROR.init({callback:function(msg,field){ERROR.on(msg, field);}});
+         myPage.init();
+     });
+    var actionController =function (){
+        return{
+            edit:function(){alert('edite');},
+          insert:function(){alert('criar');},
+            back:function(){alert('voltar');},
+          remove:function(){alert('remover');},
+          update:function(){alert('alterar');},
+            sort:function(){alert('sort');},
+           print:function(){alert('print');},
+          filter:function(){alert('filtrar');},
+             get:function(){alert('consultar');},
+       pesquisar:function(){alert('pesquisar');},
+            novo:function(){alert('novo');}
+        };
+    }();
+   j$.service.create("myPage",
+         {
+            init:function(idTarget){
+                 var page = j$.ui.Page.create(myPage);
+                 page.init(actionController);   // actionController: Objeto para receber as ações quando clicar nos botões
+            }
+          , id:"myPage"
+        });
+
+    myPage.Interface = {
+       container:CONFIG.LAYOUT.CONTENT
+          ,   id:myPage.id.toLowerCase()
+          ,    title:'Manter papéis'
+          , design:[
+                {type:'classic'
+                     , fields:['Digito','ufLegenda'], labelStyle:{width:'140px'}}
+              , {type:'line'
+                     , style:{width:'90%', marginBottom:'5px', borderColor:'green'}, title:'inLine'}
+              , {type:'inLine'
+                     , fields:['Dinheiro','Numerico'], style:{marginLeft:'60px'}}
+              , {type:'line'
+                     , style:{marginLeft:'width:100%', marginBottom:'5px', borderColor:'green'}, title:"Caracteres Especiais"}
+              , {type:'inLine'  , fields:[['Nome', 'Letra'],['Maiuscula','Minuscula']]
+                                , style:{marginLeft:'34px'}
+                                , labelStyle:{width:'85px',  textAlign:'left' }
+                                , columnStyle:{width:'360px', display: 'inline-block'}
+                            }
+              , {type:'line'    , style:{marginBottom:'1px', borderColor:'green'}
+                                , title:{text:"Campos Especiais Formatados", style:{textAlign:'left'}}}
+              , {type:'inLine'  , fields:[['CNPJ','CCA'],['CPF','CEP']]
+                                , style:{marginLeft:'3.0em'}
+                                , labelStyle:{width:'4em'}
+                                , columnStyle:{width:'350px', display: 'inline-block'}
+                            }
+              , {type:'line'    , style:{marginTop:'1px'}
+                                , title:{text:"Estilo de Coluna", style:{textAlign:'left'}}}
+              , {type:'column'  , fields:[['Data','Hora'],['Telefone','Placa']], style:{marginLeft:'80px'}}
+              , {type:'slidebox.column', fields:['Mascara','MascaraUsuario'], id:'slidebox', title:'Máscaras'
+                                       , design:[{type:'inLine', fields:'Check'}]} // 1.quando tem apenas um campo, não precisar usar o um array para definir
+                                                                                   // 2.Inclui no frame 'slidebox' os fields definidos no Array no estilo 'column'
+                                                                                   // 3.Em seguida, no mesmo frame desenha tudo o que está definido em design (recursivo)
+              , {type:'framebox',  id:'framebox', title:'Listas'}
+              , {type:'inLine',  frame:'framebox', fields:['listUf', 'Lista']} //Outra forma de colocar os campos em um frame é indicar o nome do mesmo
+              , {type:'classic',  container:'framebox', fields:'Email'} //Pode-se ainda indicar o id de algum container específico;
+           ]
+    };
+
+    myPage.Fieldset= new j$.ui.Fieldset({
+                     Digito:TYPE.DIGIT({label:'Dígito', resource:{name:'estadoCivil', local:true}, hint:'informe o código aparece a legenda.'}),
+                  ufLegenda:TYPE.UPPERCASE(2,{label:'UF com Legenda', resource:{name:'uf', local:true, id:'sgUf', text:'txEstado'}}),
+                   Numerico:TYPE.NUMERIC(4,2,{label:'Numérico', mandatory:true}),
+                   Dinheiro:TYPE.MONEY(10),
+                      Letra:TYPE.LETTER(4),
+                  Maiuscula:TYPE.UPPERCASE(2,{label:'Maiúscula'}),
+                  Minuscula:TYPE.LOWERCASE(4,{label:'Minúscula'}),
+                       Data:TYPE.DATE(),
+                       Hora:TYPE.HOUR(),
+                      Email:TYPE.EMAIL(50),
+                       Nome:TYPE.CHAR(25),
+                   Telefone:TYPE.PHONE(),
+                        CPF:TYPE.CPF(),
+                       CNPJ:TYPE.CNPJ(),
+                        CCA:TYPE.CCA(),
+                        CEP:TYPE.CEP(),
+                      Placa:TYPE.Placa(),
+                      Lista:TYPE.LIST({label:'Categoria', list:{'1':'Sistema', '2':'Projeto', '3':'Manutenção'}}),
+                      listUf:TYPE.LIST({label:'UF', resource:{name:'uf', text:'txEstado'}}),
+                      Check:TYPE.BOOLEAN({label:'Ativo', list:{'true':{value:true, text:'Ativo'}, 'false': {value:false, text:'Cancelado'}}}),
+                    Mascara:TYPE.MASK('(@@)###-9',{label:'Máscara Auto'}),
+             MascaraUsuario:TYPE.MASK('(@@)###-9',{label:'Máscara', validator:{error:'Campo com valor inválido', handler:function(value){return false;}}})         });
+</script>
+
+</head>
+<body>
+    <div id="page" class='page'>
+        <header>
+           <div class="header-top">
+              <div  class="top-left"></div>
+           </div>
+           <nav class="navbar" id="menubar"></nav>
+        </header>
+
+        <nav id="nav-left"><div  id="sidebar"></div></nav>
+
+        <section id="content_section"><div id='content'></div></section>
+
+        <aside id="nav-right"></aside>
+
+        <footer class="navbar-fixed-bottom">
+            <div class="footer" id="Sefaz">© 2013 - Secretaria de Estado da Fazenda</div>
+        </footer>
+
+    </div>
+</body>
+</html>

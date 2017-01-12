@@ -1,0 +1,84 @@
+/* O container do conte�do de cada tab*/
+.tab {padding: 4px 2px 4px 2px;}
+.tab_header {
+/*    background-color:rgb(120,150,120); */
+    background-color: rgba(120,180,120,0.7);
+    height: 25px; width: 100%; margin: 0; padding: 0px;
+}
+.tab_header_title{padding:2px 2px 1px 4px; color: black; font-size: 1.2em; margin: 0; display: inline-block; height: 23px; float: left;min-width: 300px;}
+.tab_header_menu{padding:0 4px 1px 4px; display: inline-block; height: 20px; float:right; min-width: 120px;}
+/* tabs � container dos links das orelhas - ou seja - as orelhas ficam dentro dele */
+.tabs{
+	margin:0; margin-top:4px; margin-left:2px; z-index:4; text-align: left;
+        display: block; position: relative;
+        height: 26px;
+}
+
+.tabs_wrap{padding:0;} /*wrap geral das tabs */
+.tab_wrap{   /*wrap de uma tab */
+      width:98%;  border: 0px solid rgb(120,150,120);
+      border-top:4px solid rgb(120,150,120);
+      background-color:rgba(246,255,250,0.5);
+      margin-bottom:4px; margin-left:2px;
+}
+
+
+a.link_tab{
+   margin:0; font-size:12px; color:white;
+   text-decoration:none;
+}
+
+a.link_tab:hover{
+    text-decoration:none;  color:#000000;
+}
+
+a.link_tab_close, a.link_tab_close:hover{ text-decoration:none;
+                 padding: 0 10px 0 1px;
+                 margin: 2px 0 0 6px;
+                 background-repeat:no-repeat;
+                 background-position:center;
+}
+a.link_tab_close{ text-decoration:none;
+                 background-image: url(../../images/icon/dialog-close.png);
+}
+
+a.link_tab_close:hover{   text-decoration:none;
+               background-image: url(../../images/icon/dialog-close-hover.png);
+}
+
+
+span.active_link_tab{
+   font-size:12px; color:white; z-index:6; font-weight:bold;
+   padding: 1px 3px 1px 3px;
+   margin:0 0 0 2px;
+   text-decoration:none;
+   background-color:rgb(120,150,120);
+   border-top:2px solid rgb(120,150,120);
+   height: 26px;
+   display: inline-block;
+   position: relative;
+   border-radius:5px 5px 0  0;
+}
+
+span.link_tab{
+   font-size:12px; color:white;  z-index:2; border: 0;
+   background-color:rgb(120,180,120);
+   padding: 0 3px 0 3px;
+   margin:0 0 0 2px;
+   height: 22px;
+   display: inline-block;
+   position: relative;
+   border-radius:5px 5px 0  0;
+}
+span.link_tab_hover, span.active_link_tab_hover{color:#000000; z-index:2;
+   background-color:rgb(120,200,120);
+   border: 0px;
+   margin:0 0 0 2px;
+   padding: 1px 3px 0px 3px;
+   border:1px solid rgb(120,150,120);
+   border-right:2px solid rgb(120,150,120);
+   height: 26px;
+   display: inline-block;
+   position: relative;
+   border-radius:5px 5px 0  0;
+}

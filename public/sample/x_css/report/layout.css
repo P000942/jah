@@ -1,0 +1,25 @@
+*{
+	color:black;
+	margin: 0px;
+	padding: 0px;
+}
+
+
+body {  position:absolute; 
+	text-align:center;
+        background-color:#ffffcc;
+        width:auto; height:auto;
+	}
+
+a{ display:none}
+
+div.page{ position:relative; 
+        border:1px solid transparent;
+	padding:0; margin:0; 
+	background-color:#FFFFFF; page-break-after:always; 
+}
+
+div.page-break{page-break-after:always; display:none;
+}
+
+#w-len{display:none; font-family:courier; font-weight:bold; color:red;}
