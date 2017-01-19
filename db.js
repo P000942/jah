@@ -1,6 +1,6 @@
 
-import fs from "fs";
-import path from "path";
+import fs        from "fs";
+import path      from "path";
 import Sequelize from "sequelize";
 let db = null;
 
@@ -22,7 +22,6 @@ module.exports = app => {
         const modelDir = path.join(dir, file);
         const model = sequelize.import(modelDir);
         db.models[model.name] = model;
-      //  console.log(model);
     });
     Object.keys(db.models).forEach(key => {
          db.models[key].associate(db.models);

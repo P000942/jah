@@ -1,5 +1,4 @@
 module.exports = {
-//export default  {
   database: {
     NAME: "tarefa"
    , USER: ""
