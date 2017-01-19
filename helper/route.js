@@ -1,47 +1,50 @@
 let route = {};
 module.exports = app => {
-  route.createRouteCrudBasic = nmModel => {
+  route.createRouteCrudBasic = (nmModel, idName=`id${nmModel}`) => {
   const nmRoute = nmModel.toLowerCase();
-  const Tasks = app.db.models[nmModel];
+  const dsModel = app.db.models[nmModel];
   app.route("/"+nmRoute)
      .get((req, res) => {
-        Tasks.findAll({})
+        dsModel.findAll({})
              .then(result => res.json(result))
              .catch(error => {
                  res.status(412).json({msg: error.message});
              });
       })
      .post((req, res) => {
-        Tasks.create(req.body)
+        dsModel.create(req.body)
              .then(result => res.json(result))
              .catch(error => {
                 res.status(412).json({msg: error.message});
             });
       });
 
-  app.route("/"+nmRoute+"/:id")
+  app.route(`/${nmRoute}/:${idName}`)
      .get((req, res) => {
-         Tasks.findOne({where: req.params})
+         console.log(dsModel.describe);
+         dsModel.findOne({where: req.params})
               .then(result => {
                  if (result) {
                     res.json(result);
                  } else {
-                    res.sendStatus(404);
+                    //console.log("Bronca");
+                    //res.sendStatus(404);
+                    res.status(404).json({msg: `${nmModel} - Registro não encontrado.`});
                  }
               })
               .catch(error => {
-                 res.status(412).json({msg: error.message});
+                 res.status(412).json({msg: `${nmModel} - Registro não encontrado.`});
               });
      })
      .put((req, res) => {
-         Tasks.update(req.body, {where: req.params})
+         dsModel.update(req.body, {where: req.params})
               .then(result => res.sendStatus(204))
               .catch(error => {
                   res.status(412).json({msg: error.message});
               });
      })
      .delete((req, res) => {
-          Tasks.destroy({where: req.params})
+          dsModel.destroy({where: req.params})
                .then(result => res.sendStatus(204))
                .catch(error => {
                    res.status(412).json({msg: error.message});

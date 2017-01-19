@@ -1,6 +1,6 @@
 module.exports = app => {
   //const nmModel = "Tasks";
-  app.helper.route.createRouteCrudBasic("Tasks");
+  app.helper.route.createRouteCrudBasic("Tasks","id");
   // function createRouteCrudBasic(nmModel){
   // const nmRoute = nmModel.toLowerCase();
   // const Tasks = app.db.models[nmModel];
