@@ -1,9 +1,9 @@
 /*
- * ActionController: Controla o fluxo de entrada da interface do usuário (user action controller)
- * ResponseController:
- *                    - Recebe as respostats do servidor
- *                    - Controla o fluxo de saída para atualizar interface do usuário
- *                    - Repassa os acoes aos objetos que devem prover a solicitacao
+ * ActionController: faz a chamada aos métodos do recurso (RESOURCE)
+  * ResponseController:
+ *                    -> Recebe as respostats do servidor (callback dos métodos http enviados ao recurso)
+ *                    -> Recebe os eventos para atualizar interface do usuário (filtro, sort, edit, etc...)
+ *                    -> Controla o fluxo de saída para atualizar interface do usuário (repassa para -> UpdateController)
  * ResourceRequest: Faz requisição de serviços do servidor
  *                ResourceRequest: Chama uma URL
  *                LocalResourceRequest: Simula chamada remota
@@ -39,7 +39,7 @@ j$.ui.Controller = function(){
 */
 
 function ActionController(ResponseController){
-  // ActionController: é a instancia desacoplada da interface que comanda os eventos ao recurso (RESOURCE)
+  // ActionController: faz a chamada aos métodos do recurso (RESOURCE)
   var SELF = this;
   var ResourceRequest = ResponseController.Resource.Requester;
   var Resource = ResponseController.Resource;
@@ -73,7 +73,7 @@ function ActionController(ResponseController){
                var row = SELF.List.getPosition(cell); // Idenifica a posição(linha) no grid (table)
                var recordRow =(SELF.List.Pager.absolutePosition(row)); // Posicao no dataset(array)
                var id=ResponseController.Resource.Dataset.get(recordRow)[Resource.id];
-               ResourceRequest.remove(Resource.url+"/"+id,row); // #Refactor (ideal não seria passar os paramentros?)
+               ResourceRequest.remove(Resource.url, id,row);
            }
         }
   }
@@ -87,7 +87,7 @@ function ActionController(ResponseController){
              ResourceRequest.post(Resource.url, record);
          }else{
              var id = record[Resource.id];
-             ResourceRequest.put(Resource.url+"/"+id, record);
+             ResourceRequest.put(Resource.url, id, record);
          }
       }
       // else {
@@ -99,8 +99,9 @@ function ActionController(ResponseController){
 
 function ResponseController($service){
    var SELF = this;
+   this.ResponseHandler = new ResponseHandler(SELF);
    this.inherit=j$.Resource.ResponseHandler; // informa que ResponseHandler é o constructor de ResponseController
-   this.inherit($service, SELF); // inicializa ResponseController
+   this.inherit($service, SELF.ResponseHandler); // inicializa ResponseController
    var EDITED = false;
    var NEW_RECORD =false;
    var rowEdited= -1;
@@ -124,38 +125,6 @@ function ResponseController($service){
    function print(){
       r3port=window.open("report.html", SELF.service.id ,'toolbar=no,location=no,directories=no,status=no,menubar=yes,scrollbars=yes,resizable=yes, height=600,width=800, fullscreen=yes');
    }
-
-   this.get= function(response) {
-        var json = SELF.handleResponse(response);
-        SELF.Resource.Parser.toDataset(json);
-        SELF.service.Resource = SELF.Resource;
-        SELF.UpdateController = new UpdateController(SELF.service);
-
-        if (SELF.service.initialize)
-            SELF.service.initialize(SELF.UpdateController);
-        init();
-        return SELF.Resource.Dataset;
-  };
-  this.remove = function(response, row) {
-       SELF.UpdateController.remove(row);
-       if (rowEdited===row){
-          init();
-       }
-  };
-
-  this.post= function(response) {
-      var json = SELF.handleResponse(response);
-      rowEdited = SELF.UpdateController.insert(json);
-      NEW_RECORD=false;
-      EDITED=true;
-  };
-
-  this.put= function(response) {
-      var json = SELF.handleResponse(response);
-      SELF.UpdateController.update(rowEdited,json);
-      NEW_RECORD=false;
-      EDITED=true;
-  };
 
   function sort(id){
      SELF.service.Fieldset.sortNone(id);
@@ -212,6 +181,39 @@ function ResponseController($service){
            (buttons.has(key))?BUTTONS[key].hide():BUTTONS[key].show();
        }
   };
+  function ResponseHandler(parent){
+      var $i = this;
+      this.get = function(response) { // os recursos serao criados no primeiro GET
+         var json = $i.handleResponse(response);
+         $i.Resource.Parser.toDataset(json);
+         $i.service.Resource = $i.Resource;
+         parent.UpdateController = new UpdateController($i.service);
+
+         if ($i.service.initialize)
+             $i.service.initialize(parent.UpdateController);
+         init();
+         return $i.Resource.Dataset;
+     };
+     this.remove= function(response, row) {
+         parent.UpdateController.remove(row);
+         if (rowEdited===row){
+            init();
+        }
+     };
+     this.post= function(response) {
+         var json = $i.handleResponse(response);
+         rowEdited = parent.UpdateController.insert(json);
+         NEW_RECORD=false;
+         EDITED=true;
+     };
+
+     this.put= function(response) {
+         var json = $i.handleResponse(response);
+         parent.UpdateController.update(rowEdited,json);
+         NEW_RECORD=false;
+        EDITED=true;
+     };
+   };  
 }
 
 function UpdateController(service){

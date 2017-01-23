@@ -52,6 +52,7 @@ j$.Resource = function(){
         if (responseHandler){ //Soh cria o request quando for informado um objeto para responder ao mesmo;
             this.Requester=(resource.local) ? new j$.Resource.Local.Requester(responseHandler)
                                             : new j$.Resource.Requester(responseHandler);
+            responseHandler.Resource = $i;
             this.ResponseHandler = responseHandler;
         }
 
@@ -77,7 +78,7 @@ j$.Resource = function(){
         }
     }
     function ResponseHandler(service, inheritor){
-       /* inheritor eh um objeto que estah extendendo Responder (Quem?)
+       /* inheritor eh um objeto que estah extendendo ResponseHandler (Quem?)
         * naum informah-lo eh indicacao da necessidade de criar um REQUESTER que irah acionar este ResponseHandler
        */
        var SELF = this;
@@ -93,6 +94,7 @@ j$.Resource = function(){
                }
            }
            Object.preset(SELF,{Resource:service.Resource, handleResponse:handleResponse, service:service});
+           Object.preset(inheritor,{handleResponse:handleResponse, service:service});
        }();
 
        this.get= function(response) {
@@ -132,7 +134,7 @@ j$.Resource = function(){
             //     var json = response.responseJSON;
             // }
             // return json;
-            return response;
+               return response;
        }
     }
 
@@ -142,8 +144,8 @@ j$.Resource = function(){
     function Requester(responseHandler) {
        this.responseHandler = responseHandler;
 
-       this.remove = function(url, row) {
-             var http ={url:url, method:'DELETE'};
+       this.remove = function(url, id, row) {
+             var http ={url:url+"/"+id, method:'DELETE'};
              request(http, {
                   success:function(response){
                      responseHandler.remove(response,row);
@@ -165,7 +167,7 @@ j$.Resource = function(){
                     if (dataExt.isString(parameter)){
                        http.url += "/"+parameter;
                     }else{
-                         http.parms = parameter;
+                         http.parms = JSON.stringify(parameter);
                     }
                 }
                 request(http, {
@@ -188,9 +190,9 @@ j$.Resource = function(){
              });
         };
 
-        this.put= function(url, record) {
-             var http ={url:url
-                   , method:'PUT'                
+        this.put= function(url, id, record) {
+             var http ={url:url+"/"+id
+                   , method:'PUT'
                    , postBody:JSON.stringify(record)
                  };
              request(http, {
@@ -215,8 +217,8 @@ j$.Resource = function(){
        function localRequest(url, callback){
            var json=j$.Resource.Store.restore(url);
            if (json){
-              var response={status:200, responseJSON:json};
-              callback(response);
+            //  var response={status:200, responseJSON:json};
+              callback(json);
            }
            return json;
        }
@@ -252,8 +254,8 @@ j$.Resource = function(){
              request(record,responseHandler.put);
        };
        function request(json, callback){
-           var response={status:200, responseJSON:json};
-           callback(response);
+           //var response={status:200, responseJSON:json};
+           callback(json);
        }
     }
 
