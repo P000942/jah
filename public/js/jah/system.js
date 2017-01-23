@@ -77,13 +77,15 @@ if (window['Prototype']!=undefined){
               options.scriptCharset = properties.encoding;
           if (properties.evalJSON)
               options.dataType = 'json';
+          if (properties.contentType)
+                  options.contentType = properties.contentType;
           if (properties.onSuccess)
               options.success = properties.onSuccess;
           if (properties.onFailure)
               options.error = properties.onFailure;
           if (properties.onComplete)
               options.complete = properties.onComplete;
-          if (properties.postBody && options.type == 'POST'){
+          if (properties.postBody && (options.type == 'POST' || options.type == 'PUT')){
               options.processData = false;
               options.data = properties.postBody;
           }

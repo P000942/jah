@@ -1,8 +1,8 @@
-//console.log(['name','key'].indexOf('keys')); 
-//console.log(" Geraldo Gomes ".split(/\s/gi)); 
+//console.log(['name','key'].indexOf('keys'));
+//console.log(" Geraldo Gomes ".split(/\s/gi));
 function i$(id) {
     return document.getElementById(id);
-} 
+}
 
 Element.prototype.content= function(value){
   if (value == undefined){
@@ -15,11 +15,11 @@ Element.prototype.content= function(value){
         if (this.type == "radio" || this.type == "checkbox")
           value = this.checked;
         if (this.type == "text" || this.type == "hidden")
-          value = this.value; 
+          value = this.value;
           break;
       default:
         value= this.textContent;
-    } 
+    }
     return value;
   }else{
     switch(dataExt.type(this)){
@@ -30,13 +30,13 @@ Element.prototype.content= function(value){
         if (this.type == "radio" || this.type == "checkbox")
           this.checked = value;
         if (this.type == "text" || this.type == "hidden")
-          this.value = value; 
+          this.value = value;
           break;
       default:
         this.textContent=value;
-    }   
-  }   
-} 
+    }
+  }
+}
 
 String.prototype.trim = function(){
     return this.replace(/^\s*/, "").replace(/\s*$/, "");
@@ -74,7 +74,7 @@ String.prototype.toCapitalize = function (){
   var r=this.split(/\s/gi); var text='';
   for (var i=0; r.length>i;i++){
       text += r[i].trim().substr(0,1).toUpperCase() + r[i].trim().substr(1).toLowerCase() + ' ';
-  }      
+  }
   return text;
 };
 String.prototype.toFirstLower = function (){
@@ -84,13 +84,13 @@ String.prototype.toFirstUpper = function (){
    return this.replace(/^[a-z]/,this[0].toUpperCase())
 };
 String.prototype.toSeparate = function (delimiters){
-  var text=''; 
+  var text='';
   if (dataExt.isArray(delimiters)){
       for (var i=0; delimiters.length > i;i++)
           text += delimiters[i];
   } else {
-    text += delimiters;  
-  }      
+    text += delimiters;
+  }
   return this.split(eval('(/['+ text +']/gi)'));
  // return r.join(' ');
 };
@@ -107,9 +107,9 @@ String.prototype.toCaption = function (delimiters){
 //"jose_geraldo.gomes-final".r.toCaption("_.-");
 
 String.prototype.toKey = function (){
-  var r=this; 
+  var r=this;
   r = r.stripChar('_.<>*!$&;:"\'@+#%^)(-'); //Remove Caracteres
-  r = r.toCapitalize(); 
+  r = r.toCapitalize();
   r = r.replace(/\s/gi,''); // Remove espaços
   r = r.noAccent();  // Troca as Letras acentuadas
   return r;
@@ -121,12 +121,12 @@ String.prototype.stripChar = function (delimiters){
       for (var i=0; delimiters.length > i;i++)
           text += delimiters[i];
   } else {
-    text += delimiters;  
-  }    
-  
+    text += delimiters;
+  }
+
   if (delimiters==undefined || text.isEmpty())
      er = '(/[ ]/gi)';
-  else  
+  else
      er = '(/['+ text +']/gi)';
   r = r.replace(eval(er),'');
   return r;
@@ -140,7 +140,7 @@ String.prototype.stripChar = function (delimiters){
 //window.document.write("<span id='w_len' style='display:none;'>X</span>");
 /*Função que padroniza valor*/
 function numberFormat( number, decimals, dec_point, thousands_sep ) {
-    // %        nota 1: Para 1000.55 retorna com precisão 1 
+    // %        nota 1: Para 1000.55 retorna com precisão 1
     //                 no FF/Opera é 1,000.5, mas no IE é 1,000.6
     // *     exemplo 1: number_format(1234.56);
     // *     retorno 1: '1,235'
@@ -161,7 +161,7 @@ function numberFormat( number, decimals, dec_point, thousands_sep ) {
     var sep = (typeof thousands_sep == "undefined") ? '.' : thousands_sep;
     var dec = (typeof dec_point == "undefined") ? ',' : dec_point;
 
-    var s = (prec > 0) ? n.toFixed(prec) : Math.round(n).toFixed(prec); 
+    var s = (prec > 0) ? n.toFixed(prec) : Math.round(n).toFixed(prec);
       //fix for IE parseFloat(0.55).toFixed(0) = 0;
 
     var abs = Math.abs(n).toFixed(prec);
@@ -303,7 +303,7 @@ var Test = function(){
           Money:function(value){console.log("isMoney('"   +value+ "'):"+ value.isMoney())},
           Email:function(value){console.log("isMail('"    +value+ "'):"+ value.isEmail())},
            Hour:function(value){console.log("isHour('"    +value+ "'):"+ value.isHour())},
-         isName:function(value){console.log('"' +value+ '".isName() -> '+ value.isName())},          
+         isName:function(value){console.log('"' +value+ '".isName() -> '+ value.isName())},
           Phone:function(value){console.log("Phone('"     +value+ "'):"+ value.isPhone())},
            Mask:function(value,mask){console.log("'"+value+"'.mask("+mask+"):"+ value.mask(mask))},
   isValidInMask:function(value,mask){console.log("'"+value+"'.isValidInMask("+mask+"):"+ value.isValidInMask(mask))},
@@ -318,7 +318,7 @@ var Testa = function(){
            CEP:function(value){console.log('ehCep('     +value+ '):'+ value.ehCep())},
          Placa:function(value){console.log('ehPlaca('    +value+ '):'+ value.ehPlaca())},
           AIDF:function(value){console.log('ehAidf('    +value+ '):'+ value.ehAidf())},
-          CNAE:function(value){console.log('ehCNAE('    +value+ '):'+ value.ehCNAE())},      
+          CNAE:function(value){console.log('ehCNAE('    +value+ '):'+ value.ehCNAE())},
       Processo:function(value){console.log('ehProcesso('+value+ '):'+ value.ehProcesso())},
 digitoModule11:function(value,dig,lim){console.log('Module11('   +value+ '):'+ value.module11(dig,lim))},
      digitoCpf:function(value,dig,lim){console.log('digitoCpf('  +value+ '):'+ value.digitoCpf())},
@@ -348,7 +348,7 @@ String.prototype.module11 = function(nrDigit, limiteMult)  {
       dig =((Soma * 10) % 11) % 10;
       if (NumDig>1)
           dig += ''+(value+dig).module11(--NumDig,LimMult);
-      
+
     return dig;
 }
 //Testa.digitoModule11('417660402',2,12); Testa.digitoModule11('04150945');Testa.digitoModule11('073114610001',2,9);
@@ -403,12 +403,12 @@ String.prototype.ehPlaca = function(){
 
 
 // Esse � o script
-String.prototype.isName = function(){    
+String.prototype.isName = function(){
     var words = this.replace(/^\s*/, "").replace(/\s*$/, "").split(/\s/gi);
     var nameIsValid = (words.length>1);
     if (nameIsValid){
-        for (var i=0; i<words.length; i++){        
-            nameIsValid = (words[i].length>1);               
+        for (var i=0; i<words.length; i++){
+            nameIsValid = (words[i].length>1);
             if (!nameIsValid)
                 break;
         }
@@ -543,7 +543,7 @@ String.prototype.isValidInMask = function(mask){
     for (i=0;i<masks.length;i++){
         var character = value[i];
         var maskChar=masks[i];
-        
+
         if ('09'.indexOf(maskChar)!=-1){ //Valida se eh numero
             valid = character.isDigit();
         }else if('XAa'.indexOf(maskChar)!=-1){ //Valida letras
@@ -563,14 +563,14 @@ String.prototype.isValidInMask = function(mask){
 //Test.isValidInMask("A111","@###");
 
 
-String.prototype.pixel = function(fontSize){   
+String.prototype.pixel = function(fontSize){
        i$('w_len').style.fontSize=fontSize + "px";
        i$('w_len').innerHTML = "X".repeat(this.length + 1);
        return {width:i$('w_len').getWidth(), height:i$('w_len').getHeight()};
 }
 //alert("123451234512".pixel(10).width);
 //alert("123451234512".pixel(10).height);
-String.prototype.point = function(fontSize){   
+String.prototype.point = function(fontSize){
 	   i$('w_len').style.fontSize=fontSize + "pt";
        i$('w_len').innerHTML = "X".repeat(this.length + 1);
        return {width:i$('w_len').getWidth(), height:i$('w_len').getHeight()};
@@ -578,17 +578,17 @@ String.prototype.point = function(fontSize){
 //alert("123451234512".point(10).width);
 //alert("123451234512".point(10).height);
 
-var dataExt = function(){    
+var dataExt = function(){
     return {
         init:function(){return true;}
       , type:function(obj){
              return Object.prototype.toString.call(obj).match(/^\[object (.*)\]$/)[1];
         }
-      ,    isArray:function(obj){ return (dataExt.type(obj)==='Array');} 
-      ,   isString:function(obj){ return (dataExt.type(obj)==='String');} 
+      ,    isArray:function(obj){ return (dataExt.type(obj)==='Array');}
+      ,   isString:function(obj){ return (dataExt.type(obj)==='String');}
       ,   isNumber:function(obj){ return (dataExt.type(obj)==='Number');}
-      ,   isObject:function(obj){ return (dataExt.type(obj)==='Object');} 
-      , isFunction:function(obj){ return (dataExt.type(obj)==='Function');} 
+      ,   isObject:function(obj){ return (dataExt.type(obj)==='Object');}
+      , isFunction:function(obj){ return (dataExt.type(obj)==='Function');}
       ,  isDefined:function(obj){ return true;}
     };
 }();
@@ -599,7 +599,7 @@ var dataExt = function(){
 
 dataExt.format = function(){
     return {
-        money:function(p_value){                
+        money:function(p_value){
            var decimal =2;
            var value = p_value.toString().replace(/[',']/gi,'.');
            return numberFormat(value, decimal);
@@ -613,10 +613,10 @@ dataExt.format = function(){
 // definir um valor para uma propriedade de um método, caso a mesma n�o seja informada;
 Object.preset = function(object, propertie, defaultvalue){
     ///if (dataExt.type(propertie)=='Object'){
-    if (dataExt.isObject(propertie)){        
+    if (dataExt.isObject(propertie)){
        for (var key in propertie){
            Object.preset(object, key, propertie[key]);
-       }    
+       }
     }else{
         if (object[propertie] == undefined){
             object[propertie] = defaultvalue;
@@ -624,50 +624,50 @@ Object.preset = function(object, propertie, defaultvalue){
            if (object[propertie]==null)
               object[propertie] = defaultvalue;
            if (dataExt.isString(object[propertie]) && object[propertie].isEmpty())
-              object[propertie] = defaultvalue; 
+              object[propertie] = defaultvalue;
         }
-    }    
+    }
     return object;
-}; 
+};
 //var aux = {a:1,b:2}
 //Object.preset(aux,'c',{x:1, y:2})
 //aux = Object.preset({a:1,b:2},{x:1, y:2});
-//aux = Object.preset({a:1,b:2,x:null,y:''},{x:1, y:2}); 
-Object.join = function(receiver,provider, properties){ 
-// Junta o objeto provider ao objeto receiver             
+//aux = Object.preset({a:1,b:2,x:null,y:''},{x:1, y:2});
+Object.join = function(receiver,provider, properties){
+// Junta o objeto provider ao objeto receiver
     if (properties) { // Um Join apenas com algumas propriedades
-       for(var i=0; i<properties.length; i++) 
-          Object.preset(receiver, properties[i], provider[properties[i]]);            
+       for(var i=0; i<properties.length; i++)
+          Object.preset(receiver, properties[i], provider[properties[i]]);
     } else { // Um Join com todas as propriedades
        for (var key in provider){
            Object.preset(receiver, key, provider[key]);
-       }      
-    }    
+       }
+    }
     return receiver;
 };
 //var aux = {a:1,b:2}
 //Object.join(aux,{x:1, y:2},['x'])
 //aux = Object.join({a:1,b:2},{x:1, y:2});
 //aux = Object.join({a:1,b:2,x:null,y:''},{x:1, y:2});
-Object.merge = function(server,provider, properties){ 
-// Junta o objeto server e provider em objeto receiver             
+Object.merge = function(server,provider, properties){
+// Junta o objeto server e provider em objeto receiver
     var receiver={};
-     
+
     if (properties) { // Um Merge apenas com algumas propriedades
        for(var i=0; i<properties.length; i++){
           Object.preset(receiver, properties[i], server[properties[i]]);
-          Object.preset(receiver, properties[i], provider[properties[i]]);         
+          Object.preset(receiver, properties[i], provider[properties[i]]);
        }
     } else { // Um Merge com todas as propriedades
        for (var key in server){ // copia todas as propriedades do SERVER para o RECEIVER
            receiver[key]= server[key];
-       }  
-       Object.join(receiver,provider);    
-       // for (var key in provider){//  
+       }
+       Object.join(receiver,provider);
+       // for (var key in provider){//
        //     Object.preset(receiver, key, provider[key]);
-       // }      
-    }    
-    return receiver;  
+       // }
+    }
+    return receiver;
 };
 //var aux = {a:1,b:2}
 //Object.merge(aux,{x:1, y:2},['x'])
@@ -677,13 +677,13 @@ Object.setIfExist = function(receiver, provider, properties){
     if (dataExt.isArray(properties)){
        for (var idx=0; properties.length>idx;idx++){
            Object.setIfExist(receiver, provider, properties[idx]);
-       }    
+       }
     }else{
         if (provider[properties]!=undefined && provider[properties]!=null)
-            receiver[properties] = provider[properties];                
-    }    
+            receiver[properties] = provider[properties];
+    }
     return receiver;
-}; 
+};
 //var aux = {a:1,b:2}
 //Object.setIfExist(aux,{c:4,d:'abc'},['c','d'])
 //Object.setIfExist(aux,{c:4,d:'abc'},'c')
@@ -691,36 +691,36 @@ Object.setIfExist = function(receiver, provider, properties){
 //Object.setIfExist(aux,{c:4,d:'abc'},'z')
 Object.mixin=function(receiver,provider, methods){
     if (methods) { // Um Mixin fornecendo alguns métodos
-       for (var i=0; i<methods.length; i++) 
-         receiver.prototype[methods[i]] = provider.prototype[methods[i]];       
+       for (var i=0; i<methods.length; i++)
+         receiver.prototype[methods[i]] = provider.prototype[methods[i]];
     } else { // Um Mixin fornecendo todos os métodos
       for (var method in provider.prototype) { // verificando se a classe receptora já possui tal método do loop...
-        if (receiver.prototype[method]==undefined) 
-           receiver.prototype[method] = provider.prototype[method];        
+        if (receiver.prototype[method]==undefined)
+           receiver.prototype[method] = provider.prototype[method];
       }
-    }  
+    }
     return receiver;
 }
 
-Object.compare = function(source, target, key){ 
+Object.compare = function(source, target, key){
 // compara se conteúdo do literal target existe em source
     var r = true;
-    if (key) { // compara por uma chave      
+    if (key) { // compara por uma chave
         if (dataExt.isString(key)) // a chave de comparação é simples
            r = (source[key] == target[key])?true:false;
         else{ // a chave de comparação é composta por mais de um atributo
            for(var i=0; i<key.length;i++){
               if (source[key[i]] != target[key[i]])
-                 return false; 
+                 return false;
            }
-        }      
+        }
     } else { // compara com todas as propriedades existente no objeto de comparação(target)
        for (var fld in target){
            if (source[fld] != target[fld])
-              return false;                           
-       }        
-    }    
-    return r;  
+              return false;
+       }
+    }
+    return r;
 };
 // Object.compare({a:1, b:3, x:'A'}, {a:1, b:3, x:'A'},['a','b'])
 // Object.compare({a:1, b:3, x:'A'}, {a:1, b:2, x:'A'},'a')
@@ -736,27 +736,27 @@ Array.prototype.each = function(callback /*, parms*/){
     for (var i = 0; i < len; i++){
       if (i in this)
     	  callback(this[i]);
-    	  //callback.call(parms, this[i], i, this);  
+    	  //callback.call(parms, this[i], i, this);
     }
 };
 
-Array.prototype.has = function(value){   
+Array.prototype.has = function(value){
    return (this.indexOf(value)>-1)?true:false;
 };
 // var aux = [1,'test',2]; aux.has(1);aux.has('test');aux.has(4)
 // Alias para o each
-Array.prototype.sweep = Array.prototype.each 
+Array.prototype.sweep = Array.prototype.each
 
 Array.prototype.exists = function(item, callback){
     var len = this.length;
     if (typeof callback != "function")
        throw new TypeError();
-    
+
     for (var i = 0; i < len; i++){
         if (i in this){
     	   if (callback(item, this[i]))
     	      return true;
-        }	  
+        }
     }
     return false;
 };
@@ -771,7 +771,7 @@ if (System.api.jquery){
     }
 
     Element.prototype.stylize = function(properties) {
-        if (properties){     
+        if (properties){
             if (typeof properties =='string'){
                if (properties.match(/[:;]/gi)==null) //Se tem ':' eh uma string com style
                    this.className = properties;
@@ -781,57 +781,57 @@ if (System.api.jquery){
                 for (var att in properties){
                     if (att.trim().toLowerCase() == 'clas$')
                         this.className = properties[att];
-                    else    
+                    else
                        this.style[att]=properties[att];
                 }
             }
-        }  
+        }
     }
     Element.prototype.insert = function(content) {
-        var id = "#" + this.id;        
+        var id = "#" + this.id;
         if (dataExt.isString(content)){
             $(id).append(content);
-        }else{ 
+        }else{
             if (content.after)
                $(id).after(content.after);
             if (content.bottom)
-               $(id).append(content.bottom);           
+               $(id).append(content.bottom);
             if (content.before)
                $(id).before(content.before);
             if (content.top)
-               $(id).prepend(content.top);           
-        }        
+               $(id).prepend(content.top);
+        }
     }
-    Element.prototype.remove = function() {      
+    Element.prototype.remove = function() {
         $("#" + this.id).remove();
-       
-    }    
+
+    }
     Element.prototype.addClassName = function(className) {
-        $("#" + this.id).addClass(className);       
-    }    
+        $("#" + this.id).addClass(className);
+    }
     Element.prototype.hide = function() {
-        $("#" + this.id).hide();       
-    }     
+        $("#" + this.id).hide();
+    }
     Element.prototype.show = function() {
-        $("#" + this.id).show();       
-    }      
+        $("#" + this.id).show();
+    }
     Element.prototype.toggle = function() {
-        $("#" + this.id).toggle();       
-    }      
+        $("#" + this.id).toggle();
+    }
     Event.observe = function(node, event, callback) {
-        var element = null;        
+        var element = null;
         if (dataExt.isString(node))
             element = $("#" + node);
-        else    
-            element = $("#" + node.id);        
+        else
+            element = $("#" + node.id);
         element.bind(event, callback);
-     }    
-    Event.element=function(event){return event.target} 
-    Object.toJSON = function(object){
-        return $.toJSON(object);
-    }
+     }
+    Event.element=function(event){return event.target}
+    // Object.toJSON = function(object){
+    //     return $.toJSON(object);
+    // }
     //   var aux=[1, 2,3];
-    //   console.log(aux.collect( function(item){ return (item*2);} ));           
+    //   console.log(aux.collect( function(item){ return (item*2);} ));
     Array.prototype.collect = function(callback){
         var results = [];
         if (typeof callback != "function")
@@ -840,13 +840,13 @@ if (System.api.jquery){
         for (var i = 0; i < this.length; i++){
             if (i in this){
                    results.push(callback(this[i]));
-            }            
+            }
         }
         return results;
     };
 
    //var aux=[{a:1, b:2},{a:2, b:2},{a:3, b:2},{a:4, b:2}]
-   //console.log(aux.select( function(item){ return (item.a<3);} ));       
+   //console.log(aux.select( function(item){ return (item.a<3);} ));
     Array.prototype.select = function(callback /*, parms*/){
         var results = [];
         if (typeof callback != "function")
@@ -856,10 +856,10 @@ if (System.api.jquery){
             if (i in this){
                if (callback(this[i]))
                    results.push(this[i]);
-            }            
+            }
         }
         return results;
-    };    
+    };
     Array.prototype.find = function(callback){
         if (typeof callback != "function")
             throw new TypeError();
@@ -867,9 +867,9 @@ if (System.api.jquery){
             if (i in this){
                if (callback(this[i]))
                    return this[i];
-            }            
+            }
         }
-    };    
+    };
 }
 
   function prepareReplacement(replacement) {

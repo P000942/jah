@@ -34,7 +34,8 @@ var CONFIG = {
               ,  INVALID_ELEMENT:{id:'INVALID_ELEMENT'     , text:"Elemento inválido. Não encontrado o elemento solicitado"}
               ,     SERVICE_NULL:{id:'SERVICE_NULL'        , text:"Serviço não informado(key)."}
                }
-   , RESOURCE:{CONTEXT:'http://localhost/jah/resources/'}
+   , RESOURCE:{CONTEXT:'http://localhost:3000/'}
+    //, RESOURCE:{CONTEXT:'http://localhost/jah/resources/'}
    ,   SERVER:{CONTEXT:'http://localhost:3000/'}
    // , ADAPTER:{TYPE:{DEFAULT:0
    //                     LINK:1

@@ -1,7 +1,6 @@
 module.exports = app =>{
-   //app.helper.route.createRouteCrudBasic("Papel");
+  // MONTA ROTA PADRÃO CRUD todos os models que estão assinalados como crud
    for (const key in app.db.models){
-      //console.log(key + ":" + app.db.models[key].isCrud);
       if (app.db.models[key].isCrud)
          app.helper.route.createRouteCrudBasic(key);
    };

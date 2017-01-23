@@ -37,8 +37,16 @@ module.exports = app => {
               });
      })
      .put((req, res) => {
+         //console.log(req.body);
+         delete req.body[idName];
          dsModel.update(req.body, {where: req.params})
-              .then(result => res.sendStatus(204))
+              .then(result => {
+                   //res.sendStatus(204);
+                   dsModel.findOne({where: req.params}).then(result => {
+                      //console.log(result);
+                      res.json(result);
+                   });
+               })
               .catch(error => {
                   res.status(412).json({msg: error.message});
               });
