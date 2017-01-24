@@ -749,6 +749,32 @@ Object.compare = function(source, target, key){
 // Object.compare({a:1, b:3, x:'A'}, {a:1, b:3, x:'A'})
 // Object.compare({a:1, b:3, x:'A'}, {a:1, b:3, y:'B'})
 // Object.compare({a:1, b:3, x:'A'}, {a:1, b:3})
+
+Function.prototype.inheritsFrom = function(parentClassOrObject){
+  	if ( parentClassOrObject.constructor == Function ) 	{
+		   //Normal Inheritance
+		   this.prototype = new parentClassOrObject;
+		   this.prototype.constructor = this;
+		   this.prototype.parent = parentClassOrObject.prototype;
+	  }else{
+		   //Pure Virtual Inheritance
+		   this.prototype = parentClassOrObject;
+		   this.prototype.constructor = this;
+	     this.prototype.parent = parentClassOrObject;
+	  }
+  	return this;
+}
+// function animal(nome){
+// 	this.nome=nome;
+//   this.grite=function(){console.log(this.nome+" Miau.......");};
+// }
+// function Gato( nome ){
+// 	this.nome=nome;
+// }
+// Gato.inheritsFrom( animal );
+// var felix = new Gato( "Felix" );
+// felix.grite();
+
 Array.prototype.each = function(callback /*, parms*/){
     var len = this.length;
     if (typeof callback != "function")
