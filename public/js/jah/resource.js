@@ -12,6 +12,7 @@
  */
 
 j$.Resource = function(){
+    var items = {};
     var context = CONFIG.RESOURCE.CONTEXT;
     return{
         getURL:function(recourseName){return context;}
@@ -20,7 +21,9 @@ j$.Resource = function(){
              //j$.Resource.Store.addContext(context);
         }
       , create: function(resource, responseHandler){
-             return new Resource(resource, responseHandler);
+            var rsrc= new Resource(resource, responseHandler);
+            items[rsrc.name] = rsrc;
+            return rsrc;
         }
       , context:context
       , ResponseHandler:ResponseHandler
@@ -36,6 +39,10 @@ j$.Resource = function(){
                     init:function(){return true;}
                  };
         }()
+      , get:function(key){return items[key];}
+      , Items:items
+      , c$:items
+      , C$:function(key){return items[key];}
     };
     // {name:'', [id]:'', [url]:'', [context]:'', unique}
     function Resource(resource, responseHandler){
@@ -58,12 +65,12 @@ j$.Resource = function(){
 
         if (dataExt.isString(resource)){ // cria identificadore e nome por CONVENCAO
             $i.name = resource.toFirstLower();
-            $i.id  = 'id' +resource.toFirstUpper();
-            $i.text = 'tx' +resource.toFirstUpper();
+            dataExt.format.record(resource,$i); // cria id+[Resource] e tx+[Resource]
         }else{
+            var rsc = dataExt.format.record(resource.name);
             $i.name = resource.name;
-            $i.id  = (resource.id)   ? resource.id  : 'id'+$i.name.toFirstUpper();
-            $i.text= (resource.text) ? resource.text: 'tx'+$i.name.toFirstUpper();
+            $i.id  = (resource.id)   ? resource.id  : rsc.id;
+            $i.text= (resource.text) ? resource.text: rsc.text;
             Object.setIfExist($i,resource,['context','key']);
         }
         Object.preset($i,{key:$i.id});
@@ -94,10 +101,17 @@ j$.Resource = function(){
                }
            }
            Object.preset(SELF,{Resource:service.Resource, handleResponse:handleResponse, service:service});
-           Object.preset(inheritor,{handleResponse:handleResponse, service:service});
+           Object.preset(inheritor,{
+                                     handleResponse:handleResponse
+                                   ,        service:service
+                                   ,            get:get
+                                   ,           post:post
+                                   ,            put:put
+                                   ,         remove:remove
+                                 });
        }();
 
-       this.get= function(response) {
+       function get(response) {
             var json = handleResponse(response);
             SELF.Resource.Parser.toDataset(json);
             SELF.service.Resource = SELF.Resource;
@@ -105,24 +119,24 @@ j$.Resource = function(){
                 service.get(SELF);
             return SELF.Resource;
        };
-       this.remove = function(response, row) {
+       function remove(response, row) {
             if (service.remove)
                 service.remove(SELF,response, row);
        };
 
-       this.post= function(response) {
+       function post(response) {
           var json = handleResponse(response);
           if (service.post)
                 service.post(SELF,json);
        };
 
-       this.put= function(response) {
+       function put(response) {
           var json = handleResponse(response);
           if (service.put)
                 service.post(SELF,json);
        };
 
-       this.failure = function(response) {
+       function failure(response) {
           //if (response.status==404){
           if (response.status>=400 && response.status<=420){
               alert('Recurso não existe!');
@@ -228,7 +242,7 @@ j$.Resource = function(){
        this.ResponseHandler = responseHandler;
        //this.response = null;
 
-       this.remove = function(url, row) {
+       this.remove = function(url, id, row) {
              responseHandler.remove(url,row);
        };
 
@@ -250,7 +264,7 @@ j$.Resource = function(){
              request(record,responseHandler.post);
        };
 
-       this.put= function(url, record) {
+       this.put= function(url, id,record) {
              request(record,responseHandler.put);
        };
        function request(json, callback){
@@ -529,7 +543,7 @@ j$.Resource.Parser.Json= function(Resource){
       var SELF = this;
       this.toListset=function(response){
         var Listset={list:{}, count:-1, maxlength:0};
-        var json = Resource.handleResponse(response);
+        var json = response; //Resource.handleResponse(response);
         var dataset =  SELF.toDataset(json);
         Listset.count = dataset.count;
         dataset.sweep(function(row, record){
@@ -655,7 +669,7 @@ j$.Resource.Store= function(){
         if (dataExt.isString(resource)){
            parseUrl(resource);
         }else{
-            Object.setIfExist(res,resource,['name','context','source'])
+            Object.setIfExist(res,resource,['name','context','source','local'])
             if (resource.Dataset)
                res.source = resource.Dataset.DataSource;
             if (!(res.name || res.source || res.context)){ // Nenhum das propriedades foram definidas
@@ -687,15 +701,15 @@ j$.Resource.Store.add(
                            ,{"idEstadoCivil":"4","txEstadoCivil":"Viúvo"}
                       ]});
 // Vai adicionar direto no context default
-j$.Resource.Store.Source['uf']=
-                   [
+j$.Resource.Store.Source['uf']=[
                            {"idUf":"1","sgUf":"AM","txEstado":"Amazonas"}
                           ,{"idUf":"2","sgUf":"AC","txEstado":"Acre"}
                           ,{"idUf":"3","sgUf":"SP","txEstado":"São Paulo"}
                           ,{"idUf":"4","sgUf":"RJ","txEstado":"Rio de Janeiro"}
-                   ];
+                       ];
 j$.Resource.Store.add({name:"assunto"
                        //, context:CONFIG.RESOURCE.CONTEXT
+                       , local:true
                        , source:[
                                {"idAssunto":"1","idCategoriaAssunto":"1","txTitulo":"GPX"}
                               ,{"idAssunto":"2","idCategoriaAssunto":"3","txTitulo":"SUAD"}
@@ -745,8 +759,8 @@ j$.Resource.Store.add({name:"situacaoAtividade"
                           ]});
 
 j$.Resource.Store.add({
-     name:"pessoa"
-, source: [
+      name:"pessoa"
+  , source: [
     {id:01, nome: 'Coxinha',    data:'1971/10/10', ativo:false, valor:12,      sexo:'M', vl:1101},
     {id:02, nome: 'Doquinha',   data:'1971/11/20', ativo:false, valor:991001,  sexo:'F', vl:112},
     {id:03, nome: 'Marinelson', data:'1980/11/20', ativo:true,  valor:'10,10', sexo:'M', vl:113},

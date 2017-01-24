@@ -942,9 +942,12 @@ j$.ui.Fieldset = function(fields) {
 };
 
 j$.ui.Fieldset.make=function(key){ // Método estático para criar um fieldset a partir
+  var rcd = dataExt.format.record(key);
   var fieldset = {};
-  fieldset['id'+key.toFirstUpper()]=TYPE.INTEGER(4,{label:'Código', readOnly:true});
-  fieldset['tx'+key.toFirstUpper()]=TYPE.CHAR(30,{label:key.toFirstUpper(), mandatory:true});
+  // fieldset['id'+key.toFirstUpper()]=TYPE.INTEGER(4,{label:'Código', readOnly:true});
+  // fieldset['tx'+key.toFirstUpper()]=TYPE.CHAR(30,{label:key.toFirstUpper(), mandatory:true});
+  fieldset[rcd.id]=TYPE.INTEGER(4,{label:'Código', readOnly:true});
+  fieldset[rcd.text]=TYPE.CHAR(30,{label:key.toFirstUpper(), mandatory:true});
   return fieldset;
 }
 

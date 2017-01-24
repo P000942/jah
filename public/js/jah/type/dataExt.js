@@ -114,6 +114,7 @@ String.prototype.toKey = function (){
   r = r.noAccent();  // Troca as Letras acentuadas
   return r;
 };
+//"id_nome&mt.for-da$xxx&".toKey()
 
 String.prototype.stripChar = function (delimiters){
   var r =this; var text=''; var er='';
@@ -604,6 +605,16 @@ dataExt.format = function(){
            var value = p_value.toString().replace(/[',']/gi,'.');
            return numberFormat(value, decimal);
         }
+      ,record:function(name, parent){
+          if (parent){
+             parent.id   = 'id' +name.toFirstUpper();
+             parent.text = 'tx' +name.toFirstUpper();
+             return parent;
+          } else {
+             return {id: 'id'+name.toFirstUpper()
+                 , text: 'tx'+name.toFirstUpper()};
+          }
+        }
     };
 }();
 //console.log(dataExt.type({a:1, b:2}))
@@ -674,6 +685,7 @@ Object.merge = function(server,provider, properties){
 //aux = Object.merge({a:1,b:2},{x:1, y:2});
 //aux = Object.merge({a:1,b:2,x:null,y:''},{x:1, y:2});
 Object.setIfExist = function(receiver, provider, properties){
+    //SE EXISTIR NO PROVIDER,sobrescreve ou adiciona atributos definidos em Properties no RECEIVER
     if (dataExt.isArray(properties)){
        for (var idx=0; properties.length>idx;idx++){
            Object.setIfExist(receiver, provider, properties[idx]);
@@ -701,6 +713,16 @@ Object.mixin=function(receiver,provider, methods){
     }
     return receiver;
 }
+// var Car = function(modelo, cor){this.modelo = modelo || 'Ford';  this.cor = cor || 'Yello'; };
+// var carMixin = function(){};
+// carMixin.prototype = {
+//   acelerar: function(){console.log('acelera.'); }
+//  ,parar: function(){console.log('parando o carro.');}
+//  };
+// Object.mixin(Car,carMixin,['acelerar']);
+// Object.mixin(Car,carMixin);
+// var fiat = new Car('Fiat','azul');
+// fiat.acelerar();fiat.parar();
 
 Object.compare = function(source, target, key){
 // compara se conteúdo do literal target existe em source
@@ -943,3 +965,5 @@ function Template(template, pattern) {
   }
 };
 Template.Pattern = /(^|.|\r|\n)(#\{(.*?)\})/;
+// var myDiv = new Template("<div class='page' id='#{id}'></div>");
+// myDiv.evaluate({id:'id.999'});
