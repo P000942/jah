@@ -144,6 +144,7 @@ j$.Resource = function(){
         function initialize(resource){
            Object.preset($i.Resource
                       ,{context:context
+                      ,bind:bind
                       , handleResponse:handleResponse
                       , Dataset:null
                       , Parser:new j$.Resource.Parser.Default($i.Resource)
@@ -183,10 +184,17 @@ j$.Resource = function(){
            }
         }
         function handleResponse(response){
-            if (response.status>=200 && response.status<=207){
-                var json = response.responseJSON;
-            }
-            return json;
+            // if (response.status>=200 && response.status<=207){
+            //     var json = response.responseJSON;
+            // }
+            // return json;
+            return response;
+        }
+        function bind(response){
+          //var json = $i.handleResponse(response);
+           $i.Resource.Parser.toDataset(handleResponse(response));
+           j$.Resource.Store.add($i.Resource);
+           return $i.Resource.Dataset;
         }
     }
     function ResponseHandler(service, inheritor){
@@ -437,32 +445,34 @@ j$.Resource = function(){
               $i.empty=true;
               $i.DataSource=[];
            }
-       }
+        }
 
-       function get(row){
-          if (row!=undefined)
+        function get(row){
+           if (row!=undefined)
               $i.position = row;
           return $i.DataSource[$i.position];
-       }
-       function id (number){
-         //#Refactor (Para entender as chaves compostas)
-          this.get(number)[Resource.id];
-       }
-       function insert(record){
-          var proceed = !(Resource.unique && $i.exists(record));
-          if (proceed){
-             $i.DataSource.push(record);
-             refresh();
-             $i.position = $i.count;
-             return $i.DataSource.length -1;
-             originalSource = $i.DataSource;
-          }
+        }
+        function id (number){
+           //#Refactor (Para entender as chaves compostas)
+            this.get(number)[Resource.id];
+        }
+
+        function insert(record){
+           var proceed = !(Resource.unique && $i.exists(record));
+           if (proceed){
+              $i.DataSource.push(record);
+              refresh();
+              $i.position = $i.count;
+              return $i.DataSource.length -1;
+              originalSource = $i.DataSource;
+           }
        }
 
        function update(row,record){
            $i.DataSource[row]=record;
            originalSource = $i.DataSource;
        }
+
        function remove(row){
            var pos = $i.position;
            $i.DataSource.splice(row,1);
@@ -471,10 +481,12 @@ j$.Resource = function(){
                $i.position=pos;
            originalSource = $i.DataSource;
        }
+
        this.orderBy = function(sortBy){
             $i.DataSource.sort(sortBy);
             refresh();
        };
+
        this.filter=function(field,value){
            if (field.filter){
                $i.DataSource = originalSource;
@@ -519,6 +531,7 @@ j$.Resource = function(){
             this.position = ROW.LAST;
             return $i.get($i.position);
         };
+
         this.sweep=function(action){ // varre todo o arquivo sem guardar as posicoes, por isso, nao chama o metodo get()
             var record = null;
             for (var row=ROW.FIRST; row<=ROW.LAST; row++){
@@ -527,6 +540,7 @@ j$.Resource = function(){
                     action(row, record);
             }
         };
+
         function find(validator){
             var record = null;
             for (var row=ROW.FIRST; row<=ROW.LAST; row++){
@@ -539,6 +553,7 @@ j$.Resource = function(){
             }
             return null;
         }
+
         function exists(record, key){
             if (!key)
                key = Resource.key;

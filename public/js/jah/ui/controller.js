@@ -184,9 +184,7 @@ function ResponseController($service){
   function ResponseHandler(parent){
       var $i = this;
       this.get = function(response) { // os recursos serao criados no primeiro GET
-         var json = $i.handleResponse(response);
-         $i.Resource.Parser.toDataset(json);
-         j$.Resource.Store.add($i.Resource);
+         $i.Resource.bind(response);
          $i.service.Resource = $i.Resource;
          parent.UpdateController = new UpdateController($i.service);
 
