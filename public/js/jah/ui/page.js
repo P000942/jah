@@ -407,6 +407,7 @@ j$.service = function(){
       }()
    }
 }()
+j$.$S = j$.service.c$;
 
 j$.ui.Page = function(){
    var items = {};
@@ -609,6 +610,7 @@ j$.ui.Page = function(){
        }()
    };
 }();
+j$.$P = j$.ui.Page.c$;
 
 j$.ui.Form=function(service, modal) {
     var $i = this;

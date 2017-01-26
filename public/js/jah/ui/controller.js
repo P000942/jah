@@ -32,7 +32,7 @@ j$.ui.Controller = function(){
       , C$:function(key){return items[key];}
     };
 }();
-
+j$.$C=j$.ui.Controller.c$;
 /* #Refactor:
    o ideal era incluir, atualizar e excluir no Dataset
    o Dataset deveria ser esperto para se manter atualizado com RESOURCE (fazer as chamadas para atualizar o recurso)
@@ -186,6 +186,7 @@ function ResponseController($service){
       this.get = function(response) { // os recursos serao criados no primeiro GET
          var json = $i.handleResponse(response);
          $i.Resource.Parser.toDataset(json);
+         j$.Resource.Store.add($i.Resource);
          $i.service.Resource = $i.Resource;
          parent.UpdateController = new UpdateController($i.service);
 
@@ -213,7 +214,7 @@ function ResponseController($service){
          NEW_RECORD=false;
         EDITED=true;
      };
-   };  
+   };
 }
 
 function UpdateController(service){

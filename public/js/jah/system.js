@@ -56,6 +56,23 @@ var System = function(){
     };
 }();
 var j$={ui:{},sys:System,sample:{}};
+j$.$V=function(key){
+   var shortCut = {"$C":"Controller:","$P":"Page:","$R":"Resource:","$S":"Service:"};
+   for (id in shortCut){
+      if (j$[id]){
+         if (key){
+            console.log(shortCut[id]+key);
+            if (id=="$R")
+               console.log(j$[id][key.toFirstLower()]);
+            else
+               console.log(j$[id][key]);
+         }else{
+            console.log(shortCut[id]);
+            console.log(j$[id]);
+        }
+      }
+   }
+}
 
 if (window['jQuery'] != undefined)
    System.api.jquery=true;
