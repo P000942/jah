@@ -597,6 +597,11 @@ var dataExt = function(){
 //alert(dataExt.type({a:'1', b:'2'}))
 //alert(dataExt.type(['1''2'))
 //alert(dataExt.type(function(){return false}))
+//console.log(dataExt.type({a:1, b:2}))
+//console.log(dataExt.type('a'))
+//console.log(dataExt.type([1, 2]))
+//console.log(dataExt.type(1))
+
 
 dataExt.format = function(){
     return {
@@ -617,11 +622,33 @@ dataExt.format = function(){
         }
     };
 }();
-//console.log(dataExt.type({a:1, b:2}))
-//console.log(dataExt.type('a'))
-//console.log(dataExt.type([1, 2]))
-//console.log(dataExt.type(1))
-// definir um valor para uma propriedade de um método, caso a mesma n�o seja informada;
+
+
+Object.getByValue = function(object, value, attribute="value"){
+   let items=[]
+   for (var key in object){
+       if (dataExt.isObject(object[key])){
+          if (object[key][attribute]){// objeto tem uma propriedade value
+             if (object[key][attribute] == value)
+                 items.push(key);
+          }
+       }else{
+          if (object[key] == value)
+              items.push(key);
+       }
+   }
+   return (items.length>0) ?items :null;
+};
+// var x = {a:1,b:2,c:1}
+// var y = {a:{value:1},b:{value:2},c:{value:2}}
+// var z = {a:{key:1},b:{key:2},c:{key:2}}
+// console.log("   Object.getByValue(x,1) ->:"       +  Object.getByValue(x,1));
+// console.log("   Object.getByValue(y,1) ->:"       +  Object.getByValue(y,2));
+// console.log("   Object.getByValue(z,2) ->:"       +  Object.getByValue(z,2));
+// console.log("   Object.getByValue(z,2,'key') ->:" +  Object.getByValue(z,2,"key"));
+// console.log("   Object.getByValue(z,3,'key') ->:" +  Object.getByValue(z,3,"key"));
+
+// definir um valor para uma propriedade de um método, caso a mesma nao seja informada;
 Object.preset = function(object, propertie, defaultvalue){
     ///if (dataExt.type(propertie)=='Object'){
     if (dataExt.isObject(propertie)){
@@ -644,6 +671,8 @@ Object.preset = function(object, propertie, defaultvalue){
 //Object.preset(aux,'c',{x:1, y:2})
 //aux = Object.preset({a:1,b:2},{x:1, y:2});
 //aux = Object.preset({a:1,b:2,x:null,y:''},{x:1, y:2});
+
+
 Object.join = function(receiver,provider, properties){
 // Junta o objeto provider ao objeto receiver
     if (properties) { // Um Join apenas com algumas propriedades

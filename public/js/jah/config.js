@@ -4,30 +4,45 @@
  */
 var RETCOD = {NOT_FOUND:-1}
 var CONFIG = {
-    ERROR:
-           {MESSAGE:
-               {Mandatory:"Campo de preenchimento obrigatório",
-                    Digit:"Entre somente com número",
-                  Numeric:"Entre somente com números",
-                    Money:"Entre somente com valores numéricos",
-                   Letter:"Entre somente com letras",
-                     Char: "",
-                 Password: "Senha inválida",
-                  Integer:"Entre somente o número sem casas decimais",
-                    Email:"Email com formatação inválida",
-                    Phone:"Telefone com formatação inválida",
-                     Date:"Data inválida",
-                     Hour:"Hora inválida",
-                      Cpf:"CPF inválido",
-                     Cnpj:"CNPJ inválido",
-                      Cca:"Inscrição estadual inválida",
-                      Cep:"CEP inválido",
-                     List:"Valor inválido. Não está dentro da lista de valores.",
-                    Placa:"Placa inválida"
-            , InvalidItem:"'@label' inválido."
+    ERROR:{
+           MESSAGE:{
+                 Mandatory: "Campo de preenchimento obrigatório"
+            ,        Digit: "Entre somente com número"
+            ,      Numeric: "Entre somente com números"
+            ,        Money: "Entre somente com valores numéricos"
+            ,       Letter: "Entre somente com letras"
+            ,         Char: ""
+            ,     Password: "Senha inválida"
+            ,      Integer: "Entre somente o número sem casas decimais"
+            ,        Email: "Email com formatação inválida"
+            ,        Phone: "Telefone com formatação inválida"
+            ,         Date: "Data inválida"
+            ,         Hour: "Hora inválida"
+            ,          Cpf: "CPF inválido"
+            ,         Cnpj: "CNPJ inválido"
+            ,          Cca: "Inscrição estadual inválida"
+            ,          Cep: "CEP inválido"
+            ,         List: "Valor inválido. Não está dentro da lista de valores."
+            ,        Placa: "Placa inválida"
+            ,  InvalidItem: "'@label' inválido."
                }
-            , SUBSCRIBE:['label','key']  // Será substituído na mensagem
-          }
+          , SUBSCRIBE:['label','key']  // Será substituído na mensagem
+      }
+
+     ,HTTP:{
+             STATUS:{
+                     BAD_REQUEST:{VALUE:400 , TEXT: "Requisição inválida"}
+            ,       UNAUTHORIZED:{VALUE:401 , TEXT: "Recurso não auterizado"}
+            ,          FORBIDDEN:{VALUE:403 , TEXT: "Acesso negado"}
+            ,          NOT_FOUND:{VALUE:404 , TEXT: "Recurso não encontrado"}
+            , METHOD_NOT_ALLOWED:{VALUE:405 , TEXT: "Método não autorizado"}
+            ,            TIMEOUT:{VALUE:408 , TEXT: "Timeout - Tempo de espera pelo recurso esgotou"}
+            ,                 OK:{VALUE:200 , TEXT: "Realizado com sucesso"}
+            ,            CREATED:{VALUE:201 , TEXT: "Recurso criado"}
+            ,            UNKNOWN:{VALUE:null, TEXT: "HTTP STATUS: Não reconhecido"}
+             }
+        }
+
    , EXCEPTION:{RECORD_NOT_FOUND:{id:'RECORD_NOT_FOUND'    , text:"Registro não encontrado"}
               ,   INVALID_COLUMN:{id:'INVALID_COLUMN'      , text:"Coluna inválida. Não existe no recurso."}
               ,    INVALID_FIELD:{id:'INVALID_FIELD'       , text:"Compo inválida. Não existe no 'fieldset'."}
@@ -126,6 +141,15 @@ var CONFIG = {
 //          , print:'icon-print'    ,  trash:'icon-trash' , filter:'icon-filter', back:'icon-o-arrow-left', next:'icon-o-arrow-right'
 //          ,    ok:'icon-o-check',  close:'icon-o-x',    home:'icon-home', undo:'icon-undo'};
 
+CONFIG.HTTP.STATUS.get = status =>{
+          var res = Object.getByValue(CONFIG.HTTP.STATUS, status,'VALUE');
+          if (res){
+             var key=res[0];
+                return CONFIG.HTTP.STATUS[key]
+          }
+          CONFIG.HTTP.STATUS.UNKNOWN.VALUE = status;
+          return CONFIG.HTTP.STATUS.UNKNOWN;
+       }
 CONFIG.CRUD.BUTTONS={
        BACK:{value:CONFIG.ACTION.BACK.VALUE}
    ,    GET:{value:CONFIG.ACTION.SEARCH.VALUE}
@@ -149,10 +173,12 @@ CONFIG.CRUD.GRID.BUTTONS={
 CONFIG.QUERY.GRID.BUTTONS={
        EDIT:{value:'Detalhar',  clas$:CONFIG.BUTTON.CLASS.DEFAULT, icon:CONFIG.ACTION.EDIT.ICON}
 };
+
 // Faz cópias dos presets(CONFIG.CRUD.BUTTONS, CONFIG.GRID.BUTTONS)
 //CONFIG.preset(CONFIG.CRUD.GRID.BUTTONS, 'edit', actionController);
 //CONFIG.preset(CONFIG.CRUD.GRID.BUTTONS, ['edit','remove'], actionController);
 //CONFIG.preset(CONFIG.CRUD.GRID.BUTTONS, null, actionController);
+//QUESTION: Será que o ideal não fazer 'mixin' ou 'inheritsFrom'?
 CONFIG.preset=function(PRESET, keys, actionController){
     var values={};
     if (dataExt.isString(keys))

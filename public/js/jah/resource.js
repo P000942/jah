@@ -96,6 +96,15 @@
 j$.Resource = function(){
     var items = {};
     var context = CONFIG.RESOURCE.CONTEXT;
+    Consumer =function (){
+       return{
+              handler: response => response
+            , success: response => response
+            , failure: response => {
+                return CONFIG.HTTP.STATUS.get(200);
+            }
+        }
+    }();
     return{
         getURL:function(recourseName){return context;}
       , init: function($context){
@@ -111,6 +120,7 @@ j$.Resource = function(){
       , context:context
       , ResponseHandler:ResponseHandler
       , Requester:Requester
+      , Consumer:Consumer
       , Dataset: Dataset
       , Local:function(){
           return{
@@ -136,16 +146,11 @@ j$.Resource = function(){
         createRequester(resource);
         createDataset(resource)
 
-        function createDataset(resource){
-            if (resource.source)
-                $i.Resource.Parser.toDataset(resource.source);
-        }
-
         function initialize(resource){
            Object.preset($i.Resource
                       ,{context:context
                       ,bind:bind
-                      , handleResponse:handleResponse
+                      , handleResponse:j$.Resource.Consumer.handler
                       , Dataset:null
                       , Parser:new j$.Resource.Parser.Default($i.Resource)
                       , cache:true
@@ -156,9 +161,6 @@ j$.Resource = function(){
                dataExt.format.record(resource,$i.Resource); // cria id+[Resource] e tx+[Resource]
            }else{
                var rsc = dataExt.format.record(resource.name, $i.Resource);
-              //  $i.Resource.name = resource.name;
-              //  $i.Resource.id  = (resource.id)   ? resource.id  : rsc.id;
-              //  $i.Resource.text= (resource.text) ? resource.text: rsc.text;
                Object.setIfExist($i.Resource,resource,['context','key','name','id','text','cache']);
            }
 
@@ -183,16 +185,13 @@ j$.Resource = function(){
                                                      : new j$.Resource.Requester($i.Resource.ResponseHandler);
            }
         }
-        function handleResponse(response){
-            // if (response.status>=200 && response.status<=207){
-            //     var json = response.responseJSON;
-            // }
-            // return json;
-            return response;
+        function createDataset(resource){
+            if (resource.source)
+                $i.Resource.Parser.toDataset(resource.source);
         }
+
         function bind(response){
-          //var json = $i.handleResponse(response);
-           $i.Resource.Parser.toDataset(handleResponse(response));
+           createDataset({source:j$.Resource.Consumer.handler(response)})
            j$.Resource.Store.add($i.Resource);
            return $i.Resource.Dataset;
         }
@@ -213,9 +212,9 @@ j$.Resource = function(){
                    }
                }
            }
-           Object.preset(SELF,{Resource:service.Resource, handleResponse:handleResponse, service:service});
+           Object.preset(SELF,{Resource:service.Resource, handleResponse:j$.Resource.Consumer.handler, service:service});
            Object.preset(inheritor,{
-                                     handleResponse:handleResponse
+                                     handleResponse:j$.Resource.Consumer.handler
                                    ,        service:service
                                    ,            get:get
                                    ,           post:post
@@ -225,9 +224,7 @@ j$.Resource = function(){
        }();
 
        function get(response) {
-            var json = handleResponse(response);
-            SELF.Resource.Parser.toDataset(json);
-            j$.Resource.Store.add(SELF.Resource);
+            SELF.Resource.bind(response);
             SELF.service.Resource = SELF.Resource;
             if (service.get)
                 service.get(SELF);
@@ -247,7 +244,7 @@ j$.Resource = function(){
        };
 
        function post(response) {
-            var json = handleResponse(response);
+            var json = j$.Resource.Consumer.handler(response);
             if (service.post)
                 service.post(SELF,json);
             else{
@@ -257,7 +254,7 @@ j$.Resource = function(){
        };
 
        function put(response) {
-           var json = handleResponse(response);
+           var json = j$.Resource.Consumer.handler(response);
            if (service.put)
                 service.post(SELF,json);
            else{
@@ -265,21 +262,6 @@ j$.Resource = function(){
                console.log(response);
            }
        };
-
-       function failure(response) {
-          //if (response.status==404){
-          if (response.status>=400 && response.status<=420){
-              alert('Recurso não existe!');
-          }
-       };
-
-       function handleResponse(response){
-            // if (response.status>=200 && response.status<=207){
-            //     var json = response.responseJSON;
-            // }
-            // return json;
-               return response;
-       }
     }
 
     /*
@@ -453,7 +435,7 @@ j$.Resource = function(){
           return $i.DataSource[$i.position];
         }
         function id (number){
-           //#Refactor (Para entender as chaves compostas)
+           //REVIEW: (Para entender as chaves compostas)
             this.get(number)[Resource.id];
         }
 
@@ -686,7 +668,7 @@ j$.Resource.Parser.Json= function(Resource){
       var SELF = this;
       this.toListset=function(response){
         var Listset={list:{}, count:-1, maxlength:0};
-        var json = response; //Resource.handleResponse(response);
+        var json = j$.Resource.Consumer.handler(response);
         var dataset =  SELF.toDataset(json);
         j$.Resource.Store.add(Resource);
         Listset.count = dataset.count;
@@ -780,13 +762,19 @@ j$.Resource.Store= function(){
                HANDLER.Resource.Requester.get(HANDLER.Resource.url);
            }
          , get:function(response){
-              var json = HANDLER.handleResponse(response);
-              var datasource = SELF.Resource.Parser.toDatasource(json);
-              j$.Resource.Store.add(HANDLER.Resource.name, datasource);
+               SELF.Resource.bind(response);
+              // var json = HANDLER.handleResponse(response);
+              // var datasource = SELF.Resource.Parser.toDatasource(json);
+              // j$.Resource.Store.add(HANDLER.Resource.name, datasource);
          }
         };
     }()
-    , Source: store[context]  //Pega o recurso do contexto padrao
+    , Source: function(name){
+          if (name)
+             return store[context][name]; // pega um recurso específico dentro do context padrao
+          else
+              return store[context] //Pega o recurso do contexto padrao
+      }
     , Data: store
     , context: context
    };

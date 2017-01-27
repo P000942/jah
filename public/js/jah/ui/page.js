@@ -692,6 +692,7 @@ j$.ui.Child=function(key, parent, properties){
       var record =  $i.Parent.service.Fieldset.sweep();
 //      j$.Dashboard.openItem($i, record);
    }
+   //TODO: O que fazer aqui?
    $i.notify=function(notification){
       if (notification.action==CONFIG.ACTION.EDIT.KEY)
          console.log("#TODO:"+ $i.key +" - "+ JSON.stringify(notification.record));

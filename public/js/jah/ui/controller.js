@@ -200,17 +200,17 @@ function ResponseController($service){
         }
      };
      this.post= function(response) {
-         var json = $i.handleResponse(response);
+         var json = j$.Resource.Consumer.handler(response);
          rowEdited = parent.UpdateController.insert(json);
          NEW_RECORD=false;
          EDITED=true;
      };
 
      this.put= function(response) {
-         var json = $i.handleResponse(response);
+         var json = j$.Resource.Consumer.handler(response);
          parent.UpdateController.update(rowEdited,json);
          NEW_RECORD=false;
-        EDITED=true;
+         EDITED=true;
      };
    };
 }
