@@ -576,7 +576,7 @@ function superType(Type, Properties) {
                              ['evaluate','autotab', 'label','mandatory', 'align', 'readOnly', 'disabled', 'defaultValue', 'type', 'dataType', 'list', 'hint','attributes']);
             if (Properties.resource){
                 SELF.AdapterResource = j$.Resource.ResponseHandler;  // Quando tiver RESOURCE
-                SELF.AdapterResource(Properties, SELF); // Herda métodos e propriedades de j$.Resource.ResponseHandler.
+                SELF.AdapterResource(Properties, SELF);
             }
         }
         SELF.mask = new superMask(mask);
@@ -702,9 +702,6 @@ j$.ui.type.List=function(Properties){
                 list = Properties.list;
             else{
                 if (Properties.resource){
-                    //this.AdapterResource(Properties, SELF); // Herda m�todos e propriedades de j$.Resource.ResponseHandler.
-                    //var request = new j$.Resource.Requester(SELF);
-                    //SELF.Resource.Requester.get(SELF.Resource.url);
                     SELF.Resource.Requester.get();
                 }
             }

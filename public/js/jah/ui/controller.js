@@ -104,9 +104,11 @@ function ActionController(ResponseController){
 
 function ResponseController($service){
    var SELF = this;
+   this.service = $service;
    this.ResponseHandler = new ResponseHandler(SELF);
    this.inherit=j$.Resource.ResponseHandler; // informa que ResponseHandler é o constructor de ResponseController
    this.inherit($service, SELF.ResponseHandler); // inicializa ResponseController
+   //this.service.Resource =  j$.Resource.create(service, SELF.ResponseHandler);
    var EDITED = false;
    var NEW_RECORD =false;
    var rowEdited= -1;

@@ -117,7 +117,6 @@ j$.Resource = function(){
         }
       , create: function(resource, responseHandler){
             var rsrc= new Resource(resource, responseHandler);
-            //items[rsrc.name.toFirstUpper()] = rsrc;
             items[rsrc.name] = rsrc;
             return rsrc;
         }
@@ -176,9 +175,10 @@ j$.Resource = function(){
               $i.Resource.ResponseHandler = responseHandler;
            }else{
               if (autoCreateResponder){
-                 $i.Resource.ResponseHandler = {};
+                 //$i.Resource.ResponseHandler = {};
                  $i.Resource.inherit=j$.Resource.ResponseHandler;
-                 $i.Resource.inherit($i, $i.Resource.ResponseHandler);
+                 //$i.Resource.inherit($i, $i.Resource.ResponseHandler);
+                 $i.Resource.inherit($i, null);
               }
            }
         }
@@ -201,7 +201,7 @@ j$.Resource = function(){
         }
     }
     function ResponseHandler(service, external_responseHandler){
-       /* external_responseHandler eh um objeto que estah extendendo ResponseHandler (Quem?)
+       /* external_responseHandler será acionado depois que faz as atualizações internas (store)
         * naum informah-lo eh indicacao da necessidade de criar um REQUESTER que irah acionar este ResponseHandler
        */
        var internalHandler = {
@@ -216,23 +216,22 @@ j$.Resource = function(){
        var initialized=function(){
            if (service){
                if (!service.Resource){   // Não tem o objeto Resource? vai criar
-                   if (service.resource) // o 'resoucer' minusculo é o NOME DECLARADO DO RECURSO em algum ponto.
-                       service.Resource= j$.Resource.create(service.resource, internalHandler);
-                   else{
-                       if (service.id)   // Cria um resouce por CONVENCAO como base no id (nome do serviço)
-                           service.Resource= j$.Resource.create(service.id, internalHandler);
+                   if (!service.resource){ // o 'resoucer' minusculo é o NOME DECLARADO DO RECURSO em algum ponto.
+                       if (service.id)
+                           service.resource= service.id; // Cria um resouce por CONVENCAO como base no id (nome do serviço)
                    }
+                   service.Resource= j$.Resource.create(service.resource, internalHandler);
+               } else {
+                   if (!service.Resource.ResponseHandler)
+                      service.Resource.ResponseHandler = internalHandler;
                }
            }
-           // preset: copia as propriedades caso n~]ao existam
-           Object.preset(SELF,{Resource:service.Resource, handleResponse:j$.Resource.Consumer.handler, service:service});
-           //Object.preset(external_responseHandler,internalHandler); // fazer preset dos métodos do external_responseHandler (caso não existam)
+           Object.preset(SELF,{Resource:service.Resource});
        }();
 
        function get(response) {
             SELF.Resource.bind(response);
-            SELF.service.Resource = SELF.Resource;
-            if (external_responseHandler.get)
+            if (external_responseHandler && external_responseHandler.get)
                 external_responseHandler.get(response);
             else{
                 console.log(SELF.Resource.name+"->GET:");
@@ -686,26 +685,6 @@ j$.Resource.Store= function(){
           var res = parse(resource);
           delete store[res.context][res.name];
       }
-    , request:function(Properties){
-        j$.Resource.Store.ResponseHandler.init(Properties);
-    }
-    , ResponseHandler:function(){
-        var HANDLER = this;
-        HANDLER.AdapterResource = j$.Resource.ResponseHandler;
-        return{
-           init:function(Properties){
-               HANDLER.AdapterResource(Properties, HANDLER); // Herda metodos e propriedades de j$.Resource.ResponseHandler.
-               HANDLER.Resource.Requester.get();
-               //HANDLER.Resource.Requester.get(HANDLER.Resource.url);
-           }
-         , get:function(response){
-               SELF.Resource.bind(response);
-              // var json = HANDLER.handleResponse(response);
-              // var datasource = SELF.Resource.Parser.toDatasource(json);
-              // j$.Resource.Store.add(HANDLER.Resource.name, datasource);
-         }
-        };
-    }()
     , Source: function(name){
           if (name)
              return store[context][name]; // pega um recurso específico dentro do context padrao
@@ -764,6 +743,9 @@ j$.Resource.Store= function(){
 }();
 
 Task = j$.Resource.create("tasks");
+Papel = j$.Resource.create("papel");
+
+Papel.Requester.get();
 
 j$.Resource.Store.add(
                     {"tabela":[
@@ -779,6 +761,7 @@ j$.Resource.Store.add(
                            ,{"idEstadoCivil":"4","txEstadoCivil":"Viúvo"}
                       ]});
 // Vai adicionar direto no context default
+// Isso é para não fucionar (tem que corrigir)
 j$.Resource.Store.Source['uf']=[
                            {"idUf":"1","sgUf":"AM","txEstado":"Amazonas"}
                           ,{"idUf":"2","sgUf":"AC","txEstado":"Acre"}
@@ -879,8 +862,6 @@ j$.Resource.Store.add({
     {id:39, nome: 'PescoÃ§o',    data:'1971/12/03', ativo:true,  valor:1001.2,  sexo:'F', vl:612},
     {id:40, nome: 'Madruga',    data:'1971/12/04', ativo:true,  valor:1001.2,  sexo:'F', vl:613}
 ]});
-
-j$.Resource.Store.request({resource:{name:'papel'}});
 
 //j$.Resource.Store.show({resource:{name:'papel'}, record:{idPapel:1}, responseHandler:function(json){console.log(json)}});
 //console.log(j$.Resource.Store.exists('uf'));
