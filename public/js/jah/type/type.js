@@ -387,7 +387,8 @@ function superType(Type, Properties) {
                    value = (value)?value:SELF.value();
                    if (SELF.Resource && !value.isEmpty()){
                        if (SELF.type==='text')
-                           SELF.Resource.Requester.get(SELF.Resource.url, value);
+                          // SELF.Resource.Requester.get(SELF.Resource.url, value);
+                           SELF.Resource.Requester.get(value);
                    }
             }
       };
@@ -703,7 +704,8 @@ j$.ui.type.List=function(Properties){
                 if (Properties.resource){
                     //this.AdapterResource(Properties, SELF); // Herda m�todos e propriedades de j$.Resource.ResponseHandler.
                     //var request = new j$.Resource.Requester(SELF);
-                    SELF.Resource.Requester.get(SELF.Resource.url);
+                    //SELF.Resource.Requester.get(SELF.Resource.url);
+                    SELF.Resource.Requester.get();
                 }
             }
         }

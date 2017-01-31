@@ -10,7 +10,7 @@
      .Parser
      .store
  */
- j$.Resquester = function(){
+ j$.Requester = function(){
      var context = CONFIG.RESOURCE.CONTEXT;
      function URL(url, responseHandler){
         return (url) ?url
@@ -41,11 +41,11 @@
      }
      return{
        get:function(url, parameter, responseHandler) {
-            var http ={url: URL(url, responseHandlerl)
+            var http ={url: URL(url, responseHandler)
                      , method:'GET'
                      , onFailure: responseHandler.failure
                      , onSuccess:function(response){
-                               responseHandler.get(response,row);
+                               responseHandler.get(response);
                        }
                     };
 
@@ -53,16 +53,16 @@
 
             if (!cached) { // não resolveu no cache.
                 if (parameter){
-                    if (dataExt.isString(parameter))
-                       http.url += "/"+parameter;
+                    if (dataExt.isObject(parameter))
+                       http.parameters = JSON.stringify(parameter);
                     else
-                         http.parameters = JSON.stringify(parameter);
+                       http.url += "/"+parameter;
                 }
                 request(http);
             }
       }
      ,remove: function(url, id, row, responseHandler) {
-           request({url: URL(url, responseHandlerl)+"/"+id
+           request({url: URL(url, responseHandler)+"/"+id
                     , method:'DELETE'
                     , onFailure: responseHandler.failure
                     , onSuccess:function(response){
@@ -71,28 +71,32 @@
                   });
      }
      ,post: function(url, record, responseHandler) {
-          request({url: URL(url, responseHandlerl)
+          request({url: URL(url, responseHandler)
                    , method:'POST'
                    , postBody:JSON.stringify(record)
                    , onFailure: responseHandler.failure
                    , onSuccess:function(response){
-                                    responseHandler.post(response,row);
+                                    responseHandler.post(response);
                      }
                 });
 
       }
       ,put: function(url, id, record, responseHandler) {
-           request({url: URL(url, responseHandlerl)+"/"+id
+           request({url: URL(url, responseHandler)+"/"+id
                     , method:'PUT'
                     , postBody:JSON.stringify(record)
                     , onFailure: responseHandler.failure
                     , onSuccess:function(response){
-                                     responseHandler.put(response,row);
+                                     responseHandler.put(response);
                       }
                    });
        }
+       ,request:request
+       ,cacheRequest:cacheRequest
+       ,url:URL
    }
-}
+}();
+
 j$.Resource = function(){
     var items = {};
     var context = CONFIG.RESOURCE.CONTEXT;
@@ -156,12 +160,12 @@ j$.Resource = function(){
                       , cache:true
            });
 
-           if (dataExt.isString(resource)){ // cria identificadore e nome por CONVENCAO
-               $i.Resource.name = resource.toFirstLower();
-               dataExt.format.record(resource,$i.Resource); // cria id+[Resource] e tx+[Resource]
-           }else{
-               var rsc = dataExt.format.record(resource.name, $i.Resource);
-               Object.setIfExist($i.Resource,resource,['context','key','name','id','text','cache']);
+           if (dataExt.isObject(resource)){
+              var rsc = dataExt.format.record(resource.name, $i.Resource);
+              Object.setIfExist($i.Resource,resource,['context','key','name','id','text','cache']);
+           }else{ // cria identificadore e nome por CONVENCAO
+              $i.Resource.name = resource.toFirstLower();
+              dataExt.format.record(resource,$i.Resource); // cria id+[Resource] e tx+[Resource]
            }
 
            Object.preset($i.Resource,{key:$i.Resource.id});
@@ -196,31 +200,32 @@ j$.Resource = function(){
            return $i.Resource.Dataset;
         }
     }
-    function ResponseHandler(service, inheritor){
-       /* inheritor eh um objeto que estah extendendo ResponseHandler (Quem?)
+    function ResponseHandler(service, interface_responseHandler){
+       /* interface_responseHandler eh um objeto que estah extendendo ResponseHandler (Quem?)
         * naum informah-lo eh indicacao da necessidade de criar um REQUESTER que irah acionar este ResponseHandler
        */
        var SELF = this;
        var initialized=function(){
            if (service){
-               if (!service.Resource){ // Não tem o objeto Resource? vai criar
+               if (!service.Resource){   // Não tem o objeto Resource? vai criar
                    if (service.resource) // o 'resoucer' minusculo é o NOME DECLARADO DO RECURSO em algum ponto.
-                       service.Resource= j$.Resource.create(service.resource, inheritor);
+                       service.Resource= j$.Resource.create(service.resource, interface_responseHandler);
                    else{
-                       if (service.id) // Cria um resouce por CONVENCAO como base no id (nome do serviço)
-                           service.Resource= j$.Resource.create(service.id, inheritor);
+                       if (service.id)   // Cria um resouce por CONVENCAO como base no id (nome do serviço)
+                           service.Resource= j$.Resource.create(service.id, interface_responseHandler);
                    }
                }
            }
            Object.preset(SELF,{Resource:service.Resource, handleResponse:j$.Resource.Consumer.handler, service:service});
-           Object.preset(inheritor,{
-                                     handleResponse:j$.Resource.Consumer.handler
-                                   ,        service:service
-                                   ,            get:get
-                                   ,           post:post
-                                   ,            put:put
-                                   ,         remove:remove
-                                 });
+           Object.preset(interface_responseHandler
+                        ,{
+                           handleResponse:j$.Resource.Consumer.handler
+                         ,        service:service
+                         ,            get:get
+                         ,           post:post
+                         ,            put:put
+                         ,         remove:remove
+                         });
        }();
 
        function get(response) {
@@ -269,104 +274,35 @@ j$.Resource = function(){
      */
     function Requester(responseHandler) {
        this.responseHandler = responseHandler;
-       function URL(url){
-          if (url)
-             return url;
-          else{
-             return responseHandler.Resource.url;
-         }
-       };
-       this.remove = function(url, id, row) {
-             var http ={url:URL(url)+"/"+id, method:'DELETE'};
-             request(http, {
-                  success:function(response){
-                     responseHandler.remove(response,row);
-                  }
-             });
+       const URL = responseHandler.Resource.url;
+       this.remove = function(id, row) {
+            j$.Requester.remove(URL, parameter, row, responseHandler);
        };
 
-       this.get= function(url, parameter) {
-            var http ={url:URL(url), method:'GET'};
-            var cached = false;
-            if (parameter == undefined){
-                if (responseHandler.Resource.cache){ // vai no cache se permitido ir no cache, senao sempre vai no servidor
-                    cached=cacheRequest(http.url,responseHandler.get);
-                }
-            }
-
-            if (!cached) {
-                if (parameter){
-                    if (dataExt.isString(parameter)){
-                       http.url += "/"+parameter;
-                    }else{
-                         http.parms = JSON.stringify(parameter);
-                    }
-                }
-                request(http, {
-                    success:function(response){
-                       responseHandler.get(response);
-                    }
-                 });
-            }
+       this.get= function(parameter) {
+            j$.Requester.get(URL, parameter,responseHandler);
        };
 
-        this.post= function(url, record) {
-             var http ={url:URL(url)
-                      , method:'POST'
-                      , postBody:JSON.stringify(record)
-                       };
-             request(http, {
-                  success:function(response){
-                     responseHandler.post(response);
-                  }
-             });
+        this.post= function(record) {
+             j$.Requester.post(URL, record, responseHandler);
         };
 
-        this.put= function(url, id, record) {
-             var http ={url:URL(url)+"/"+id
-                   , method:'PUT'
-                   , postBody:JSON.stringify(record)
-                 };
-             request(http, {
-                  success:function(response){
-                     responseHandler.put(response);
-                   }
-            });
+        this.put= function(id, record) {
+             j$.Requester.put(URL, id, record, responseHandler);
         };
-
-       function request(http, responseHandler){
-            new Ajax.Request(http.url, {
-                  parameters: http.parms
-            ,         method: http.method
-            ,       postBody: http.postBody
-            ,       evalJSON: true
-            ,    contentType: 'application/json'
-            ,      onSuccess: responseHandler.success
-            ,      onFailure: responseHandler.failure
-            ,    onException: function(a){console.log(a);}
-             });
-       }
-       function cacheRequest(url, callback){
-           var json=j$.Resource.Store.restore(url);
-           if (json){
-            //  var response={status:200, responseJSON:json};
-              callback(json);
-           }
-           return json;
-       }
     }
     function LocalRequester(responseHandler) {
-       var self = this;
-       this.ResponseHandler = responseHandler;
-       //this.response = null;
+        var self = this;
+        this.ResponseHandler = responseHandler;
+        const URL = responseHandler.Resource.url;
 
-       this.remove = function(url, id, row) {
-             responseHandler.remove(url,row);
-       };
+        this.remove = function(id, row) {
+             responseHandler.remove(URL,row);
+        };
 
-       this.get= function(url, parameter) {
-               if (parameter){
-                   responseHandler.Resource.Dataset = new j$.Resource.Dataset(j$.Resource.Store.restore(url), responseHandler.Resource);
+        this.get= function(parameter) {
+               if (parameter){ // simula o "http://localhost:3000/assunto/1"
+                   responseHandler.Resource.Dataset = new j$.Resource.Dataset(j$.Resource.Store.restore(URL), responseHandler.Resource);
                    var res= responseHandler.Resource.Dataset.find(function(row,record){
                        if (record[responseHandler.Resource.id] == parameter){
                           return true;
@@ -374,19 +310,18 @@ j$.Resource = function(){
                    });
                    request(res, responseHandler.get);
                }else{
-                  request(j$.Resource.Store.restore(url),responseHandler.get);
+                  request(j$.Resource.Store.restore(URL),responseHandler.get);
                }
        };
 
-       this.post= function(url, record) {
+       this.post= function( record) {
              request(record,responseHandler.post);
        };
 
-       this.put= function(url, id,record) {
+       this.put= function(id,record) {
              request(record,responseHandler.put);
        };
        function request(json, callback){
-           //var response={status:200, responseJSON:json};
            callback(json);
        }
     }
@@ -759,7 +694,8 @@ j$.Resource.Store= function(){
         return{
            init:function(Properties){
                HANDLER.AdapterResource(Properties, HANDLER); // Herda metodos e propriedades de j$.Resource.ResponseHandler.
-               HANDLER.Resource.Requester.get(HANDLER.Resource.url);
+               HANDLER.Resource.Requester.get();
+               //HANDLER.Resource.Requester.get(HANDLER.Resource.url);
            }
          , get:function(response){
                SELF.Resource.bind(response);

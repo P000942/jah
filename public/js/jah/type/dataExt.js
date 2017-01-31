@@ -41,8 +41,8 @@ Element.prototype.content= function(value){
 String.prototype.trim = function(){
     return this.replace(/^\s*/, "").replace(/\s*$/, "");
 }
-
 // TESTE: '   tete  '.trim()
+
 String.prototype.isEmpty = function(){
     if(this==null){return true;};
     if(this.trim().length==0){return true;};
@@ -587,10 +587,14 @@ var dataExt = function(){
         }
       ,    isArray:function(obj){ return (dataExt.type(obj)==='Array');}
       ,   isString:function(obj){ return (dataExt.type(obj)==='String');}
+      ,    isValue:function(obj){ return (dataExt.type(obj)==='String' || dataExt.type(obj)==='Number');}
       ,   isNumber:function(obj){ return (dataExt.type(obj)==='Number');}
       ,   isObject:function(obj){ return (dataExt.type(obj)==='Object');}
       , isFunction:function(obj){ return (dataExt.type(obj)==='Function');}
-      ,  isDefined:function(obj){ return true;}
+      ,  isDefined: obj => {  return (obj==null || obj==undefined)
+                              ?false
+                              :true;
+                           }
     };
 }();
 //if (dataExt.type('resource') == 'String')
@@ -649,28 +653,27 @@ Object.getByValue = function(object, value, attribute="value"){
 // console.log("   Object.getByValue(z,3,'key') ->:" +  Object.getByValue(z,3,"key"));
 
 // definir um valor para uma propriedade de um método, caso a mesma nao seja informada;
-Object.preset = function(object, propertie, defaultvalue){
-    ///if (dataExt.type(propertie)=='Object'){
-    if (dataExt.isObject(propertie)){
+Object.preset = function(receiver, propertie, defaultvalue){
+    if (dataExt.isObject(propertie)){ // copia propriedades do objeto
        for (var key in propertie){
-           Object.preset(object, key, propertie[key]);
+           Object.preset(receiver, key, propertie[key]);
        }
     }else{
-        if (object[propertie] == undefined){
-            object[propertie] = defaultvalue;
+        if (dataExt.isDefined(receiver[propertie]) == false){
+            receiver[propertie] = defaultvalue;
         }else{
-           if (object[propertie]==null)
-              object[propertie] = defaultvalue;
-           if (dataExt.isString(object[propertie]) && object[propertie].isEmpty())
-              object[propertie] = defaultvalue;
+          //  if (receiver[propertie]==null)
+          //     receiver[propertie] = defaultvalue;
+           if (dataExt.isString(receiver[propertie]) && receiver[propertie].isEmpty())
+              receiver[propertie] = defaultvalue;
         }
     }
-    return object;
+    return receiver;
 };
-//var aux = {a:1,b:2}
-//Object.preset(aux,'c',{x:1, y:2})
-//aux = Object.preset({a:1,b:2},{x:1, y:2});
-//aux = Object.preset({a:1,b:2,x:null,y:''},{x:1, y:2});
+// var aux = {a:1,b:2}
+// console.log(Object.preset(aux,'c',{x:1, y:2}));
+// aux = Object.preset({a:1,b:2},{x:1, y:2});
+// aux = Object.preset({a:1,b:2,x:null,y:''},{x:1, y:2});
 
 
 Object.join = function(receiver,provider, properties){

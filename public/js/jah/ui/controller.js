@@ -49,7 +49,8 @@ function ActionController(ResponseController){
 
   function get(){
       if (ResponseController.service)
-         ResourceRequest.get(Resource.url);
+         //ResourceRequest.get(Resource.url);
+         ResourceRequest.get();
   }
 
   function search(){
@@ -57,7 +58,8 @@ function ActionController(ResponseController){
       if (ResponseController.service)
          // pegar só os campos que foram preenchidos
          parm= ResponseController.service.Fieldset.filled();
-      ResourceRequest.get(Resource.url, parm);
+      //ResourceRequest.get(Resource.url, parm);
+      ResourceRequest.get(parm);
   }
 
   function remove(cell){
@@ -73,7 +75,8 @@ function ActionController(ResponseController){
                var row = SELF.List.getPosition(cell); // Idenifica a posição(linha) no grid (table)
                var recordRow =(SELF.List.Pager.absolutePosition(row)); // Posicao no dataset(array)
                var id=ResponseController.Resource.Dataset.get(recordRow)[Resource.id];
-               ResourceRequest.remove(Resource.url, id,row);
+               //ResourceRequest.remove(Resource.url, id,row);
+               ResourceRequest.remove(id,row);
            }
         }
   }
@@ -84,10 +87,12 @@ function ActionController(ResponseController){
       // fazer a validacao
       if (ResponseController.UpdateController.validate()){
          if (ResponseController.isNewRecord()){
-             ResourceRequest.post(Resource.url, record);
+             //ResourceRequest.post(Resource.url, record);
+             ResourceRequest.post(record);
          }else{
              var id = record[Resource.id];
-             ResourceRequest.put(Resource.url, id, record);
+             //ResourceRequest.put(Resource.url, id, record);
+             ResourceRequest.put(id, record);
          }
       }
       // else {
