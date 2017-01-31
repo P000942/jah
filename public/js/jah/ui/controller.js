@@ -187,16 +187,16 @@ function ResponseController($service){
        }
   };
   function ResponseHandler(parent){
-      var $i = this;
+      //var $i = this;
       this.get = function(response) { // os recursos serao criados no primeiro GET
-         $i.Resource.bind(response);
-         $i.service.Resource = $i.Resource;
-         parent.UpdateController = new UpdateController($i.service);
+        // $i.Resource.bind(response);
+         //$i.service.Resource = $i.Resource;
+         parent.UpdateController = new UpdateController(parent.service);
 
-         if ($i.service.initialize)
-             $i.service.initialize(parent.UpdateController);
+         if (parent.service.initialize)
+            parent.service.initialize(parent.UpdateController);
          init();
-         return $i.Resource.Dataset;
+         return parent.Resource.Dataset;
      };
      this.remove= function(response, row) {
          parent.UpdateController.remove(row);
@@ -205,15 +205,15 @@ function ResponseController($service){
         }
      };
      this.post= function(response) {
-         var json = j$.Resource.Consumer.handler(response);
-         rowEdited = parent.UpdateController.insert(json);
+         //var json = j$.Resource.Consumer.handler(response);
+         rowEdited = parent.UpdateController.insert(response);
          NEW_RECORD=false;
          EDITED=true;
      };
 
      this.put= function(response) {
-         var json = j$.Resource.Consumer.handler(response);
-         parent.UpdateController.update(rowEdited,json);
+         //var json = j$.Resource.Consumer.handler(response);
+         parent.UpdateController.update(rowEdited,response);
          NEW_RECORD=false;
          EDITED=true;
      };

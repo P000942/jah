@@ -200,39 +200,40 @@ j$.Resource = function(){
            return $i.Resource.Dataset;
         }
     }
-    function ResponseHandler(service, interface_responseHandler){
-       /* interface_responseHandler eh um objeto que estah extendendo ResponseHandler (Quem?)
+    function ResponseHandler(service, external_responseHandler){
+       /* external_responseHandler eh um objeto que estah extendendo ResponseHandler (Quem?)
         * naum informah-lo eh indicacao da necessidade de criar um REQUESTER que irah acionar este ResponseHandler
        */
+       var internalHandler = {
+          handleResponse:j$.Resource.Consumer.handler
+        ,        service:service
+        ,            get:get
+        ,           post:post
+        ,            put:put
+        ,         remove:remove
+        }
        var SELF = this;
        var initialized=function(){
            if (service){
                if (!service.Resource){   // Não tem o objeto Resource? vai criar
                    if (service.resource) // o 'resoucer' minusculo é o NOME DECLARADO DO RECURSO em algum ponto.
-                       service.Resource= j$.Resource.create(service.resource, interface_responseHandler);
+                       service.Resource= j$.Resource.create(service.resource, internalHandler);
                    else{
                        if (service.id)   // Cria um resouce por CONVENCAO como base no id (nome do serviço)
-                           service.Resource= j$.Resource.create(service.id, interface_responseHandler);
+                           service.Resource= j$.Resource.create(service.id, internalHandler);
                    }
                }
            }
+           // preset: copia as propriedades caso n~]ao existam
            Object.preset(SELF,{Resource:service.Resource, handleResponse:j$.Resource.Consumer.handler, service:service});
-           Object.preset(interface_responseHandler
-                        ,{
-                           handleResponse:j$.Resource.Consumer.handler
-                         ,        service:service
-                         ,            get:get
-                         ,           post:post
-                         ,            put:put
-                         ,         remove:remove
-                         });
+           //Object.preset(external_responseHandler,internalHandler); // fazer preset dos métodos do external_responseHandler (caso não existam)
        }();
 
        function get(response) {
             SELF.Resource.bind(response);
             SELF.service.Resource = SELF.Resource;
-            if (service.get)
-                service.get(SELF);
+            if (external_responseHandler.get)
+                external_responseHandler.get(response);
             else{
                 console.log(SELF.Resource.name+"->GET:");
                 console.log(response);
@@ -240,8 +241,8 @@ j$.Resource = function(){
             return SELF.Resource;
        };
        function remove(response, row) {
-            if (service.remove)
-                service.remove(SELF,response, row);
+            if (external_responseHandler.remove)
+                external_responseHandler.remove(response, row);
             else{
                 console.log(SELF.Resource.name+"->DELETE:");
                 console.log(response);
@@ -250,8 +251,8 @@ j$.Resource = function(){
 
        function post(response) {
             var json = j$.Resource.Consumer.handler(response);
-            if (service.post)
-                service.post(SELF,json);
+            if (external_responseHandler.post)
+                external_responseHandler.post(json);
             else{
                 console.log(SELF.Resource.name+"->POST:");
                 console.log(response);
@@ -260,8 +261,8 @@ j$.Resource = function(){
 
        function put(response) {
            var json = j$.Resource.Consumer.handler(response);
-           if (service.put)
-                service.post(SELF,json);
+           if (external_responseHandler.put)
+                external_responseHandler.put(json);
            else{
                console.log(SELF.Resource.name+"->PUT:");
                console.log(response);

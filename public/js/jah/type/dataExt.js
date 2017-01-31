@@ -653,19 +653,18 @@ Object.getByValue = function(object, value, attribute="value"){
 // console.log("   Object.getByValue(z,3,'key') ->:" +  Object.getByValue(z,3,"key"));
 
 // definir um valor para uma propriedade de um método, caso a mesma nao seja informada;
+// é uma forma de garantir que certa propriedade estará presente no objeto
 Object.preset = function(receiver, propertie, defaultvalue){
     if (dataExt.isObject(propertie)){ // copia propriedades do objeto
        for (var key in propertie){
            Object.preset(receiver, key, propertie[key]);
        }
     }else{
-        if (dataExt.isDefined(receiver[propertie]) == false){
+        if (dataExt.isDefined(receiver[propertie]) == false){ // cria caso não exista
             receiver[propertie] = defaultvalue;
         }else{
-          //  if (receiver[propertie]==null)
-          //     receiver[propertie] = defaultvalue;
            if (dataExt.isString(receiver[propertie]) && receiver[propertie].isEmpty())
-              receiver[propertie] = defaultvalue;
+              receiver[propertie] = defaultvalue; // garante o valor caso exista a propriedade sem valor
         }
     }
     return receiver;
