@@ -141,12 +141,12 @@ j$.Resource = function(){
       , C$:function(key){return items[key];}
     };
     // resoucer:{name:'', [id]:'', [url]:'', [context]:'', unique:"true/false", source:[{record},{record},...]}
-    function Resource(resource, responseHandler, autoCreateResponder=true){
+    function Resource(resource, external_responseHandler){
         var $i = {Resource:this};
 
         initialize(resource);
-        createResponder(responseHandler, autoCreateResponder);
-        createRequester(resource);
+        createResponder(external_responseHandler);
+        createRequester();
         createDataset(resource)
 
         function initialize(resource){
@@ -160,8 +160,8 @@ j$.Resource = function(){
            });
 
            if (dataExt.isObject(resource)){
-              var rsc = dataExt.format.record(resource.name, $i.Resource);
-              Object.setIfExist($i.Resource,resource,['context','key','name','id','text','cache']);
+              dataExt.format.record(parseName(resource), $i.Resource);
+              Object.setIfExist($i.Resource,resource,['context','key','name','id','text','cache','local', 'autoCharge']);
            }else{ // cria identificadore e nome por CONVENCAO
               $i.Resource.name = resource.toFirstLower();
               dataExt.format.record(resource,$i.Resource); // cria id+[Resource] e tx+[Resource]
@@ -170,23 +170,25 @@ j$.Resource = function(){
            Object.preset($i.Resource,{key:$i.Resource.id});
            $i.Resource.url = $i.Resource.context + $i.Resource.name.toFirstLower();
         }
-        function createResponder(responseHandler, autoCreateResponder){
-           if (responseHandler){
-              $i.Resource.ResponseHandler = responseHandler;
+
+        function parseName(resource){
+            return resource.name;
+        };
+
+        function createResponder(responseHandler){
+           $i.Resource.inherit=j$.Resource.ResponseHandler;
+           if  (responseHandler){
+               $i.Resource.inherit($i.Resource, responseHandler);
            }else{
-              if (autoCreateResponder){
-                 //$i.Resource.ResponseHandler = {};
-                 $i.Resource.inherit=j$.Resource.ResponseHandler;
-                 //$i.Resource.inherit($i, $i.Resource.ResponseHandler);
-                 $i.Resource.inherit($i, null);
-              }
+               $i.Resource.inherit($i.Resource, null);
            }
         }
-        function createRequester(resource){
+        function createRequester(){
            if ($i.Resource.ResponseHandler){ //Soh cria o request quando for informado um objeto para responder ao mesmo;
               $i.Resource.ResponseHandler.Resource =  $i.Resource
-              $i.Resource.Requester=(resource.local) ? new j$.Resource.Local.Requester($i.Resource.ResponseHandler)
-                                                     : new j$.Resource.Requester($i.Resource.ResponseHandler);
+              $i.Resource.Requester=($i.Resource.local)
+                                   ? new j$.Resource.Local.Requester($i.Resource.ResponseHandler)
+                                   : new j$.Resource.Requester($i.Resource.ResponseHandler);
            }
         }
         function createDataset(resource){
@@ -200,13 +202,12 @@ j$.Resource = function(){
            return $i.Resource.Dataset;
         }
     }
-    function ResponseHandler(service, external_responseHandler){
+    function ResponseHandler(Resource, external_responseHandler){
        /* external_responseHandler será acionado depois que faz as atualizações internas (store)
         * naum informah-lo eh indicacao da necessidade de criar um REQUESTER que irah acionar este ResponseHandler
        */
        var internalHandler = {
           handleResponse:j$.Resource.Consumer.handler
-        ,        service:service
         ,            get:get
         ,           post:post
         ,            put:put
@@ -214,19 +215,9 @@ j$.Resource = function(){
         }
        var SELF = this;
        var initialized=function(){
-           if (service){
-               if (!service.Resource){   // Não tem o objeto Resource? vai criar
-                   if (!service.resource){ // o 'resoucer' minusculo é o NOME DECLARADO DO RECURSO em algum ponto.
-                       if (service.id)
-                           service.resource= service.id; // Cria um resouce por CONVENCAO como base no id (nome do serviço)
-                   }
-                   service.Resource= j$.Resource.create(service.resource, internalHandler);
-               } else {
-                   if (!service.Resource.ResponseHandler)
-                      service.Resource.ResponseHandler = internalHandler;
-               }
-           }
-           Object.preset(SELF,{Resource:service.Resource});
+           if (!Resource.ResponseHandler) //TODO: Ainda faz sentido isso? Não severia ser sempre o internalHandler?
+                Resource.ResponseHandler = internalHandler;
+           SELF.Resource = Resource;
        }();
 
        function get(response) {
@@ -268,7 +259,6 @@ j$.Resource = function(){
            }
        };
     }
-
     /*
      *   Faz as chamadas ao servidor por AJAX
      */

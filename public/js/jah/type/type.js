@@ -575,8 +575,9 @@ function superType(Type, Properties) {
             Object.setIfExist(SELF, Properties,
                              ['evaluate','autotab', 'label','mandatory', 'align', 'readOnly', 'disabled', 'defaultValue', 'type', 'dataType', 'list', 'hint','attributes']);
             if (Properties.resource){
-                SELF.AdapterResource = j$.Resource.ResponseHandler;  // Quando tiver RESOURCE
-                SELF.AdapterResource(Properties, SELF);
+                // SELF.AdapterResource = j$.Resource.ResponseHandler;  // Quando tiver RESOURCE
+                // SELF.AdapterResource(Properties, SELF);
+                 SELF.Resource =  j$.Resource.create(Properties.resource, SELF);
             }
         }
         SELF.mask = new superMask(mask);

@@ -106,9 +106,17 @@ function ResponseController($service){
    var SELF = this;
    this.service = $service;
    this.ResponseHandler = new ResponseHandler(SELF);
-   this.inherit=j$.Resource.ResponseHandler; // informa que ResponseHandler é o constructor de ResponseController
-   this.inherit($service, SELF.ResponseHandler); // inicializa ResponseController
-   //this.service.Resource =  j$.Resource.create(service, SELF.ResponseHandler);
+   //this.inherit=j$.Resource.ResponseHandler; // informa que ResponseHandler é o constructor de ResponseController
+   //this.inherit($service, SELF.ResponseHandler); // inicializa ResponseController
+   if (dataExt.isDefined(SELF.service.resource)){
+       if (dataExt.isString(SELF.service.resource))
+          SELF.service.resource ={name: SELF.service.resource.toFirstLower() };
+   }else
+       SELF.service.resource ={name: SELF.service.id.toFirstLower()};
+
+   SELF.Resource =  j$.Resource.create(SELF.service.resource, SELF.ResponseHandler);
+   SELF.service.Resource =  SELF.Resource;
+   //SELF.ResponseHandler.Resource = SELF.service.Resource
    var EDITED = false;
    var NEW_RECORD =false;
    var rowEdited= -1;
