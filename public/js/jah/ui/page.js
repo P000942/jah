@@ -325,7 +325,7 @@ j$.service = function(){
         };
         // DEFINIR O RESOURCE
         Object.setIfExist($i,adpater,['resource']); // Primeiro procurar obter do serviço
-        Object.setIfExist($i,service,['resource','init',,'child']); // Em seguida das propriedades informadas (este prevalece)
+        Object.setIfExist($i,service,['resource','init',,'child','initialize','onOpen','afterActionInsert','onSuccess','onError','validate']); // Em seguida das propriedades informadas (este prevalece)
         if (service.Interface)
            Object.setIfExist($i.Interface,service.Interface,['id','design','container','Buttons','List']);
 
@@ -629,8 +629,11 @@ j$.ui.Form=function(service, modal) {
     Object.preset(service.Interface,{Buttons:false});
     Object.preset(service,{
          onSuccess:function(ACTION){
-          j$.ui.Alert.success($i.alert, ACTION.MESSAGE.SUCCESS);}
-       ,   onError:function(ACTION){j$.ui.Alert.error($i.alert, ACTION.MESSAGE.ERROR);}
+                 j$.ui.Alert.success($i.alert, ACTION.MESSAGE.SUCCESS);
+               }
+       ,   onError:function(ACTION){
+                 j$.ui.Alert.error($i.alert, ACTION.MESSAGE.ERROR);
+               }
     });
     if (!service.Interface.id)
         service.Interface.id = service.id.toFirstLower();
@@ -669,6 +672,8 @@ j$.ui.Form=function(service, modal) {
         else
            service.actionController =  j$.ui.Controller.create(service);
         $i.display();
+        if (service.onOpen)
+           service.onOpen();
     };
 };
 
