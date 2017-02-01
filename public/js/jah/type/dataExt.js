@@ -590,6 +590,11 @@ var dataExt = function(){
       ,    isValue:function(obj){ return (dataExt.type(obj)==='String' || dataExt.type(obj)==='Number');}
       ,   isNumber:function(obj){ return (dataExt.type(obj)==='Number');}
       ,   isObject:function(obj){ return (dataExt.type(obj)==='Object');}
+      ,     isCrud:function(obj){ 
+                return (dataExt.isDefined(obj))
+                      ?(obj.constructor.name==='crud')
+                      :false;
+            }
       , isFunction:function(obj){ return (dataExt.type(obj)==='Function');}
       ,  isDefined: obj => {  return (obj==null || obj==undefined)
                               ?false

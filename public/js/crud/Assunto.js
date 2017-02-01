@@ -25,7 +25,12 @@
                     this.Interface.container=idTarget;
                 j$.ui.Page.create(this, modal).init();
             }
-            , resource:{name:'assunto', id:'idAssunto', local:true, cache:true, autocharge:true}
+            , resource:{name:'assunto'
+                        , id:'idAssunto'
+                     , local:true // recurso local (não está no servidor)
+                     , cache:true // pega os dados que estão no cache.
+                     , autoCharge:true // TODO: faz o carregamento automático do recurso
+                   }
             , child:{   Tarefa:{caption:'Ver Tarefa'
                              , fieldset:{idTarefa:TYPE.INTEGER(4,{label:'Código', readOnly:true})
                                         ,txTarefa:TYPE.CHAR(30,{label:'Tarefa', mandatory:true})}}
