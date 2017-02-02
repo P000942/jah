@@ -197,10 +197,7 @@ function ResponseController($service){
        }
   };
   function ResponseHandler(parent){
-      //var $i = this;
       this.get = function(response) { // os recursos serao criados no primeiro GET
-        // $i.Resource.bind(response);
-         //$i.service.Resource = $i.Resource;
          parent.UpdateController = new UpdateController(parent.service);
 
          if (parent.service.initialize)
@@ -215,14 +212,12 @@ function ResponseController($service){
         }
      };
      this.post= function(response) {
-         //var json = j$.Resource.Consumer.handler(response);
          rowEdited = parent.UpdateController.insert(response);
          NEW_RECORD=false;
          EDITED=true;
      };
 
      this.put= function(response) {
-         //var json = j$.Resource.Consumer.handler(response);
          parent.UpdateController.update(rowEdited,response);
          NEW_RECORD=false;
          EDITED=true;
