@@ -633,7 +633,10 @@ j$.ui.Form=function(service, modal) {
                }
        ,   onError:function(ACTION){
                  j$.ui.Alert.error($i.alert, ACTION.MESSAGE.ERROR);
-               }
+              }
+       ,   onFailure:function(response){
+                j$.ui.Alert.error($i.alert, response.msg);
+       }
     });
     if (!service.Interface.id)
         service.Interface.id = service.id.toFirstLower();

@@ -222,6 +222,10 @@ function ResponseController($service){
          NEW_RECORD=false;
          EDITED=true;
      };
+     this.failure= function(response) {
+       if (parent.service.onFailure)
+          parent.service.onFailure(response);
+     };
    };
 }
 
@@ -315,7 +319,7 @@ function UpdateController(service){
             error=!service.validate(SELF);
 
         if (error && service.onError)
-            service.onError(Resource.Requester.ResponseHandler.isNewRecord()?CONFIG.ACTION.NEW:CONFIG.ACTION.SAVE);
+              service.onError(Resource.Requester.ResponseHandler.isNewRecord()?CONFIG.ACTION.NEW:CONFIG.ACTION.SAVE);
         return !error;
   }
 

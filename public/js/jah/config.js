@@ -127,7 +127,7 @@ var CONFIG = {
         , INFO:{CLASS:'hint-info'}
     }
     , ALERT:{
-          ERROR:{CLASS:'alert-error'}
+          ERROR:{CLASS:'alert-danger'}
       , SUCCESS:{CLASS:'alert-success'}
       ,    INFO:{CLASS:'alert-info'}
     }

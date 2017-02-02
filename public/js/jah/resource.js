@@ -38,6 +38,7 @@
           ,      onFailure: http.onFailure
           ,    onException: function(a){console.log(a);}
            });
+           return http;
      }
      return{
        get:function(url, parameter, responseHandler) {
@@ -60,9 +61,10 @@
                 }
                 request(http);
             }
+            return http;
       }
      ,remove: function(url, id, row, responseHandler) {
-           request({url: URL(url, responseHandler)+"/"+id
+          return request({url: URL(url, responseHandler)+"/"+id
                     , method:'DELETE'
                     , onFailure: responseHandler.failure
                     , onSuccess:function(response){
@@ -71,7 +73,7 @@
                   });
      }
      ,post: function(url, record, responseHandler) {
-          request({url: URL(url, responseHandler)
+          return request({url: URL(url, responseHandler)
                    , method:'POST'
                    , postBody:JSON.stringify(record)
                    , onFailure: responseHandler.failure
@@ -82,7 +84,7 @@
 
       }
       ,put: function(url, id, record, responseHandler) {
-           request({url: URL(url, responseHandler)+"/"+id
+           return request({url: URL(url, responseHandler)+"/"+id
                     , method:'PUT'
                     , postBody:JSON.stringify(record)
                     , onFailure: responseHandler.failure
@@ -109,7 +111,10 @@ j$.Resource = function(){
               handler: response => response
             , success: response => response
             , failure: response => {
-                return CONFIG.HTTP.STATUS.get(response.status);
+                //let res ={};
+                let res = Object.preset({},response.responseJSON,['msg'])
+                return Object.preset(res,CONFIG.HTTP.STATUS.get(response.status))
+                return res;
             }
         }
     }();
@@ -203,6 +208,7 @@ j$.Resource = function(){
        */
        let SELF = this;
        SELF.handleResponse = j$.Resource.DefaultHandler.handler;
+       SELF.failure =failure;
        SELF.get    = get;
        SELF.post   = post;
        SELF.put    = put;
@@ -245,6 +251,13 @@ j$.Resource = function(){
            else
                show(response, 'put')
        };
+       function failure(response) {
+           var json = j$.Resource.DefaultHandler.failure(response);
+           if (SELF.Resource.externalResponseHandler.failure)
+                SELF.Resource.externalResponseHandler.failure(json);
+           else
+               show(json,'error http');
+       };
     }
     /*
      *   Faz as chamadas ao servidor por AJAX
@@ -253,19 +266,19 @@ j$.Resource = function(){
        this.responseHandler = responseHandler;
        const url = responseHandler.Resource.url;
        this.remove = function(id, row) {
-            j$.Requester.remove(url, parameter, row, responseHandler);
+            return j$.Requester.remove(url, parameter, row, responseHandler);
        };
 
        this.get= function(parameter) {
-            j$.Requester.get(url, parameter,responseHandler);
+            return j$.Requester.get(url, parameter,responseHandler);
        };
 
         this.post= function(record) {
-             j$.Requester.post(url, record, responseHandler);
+             return j$.Requester.post(url, record, responseHandler);
         };
 
         this.put= function(id, record) {
-             j$.Requester.put(url, id, record, responseHandler);
+             return j$.Requester.put(url, id, record, responseHandler);
         };
     }
     function LocalRequester(responseHandler) {
