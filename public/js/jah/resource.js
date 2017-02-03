@@ -189,6 +189,7 @@ j$.Resource = function(){
               $r.Requester=($r.local)
                                    ? new j$.Resource.Local.Requester($r.ResponseHandler)
                                    : new j$.Resource.Requester($r.ResponseHandler);
+             Object.setIfExist($r,$r.Requester,['get','post','put','remove']);
         }
         function createDataset(resource, save=true){
             if (resource.source){
@@ -207,7 +208,7 @@ j$.Resource = function(){
         * naum informah-lo eh indicacao da necessidade de criar um REQUESTER que irah acionar este ResponseHandler
        */
        let SELF = this;
-       SELF.handleResponse = j$.Resource.DefaultHandler.handler;
+      // SELF.handleResponse = j$.Resource.DefaultHandler.handler;
        SELF.failure =failure;
        SELF.get    = get;
        SELF.post   = post;
