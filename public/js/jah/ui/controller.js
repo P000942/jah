@@ -149,15 +149,17 @@ function ResponseController($service){
   }
 
   function filter(event, key, value){
-     var field = SELF.service.Fieldset.Items[key];
-     switch(event.button) {
-       case MOUSE.BUTTON.CENTER:
-          SELF.service.Fieldset.filterNone(key);
-          SELF.Resource.Dataset.filter(field, field.value(value));
-          init();
-       case MOUSE.BUTTON.LEFT: break;
-       case MOUSE.BUTTON.RIGHT:break;
-     }
+    if (event.ctrlKey && event.button==MOUSE.BUTTON.LEFT){ // os outros estão ai por questões didáticas. Depois pode tirar
+       var field = SELF.service.Fieldset.Items[key];
+       switch(event.button) {
+         case MOUSE.BUTTON.LEFT:
+            SELF.service.Fieldset.filterNone(key);
+            SELF.Resource.Dataset.filter(field, field.value(value));
+            init();
+         case MOUSE.BUTTON.CENTER: break;
+         case MOUSE.BUTTON.RIGHT:break;
+       }
+    }
   }
   function init(){
       hide(['SAVE','CHILD']);
