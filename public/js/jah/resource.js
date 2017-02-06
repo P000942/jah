@@ -395,18 +395,21 @@ j$.Resource = function(){
             refresh();
        };
 
-       this.filter=function(field,value){
-           if (field.filter){
-               $i.DataSource = originalSource;
-               field.filter=FILTER.NONE;
-           }else{
-               $i.DataSource = $i.DataSource.select(function(record){
-                   return record[field.key]==value;
-               });
-               field.filter=true;
-           }
-           field.doFilter();
+       this.unfilter=function(){
+           $i.DataSource = originalSource;
            refresh();
+       };
+       this.filter=function(criteria){
+           $i.DataSource = $i.DataSource.select(
+               function(record){
+                   for (let key in criteria){
+                       if (record[key]!=criteria[key])
+                          return false;
+                   }
+                   return true; // todos os campos foram iguais
+               });
+           refresh();
+           return $i.DataSource;
        };
 
        // métodos de navegacao
@@ -865,3 +868,8 @@ j$.Resource.Store.add({
 //console.log(j$.Resource.Store.exists('uf'));
 //console.log(j$.Resource.Store.exists(CONFIG.RESOURCE.CONTEXT +'uf'));
 //console.log(j$.Resource.Store.exists('ufs'));
+
+
+// var criteria = {txTitulo:'SUAD', idCategoriaAssunto:3}
+// j$.$R.assunto.Dataset.filter(criteria)
+// Assunto.actionController.refresh(criteria, {filter:true})

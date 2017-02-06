@@ -915,14 +915,22 @@ j$.ui.Fieldset = function(fields) {
         return "?"+jQuery.param(SELF.filled(action));
     };
 
-    this.filterNone = function(id){
-        for(key in SELF.Items){
-            if (key != id){
-               var field = SELF.Items[key];
-               field.filter=FILTER.NONE;
-               field.doFilter();
-            }
+    this.filterNone = function(properties){ // remove o indicador de filtro dos outros campos não indicados
+        if (dataExt.isObject(properties)){
+           for(key in SELF.Items){
+             if (!dataExt.isDefined(properties[key]))
+                none(SELF.Items[key])
+           }
+        }else{
+          for(key in SELF.Items){
+            if (key != properties)
+               none(SELF.Items[key])
+          }
         }
+         function none(field){
+             field.filter=FILTER.NONE;
+             field.doFilter();
+         }
     };
     this.execute = function(action){
         for(key in SELF.Items){

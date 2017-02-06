@@ -45,7 +45,7 @@ function ActionController(ResponseController){
   var Resource = ResponseController.Resource;
 
   Object.preset(SELF, {remove:remove, save:update, get:get});
-  Object.setIfExist(SELF, ResponseController,['edit','insert','back','print','sort','filter','List','child']);
+  Object.setIfExist(SELF, ResponseController,['edit','insert','back','print','sort','filter','List','child', 'refresh']);
 
   function get(){
       if (ResponseController.service)
@@ -129,7 +129,7 @@ function ResponseController($service){
        return values;
    }(SELF.service.page.Buttons.Items);
 
-   Object.preset(SELF,{edit:edit, insert:insert, back:back, sort:sort, print:print, filter:filter, UpdateController:null, child:child});
+   Object.preset(SELF,{edit:edit, insert:insert, back:back, sort:sort, print:print, filter:filter, UpdateController:null, child:child, refresh:refresh});
    Object.setIfExist(SELF,SELF.service.page,'List');
 
    this.isNewRecord = function(){return NEW_RECORD;};
@@ -150,17 +150,42 @@ function ResponseController($service){
 
   function filter(event, key, value){
     if (event.ctrlKey && event.button==MOUSE.BUTTON.LEFT){ // os outros estão ai por questões didáticas. Depois pode tirar
-       var field = SELF.service.Fieldset.Items[key];
+       let field = SELF.service.Fieldset.Items[key];
+
        switch(event.button) {
          case MOUSE.BUTTON.LEFT:
-            SELF.service.Fieldset.filterNone(key);
-            SELF.Resource.Dataset.filter(field, field.value(value));
-            init();
+             SELF.service.Fieldset.filterNone(key);
+             if (field.filter){
+                SELF.Resource.Dataset.unfilter();
+                field.filter=FILTER.NONE;
+             }else{
+                let criteria ={}
+                criteria[key]=field.value(value);
+                SELF.Resource.Dataset.filter(criteria);
+                field.filter=true;
+             }
+             field.doFilter();
+             init();
          case MOUSE.BUTTON.CENTER: break;
          case MOUSE.BUTTON.RIGHT:break;
        }
     }
   }
+  //{filter:true}
+  function refresh(record, options){ // TODO: em construção
+      if (dataExt.isDefined(options.filter)){
+         SELF.service.Fieldset.filterNone(record);
+         for (let key in record){
+            let field = SELF.service.Fieldset.Items[key];
+            field.filter = (options.filter)
+                         ?true
+                         :FILTER.NONE;
+            field.doFilter();
+         }
+      }
+      init();
+  }
+
   function init(){
       hide(['SAVE','CHILD']);
       EDITED = false;
