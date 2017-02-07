@@ -251,7 +251,7 @@ ORDER.CLASS =  function(order){
      }
     return _class;
 };
-var FILTER ={NONE:null};
+var FILTER ={};
 FILTER.CLASS =  function(filter){
     return (filter)?'list-ikon ikon-filter':null;
 };

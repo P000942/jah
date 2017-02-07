@@ -332,7 +332,7 @@ Element.prototype.bind = function(field) {
 function superType(Type, Properties) {
    var SELF=this;
    Object.preset(SELF,{align:ALIGN.LEFT, mandatory:false, autotab:false, label:'', hint:null, persist:true, defaultValue:'', type:'text'
-                     ,id:'', key:null, list:null, readOnly:false, binded:false, order:ORDER.NONE, disabled:false, filter:false
+                     ,id:'', key:null, list:null, readOnly:false, binded:false, order:ORDER.NONE, disabled:false, onFilter:false
                      ,inputField:false, dataType:DATATYPE.NUMBER, size:null, maxlength:0, validator:null, mask:null
                      ,Header:{clas$:null, id:null}, Report:{}, Record:{value:'', formattedValue:''}, attributes:null});
 /*   this.id  - Eh o identificador no form.
@@ -554,8 +554,11 @@ function superType(Type, Properties) {
            return null;
         }
     };
-    this.doFilter=function(){
-        SELF.Header.clas$ = FILTER.CLASS(SELF.filter);
+    this.filterToggle=function(showFilter){
+        SELF.onFilter = (dataExt.isDefined(showFilter))
+                    ?showFilter
+                    :!SELF.onFilter
+        SELF.Header.clas$ = FILTER.CLASS(SELF.onFilter);
     };
     // Ver DATATYPE - � fazer um parse para um valor correto.
     function parseValue(value){
@@ -867,7 +870,7 @@ j$.ui.Fieldset = function(fields) {
     // varre fieldset devolve um registro dos campos que estão preenchidos
     // útil para consultas
     this.filled = function(action){
-        var record = {};
+        let record = {};
         for(var key in SELF.Items){
             var value = SELF.Items[key].value();
             var use = !value.toString().isEmpty();
@@ -880,7 +883,7 @@ j$.ui.Fieldset = function(fields) {
     };
      // varre as campos e devolve um registro com o conteúdo dos campos
     this.sweep = function(action){
-        var record = {};
+        let record = {};
         for(var key in SELF.Items){
             var field = SELF.Items[key];
             if (field.persist)
@@ -890,8 +893,22 @@ j$.ui.Fieldset = function(fields) {
         }
         return record;
     };
+    this.createRecord = function(){
+       return SELF.sweep();
+    };
     this.each = this.sweep;
-    // recebe um registro e popula conteúdo dos campos
+    this.reset = function(){
+       SELF.sweep(function(field){
+            field.reset();
+       });
+    };
+    this.bindColumns = function(Columns){
+       SELF.sweep(function(field){
+           if (Columns[field.key]===undefined)
+               field.persist=false;
+       });
+    };
+    // recebe um registro e popula conteúdo dos campos no Fieldset
     this.populate = function(record, action){
         for(var key in SELF.Items){
             var field = SELF.Items[key];
@@ -910,27 +927,21 @@ j$.ui.Fieldset = function(fields) {
                 action(field);
         }
     };
+    this.edit = function(record){
+      SELF.populate(record,
+         function(field){
+              field.edit(); // atualiza no form
+      });
+    }
 
     this.toQueryString = function(action){
         return "?"+jQuery.param(SELF.filled(action));
     };
 
     this.filterNone = function(properties){ // remove o indicador de filtro dos outros campos não indicados
-        if (dataExt.isObject(properties)){
            for(key in SELF.Items){
-             if (!dataExt.isDefined(properties[key]))
-                none(SELF.Items[key])
+               SELF.Items[key].filterToggle(false);
            }
-        }else{
-          for(key in SELF.Items){
-            if (key != properties)
-               none(SELF.Items[key])
-          }
-        }
-         function none(field){
-             field.filter=FILTER.NONE;
-             field.doFilter();
-         }
     };
     this.execute = function(action){
         for(key in SELF.Items){

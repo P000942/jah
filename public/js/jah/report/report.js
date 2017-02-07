@@ -2,38 +2,38 @@
 var Report = {};
 Report.Util = function(){
     return {
-        init:function(){                        
+        init:function(){
 //                        //----- EstÃ¡ obtendo o parametro 'columns'
 //                        urlColsDef = System.parameters('columns');
 //                        //----- EstÃ¡ obtendo o parametro 'ds'
 //                        if (urlColsDef)
-//                           System.using(urlColsDef);   
+//                           System.using(urlColsDef);
             urlDS = System.parameters('ds');
             if (urlDS)
-               System.request(urlDS, imprime);           
-        },          
+               System.request(urlDS, imprime);
+        },
         convertMMtoPT:function (vl){
            var vl_pol = vl / 25.4 //Convert para polegadas
-           var vl_pt = vl_pol * 72; 
+           var vl_pt = vl_pol * 72;
            return Math.round( vl_pt * Math.pow( 10 , 2 ) ) / Math.pow( 10 , 2 );
         },
         convertPTtoMM: function (vl){
            var vl_pol = vl / 72 //Convert para polegadas
-           var vl_mm = vl_pol * 25.4; 
+           var vl_mm = vl_pol * 25.4;
            return Math.round( vl_mm * Math.pow( 10 , 2 ) ) / Math.pow( 10 , 2 );
         },
 
         convertPXtoMM:function (vl){
            var vl_pol = vl / 94.5 //Convert para polegadas
-           var vl_mm = vl_pol * 25.4; 
+           var vl_mm = vl_pol * 25.4;
            return Math.round( vl_mm * Math.pow( 10 , 2 ) ) / Math.pow( 10 , 2 );
         }
     }
 }();
-var MASK =  {DATE: 'dd/mm/yyyy', 
+var MASK =  {DATE: 'dd/mm/yyyy',
              HOUR:'hh:mm:ss',
            NUMBER:{decimal:2, thousandSeparator:'.', decimalSeparator:','}};
-       
+
 var COLOR = {ON:'#F8F8FF', OFF:'#FFFFFF'};
 
 // Medidas em milimetro 'mm'
@@ -62,15 +62,15 @@ var ReportFactory = function(){
                   Dataset: self.opener[self.name].Resource.Dataset,
                  Fieldset: self.opener[self.name].Interface.Fieldset,
                   caption: self.opener[self.name].Interface.Form.caption
-             }               
+             }
         }
-    }    
+    }
 }();
 
 
-j$.Report = function(page, Fieldset, dataset, id_div, idx){   
+j$.Report = function(page, Fieldset, dataset, id_div, idx){
    var $report = this;
-    
+
    this.ops= function(a){alert(a);}
    this.newPage= function() {
             //this.preparePage();
@@ -85,7 +85,7 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
                 var html = std_page.evaluate(Page);
                 $report.body.insert(html);
                 // Define o tamanho da página
-                var p_style = 
+                var p_style =
                           {height: Page.Style.height  + 'mm', width: Page.Style.width  + 'mm',
                         marginTop: Page.Style.marginTop + 'mm',
                      marginBottom: Page.Style.marginBottom + 'mm',
@@ -109,12 +109,12 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
            with ($report.Page){
                 while(Pager.next()){
                     $report.newPage();
-                }           
+                }
            }
         }
-  this.sort=function(colName){        
+  this.sort=function(colName){
             $report.Columns.sortNone(colName);
-            var field = $report.Columns.Items[colName];      
+            var field = $report.Columns.Items[colName];
             $report.Dataset.orderBy(field.sortOrder());
             $report.clear();
             $report.Page.Pager.restart($report.Dataset);
@@ -123,15 +123,15 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
   this.filter=function(event, colName, value){
              var field = $report.Columns.Items[colName];
              switch(event.button) {
-               case MOUSE.BUTTON.CENTER: 
-                  $report.Columns.filterNone(colName); 
-                  $report.Dataset.filter($report.Columns.Items[colName], field.value(value));          
+               case MOUSE.BUTTON.CENTER:
+                  $report.Columns.filterNone(colName);
+                  $report.Dataset.filter($report.Columns.Items[colName], field.value(value));
                   $report.clear();
                   $report.Page.Pager.restart($report.Dataset);
                   $report.start()
                case MOUSE.BUTTON.RIGHT: break;
                case MOUSE.BUTTON.LEFT:break;
-             }          
+             }
       }
   this.clear= function(){
             $report.body.innerHTML = "";
@@ -141,50 +141,50 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
   this.sumHeight = function(obj){
             return obj.height + obj.marginTop + obj.marginBottom;
         }
-  
+
   var initialized = function(){
-        $report.id = "body";        
+        $report.id = "body";
         if (id_div)
-            $report.id = id_div;              
-        
+            $report.id = id_div;
+
         $report.body = i$($report.id);
         $report.clear();
 
         var std_Header = {Style:{height:12.4, marginTop: 0, marginBottom:4},
-                            Font:DEFAULT.HEADER.COLUMN.FONT, 
+                            Font:DEFAULT.HEADER.COLUMN.FONT,
                              Title:{line1:"", line2:"",line3:""}};
         var std_Detail = {Style:{height:0, marginTop: 0.5, marginBottom:0.5},
                             Header:{Font:DEFAULT.HEADER.COLUMN.FONT},
                               Font:DEFAULT.DETAIL.COLUMN.FONT};
         var std_Footer = {Style:{height:3.45, marginTop: 0, marginBottom:0},
-                             note: '', date: NOW.format(DEFAULT.MASK.DATE), 
+                             note: '', date: NOW.format(DEFAULT.MASK.DATE),
                              hour: NOW.format(DEFAULT.MASK.HOUR)};
         var std_Page   = {Style:{height:0, width:0, marginTop: 0, marginBottom:0.5, marginLeft:1, MarginRight:1}
                           ,  id:'', Paper: DEFAULT.PAGE.PAPER, RowsPerPage:0};
         //self = $report;
         $report.idx = idx;
         $report.pages = {};//new Hash();
-        $report.Dataset = dataset;       
+        $report.Dataset = dataset;
         $report.Page = Object.preset(page, std_Page);
         //$report.Page = std_Page.merge(page).toObject();
         // $report.Page.Header = (page.Header ==null || page.Header == undefined || page.Header == false)
         //                  ? null : std_Header.merge(page.Header).toObject();
         $report.Page.Header = (page.Header ==null || page.Header == undefined || page.Header == false)
-                         ? null :Object.preset(page.Header, std_Header);                         
+                         ? null :Object.preset(page.Header, std_Header);
 
         // $report.Page.Footer =(page.Footer ==null || page.Footer == undefined || page.Footer == false)
         //                  ? null : std_Footer.merge(page.Footer).toObject();
         $report.Page.Footer =(page.Footer ==null || page.Footer == undefined || page.Footer == false)
                          ? null : Object.preset(page.Footer, std_Footer);
-                    
+
         //$report.Page.Detail = std_Detail.merge(page.Detail).toObject();
         $report.Page.Detail = Object.preset(page.Detail, std_Detail);
         //$report.Page.Record ={count:0, first:0, last:0, height:$report.Page.Detail.Font.size +1};
         $report.Page.Control ={limit: 0, height:$report.Page.Detail.Font.size +1};
 
-        // $report.Page.HeaderDetail ={Style:{height:Report.Util.convertPTtoMM($report.Page.Detail.Header.Font.size +2), 
+        // $report.Page.HeaderDetail ={Style:{height:Report.Util.convertPTtoMM($report.Page.Detail.Header.Font.size +2),
         //                      marginTop: 0, marginBottom:4.0}};
-        $report.Page.HeaderDetail ={Style:{height:$report.Page.Detail.Header.Font.size +3, marginTop: 0, marginBottom:1.4}};                             
+        $report.Page.HeaderDetail ={Style:{height:$report.Page.Detail.Header.Font.size +3, marginTop: 0, marginBottom:1.4}};
         // Define colunas do relatório
         $report.Columns = Columns($report.Page, Fieldset);
 
@@ -197,36 +197,36 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
             detailSpace =($report.sumHeight(Detail.Style)
                         + (($report.Page.Header == null) ? 0 : $report.sumHeight(Header.Style))
                         + (($report.Page.Footer == null) ? 0 : $report.sumHeight(Footer.Style))
-                        + $report.sumHeight(HeaderDetail.Style))//+ convertPTtoMM($report.Page.HeaderDetail.Style.height)) 
-                        
-            Detail.Style.height = (Style.height - detailSpace)-2;                    
-    //            console.log(Style.height);        
-    //            console.log(detailSpace); 
-    //            console.log(Detail.Style.height); 
+                        + $report.sumHeight(HeaderDetail.Style))//+ convertPTtoMM($report.Page.HeaderDetail.Style.height))
+
+            Detail.Style.height = (Style.height - detailSpace)-2;
+    //            console.log(Style.height);
+    //            console.log(detailSpace);
+    //            console.log(Detail.Style.height);
     //            console.log(Header.Style);
     //            console.log(HeaderDetail.Style);
     //            console.log(Detail.Style);
     //            console.log(Footer.Style);
-            
-            
+
+
 
             // calcula a quatidade de registros que cabe na página
             Control.limit = ((Detail.Style.height) / Math.round(Report.Util.convertPTtoMM(Control.height)));
             if ((Control.limit * Report.Util.convertPTtoMM(Control.height)) > Detail.Style.height)
                 --Control.limit
-                       
+
             //$report.calcDataPage();
-            
+
         }
         //console.log($report.Page.Control);
-        $report.Page.Pager = $report.Dataset.Pager.create($report.Page.Control);//($report.Dataset,$report.Page.Control);
+        $report.Page.Pager = $report.Dataset.createPager($report.Page.Control);//($report.Dataset,$report.Page.Control);
         //$report.Pager.show();
 
         $report.Header = ($report.Page.Header == null) ? null : new Header();
         $report.Footer = ($report.Page.Footer == null) ? null : new Footer();
         $report.HeaderDetail = new HeaderDetail($report.Columns, $report);
         $report.Detail = new Detail($report.Columns, $report);
-    }(); 
+    }();
 };
 
 //são as colunas do relatório
@@ -237,7 +237,7 @@ function Columns(page, Fieldset){
     prepare(page, Fieldset);
 
     function calculeSize(size, fontSize){
-         i$('w-len').innerHTML = "<label style='font-size: " + fontSize + "pt;'>" 
+         i$('w-len').innerHTML = "<label style='font-size: " + fontSize + "pt;'>"
                               + "X".repeat(size + 1) + "</label>";
          return Report.Util.convertPXtoMM($('#w-len').innerWidth());
     }
@@ -247,16 +247,16 @@ function Columns(page, Fieldset){
        var leftPos = 0;
        var idx = 0;
        for(key in Fieldset.Items){
-          var field = Fieldset.Items[key];          
+          var field = Fieldset.Items[key];
           field.type = 'column';
           field.Report = {identicalSupress:true, size:0,
-	                bold:false, hide:false,  style:null, 
-                        leftPos:0, first:false, last:false                        
+	                bold:false, hide:false,  style:null,
+                        leftPos:0, first:false, last:false
                         };
           if (field.label.length == 0)
               field.label = this.id;
           //var column = new Column(fld)
-          idx++; 
+          idx++;
           if (idx == 1)
              field.Report.first=true;
 
@@ -278,7 +278,7 @@ function Columns(page, Fieldset){
           //aux.show = function(){ alert($H(aux).inspect())};
           //aux.prototype.show = function(){};
           //cols.set(field.id, field);
-      }      
+      }
       totalWidth += (Fieldset.length * 0.5) // margens das colunas
 
       if (totalWidth > page.Paper.width){
@@ -294,7 +294,7 @@ function Columns(page, Fieldset){
                     break;
              }
        }
-      //return cols; 
+      //return cols;
    }
    return Fieldset;
 }
@@ -316,29 +316,29 @@ function HeaderDetail(columns, report){
 	      var html = std.evaluate($this.Page);
 	      i$($this.Page.id).insert(html);
 
-        var p_style = {height: (page.HeaderDetail.Style.height)  + 'pt', 
+        var p_style = {height: (page.HeaderDetail.Style.height)  + 'pt',
                       lineHeight: (page.HeaderDetail.Style.height)  + 'pt',
                     marginBottom: page.HeaderDetail.Style.marginBottom + 'mm'};
-             
+
         i$($this.id).stylize(p_style);
 
         $this.writeColumns();
     };
     this.writeColumns= function() {
-        for (key in $this.Columns.Items)   
-            $this.writeColumn(this.Columns.Items[key])        
+        for (key in $this.Columns.Items)
+            $this.writeColumn(this.Columns.Items[key])
     };
     this.writeColumn=function(column) {
         if (!column.persist) return false;
         var clas$ = "header-detail-column "
-        if (column.Header.clas$)            
+        if (column.Header.clas$)
             clas$ += column.Header.clas$;
-                
+
         id = column.id + "-" + $this.id;
         var html = "<li onclick='" +$this.sortFunction+ "(\"" + column.key + "\")' id='" + id + "'>"
                 + "<a>" +column.label+ "</a>"
-                + "</li>";                
-	
+                + "</li>";
+
 	      $('#'+$this.id+' > ul').append(html);
 
         var p_left =  column.Report.leftPos + "mm";
@@ -346,7 +346,7 @@ function HeaderDetail(columns, report){
         var p_fontSize = $this.Page.Detail.Header.Font.size + 'pt';
 
         var p_style = { width: p_width, left: p_left,
-                        fontSize:p_fontSize, 
+                        fontSize:p_fontSize,
                         textAlign: column.align
                       };
 
@@ -354,56 +354,56 @@ function HeaderDetail(columns, report){
     }
 };
 
-var Detail = function(Columns, report){ 
+var Detail = function(Columns, report){
     var SELF = this;
     this.id = "";
-    this.Page = null; 
+    this.Page = null;
     this.rpt = "ReportFactory.reports(" + report.idx + ")";
     this.filterFunction = this.rpt + ".filter";
     this.report = report;
     this.Dataset = null;
     this.Columns = Columns;
-    
+
     this.write= function(Page, dataset) {
-        this.Dataset = dataset; 
+        this.Dataset = dataset;
         this.id = "detail-" + Page.id;
-        this.Page = Page; 
+        this.Page = Page;
         var std = new Template("<div class='detail' id='detail-#{id}'></div>");
         var html = std.evaluate(Page);
         i$(Page.id).insert(html);
         // Para definir o tamanho para as linhas de detalhe
         // Depende da propriedade de Page.Detail.height
-        var p_style = {height: Page.Detail.Style.height  + 'mm', 
-                    marginTop: Page.Detail.Style.marginTop + 'mm', 
+        var p_style = {height: Page.Detail.Style.height  + 'mm',
+                    marginTop: Page.Detail.Style.marginTop + 'mm',
                  marginBottom: Page.Detail.Style.marginBottom + 'mm'};
         i$(this.id).stylize(p_style);
-        this.writeLines(); 
+        this.writeLines();
     }
     this.writeLines= function() {
         var off = true;
         SELF.Page.Pager.sweep(function(row, record){
             var id = SELF.id + "L" + (row+1);
             var html = 	"<div class='detail-column-wrap' id='" + id + "'><ul></ul></div>"
-	     
+
 	     i$(SELF.id).insert(html);
-             var p_style = {height: SELF.Page.Control.height+2  + 'pt', 
+             var p_style = {height: SELF.Page.Control.height+2  + 'pt',
                             lineHeight: SELF.Page.Control.height+2  + 'pt',
                             backgroundColor:(off)?COLOR.OFF:COLOR.ON};
              i$(id).stylize(p_style);
 
-             off = (!off);                          
+             off = (!off);
 
              SELF.Columns.populate(record, function(column){
                 if (column.persist)
                     SELF.writeColumn(column,row, id);
-             });                  
+             });
         });
     }
-    
+
     this.writeColumn= function(column, line, id_line) {
         id = column.id + "-" + id_line;
 
-        var html = '<li onclick="DetailMouseUp(event,\''  +column.key+ '\',\'' + column.Record.value + '\',' 
+        var html = '<li onclick="DetailMouseUp(event,\''  +column.key+ '\',\'' + column.Record.value + '\','
                  + line + ',' + this.report.idx + ')" id="' +id+ '">'
                  + '<a id="vl-' + id + '">' +column.Record.formattedValue+ '</a>'
                  + '</li>';
@@ -417,7 +417,7 @@ var Detail = function(Columns, report){
         var p_borderRight = (column.Report.last)?'0':'1px solid transparent';
         var p_fontSize = this.Page.Detail.Font.size + 'pt';
         var p_style = {width: p_width, left: p_left, textAlign: column.align,
-                       fontSize:p_fontSize, 
+                       fontSize:p_fontSize,
                        lineHeight: SELF.Page.Control.height+2  + 'pt',
                        borderRight:p_borderRight
                        };
@@ -429,7 +429,7 @@ var Detail = function(Columns, report){
 
 function Header(){
   var $this=this;
-    var initialized= function(){ 
+    var initialized= function(){
         $this.id = "";
         $this.titleWidth = 0;
     }();
@@ -455,8 +455,8 @@ function Header(){
         // Depende da propriedade de Page.Header.width
        i$('header-title-' + page.id).stylize({width: this.titleWidth + 'mm'});
         // Definir altura do cabecalho
-       var p_style = {height: page.Header.Style.height + 'mm', 
-                    marginTop: page.Header.Style.marginTop + 'mm', 
+       var p_style = {height: page.Header.Style.height + 'mm',
+                    marginTop: page.Header.Style.marginTop + 'mm',
                  marginBottom: page.Header.Style.marginBottom + 'mm'};
        i$($this.id).stylize(p_style);
     };
@@ -476,7 +476,7 @@ function Header(){
 
 function Footer(){
   var $this=this;
-  var initialize=function(){ 
+  var initialize=function(){
         this.id = "";
   }();
   this.write= function(page) {
@@ -486,20 +486,20 @@ function Footer(){
                 	+ "<div class='footer-date'>#{Footer.date}</div>"
 			+ "<div class='footer-hour'>#{Footer.hour}</div>"
 			+ "<div class='footer-note'>#{Footer.note}</div>"
-			+ "<div class='footer-position'>" 
-                                + (page.Pager.Record.first) + "/" 
-                                + (page.Pager.Record.last) + "-" 
-                                + (page.Pager.Record.count) 
+			+ "<div class='footer-position'>"
+                                + (page.Pager.Record.first) + "/"
+                                + (page.Pager.Record.last) + "-"
+                                + (page.Pager.Record.count)
                         + "</div>"
-			+ "<div class='footer-page'>" 
-                        + "#{Pager.Control.number}/#{Pager.Control.last}" 
+			+ "<div class='footer-page'>"
+                        + "#{Pager.Control.number}/#{Pager.Control.last}"
                         + "</div>"
                 + "</div>");
 	    var html = std.evaluate(page);
     	i$(page.id).insert(html);
 
-      var p_style = {height: page.Footer.Style.height + 'mm', 
-                    marginTop: page.Footer.Style.marginTop + 'mm', 
+      var p_style = {height: page.Footer.Style.height + 'mm',
+                    marginTop: page.Footer.Style.marginTop + 'mm',
                  marginBottom: page.Footer.Style.marginBottom + 'mm'};
       i$(this.id).stylize(p_style);
   }

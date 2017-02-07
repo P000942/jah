@@ -27,6 +27,7 @@
 j$.ui.Grid=function(page, wrap, TEMPLATE){
     var self_grid = this;
     TEMPLATE =(TEMPLATE) ?TEMPLATE :CONFIG.GRID.DEFAULT;
+    let rowIndex=-1;
     var pager = null;
 
     Object.preset(self_grid,{table:null, Designer:designer() });
@@ -40,11 +41,11 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
 
     this.Buttons = new j$.ui.Buttons(self_grid.actionController, page.service.Interface.List.Buttons, CONFIG[TEMPLATE].GRID.preset);
 
-    this.init=function(dataset, wrapGrid){
-        pager = dataset.Pager.create(page.service.Interface.List);
+    this.init=function(Resource, wrapGrid){
+        pager = Resource.Dataset.createPager(page.service.Interface.List);
         if (!wrapGrid)
             wrapGrid=wrap;
-        if (wrapGrid && dataset){
+        if (wrapGrid && pager){
            self_grid.Designer.table(wrapGrid);
            self_grid.paginator = new j$.ui.Pager(wrapGrid, pager , page.actionController+".List.Pager");
            self_grid.Pager= self_grid.paginator.Controller(self_grid.Detail.populate);
@@ -53,7 +54,9 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
     };
 
     this.getPosition=function(cell){
-         return cell.parentNode.parentNode.rowIndex -1;
+        if (cell)
+           rowIndex = cell.parentNode.parentNode.rowIndex -1;
+        return rowIndex;
     };
 
     function designer(){
@@ -136,7 +139,8 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
                         self_grid.Designer.changeColumn(field);
                     });
             }
-          , remove:function(row){
+          , remove:function(pos){
+                   let row = self_grid.getPosition(pos);
                    var pageNumber =pager.Control.number;
                    self_grid.Designer.deleteRow(row);
                    pager.restart();
@@ -144,6 +148,7 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
                       self_grid.Pager.last();
                    else
                       self_grid.Pager.get(pageNumber);
+                    return row;
             }
           , add:function(Record, populating){
                    self_grid.Designer.addRow();

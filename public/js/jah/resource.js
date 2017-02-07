@@ -189,14 +189,16 @@ j$.Resource = function(){
               $r.Requester=($r.local)
                                    ? new j$.Resource.Local.Requester($r.ResponseHandler)
                                    : new j$.Resource.Requester($r.ResponseHandler);
+             // coloca os métodos do Resquester no Resource (Isso vai reduzir a necessidade de conhecimento da estrurua dos objetos do Resource)
              Object.setIfExist($r,$r.Requester,['get','post','put','remove']);
         }
-        function createDataset(resource, save=true){
-            if (resource.source){
-                return $r.Parser.toDataset(resource.source);
-            }else {
-                 return null;
-            }
+        function createDataset(resource){
+            let Dataset = (resource.source)
+                        ? $r.Parser.toDataset(resource.source)
+                        : null;
+            if (Dataset)
+                Object.setIfExist($r,Dataset,['filter','unfilter','orderBy']);
+             return Dataset;
         }
 
         function recharge(response){
@@ -230,25 +232,32 @@ j$.Resource = function(){
                 show(response, 'get')
             return SELF.Resource;
        };
-       function remove(response, row) {
+       function remove(response, recordRow) {
+            if (Resource.Dataset)
+                Resource.Dataset.remove(recordRow);
             if (SELF.Resource.externalResponseHandler.remove)
-                SELF.Resource.externalResponseHandler.remove(response, row);
+                SELF.Resource.externalResponseHandler.remove(response, recordRow);
             else
               show(response, 'remove')
        };
 
        function post(response) {
-            var json = j$.Resource.DefaultHandler.handler(response);
+            var record = j$.Resource.DefaultHandler.handler(response);
+            let idx = -1
+            if (Resource.Dataset)
+                idx = Resource.Dataset.insert(record);
             if (SELF.Resource.externalResponseHandler.post)
-                SELF.Resource.externalResponseHandler.post(json);
+                SELF.Resource.externalResponseHandler.post(record, idx);
             else
                 show(response, 'post')
        };
 
        function put(response) {
-           var json = j$.Resource.DefaultHandler.handler(response);
+           var record = j$.Resource.DefaultHandler.handler(response);
+           if (Resource.Dataset)
+               Resource.Dataset.update(null, record);
            if (SELF.Resource.externalResponseHandler.put)
-                SELF.Resource.externalResponseHandler.put(json);
+                SELF.Resource.externalResponseHandler.put(record);
            else
                show(response, 'put')
        };
@@ -266,8 +275,9 @@ j$.Resource = function(){
     function Requester(responseHandler) {
        this.responseHandler = responseHandler;
        const url = responseHandler.Resource.url;
-       this.remove = function(id, row) {
-            return j$.Requester.remove(url, parameter, row, responseHandler);
+       this.remove = function(recordRow, row) {
+            var id=responseHandler.Resource.Dataset.id(recordRow);
+            return j$.Requester.remove(url, id, recordRow, responseHandler);
        };
 
        this.get= function(parameter) {
@@ -278,7 +288,8 @@ j$.Resource = function(){
              return j$.Requester.post(url, record, responseHandler);
         };
 
-        this.put= function(id, record) {
+        this.put= function(recordRow, record) {
+             var id=responseHandler.Resource.Dataset.id(recordRow);
              return j$.Requester.put(url, id, record, responseHandler);
         };
     }
@@ -287,8 +298,9 @@ j$.Resource = function(){
         this.ResponseHandler = responseHandler;
         const url = responseHandler.Resource.url;
 
-        this.remove = function(id, row) {
-             responseHandler.remove(url,row);
+        this.remove = function(recordRow) {
+             //var id=responseHandler.Resource.Dataset.id(recordRow);
+             responseHandler.remove(responseHandler.Resource.Dataset.get(recordRow),recordRow);
         };
 
         this.get= function(parameter) {
@@ -309,7 +321,8 @@ j$.Resource = function(){
              request(record,responseHandler.post);
        };
 
-       this.put= function(id,record) {
+       this.put= function(recordRow,record) {
+             //var id=responseHandler.Resource.Dataset.id(recordRow);
              request(record,responseHandler.put);
        };
        function request(json, callback){
@@ -322,13 +335,11 @@ j$.Resource = function(){
        var ROW = {FIRST:0, LAST:0}
        var originalSource = null;
        Object.preset($i,{Columns:null, get:get, update:update, insert:insert, remove:remove, find:find, exists:exists
-                         , DataSource:DataSource, count:-1,position:0});
-
-       this.Pager=function(){
-            return{
-                create:function(page){return new j$.Resource.Pager($i, page);}
-            };
-       }();
+                         ,id:id, DataSource:DataSource, count:-1,position:0});
+                         
+       this.createPager= page =>{
+           return new j$.Resource.Pager($i, page);
+       };
 
        var initialized= function init(){
            if (DataSource){
@@ -362,7 +373,7 @@ j$.Resource = function(){
         }
         function id (number){
            //REVIEW: (Para entender as chaves compostas)
-            this.get(number)[Resource.id];
+            return this.get(number)[Resource.id];
         }
 
         function insert(record){
@@ -370,14 +381,15 @@ j$.Resource = function(){
            if (proceed){
               $i.DataSource.push(record);
               refresh();
-              $i.position = $i.count;
-              return $i.DataSource.length -1;
+              $i.position = ROW.LAST;//$i.count;
+              return ROW.LAST; //$i.DataSource.length -1;
               originalSource = $i.DataSource;
            }
        }
 
        function update(row,record){
-           $i.DataSource[row]=record;
+           let pos = (row) ?row :$i.position
+           $i.DataSource[pos]=record;
            originalSource = $i.DataSource;
        }
 
@@ -522,7 +534,8 @@ j$.Resource = function(){
 j$.$R =j$.Resource.c$;
 j$.Resource.Pager=function(dataset, page){
    SELF = this;
-   this.Dataset = null;
+   dataset.Pager = SELF;
+   SELF.Dataset = null;
    this.restart=restart;
    this.sweep=sweep;
    // number  -> Nro da pagina
