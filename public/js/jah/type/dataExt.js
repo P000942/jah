@@ -590,7 +590,7 @@ var dataExt = function(){
       ,    isValue:function(obj){ return (dataExt.type(obj)==='String' || dataExt.type(obj)==='Number');}
       ,   isNumber:function(obj){ return (dataExt.type(obj)==='Number');}
       ,   isObject:function(obj){ return (dataExt.type(obj)==='Object');}
-      ,     isCrud:function(obj){ 
+      ,     isCrud:function(obj){
                 return (dataExt.isDefined(obj))
                       ?(obj.constructor.name==='crud')
                       :false;
@@ -785,6 +785,14 @@ Object.compare = function(source, target, key){
 // Object.compare({a:1, b:3, x:'A'}, {a:1, b:3, x:'A'})
 // Object.compare({a:1, b:3, x:'A'}, {a:1, b:3, y:'B'})
 // Object.compare({a:1, b:3, x:'A'}, {a:1, b:3})
+
+Object.build = function(key, value){
+   let obj ={}
+   obj[key]=value;
+   return obj;
+}
+// console.log(Object.build("A",4))
+// ->Object {A: 4}
 
 Function.prototype.inheritsFrom = function(parentClassOrObject){
   	if ( parentClassOrObject.constructor == Function ) 	{

@@ -938,11 +938,34 @@ j$.ui.Fieldset = function(fields) {
         return "?"+jQuery.param(SELF.filled(action));
     };
 
-    this.filterNone = function(properties){ // remove o indicador de filtro dos outros campos não indicados
-           for(key in SELF.Items){
-               SELF.Items[key].filterToggle(false);
-           }
-    };
+    this.filter = function(){
+        let criteria={};
+        return {
+          clear: ()=>{
+             for(key in SELF.Items){
+                 SELF.Items[key].filterToggle(false);
+             }
+          }
+          ,toggle: (key,value) => {
+              let field= SELF.Items[key];
+              if (field.onFilter){ // já tem filtro, tem que remover
+                  delete criteria[field.key];
+              }else{
+                  criteria[field.key]= field.value(value);
+              }
+              return ($.isEmptyObject(criteria))
+                    ? null
+                    : criteria;
+          }
+        };
+    }();
+
+    // this.filterNone = function(){ // remove o indicador de filtro dos outros campos não indicados
+    //        for(key in SELF.Items){
+    //            SELF.Items[key].filterToggle(false);
+    //        }
+    // };
+
     this.execute = function(action){
         for(key in SELF.Items){
            var field = this.Items[key];

@@ -43,8 +43,16 @@ function ActionController(ResponseController){
   var SELF = this;
   var Resource = ResponseController.Resource;
 
-  Object.preset(SELF, {remove:remove, save:update, get:get});
-  Object.setIfExist(SELF, ResponseController,['edit','insert','back','print','sort','filter','List','child', 'refresh']);
+  Object.preset(SELF, {remove:remove, save:update, get:get, filter:filter});
+  Object.setIfExist(SELF, ResponseController,['edit','insert','back','print','sort','List','child', 'refresh']);
+
+
+  function filter(event, key, value){
+        if (event.ctrlKey && event.button==MOUSE.BUTTON.LEFT){
+            let criteria = ResponseController.service.Fieldset.filter.toggle(key, value)
+            Resource.filter(criteria);
+        }
+  }
 
   function get(){
       if (ResponseController.service)
@@ -120,7 +128,7 @@ function ResponseController($service){
        return values;
    }(SELF.service.page.Buttons.Items);
 
-   Object.preset(SELF,{edit:edit, insert:insert, back:back, sort:sort, print:print, filter:filter, UpdateController:null, child:child, refresh:refresh});
+   Object.preset(SELF,{edit:edit, insert:insert, back:back, sort:sort, print:print, UpdateController:null, child:child, refresh:refresh});
    Object.setIfExist(SELF,SELF.service.page,'List');
 
    this.isNewRecord = function(){return NEW_RECORD;};
@@ -139,38 +147,13 @@ function ResponseController($service){
      init();
   }
 
-  function filter(event, key, value){
-    if (event.ctrlKey && event.button==MOUSE.BUTTON.LEFT){ // os outros estão ai por questões didáticas. Depois pode tirar
-       let field = SELF.service.Fieldset.Items[key];
-       let onFilter = field.onFilter
-
-       switch(event.button) {
-         case MOUSE.BUTTON.LEFT:
-             SELF.service.Fieldset.filterNone(key);
-             if (onFilter){
-                SELF.Resource.unfilter();
-             }else{
-                 let criteria ={}
-                 criteria[key]=field.value(value);
-                 SELF.Resource.filter(criteria);
-             }
-             field.filterToggle(!onFilter);
-             init();
-         case MOUSE.BUTTON.CENTER: break;
-         case MOUSE.BUTTON.RIGHT:break;
-       }
-    }
-  }
-  //options = {filter:true}
-  function refresh(record, options){ // TODO: em construção
+  //options = {filter:true} ou {sort:true}
+  function refresh(options, record){ // TODO: em construção
       if (dataExt.isDefined(options.filter)){
-         let onFilter =(options.filter)
-                      ?true
-                      :FILTER.NONE;
-         SELF.service.Fieldset.filterNone(record);
+         SELF.service.Fieldset.filter.clear();
          for (let key in record){
             let field = SELF.service.Fieldset.Items[key];
-            field.filterToggle(onFilter);
+            field.filterToggle(options.filter);
          }
       }
       init();
@@ -244,9 +227,9 @@ function ResponseController($service){
          EDITED=true;
      };
 
-     this.filter= function(criteria,options) {
+     this.filter= function(options, record) {
         // esse método é apenas para fazer um refresh da tela quando for feito um filtro direto no Dataset
-         parent.refresh(criteria, options)
+         parent.refresh(options, record)
      };
 
      this.failure= function(response) {

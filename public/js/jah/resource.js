@@ -216,6 +216,7 @@ j$.Resource = function(){
        SELF.post   = post;
        SELF.put    = put;
        SELF.remove = remove;
+       SELF.filter = filter;
 
        var initialized=function(){
            SELF.Resource = Resource;
@@ -224,6 +225,13 @@ j$.Resource = function(){
           console.log(SELF.Resource.name+"." + method +":");
           console.log(response);
        }
+       function filter(onFilter, criteria) {
+            if (SELF.Resource.externalResponseHandler && SELF.Resource.externalResponseHandler.filter)
+                SELF.Resource.externalResponseHandler.filter({filter:onFilter}, criteria);
+            else
+                show(criteria, 'filter:'+onFilter)
+       };
+
        function get(response) {
             SELF.Resource.recharge(response);
             if (SELF.Resource.externalResponseHandler && SELF.Resource.externalResponseHandler.get)
@@ -336,7 +344,7 @@ j$.Resource = function(){
        var originalSource = null;
        Object.preset($i,{Columns:null, get:get, update:update, insert:insert, remove:remove, find:find, exists:exists
                          ,id:id, DataSource:DataSource, count:-1,position:0});
-                         
+
        this.createPager= page =>{
            return new j$.Resource.Pager($i, page);
        };
@@ -407,20 +415,22 @@ j$.Resource = function(){
             refresh();
        };
 
-       this.unfilter=function(){
-           $i.DataSource = originalSource;
-           refresh();
-       };
        this.filter=function(criteria){
-           $i.DataSource = $i.DataSource.select(
-               function(record){
-                   for (let key in criteria){
-                       if (record[key]!=criteria[key])
-                          return false;
-                   }
-                   return true; // todos os campos foram iguais
-               });
+           let onFilter=false;
+           $i.DataSource = originalSource;
+           if (criteria){
+               onFilter=true;
+               $i.DataSource = $i.DataSource.select(
+                   function(record){
+                       for (let key in criteria){
+                           if (record[key]!=criteria[key])
+                              return false;
+                       }
+                       return true; // todos os campos foram iguais
+                   });
+           }
            refresh();
+           Resource.ResponseHandler.filter(onFilter,criteria)
            return $i.DataSource;
        };
 
@@ -793,8 +803,8 @@ j$.Resource.Store.add({name:"assunto"
                               ,{"idAssunto":"5","idCategoriaAssunto":"1","txTitulo":"GDD"}
                               ,{"idAssunto":"6","idCategoriaAssunto":"2","txTitulo":"GCC"}
                               ,{"idAssunto":"7","idCategoriaAssunto":"1","txTitulo":"GLOG"}
-                              ,{"idAssunto":"8","idCategoriaAssunto":"2","txTitulo":"CCEA"}
-                              ,{"idAssunto":"9","idCategoriaAssunto":"3","txTitulo":"SUAD"}
+                              ,{"idAssunto":"8","idCategoriaAssunto":"1","txTitulo":"CCEA"}
+                              ,{"idAssunto":"9","idCategoriaAssunto":"2","txTitulo":"SUAD"}
                               ,{"idAssunto":"10","idCategoriaAssunto":"1","txTitulo":"SCEA"}
                               ,{"idAssunto":"11","idCategoriaAssunto":"2","txTitulo":"CCEA"}
                               ,{"idAssunto":"12","idCategoriaAssunto":"3","txTitulo":"CCOR"}
@@ -808,6 +818,15 @@ j$.Resource.Store.add({name:"assunto"
                               ,{"idAssunto":"20","idCategoriaAssunto":"1","txTitulo":"XPT"}
                               ,{"idAssunto":"21","idCategoriaAssunto":"3","txTitulo":"CAE"}
                               ,{"idAssunto":"22","idCategoriaAssunto":"3","txTitulo":"CNAE"}
+                              ,{"idAssunto":"23","idCategoriaAssunto":"1","txTitulo":"GPE"}
+                              ,{"idAssunto":"24","idCategoriaAssunto":"1","txTitulo":"SUAD"}
+                              ,{"idAssunto":"25","idCategoriaAssunto":"3","txTitulo":"CCEA"}
+                              ,{"idAssunto":"26","idCategoriaAssunto":"4","txTitulo":"GPE"}
+                              ,{"idAssunto":"27","idCategoriaAssunto":"4","txTitulo":"SUAD"}
+                              ,{"idAssunto":"28","idCategoriaAssunto":"4","txTitulo":"CCEA"}
+                              ,{"idAssunto":"29","idCategoriaAssunto":"3","txTitulo":"GPE"}
+                              ,{"idAssunto":"30","idCategoriaAssunto":"3","txTitulo":"SUAD"}
+                              ,{"idAssunto":"31","idCategoriaAssunto":"3","txTitulo":"CCEA"}
                           ]});
 j$.Resource.Store.add({name:"categoriaAssunto"
                        //, context:CONFIG.RESOURCE.CONTEXT
@@ -815,6 +834,7 @@ j$.Resource.Store.add({name:"categoriaAssunto"
                                {"idCategoriaAssunto":"1","txCategoriaAssunto":"Sistema"}
                               ,{"idCategoriaAssunto":"2","txCategoriaAssunto":"Projeto"}
                               ,{"idCategoriaAssunto":"3","txCategoriaAssunto":"Manutenção"}
+                              ,{"idCategoriaAssunto":"4","txCategoriaAssunto":"Inovação"}
                           ]});
 
 // j$.Resource.Store.add({name:"papel"
