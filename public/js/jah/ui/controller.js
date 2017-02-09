@@ -43,15 +43,19 @@ function ActionController(ResponseController){
   var SELF = this;
   var Resource = ResponseController.Resource;
 
-  Object.preset(SELF, {remove:remove, save:update, get:get, filter:filter});
-  Object.setIfExist(SELF, ResponseController,['edit','insert','back','print','sort','List','child', 'refresh']);
-
+  Object.preset(SELF, {remove:remove, save:update, get:get, filter:filter, sort:sort});
+  Object.setIfExist(SELF, ResponseController,['edit','insert','back','print','List','child', 'refresh']);
 
   function filter(event, key, value){
         if (event.ctrlKey && event.button==MOUSE.BUTTON.LEFT){
             let criteria = ResponseController.service.Fieldset.filter.toggle(key, value)
             Resource.filter(criteria);
         }
+  }
+
+  function sort(key){
+     let field = ResponseController.service.Fieldset.Items[key];
+     Resource.orderBy(field.sortOrder(),key);
   }
 
   function get(){
@@ -128,7 +132,7 @@ function ResponseController($service){
        return values;
    }(SELF.service.page.Buttons.Items);
 
-   Object.preset(SELF,{edit:edit, insert:insert, back:back, sort:sort, print:print, UpdateController:null, child:child, refresh:refresh});
+   Object.preset(SELF,{edit:edit, insert:insert, back:back, sort:sort, print:print, UpdateController:null, child:child, filter:filter});
    Object.setIfExist(SELF,SELF.service.page,'List');
 
    this.isNewRecord = function(){return NEW_RECORD;};
@@ -140,20 +144,18 @@ function ResponseController($service){
       r3port=window.open("report.html", SELF.service.id ,'toolbar=no,location=no,directories=no,status=no,menubar=yes,scrollbars=yes,resizable=yes, height=600,width=800, fullscreen=yes');
    }
 
-  function sort(id){
-     SELF.service.Fieldset.sortNone(id);
-     var input = SELF.service.Fieldset.Items[id];
-     SELF.Resource.orderBy(input.sortOrder());
+  function sort(key){
+     SELF.service.Fieldset.sortNone(key);
      init();
   }
 
-  //options = {filter:true} ou {sort:true}
-  function refresh(options, record){ // TODO: em construção
-      if (dataExt.isDefined(options.filter)){
-         SELF.service.Fieldset.filter.clear();
-         for (let key in record){
+  //options = {filter:true}
+  function filter(onFilter, criteria){ // TODO: em construção
+      SELF.service.Fieldset.filter.clear();
+      if (onFilter){
+         for (let key in criteria){
             let field = SELF.service.Fieldset.Items[key];
-            field.filterToggle(options.filter);
+            field.filterToggle(onFilter);
          }
       }
       init();
@@ -227,9 +229,11 @@ function ResponseController($service){
          EDITED=true;
      };
 
-     this.filter= function(options, record) {
-        // esse método é apenas para fazer um refresh da tela quando for feito um filtro direto no Dataset
-         parent.refresh(options, record)
+     this.filter= function(onFilter, criteria) {
+         parent.filter(onFilter, criteria)
+     };
+     this.sort= function(key) {
+         parent.sort(key);
      };
 
      this.failure= function(response) {

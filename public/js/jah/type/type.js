@@ -517,7 +517,6 @@ function superType(Type, Properties) {
        Event.observe(inputField, 'focus', TYPE.HANDLE.focus, false);
    };
     this.sortAsc = function(currentRow, nextRow){
-        //SELF.order = ORDER.ASCENDING;
         var currentVal = SELF.dataType.parse(currentRow[SELF.key]);
         var nextVal = SELF.dataType.parse(nextRow[SELF.key]);
         var r = 0;
@@ -528,7 +527,6 @@ function superType(Type, Properties) {
         return r;
     };
     this.sortDesc = function(currentRow, nextRow){
-        //SELF.order = ORDER.DESCENDING;
         var currentVal = SELF.dataType.parse(currentRow[SELF.key]);
         var nextVal = SELF.dataType.parse(nextRow[SELF.key]);
         var r = 0;
@@ -959,12 +957,6 @@ j$.ui.Fieldset = function(fields) {
           }
         };
     }();
-
-    // this.filterNone = function(){ // remove o indicador de filtro dos outros campos não indicados
-    //        for(key in SELF.Items){
-    //            SELF.Items[key].filterToggle(false);
-    //        }
-    // };
 
     this.execute = function(action){
         for(key in SELF.Items){

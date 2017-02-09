@@ -217,6 +217,7 @@ j$.Resource = function(){
        SELF.put    = put;
        SELF.remove = remove;
        SELF.filter = filter;
+       SELF.sort = sort;
 
        var initialized=function(){
            SELF.Resource = Resource;
@@ -225,9 +226,15 @@ j$.Resource = function(){
           console.log(SELF.Resource.name+"." + method +":");
           console.log(response);
        }
+       function sort(key) {
+            if (SELF.Resource.externalResponseHandler && SELF.Resource.externalResponseHandler.sort)
+                SELF.Resource.externalResponseHandler.sort(key);
+            else
+                show(key, 'sort')
+       };
        function filter(onFilter, criteria) {
             if (SELF.Resource.externalResponseHandler && SELF.Resource.externalResponseHandler.filter)
-                SELF.Resource.externalResponseHandler.filter({filter:onFilter}, criteria);
+                SELF.Resource.externalResponseHandler.filter(onFilter, criteria);
             else
                 show(criteria, 'filter:'+onFilter)
        };
@@ -410,9 +417,11 @@ j$.Resource = function(){
            originalSource = $i.DataSource;
        }
 
-       this.orderBy = function(sortBy){
+       this.orderBy = function(sortBy,key){
             $i.DataSource.sort(sortBy);
             refresh();
+            Resource.ResponseHandler.sort(key);
+            //return $i.DataSource;
        };
 
        this.filter=function(criteria){
@@ -431,7 +440,7 @@ j$.Resource = function(){
            }
            refresh();
            Resource.ResponseHandler.filter(onFilter,criteria)
-           return $i.DataSource;
+           //return $i.DataSource;
        };
 
        // métodos de navegacao
@@ -903,6 +912,19 @@ j$.Resource.Store.add({
 //console.log(j$.Resource.Store.exists('ufs'));
 
 
-// var criteria = {txTitulo:'SUAD', idCategoriaAssunto:3}
-// j$.$R.assunto.Dataset.filter(criteria)
+
+// j$.$R.assunto.filter({txTitulo:'SUAD', idCategoriaAssunto:3})
 // Assunto.actionController.refresh(criteria, {filter:true})
+
+// sortDemo = function(currentRow, nextRow){
+//     var currentVal = DATATYPE.NUMBER.parse(currentRow.idCategoriaAssunto);
+//     var nextVal    = DATATYPE.NUMBER.parse(nextRow.idCategoriaAssunto);
+//     var r = 0;
+//     if (currentVal < nextVal)
+//         r = -1;
+//     else if (currentVal > nextVal)
+//         r = 1;
+//     return r;
+// };
+// j$.$R.assunto.orderBy(sortDemo,"idCategoriaAssunto")
+// j$.$R.assunto.orderBy(j$.$S.Assunto.Fieldset.Items.idCategoriaAssunto.sortOrder(),"idCategoriaAssunto")
