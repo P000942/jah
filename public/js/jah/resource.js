@@ -226,11 +226,11 @@ j$.Resource = function(){
           console.log(SELF.Resource.name+"." + method +":");
           console.log(response);
        }
-       function sort(key) {
+       function sort(sort) {
             if (SELF.Resource.externalResponseHandler && SELF.Resource.externalResponseHandler.sort)
-                SELF.Resource.externalResponseHandler.sort(key);
+                SELF.Resource.externalResponseHandler.sort(sort);
             else
-                show(key, 'sort')
+                show(sort, 'sort')
        };
        function filter(onFilter, criteria) {
             if (SELF.Resource.externalResponseHandler && SELF.Resource.externalResponseHandler.filter)
@@ -417,10 +417,10 @@ j$.Resource = function(){
            originalSource = $i.DataSource;
        }
 
-       this.orderBy = function(sortBy,key){
-            $i.DataSource.sort(sortBy);
+       this.orderBy = function(sort){
+            $i.DataSource.sort(sort.orderBy());
             refresh();
-            Resource.ResponseHandler.sort(key);
+            Resource.ResponseHandler.sort(sort);
             //return $i.DataSource;
        };
 
@@ -916,15 +916,15 @@ j$.Resource.Store.add({
 // j$.$R.assunto.filter({txTitulo:'SUAD', idCategoriaAssunto:3})
 // Assunto.actionController.refresh(criteria, {filter:true})
 
-// sortDemo = function(currentRow, nextRow){
-//     var currentVal = DATATYPE.NUMBER.parse(currentRow.idCategoriaAssunto);
-//     var nextVal    = DATATYPE.NUMBER.parse(nextRow.idCategoriaAssunto);
-//     var r = 0;
-//     if (currentVal < nextVal)
-//         r = -1;
-//     else if (currentVal > nextVal)
-//         r = 1;
-//     return r;
-// };
+sortDemo = function(currentRow, nextRow){
+    var currentVal = DATATYPE.NUMBER.parse(currentRow.idCategoriaAssunto);
+    var nextVal    = DATATYPE.NUMBER.parse(nextRow.idCategoriaAssunto);
+    var r = 0;
+    if (currentVal < nextVal)
+        r = -1;
+    else if (currentVal > nextVal)
+        r = 1;
+    return r;
+};
 // j$.$R.assunto.orderBy(sortDemo,"idCategoriaAssunto")
 // j$.$R.assunto.orderBy(j$.$S.Assunto.Fieldset.Items.idCategoriaAssunto.sortOrder(),"idCategoriaAssunto")

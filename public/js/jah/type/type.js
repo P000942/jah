@@ -516,42 +516,7 @@ function superType(Type, Properties) {
 
        Event.observe(inputField, 'focus', TYPE.HANDLE.focus, false);
    };
-    this.sortAsc = function(currentRow, nextRow){
-        var currentVal = SELF.dataType.parse(currentRow[SELF.key]);
-        var nextVal = SELF.dataType.parse(nextRow[SELF.key]);
-        var r = 0;
-        if (currentVal < nextVal)
-            r = -1;
-        else if (currentVal > nextVal)
-            r = 1;
-        return r;
-    };
-    this.sortDesc = function(currentRow, nextRow){
-        var currentVal = SELF.dataType.parse(currentRow[SELF.key]);
-        var nextVal = SELF.dataType.parse(nextRow[SELF.key]);
-        var r = 0;
-        if (currentVal > nextVal)
-            r = -1;
-        else if (currentVal < nextVal)
-            r = 1;
-        return r;
-    };
-    this.sortOrder=function(order){
-        // Quando indicar que não há classificação, passa order=ORDER.NONE
-        if (!order){
-           if (SELF.order == ORDER.NONE || SELF.order == ORDER.DESCENDING)
-               order = ORDER.ASCENDING;
-           else
-               order = ORDER.DESCENDING;
-        }
-        SELF.order = order;
-        SELF.Header.clas$ = ORDER.CLASS(order);
-        if (order != ORDER.NONE){
-           return (order == ORDER.DESCENDING) ? SELF.sortDesc : SELF.sortAsc;
-        }else{
-           return null;
-        }
-    };
+
     this.filterToggle=function(showFilter){
         SELF.onFilter = (dataExt.isDefined(showFilter))
                     ?showFilter
@@ -936,6 +901,74 @@ j$.ui.Fieldset = function(fields) {
         return "?"+jQuery.param(SELF.filled(action));
     };
 
+    this.orderBy=(key)=>{ // forma semantica de criar o Sort
+       if (!SELF.sort)
+          SELF.sort = new Sort(key)
+       else
+          SELF.sort.init(key)
+        return SELF.sort;
+    }
+
+    function Sort(key){ // Sort está no Fieldset e não no field para consumir menos recurso (não precisará uma instancia por field)
+        let $ORT = this;
+        let field =  null;
+        $ORT.init = init;
+        init(key);
+
+        function init(key){
+            if (key && key != $ORT.key) {
+               $ORT.key =  key;
+               $ORT.field =  SELF.Items[key];
+               $ORT.order =  ORDER.NONE;
+               field = $ORT.field;
+            }
+        }
+        $ORT.clear = ()=>{
+            for(let key in SELF.Items){
+                if (key != $ORT.key)
+                   SELF.Items[key].Header.clas$ = ORDER.CLASS(ORDER.NONE);
+            }
+        }
+        $ORT.asc=(currentRow, nextRow)=>{
+              var currentVal = field.dataType.parse(currentRow[$ORT.key]);
+              var nextVal = field.dataType.parse(nextRow[$ORT.key]);
+              var r = 0;
+              if (currentVal < nextVal)
+                  r = -1;
+              else if (currentVal > nextVal)
+                  r = 1;
+              return r;
+          }
+        $ORT.desc=(currentRow, nextRow)=>{
+              var currentVal = field.dataType.parse(currentRow[$ORT.key]);
+              var nextVal = field.dataType.parse(nextRow[$ORT.key]);
+              var r = 0;
+              if (currentVal > nextVal)
+                 r = -1;
+              else if (currentVal < nextVal)
+                 r = 1;
+              return r;
+          }
+        $ORT.orderBy=order => {
+              if ($ORT.toggle(order) != ORDER.NONE)
+                 return ($ORT.order == ORDER.DESCENDING) ? $ORT.desc : $ORT.asc;
+              else
+                 return null;
+           }
+        $ORT.toggle=order => {
+                 // Quando indicar que não há classificação, passa order=ORDER.NONE
+                 if (!order){
+                    if ($ORT.order == ORDER.NONE || $ORT.order == ORDER.DESCENDING)
+                        order = ORDER.ASCENDING;
+                    else
+                        order = ORDER.DESCENDING;
+                 }
+                 $ORT.order = order;
+                 field.Header.clas$ = ORDER.CLASS(order);
+                 return order;
+              }
+    };
+
     this.filter = function(){
         let criteria={};
         return {
@@ -959,19 +992,12 @@ j$.ui.Fieldset = function(fields) {
     }();
 
     this.execute = function(action){
-        for(key in SELF.Items){
-           var field = this.Items[key];
+        for(let key in SELF.Items){
+           let field = this.Items[key];
            action(field,key);
         }
     };
-    this.sortNone = function(id){
-        for(key in SELF.Items){
-            if (key != id){
-               var field = SELF.Items[key];
-               field.sortOrder(ORDER.NONE);
-            }
-        }
-    };
+
     this.show = function(){SELF.execute(function(field, key){console.log(key); console.log(input);});};
 };
 

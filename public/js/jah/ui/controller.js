@@ -54,8 +54,7 @@ function ActionController(ResponseController){
   }
 
   function sort(key){
-     let field = ResponseController.service.Fieldset.Items[key];
-     Resource.orderBy(field.sortOrder(),key);
+     Resource.orderBy(ResponseController.service.Fieldset.orderBy(key));
   }
 
   function get(){
@@ -144,8 +143,8 @@ function ResponseController($service){
       r3port=window.open("report.html", SELF.service.id ,'toolbar=no,location=no,directories=no,status=no,menubar=yes,scrollbars=yes,resizable=yes, height=600,width=800, fullscreen=yes');
    }
 
-  function sort(key){
-     SELF.service.Fieldset.sortNone(key);
+  function sort(sort){
+     SELF.service.Fieldset.sort.clear();
      init();
   }
 
@@ -232,8 +231,8 @@ function ResponseController($service){
      this.filter= function(onFilter, criteria) {
          parent.filter(onFilter, criteria)
      };
-     this.sort= function(key) {
-         parent.sort(key);
+     this.sort= function(sort) {
+         parent.sort(sort);
      };
 
      this.failure= function(response) {
