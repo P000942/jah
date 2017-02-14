@@ -61,7 +61,7 @@ var ReportFactory = function(){
              return {
                   Dataset: self.opener[self.name].Resource.Dataset,
                  Fieldset: self.opener[self.name].Interface.Fieldset,
-                  caption: self.opener[self.name].Interface.Form.caption
+                  caption: self.opener[self.name].Interface.title
              }
         }
     }

@@ -957,7 +957,7 @@ if (System.api.jquery){
             throw new TypeError();
         for (var i = 0; i < this.length; i++){
             if (i in this){
-               if (callback(this[i]))
+               if (callback(this[i],i))
                    return this[i];
             }
         }

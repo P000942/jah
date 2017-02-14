@@ -190,9 +190,15 @@ j$.ui.Alert= function(){
                j$.ui.Render.alert(wrap, html , alertClass);
            }
        }
-     ,   error:function(wrap, msg){j$.ui.Alert.show(wrap, msg, CONFIG.ALERT.ERROR.CLASS)}
-     ,    info:function(wrap, msg){j$.ui.Alert.show(wrap, msg, CONFIG.ALERT.INFO.CLASS)}
-     , success:function(wrap, msg){j$.ui.Alert.show(wrap, msg, CONFIG.ALERT.SUCCESS.CLASS)}
+     ,   error:function(wrap, msg){
+                  j$.ui.Alert.show(wrap, msg, CONFIG.ALERT.ERROR.CLASS)
+               }
+     ,    info:function(wrap, msg){
+                  j$.ui.Alert.show(wrap, msg, CONFIG.ALERT.INFO.CLASS)
+               }
+     , success:function(wrap, msg){
+                  j$.ui.Alert.show(wrap, msg, CONFIG.ALERT.SUCCESS.CLASS)
+               }
      , hide:function(wrap){
          if (!wrap) wrap=$alert.wrap;
              wrap.innerHTML='';

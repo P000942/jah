@@ -16,16 +16,48 @@
         return (url) ?url
                      :responseHandler.Resource.url;
      };
+    //  function cacheRequest(url, parameter, responseHandler){
+    //     var response;
+    //     if (parameter == undefined){
+    //        if (responseHandler.Resource.cache){ // vai no cache se permitido ir no cache, senao sempre vai no servidor
+    //           response=j$.Resource.Store.restore(url);
+    //           if (response)
+    //              responseHandler.get(response);
+    //         }
+    //     }
+    //     return response;
+    //  }
      function cacheRequest(url, parameter, responseHandler){
-        var response;
-        if (parameter == undefined){
-           if (responseHandler.Resource.cache){ // vai no cache se permitido ir no cache, senao sempre vai no servidor
-              response=j$.Resource.Store.restore(url);
-              if (response)
-                 responseHandler.get(response);
-            }
+        let response=null;
+        if (responseHandler.Resource.cache){ // vai no cache se permitido ir no cache, senao sempre vai no servidor
+           response=j$.Resource.Store.restore(url);
+           if (parameter && response){
+              response=search(response, parameter, responseHandler.Resource.id);
+           }
         }
         return response;
+     }
+     function search(source, parameter, id) {
+          let response = null
+          if (parameter){ //GET "http://localhost:3000/assunto com boby={idAssunto:1}
+             if (dataExt.isObject(parameter)){
+                response = source.select( record =>{
+                      for (let key in parameter){
+                          if (record[key]!=parameter[key])
+                             return false;
+                      }
+                      return true; // todos os campos foram iguais
+                  });
+              }else{ // simula o GET "http://localhost:3000/assunto/1"
+                  response = source.find(function(record){
+                      if (record[id] == parameter)
+                         return true;
+                  });
+              }
+          }
+          if (response.length==0)
+             response=null;
+          return response;
      }
      function request(http){
           new Ajax.Request(http.url, {
@@ -52,14 +84,25 @@
 
             var cached=cacheRequest(http.url, parameter, responseHandler);
 
-            if (!cached) { // não resolveu no cache.
-                if (parameter){
-                    if (dataExt.isObject(parameter))
-                       http.parameters = JSON.stringify(parameter);
-                    else
-                       http.url += "/"+parameter;
-                }
-                request(http);
+            if (!cached) {// não resolveu no cache.
+               if (responseHandler.Resource.local) { //Se não for recurso local, pede http
+                  responseHandler.failure (
+                     j$.Resource.DefaultHandler.formatError(CONFIG.HTTP.STATUS.NOT_FOUND.VALUE, "Nenhum resultado foi encontrado para a solicitação")
+                  );
+                  responseHandler.get(null);
+               }else{
+                  if (parameter){
+                      if (dataExt.isObject(parameter))
+                         http.parameters = JSON.stringify(parameter);
+                      else
+                         http.url += "/"+parameter;
+
+                   }
+                   request(http);
+               }
+            } else{
+              if (responseHandler)
+                  responseHandler.get(cached);
             }
             return http;
       }
@@ -94,6 +137,7 @@
                    });
        }
        ,request:request
+       ,search:search
        ,cacheRequest:cacheRequest
        ,url:URL
    }
@@ -111,11 +155,22 @@ j$.Resource = function(){
               handler: response => response
             , success: response => response
             , failure: response => {
-                //let res ={};
-                let res = Object.preset({},response.responseJSON,['msg'])
-                return Object.preset(res,CONFIG.HTTP.STATUS.get(response.status))
-                return res;
+                let error = Object.preset({},CONFIG.HTTP.STATUS.get(response.status))
+                error.msg = error.TEXT;
+                if (response.responseJSON)
+                    Object.setIfExist(error,response.responseJSON,['msg'])
+
+                return error;
             }
+            , formatError: (cdStatus,message) => {
+                return {
+                  status:cdStatus
+                 ,statusText:message
+                 ,responseJSON:{msg:message}
+                }
+
+            }
+
         }
     }();
     return{
@@ -190,12 +245,13 @@ j$.Resource = function(){
                                    ? new j$.Resource.Local.Requester($r.ResponseHandler)
                                    : new j$.Resource.Requester($r.ResponseHandler);
              // coloca os métodos do Resquester no Resource (Isso vai reduzir a necessidade de conhecimento da estrurua dos objetos do Resource)
-             Object.setIfExist($r,$r.Requester,['get','post','put','remove']);
+             Object.setIfExist($r,$r.Requester,['get','post','put','remove','search']);
         }
         function createDataset(resource){
-            let Dataset = (resource.source)
-                        ? $r.Parser.toDataset(resource.source)
-                        : null;
+            let Dataset = null;
+            //if (resource.source)
+            Dataset = $r.Parser.toDataset(resource.source);
+
             if (Dataset)
                 Object.setIfExist($r,Dataset,['filter','unfilter','orderBy']);
              return Dataset;
@@ -222,66 +278,54 @@ j$.Resource = function(){
        var initialized=function(){
            SELF.Resource = Resource;
        }();
+       function passForward(method, response, recordRow){
+          let exists = (SELF.Resource.externalResponseHandler && SELF.Resource.externalResponseHandler[method]);
+          //if (exists && response)
+          if (exists)
+             SELF.Resource.externalResponseHandler[method](response, recordRow);
+          else
+              show(response,  method);
+          return exists;
+       }
        function show(response, method){
           console.log(SELF.Resource.name+"." + method +":");
           console.log(response);
        }
        function sort(sort) {
-            if (SELF.Resource.externalResponseHandler && SELF.Resource.externalResponseHandler.sort)
-                SELF.Resource.externalResponseHandler.sort(sort);
-            else
-                show(sort, 'sort')
+            passForward("sort", sort);
        };
-       function filter(onFilter, criteria) {
-            if (SELF.Resource.externalResponseHandler && SELF.Resource.externalResponseHandler.filter)
-                SELF.Resource.externalResponseHandler.filter(onFilter, criteria);
-            else
-                show(criteria, 'filter:'+onFilter)
+       function filter(criteria) {
+            passForward("filter", criteria);
        };
 
        function get(response) {
             SELF.Resource.recharge(response);
-            if (SELF.Resource.externalResponseHandler && SELF.Resource.externalResponseHandler.get)
-                SELF.Resource.externalResponseHandler.get(response);
-            else
-                show(response, 'get')
+            passForward("get", response);
             return SELF.Resource;
        };
        function remove(response, recordRow) {
             if (Resource.Dataset)
                 Resource.Dataset.remove(recordRow);
-            if (SELF.Resource.externalResponseHandler.remove)
-                SELF.Resource.externalResponseHandler.remove(response, recordRow);
-            else
-              show(response, 'remove')
+            passForward("remove", response, recordRow);
        };
 
        function post(response) {
             var record = j$.Resource.DefaultHandler.handler(response);
-            let idx = -1
+            let recordRow = -1
             if (Resource.Dataset)
-                idx = Resource.Dataset.insert(record);
-            if (SELF.Resource.externalResponseHandler.post)
-                SELF.Resource.externalResponseHandler.post(record, idx);
-            else
-                show(response, 'post')
+                recordRow = Resource.Dataset.insert(record);
+            passForward("post", response, recordRow);
        };
 
        function put(response) {
            var record = j$.Resource.DefaultHandler.handler(response);
            if (Resource.Dataset)
                Resource.Dataset.update(null, record);
-           if (SELF.Resource.externalResponseHandler.put)
-                SELF.Resource.externalResponseHandler.put(record);
-           else
-               show(response, 'put')
+           passForward("put", record);
        };
        function failure(response) {
-           var json = j$.Resource.DefaultHandler.failure(response);
-           if (SELF.Resource.externalResponseHandler.failure)
-                SELF.Resource.externalResponseHandler.failure(json);
-           else
-               show(json,'error http');
+           var error = j$.Resource.DefaultHandler.failure(response);
+           passForward("failure", error);
        };
     }
     /*
@@ -298,6 +342,7 @@ j$.Resource = function(){
        this.get= function(parameter) {
             return j$.Requester.get(url, parameter,responseHandler);
        };
+       this.search= this.get;
 
         this.post= function(record) {
              return j$.Requester.post(url, record, responseHandler);
@@ -331,6 +376,9 @@ j$.Resource = function(){
                   request(j$.Resource.Store.restore(url),responseHandler.get);
                }
        };
+       this.search= function(parameter) {
+            return j$.Requester.get(url, parameter,responseHandler)
+       }
 
        this.post= function( record) {
              request(record,responseHandler.post);
@@ -340,8 +388,8 @@ j$.Resource = function(){
              //var id=responseHandler.Resource.Dataset.id(recordRow);
              request(record,responseHandler.put);
        };
-       function request(json, callback){
-           callback(json);
+       function request(response, callback){
+           callback(response);
        }
     }
 
@@ -425,10 +473,10 @@ j$.Resource = function(){
        };
 
        this.filter=function(criteria){
-           let onFilter=false;
+
            $i.DataSource = originalSource;
            if (criteria){
-               onFilter=true;
+
                $i.DataSource = $i.DataSource.select(
                    function(record){
                        for (let key in criteria){
@@ -439,7 +487,7 @@ j$.Resource = function(){
                    });
            }
            refresh();
-           Resource.ResponseHandler.filter(onFilter,criteria)
+           Resource.ResponseHandler.filter(criteria)
            //return $i.DataSource;
        };
 
@@ -531,7 +579,7 @@ j$.Resource = function(){
             parseUrl(resource);
          }else{
              Object.setIfExist(res,resource,properties)
-             if (resource.Dataset)
+             if (resource.Dataset) //REVIEW: Não encontrei necessidade disso. parece que não acontece
                 res.source = resource.Dataset.DataSource; // recupera o "source"
              if (!(res.name || res.source || res.context)){ // Nenhum das propriedades foram definidas
                  // provavelmente tem algo assim -> {tabela:[{id:1, text:'aaaa},{id:1, text:'aaaa}]}
@@ -539,6 +587,8 @@ j$.Resource = function(){
                      parseUrl(key);
                  res.source=resource[key];
              }
+             if (res.source && !dataExt.isDefined(res.local))
+                 res.local  = true;
          }
          if (!res.context)
                res.context=context;
@@ -690,21 +740,24 @@ j$.Resource.Parser.Json= function(Resource){
         });
         return Listset;
       };
-      this.toDataset=function(json){
-            var data_source = SELF.toDatasource(json);
-            Resource.Dataset =   new j$.Resource.Dataset(data_source, Resource);
-            j$.Resource.Store.save(Resource, data_source);
+      this.toDataset=function(response){
+           //Resource.Dataset = null;
+           //if (response){
+              let data_source = SELF.toDatasource(response);
+              Resource.Dataset =   new j$.Resource.Dataset(data_source, Resource);
+              j$.Resource.Store.save(Resource, data_source, Resource.local);
+            //}
             return Resource.Dataset;
       };
       this.toDatasource=parse;
-      function parse(json){
+      function parse(response){
         var data_source = null;
-        if (json){
-             if (json[Resource.name]){
+        if (response){
+             if (response[Resource.name]){
                  // RETORNOU UMA LISTA DE REGISTROS
-                 data_source = json[Resource.name];
+                 data_source = response[Resource.name];
              }else{
-                 data_source=json;
+                 data_source=response;
              }
         }
         return data_source;
@@ -873,13 +926,13 @@ j$.Resource.Store.add({
     {id:07, nome: 'Seu Jose',   data:'1971/10/21', ativo:false, valor:991001,  sexo:'F', vl:117},
     {id:08, nome: 'Tadeu',      data:'1971/10/10', ativo:true,  valor:10.10,   sexo:'M', vl:118},
     {id:09, nome: 'Numvouw',    data:'1971/10/11', ativo:true,  valor:1001.2,  sexo:'F', vl:119},
-    {id:10, nome: 'Vovó',      data:'1971/10/12', ativo:true,  valor:1001.2,  sexo:'F', vl:211},
+    {id:10, nome: 'Vovó',       data:'1971/10/12', ativo:true,  valor:1001.2,  sexo:'F', vl:211},
     {id:11, nome: 'Foca',       data:'1971/10/01', ativo:true,  valor:1001.50, sexo:'M', vl:212},
-    {id:12, nome: 'Negão    ', data:'1971/10/02', ativo:false, valor:991001,  sexo:'F', vl:213},
+    {id:12, nome: 'Negão    ',  data:'1971/10/02', ativo:false, valor:991001,  sexo:'F', vl:213},
     {id:13, nome: 'Robinho   ', data:'1971/10/03', ativo:true,  valor:10.10,   sexo:'M', vl:214},
     {id:14, nome: 'Papai Noel', data:'1971/10/04', ativo:true,  valor:1001.2,  sexo:'F', vl:215},
     {id:15, nome: 'Puf',        data:'1971/10/05', ativo:false, valor:991001,  sexo:'F', vl:216},
-    {id:16, nome: 'Ursão',     data:'1971/10/06', ativo:true,  valor:10.10,   sexo:'M', vl:217},
+    {id:16, nome: 'Ursão',      data:'1971/10/06', ativo:true,  valor:10.10,   sexo:'M', vl:217},
     {id:17, nome: 'Chimbinha',  data:'1971/10/07', ativo:false, valor:991001,  sexo:'F', vl:218},
     {id:18, nome: 'Taputo',     data:'1971/10/08', ativo:true,  valor:10.10,   sexo:'M', vl:219},
     {id:19, nome: 'Tin Loren',  data:'1971/10/09', ativo:true,  valor:1001.2,  sexo:'F', vl:311},
@@ -887,7 +940,7 @@ j$.Resource.Store.add({
     {id:21, nome: 'Moca',       data:'1971/10/16', ativo:true,  valor:1001.50, sexo:'M', vl:313},
     {id:22, nome: 'Curaca  ',   data:'1971/10/17', ativo:false, valor:991001,  sexo:'F', vl:314},
     {id:23, nome: 'Coronel   ', data:'1971/10/18', ativo:true,  valor:10.10,   sexo:'M', vl:315},
-    {id:24, nome: 'Lacraudio', data:'1971/10/19', ativo:true,  valor:1001.2,  sexo:'F', vl:316},
+    {id:24, nome: 'Lacraudio',  data:'1971/10/19', ativo:true,  valor:1001.2,  sexo:'F', vl:316},
     {id:25, nome: 'Baiano',     data:'1971/11/20', ativo:false, valor:991001,  sexo:'F', vl:317},
     {id:26, nome: 'Salsicha',   data:'1971/11/10', ativo:true,  valor:10.10,   sexo:'M', vl:318},
     {id:27, nome: 'Chimbinha',  data:'1971/11/11', ativo:false, valor:991001,  sexo:'F', vl:319},

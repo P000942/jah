@@ -43,7 +43,7 @@ function ActionController(ResponseController){
   var SELF = this;
   var Resource = ResponseController.Resource;
 
-  Object.preset(SELF, {remove:remove, save:update, get:get, filter:filter, sort:sort});
+  Object.preset(SELF, {remove:remove, save:update, get:get, filter:filter, sort:sort, search:search});
   Object.setIfExist(SELF, ResponseController,['edit','insert','back','print','List','child', 'refresh']);
 
   function filter(event, key, value){
@@ -67,7 +67,7 @@ function ActionController(ResponseController){
       if (ResponseController.service)
          // pegar só os campos que foram preenchidos
          parm= ResponseController.service.Fieldset.filled();
-      Resource.get(parm);
+      Resource.search(parm);
   }
 
   function remove(cell){
@@ -148,13 +148,13 @@ function ResponseController($service){
      init();
   }
 
-  //options = {filter:true}
-  function filter(onFilter, criteria){ // TODO: em construção
+  //criteria={idAssunto:2}
+  function filter(criteria){
       SELF.service.Fieldset.filter.clear();
-      if (onFilter){
+      if (criteria){
          for (let key in criteria){
             let field = SELF.service.Fieldset.Items[key];
-            field.filterToggle(onFilter);
+            field.filterToggle(true); // exibir icone
          }
       }
       init();
@@ -228,8 +228,8 @@ function ResponseController($service){
          EDITED=true;
      };
 
-     this.filter= function(onFilter, criteria) {
-         parent.filter(onFilter, criteria)
+     this.filter= function(criteria) {
+         parent.filter(criteria)
      };
      this.sort= function(sort) {
          parent.sort(sort);
