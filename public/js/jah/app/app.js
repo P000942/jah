@@ -3,6 +3,7 @@ var adapter={
     services:{
                Papel:{caption:'Papel'   ,  crud:true, title:'Cadastro de Papel',  onClick:openPapel}
           ,  Usuario:{caption:'Usuário' ,  crud:true, title:'Cadastro de Usuário'}
+          ,  Documento:{caption:'Documento' ,  crud:true, title:'Cadastro de Documento'}
           ,  Assunto:{caption:'Assunto' ,  crud:true, title:'Cadastro de Assunto', modal:true}
   ,SituacaoAtividade:{caption:'Situação',  crud:true, title:'Cadastro de Situações da Atividade'}
           ,  Partial:{partial:urlPartial,             title:'Conheça a história e a caminhada da Comunidade'}
@@ -12,7 +13,7 @@ var adapter={
           , Mensagem:{caption:'Mensagem', query:true, title:'Mensagem'       , resource:'mensagem', modal:true}
         }
    , design:{
-           Tabelas:{caption:'Tabelas', items:['Papel','Usuario']}
+           Tabelas:{caption:'Tabelas', items:['Papel','Usuario','Documento']}
          ,  Outros:['Assunto', 'SituacaoAtividade','Partial'] // key e caption serão igual a "Outros"
          ,  Consulta:['Pessoa','Basico']
        }

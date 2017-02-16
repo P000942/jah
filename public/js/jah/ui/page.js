@@ -25,9 +25,9 @@
  */
 
 j$.ui.Grid=function(page, wrap, TEMPLATE){
-    var self_grid = this;
+    let self_grid = this;
     TEMPLATE =(TEMPLATE) ?TEMPLATE :CONFIG.GRID.DEFAULT;
-    let rowIndex=-1;
+    self_grid.index=RC.NONE;
     var pager = null;
 
     Object.preset(self_grid,{table:null, Designer:designer() });
@@ -42,6 +42,7 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
     this.Buttons = new j$.ui.Buttons(self_grid.actionController, page.service.Interface.List.Buttons, CONFIG[TEMPLATE].GRID.preset);
 
     this.init=function(Resource, wrapGrid){
+        self_grid.index=RC.NONE;
         pager = Resource.Dataset.createPager(page.service.Interface.List);
         if (!wrapGrid)
             wrapGrid=wrap;
@@ -54,9 +55,10 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
     };
 
     this.getPosition=function(cell){
+        self_grid.index=RC.NONE; //REVIEW: Pode dá chabu
         if (cell)
-           rowIndex = cell.parentNode.parentNode.rowIndex -1;
-        return rowIndex;
+           self_grid.index= cell.parentNode.parentNode.rowIndex -1;
+        return self_grid.index;
     };
 
     function designer(){
@@ -161,12 +163,18 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
                         self_grid.Pager.last();
                    }
             }
+          ,clear:()=>{
+             self_grid.Designer.clear();
+          }
           , populate:function(){
-                self_grid.Designer.clear();
-                pager.sweep(function(row, record){
-                   self_grid.Detail.add(record,true);
-                });
-                self_grid.Designer.header();
+                page.reset(); // o formulário
+                 self_grid.Detail.clear();
+                if (pager.Record.count != RC.NOT_FOUND){
+                    pager.sweep(function(row, record){
+                       self_grid.Detail.add(record,true);
+                    });
+                    self_grid.Designer.header();
+                }
           }
          , populateAll:function(){ // preenche todos registros no grid, sem paginação
               self_grid.table.innerHTML='';
@@ -297,8 +305,10 @@ j$.ui.Pager=function(parent, pager , actionController){
         self_pager.add("last",(pager.Control.last===pager.Control.number)?'disabled':'');
     };
     this.Controller=function(callbackPopulate){
+        let nbr = RC.NONE;
         var ws = {callback:callbackPopulate};
         var populate=function(number){
+                nbr=number;
                 if (number)
                     pager.get(number);
                 ws.callback(pager);
@@ -310,6 +320,8 @@ j$.ui.Pager=function(parent, pager , actionController){
           , last:function(){populate(pager.Control.last);}
           ,  get:function(number){populate(number);}
           , absolutePosition:function(row){return pager.absolutePosition(row);}
+          , number:()=>{return nbr;}
+          // , Control:pager.Con
         };
     };
 };
@@ -618,7 +630,7 @@ j$.ui.Page = function(){
 j$.$P = j$.ui.Page.c$;
 
 j$.ui.Form=function(service, modal) {
-    var $i = this;
+    let $i = this;
     this.service = service;
     service.page = this;
 
@@ -648,7 +660,17 @@ j$.ui.Form=function(service, modal) {
     // se for modal, herda de um template próprio para modal
     this.inherit = (modal) ?j$.ui.Page.Designer.modal :j$.ui.Page.Designer.form
     $i.inherit($i.container, service.Interface);
-
+    $i.hideAlert=function(){
+       if ($i.alert)
+           j$.ui.Alert.hide($i.alert);
+    }
+    $i.reset = function(){
+        //hideAlert()
+        $i.form.reset(); // inputs do form
+        $i.service.Fieldset.reset(); // atributo dos fields (class, valor default, etc)
+        if ($i.List)
+           $i.List.index=RC.NONE;
+    }
     if (!service.Interface.Buttons)
         service.Interface.Buttons = DEFAULT_BUTTON_PRESET();
 

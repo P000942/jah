@@ -786,6 +786,27 @@ Object.compare = function(source, target, key){
 // Object.compare({a:1, b:3, x:'A'}, {a:1, b:3, y:'B'})
 // Object.compare({a:1, b:3, x:'A'}, {a:1, b:3})
 
+Object.contains = function(source, criteria, key){
+// verifica se source contains criteria
+    var r = true;
+    if (dataExt.isObject(criteria)) {
+      for (let key in criteria){
+         if (!dataExt.isDefined(source[key]) || source[key]!=criteria[key])
+            return false;
+      }
+    }else{ // a chave de comparação é composta por mais de um atributo
+         return (dataExt.isDefined(source[key]) && source[key] == criteria)?true:false;
+    }
+
+    return r;
+};
+// Object.contains({a:1, b:3, x:'A'}, {a:1, b:3, x:'A'})
+// Object.contains({a:1, b:3, x:'A'}, {a:1, b:3, y:'A'})
+// Object.contains({a:1, b:3, x:'A'}, {a:1, b:3, x:'B'})
+// Object.contains({a:1, b:3, x:'A'}, {a:1, b:3})
+// Object.contains({a:1, b:3, x:'A'}, {a:1, b:2})
+// Object.contains({a:1, b:3, x:'A'}, 1,'a')
+
 Object.build = function(key, value){
    let obj ={}
    obj[key]=value;

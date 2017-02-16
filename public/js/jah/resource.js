@@ -55,7 +55,7 @@
                   });
               }
           }
-          if (response.length==0)
+          if (response && response.length==0)
              response=null;
           return response;
      }
@@ -106,12 +106,12 @@
             }
             return http;
       }
-     ,remove: function(url, id, row, responseHandler) {
+     ,remove: function(url, id, responseHandler,  recordRow) {
           return request({url: URL(url, responseHandler)+"/"+id
                     , method:'DELETE'
                     , onFailure: responseHandler.failure
                     , onSuccess:function(response){
-                              responseHandler.remove(response,row);
+                              responseHandler.remove(response, recordRow);
                       }
                   });
      }
@@ -121,18 +121,18 @@
                    , postBody:JSON.stringify(record)
                    , onFailure: responseHandler.failure
                    , onSuccess:function(response){
-                                    responseHandler.post(response);
+                               responseHandler.post(response);
                      }
                 });
 
       }
-      ,put: function(url, id, record, responseHandler) {
+      ,put: function(url, id, record, responseHandler, recordRow) {
            return request({url: URL(url, responseHandler)+"/"+id
                     , method:'PUT'
                     , postBody:JSON.stringify(record)
                     , onFailure: responseHandler.failure
                     , onSuccess:function(response){
-                                     responseHandler.put(response);
+                                responseHandler.put(response, id, recordRow);
                       }
                    });
        }
@@ -253,7 +253,7 @@ j$.Resource = function(){
             Dataset = $r.Parser.toDataset(resource.source);
 
             if (Dataset)
-                Object.setIfExist($r,Dataset,['filter','unfilter','orderBy']);
+                Object.setIfExist($r,Dataset,['filter','unfilter','orderBy','find','findIndex']);
              return Dataset;
         }
 
@@ -317,11 +317,16 @@ j$.Resource = function(){
             passForward("post", response, recordRow);
        };
 
-       function put(response) {
+       function put(response, id, recordRow) {
            var record = j$.Resource.DefaultHandler.handler(response);
+           if (!dataExt.isDefined(recordRow)){
+              recordRow=(dataExt.isDefined(id))
+                           ?Resource.findIndex(id)
+                           :Resource.Dataset.position;
+           }
            if (Resource.Dataset)
-               Resource.Dataset.update(null, record);
-           passForward("put", record);
+               Resource.Dataset.update(recordRow, record);
+           passForward("put", record, recordRow);
        };
        function failure(response) {
            var error = j$.Resource.DefaultHandler.failure(response);
@@ -334,9 +339,10 @@ j$.Resource = function(){
     function Requester(responseHandler) {
        this.responseHandler = responseHandler;
        const url = responseHandler.Resource.url;
-       this.remove = function(recordRow, row) {
-            var id=responseHandler.Resource.Dataset.id(recordRow);
-            return j$.Requester.remove(url, id, recordRow, responseHandler);
+       this.remove = function(id, row) {
+            //var id=responseHandler.Resource.Dataset.id(recordRow);
+            let recordRow=responseHandler.Resource.findIndex(id);
+            return j$.Requester.remove(url, id, responseHandler, recordRow);
        };
 
        this.get= function(parameter) {
@@ -348,9 +354,8 @@ j$.Resource = function(){
              return j$.Requester.post(url, record, responseHandler);
         };
 
-        this.put= function(recordRow, record) {
-             var id=responseHandler.Resource.Dataset.id(recordRow);
-             return j$.Requester.put(url, id, record, responseHandler);
+        this.put= function(id, record, recordRow) {
+             return j$.Requester.put(url, id, record, responseHandler, recordRow);
         };
     }
     function LocalRequester(responseHandler) {
@@ -358,23 +363,26 @@ j$.Resource = function(){
         this.ResponseHandler = responseHandler;
         const url = responseHandler.Resource.url;
 
-        this.remove = function(recordRow) {
+        this.remove = function(id, recordRow) {
              //var id=responseHandler.Resource.Dataset.id(recordRow);
+             if (!recordRow)
+                 recordRow=responseHandler.Resource.findIndex(id);
              responseHandler.remove(responseHandler.Resource.Dataset.get(recordRow),recordRow);
         };
 
         this.get= function(parameter) {
-               if (parameter){ // simula o "http://localhost:3000/assunto/1"
-                   responseHandler.Resource.Dataset = new j$.Resource.Dataset(j$.Resource.Store.restore(url), responseHandler.Resource);
-                   var res= responseHandler.Resource.Dataset.find(function(row,record){
-                       if (record[responseHandler.Resource.id] == parameter){
-                          return true;
-                       }
-                   });
-                   request(res, responseHandler.get);
-               }else{
-                  request(j$.Resource.Store.restore(url),responseHandler.get);
-               }
+              //  if (parameter){ // simula o "http://localhost:3000/assunto/1"
+              //      responseHandler.Resource.Dataset = new j$.Resource.Dataset(j$.Resource.Store.restore(url), responseHandler.Resource);
+              //      var res= responseHandler.Resource.Dataset.find(function(row,record){
+              //          if (record[responseHandler.Resource.id] == parameter){
+              //             return true;
+              //          }
+              //      });
+              //      request(res, responseHandler.get);
+              //  }else{
+              //     request(j$.Resource.Store.restore(url),responseHandler.get);
+              //  }
+              return j$.Requester.get(url, parameter,responseHandler)
        };
        this.search= function(parameter) {
             return j$.Requester.get(url, parameter,responseHandler)
@@ -384,9 +392,10 @@ j$.Resource = function(){
              request(record,responseHandler.post);
        };
 
-       this.put= function(recordRow,record) {
+       this.put= function(id,record, recordRow) {
              //var id=responseHandler.Resource.Dataset.id(recordRow);
-             request(record,responseHandler.put);
+             responseHandler.put(record,id, recordRow)
+             //request(record,responseHandler.put);
        };
        function request(response, callback){
            callback(response);
@@ -397,7 +406,7 @@ j$.Resource = function(){
        var $i = this;
        var ROW = {FIRST:0, LAST:0}
        var originalSource = null;
-       Object.preset($i,{Columns:null, get:get, update:update, insert:insert, remove:remove, find:find, exists:exists
+       Object.preset($i,{Columns:null, get:get, update:update, insert:insert, remove:remove, find:find, findIndex:findIndex,  exists:exists
                          ,id:id, DataSource:DataSource, count:-1,position:0});
 
        this.createPager= page =>{
@@ -435,7 +444,7 @@ j$.Resource = function(){
           return $i.DataSource[$i.position];
         }
         function id (number){
-           //REVIEW: (Para entender as chaves compostas)
+           //REVIEW: (Para atender as chaves compostas)
             return this.get(number)[Resource.id];
         }
 
@@ -448,31 +457,31 @@ j$.Resource = function(){
               return ROW.LAST; //$i.DataSource.length -1;
               originalSource = $i.DataSource;
            }
-       }
+        }
 
-       function update(row,record){
+        function update(row,record){
            let pos = (row) ?row :$i.position
            $i.DataSource[pos]=record;
            originalSource = $i.DataSource;
-       }
+        }
 
-       function remove(row){
+        function remove(row){
            var pos = $i.position;
            $i.DataSource.splice(row,1);
            refresh();
            if (pos != row)
                $i.position=pos;
            originalSource = $i.DataSource;
-       }
+        }
 
-       this.orderBy = function(sort){
+        this.orderBy = function(sort){
             $i.DataSource.sort(sort.orderBy());
             refresh();
             Resource.ResponseHandler.sort(sort);
             //return $i.DataSource;
-       };
+        };
 
-       this.filter=function(criteria){
+        this.filter=function(criteria){
 
            $i.DataSource = originalSource;
            if (criteria){
@@ -492,35 +501,35 @@ j$.Resource = function(){
        };
 
        // métodos de navegacao
-        this.isFirst = function(){
+       this.isFirst = function(){
             return ($i.position == ROW.FIRST);
-        };
-        this.isLast = function(){
+       };
+       this.isLast = function(){
             return ($i.position == ROW.LAST);
-        };
+       };
         // Retorna o PROXIMO registro
-        this.next = function(){
+       this.next = function(){
             if ($i.position < ROW.LAST)
                 $i.position++;
             return this.get(this.position);
         };
 
         // Retorna o registro ANTERIOR
-        this.previous = function(){
+       this.previous = function(){
             if ($i.position > ROW.FIRST)
                 $i.position--;
             return this.get(this.position);
         };
         // Retorna o PRIMEIRO registro
-        this.first = function(){
+       this.first = function(){
             this.position = ROW.FIRST;
             return $i.get($i.position);
-        };
+       };
         // Retorna o ULTIMO registro
-        this.last = function(){
+       this.last = function(){
             this.position = ROW.LAST;
             return $i.get($i.position);
-        };
+       };
 
         this.sweep=function(action){ // varre todo o arquivo sem guardar as posicoes, por isso, nao chama o metodo get()
             var record = null;
@@ -531,7 +540,7 @@ j$.Resource = function(){
             }
         };
 
-        function find(validator){
+        function find(validator){//encontrar um registro específico
             var record = null;
             for (var row=ROW.FIRST; row<=ROW.LAST; row++){
                 record = $i.DataSource[row];
@@ -543,17 +552,24 @@ j$.Resource = function(){
             }
             return null;
         }
+        function findIndex(criteria){//encontrar um registro específico
+            for (let row=ROW.FIRST; row<=ROW.LAST; row++){
+                if (Object.contains($i.DataSource[row],criteria,Resource.key))
+                   return row;
+            }
+            return RC.NOT_FOUND;
+        }
 
-        function exists(record, key){
+        function exists(record, key){ //verifica se um registro existe
             if (!key)
                key = Resource.key;
             var FOUND=false;
             for (var row=ROW.FIRST; row<=ROW.LAST; row++){
                 $i.DataSource[row];
-                if (Object.compare($i.DataSource[row], record, key))
+                if (Object.compare($i.DataSource[row], record, key)) //compara os valores de uma instancia
                    return row;
             }
-            return RETCOD.NOT_FOUND;
+            return RC.NOT_FOUND;
         }
     }
 
@@ -618,6 +634,15 @@ j$.Resource.Pager=function(dataset, page){
    // last    -> indice do registro FINAL da página solicitada
    this.Record ={count:0, first:-1, last:0};
    this.absolutePosition = function(position){return (SELF.Record.first-1)+position}
+   this.pagePosition = function(recordRow){
+       let pos={};
+       let row = recordRow+1
+       pos.page = Math.round(row/this.Control.maxline);
+       if ((pos.page*this.Control.maxline) < row)
+          pos.page++;
+       pos.index = ( row - ((pos.page-1)*this.Control.maxline) -1);
+       return pos;
+   }
 
    if (page){
        Object.setIfExist(SELF.Control, page,['maxline','maxpage']);
@@ -827,8 +852,9 @@ j$.Resource.Store= function(){
    }
 }();
 
-Task = j$.Resource.create("tasks");
+//Task = j$.Resource.create("tasks");
 Papel = j$.Resource.create("papel");
+Documento = j$.Resource.create("http://10.70.4.100:8080/documento");
 
 Papel.Requester.get();
 
@@ -846,7 +872,7 @@ j$.Resource.Store.add(
                            ,{"idEstadoCivil":"4","txEstadoCivil":"Viúvo"}
                       ]});
 // Vai adicionar direto no context default
-Task = j$.Resource.create({name:'uf'
+Uf = j$.Resource.create({name:'uf'
                          ,source:[
                            {"idUf":"1","sgUf":"AM","txEstado":"Amazonas"}
                           ,{"idUf":"2","sgUf":"AC","txEstado":"Acre"}
@@ -981,3 +1007,4 @@ sortDemo = function(currentRow, nextRow){
 };
 // j$.$R.assunto.orderBy(sortDemo,"idCategoriaAssunto")
 // j$.$R.assunto.orderBy(j$.$S.Assunto.Fieldset.Items.idCategoriaAssunto.sortOrder(),"idCategoriaAssunto")
+//j$.$R.assunto.put(13,{idAssunto: "13", idCategoriaAssunto: "1", txTitulo: "TesteW"})

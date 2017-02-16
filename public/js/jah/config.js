@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-var RETCOD = {NOT_FOUND:-1}
+var RC = {NOT_FOUND:-1, NONE:-1}
 var CONFIG = {
     ERROR:{
            MESSAGE:{

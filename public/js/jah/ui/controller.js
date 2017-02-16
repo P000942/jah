@@ -78,11 +78,12 @@ function ActionController(ResponseController){
         }
 
         if (goAhead){
-           var confirmed = confirm("Confirma solicitação de exclusão?");
+           let confirmed = confirm("Confirma solicitação de exclusão?");
            if (confirmed){
-               var row = SELF.List.getPosition(cell); // Idenifica a posição(linha) no grid (table)
-               var recordRow =(SELF.List.Pager.absolutePosition(row)); // Posicao no dataset(array)
-               Resource.remove(recordRow);
+               let idxList = SELF.List.getPosition(cell); // Idenifica a posição(linha) no grid (table)
+               let recordRow =(SELF.List.Pager.absolutePosition(idxList)); // Posicao no dataset(array)
+               let id = Resource.Dataset.id(recordRow);
+               Resource.remove(id, recordRow);
            }
         }
   }
@@ -96,7 +97,9 @@ function ActionController(ResponseController){
          if (newRecord){
              Resource.post(record);
          }else{
-             Resource.put(Resource.Dataset.position, record);
+             ResponseController.service.updating=true;
+             let id = Resource.Dataset.id(Resource.Dataset.position);
+             Resource.put(id, record, Resource.Dataset.position);
          }
       }
       // else {
@@ -121,7 +124,6 @@ function ResponseController($service){
 
    var EDITED = false;
    var NEW_RECORD =false;
-   var rowEdited= -1;
 
    var BUTTONS = function(buttons){
        // Carregar os elementos(button) para cria as constantes com o botões (Exemplo: BUTTONS.SAVE, BUTTONS.EDIT)
@@ -160,21 +162,22 @@ function ResponseController($service){
       init();
   }
 
-  function init(){
+  function init(options){
       hide(['SAVE','CHILD']);
       EDITED = false;
       NEW_RECORD=false;
-      rowEdited = -1;
       if (SELF.UpdateController)
-          SELF.UpdateController.refresh();
+          SELF.UpdateController.refresh(options);
   }
 
   function edit(cell){
+        SELF.service.updating=false;
         hide(['GET','INSERT']);
         NEW_RECORD=false;
         EDITED=true;
-        rowEdited = SELF.service.page.List.getPosition(cell);
-        let recordRow = SELF.Resource.Dataset.Pager.absolutePosition(rowEdited);
+        SELF.UpdateController.reset();
+        let idxListEdited = SELF.List.getPosition(cell);
+        let recordRow = SELF.Resource.Dataset.Pager.absolutePosition(idxListEdited);
         SELF.UpdateController.edit(recordRow);
   }
   function child(key){ // key é o indicador da chave que contém o filho
@@ -185,12 +188,12 @@ function ResponseController($service){
 
   function insert(){
         hide(['GET','INSERT','PRINT','CHILD']);
-        rowEdited = -1;
         EDITED=true;
         NEW_RECORD=true;
         SELF.UpdateController.reset();
         if (SELF.service.afterActionInsert)
             SELF.service.afterActionInsert(SELF.UpdateController);
+        SELF.service.page.hideAlert().hideAlert();
   }
 
   function hide(buttons){
@@ -200,19 +203,22 @@ function ResponseController($service){
   };
   function ResponseHandler(parent){
       this.get = function(response) { // os recursos serao criados no primeiro GET
-         parent.UpdateController = new UpdateController(parent.service);
+        if (!dataExt.isDefined(parent.UpdateController))
+           parent.UpdateController = new UpdateController(parent.service);
 
-         if (parent.service.initialize)
+        if (parent.service.initialize)
             parent.service.initialize(parent.UpdateController);
-         init();
-         //return parent.Resource.Dataset;
+        if (response)
+            init({});
+        else
+            init({hideAlert:true});
      };
      this.remove= function(response, recordRow) {
          let rowDeleted = parent.UpdateController.remove();
-         if (rowEdited===rowDeleted)
+         if (SELF.List.index===rowDeleted)
             init();
-         else if (rowEdited>rowDeleted) {
-            rowEdited--;
+         else if (SELF.List.index>rowDeleted) {
+            SELF.List.index--;
          }
 
      };
@@ -222,10 +228,22 @@ function ResponseController($service){
          EDITED=true;
      };
 
-     this.put= function(record) {
-         parent.UpdateController.update(rowEdited,record);
-         NEW_RECORD=false;
-         EDITED=true;
+     this.put= function(record, recordRow) {
+         let idxListEdited=SELF.List.index;
+         let pagEdited=SELF.List.Pager.number();
+
+         let pos = SELF.Resource.Dataset.Pager.pagePosition(recordRow); // esse controle só faz sentido para uma atualização externa.
+         if (pagEdited==pos.page){     // é a mesma página
+            let rowEdit = (pos.index==idxListEdited && !SELF.service.updating) ?recordRow :null;
+            if (pos.index!=idxListEdited) // Não é a mesma linha do grid que está sendo editada tb está sendo atualizado
+               idxListEdited = pos.index
+            parent.UpdateController.update(idxListEdited,record, rowEdit);
+         } else {
+             parent.UpdateController.update(RC.NONE,record);
+         }
+          NEW_RECORD=false;
+          EDITED=true;
+          SELF.service.updating=false;
      };
 
      this.filter= function(criteria) {
@@ -254,40 +272,41 @@ function UpdateController(service){
       }
   }();
 
-  function hideAlert(){
-     if (service.page.alert)
-         j$.ui.Alert.hide(service.page.alert);
-  }
+  // function hideAlert(){
+  //    if (service.page.alert)
+  //        j$.ui.Alert.hide(service.page.alert);
+  // }
 
   function reset(){
-       hideAlert()
-       SELF.form.reset(); // inputs do form
-       service.Fieldset.reset(); // atribusto dos fields (class, valor default, etc)
+      service.page.reset();
   }
 
-  function refresh(){
+  function refresh(options){
      if (service.page.List)
-         service.page.List.init(Resource);
-     SELF.reset();
+        service.page.List.init(Resource); // já faz o reset();
+     else
+        SELF.reset();
+     if (options.hideAlert)
+        service.page.hideAlert();
   }
 
   function edit(recordRow){
-        reset();
         let record = Resource.Dataset.get(recordRow);
         service.Fieldset.edit(record);
         if (service.page.child)
            service.page.child.notify({action:CONFIG.ACTION.EDIT.KEY, record:record});
+        service.page.hideAlert();
         return record;
   }
 
   function remove(){
-        let row = -1;
+        let idxList = -1;
         if (service.page.List)
            //service.page.List.Detail.remove();
-           row = service.page.List.Detail.remove();
+           idxList = service.page.List.Detail.remove();
         if (service.onSuccess)
             service.onSuccess(CONFIG.ACTION.REMOVE);
-        return row;
+        return idxList;
   }
 
   function insert(record, recordRow){
@@ -299,12 +318,14 @@ function UpdateController(service){
      return recordRow;
   }
 
-  function update(rowEdited, record){
+  function update(idxList, record, recordRow){
       service.Fieldset.populate(record);
-      if (service.page.List)
-          service.page.List.Detail.update(rowEdited+1, record);
+      if (service.page.List && idxList != RC.NONE)
+          service.page.List.Detail.update(idxList+1, record);
+      if (recordRow)
+         edit(recordRow);
       if (service.onSuccess)
-         service.onSuccess(CONFIG.ACTION.SAVE);
+            service.onSuccess(CONFIG.ACTION.SAVE);
   }
 
  function validate(newRecord){

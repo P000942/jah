@@ -8,14 +8,14 @@
                  }
             , beforeDelete: function(UpdateController) {console.log('beforeDelete: Não vai prosseguir'); return true;}
             , afterActionInsert: function(UpdateController) {console.log('afterActionInsert:');}
-            , onError: function(ACTION) {
-                 console.log('onError Assunto:'+ACTION.MESSAGE.ERROR);
-                 j$.ui.Alert.error(this.Interface.Designer.alert, ACTION.MESSAGE.ERROR)
-            }
-            , onSuccess: function(ACTION) {
-                 console.log('onSuccess Assunto:'+ACTION.MESSAGE.SUCCESS);
-                // j$.ui.Alert.success(this.Interface.Designer.alert, ACTION.MESSAGE.SUCCESS)
-            }
+            // , onError: function(ACTION) {
+            //      console.log('onError Assunto:'+ACTION.MESSAGE.ERROR);
+            //      j$.ui.Alert.error(this.Interface.Designer.alert, ACTION.MESSAGE.ERROR)
+            // }
+            // , onSuccess: function(ACTION) {
+            //      console.log('onSuccess Assunto:'+ACTION.MESSAGE.SUCCESS);
+            //     // j$.ui.Alert.success(this.Interface.Designer.alert, ACTION.MESSAGE.SUCCESS)
+            // }
             , validate: function(UpdateController) {
                  console.log('validate Assunto');
                  return true;
