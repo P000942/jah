@@ -665,7 +665,7 @@ j$.ui.Form=function(service, modal) {
            j$.ui.Alert.hide($i.alert);
     }
     $i.reset = function(){
-        //hideAlert()
+        $i.hideAlert();
         $i.form.reset(); // inputs do form
         $i.service.Fieldset.reset(); // atributo dos fields (class, valor default, etc)
         if ($i.List)

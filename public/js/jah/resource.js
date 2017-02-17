@@ -86,10 +86,10 @@
 
             if (!cached) {// não resolveu no cache.
                if (responseHandler.Resource.local) { //Se não for recurso local, pede http
+                  responseHandler.get(null);
                   responseHandler.failure (
                      j$.Resource.DefaultHandler.formatError(CONFIG.HTTP.STATUS.NOT_FOUND.VALUE, "Nenhum resultado foi encontrado para a solicitação")
                   );
-                  responseHandler.get(null);
                }else{
                   if (parameter){
                       if (dataExt.isObject(parameter))

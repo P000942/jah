@@ -162,12 +162,12 @@ function ResponseController($service){
       init();
   }
 
-  function init(options){
+  function init(){
       hide(['SAVE','CHILD']);
       EDITED = false;
       NEW_RECORD=false;
       if (SELF.UpdateController)
-          SELF.UpdateController.refresh(options);
+          SELF.UpdateController.refresh();
   }
 
   function edit(cell){
@@ -193,7 +193,7 @@ function ResponseController($service){
         SELF.UpdateController.reset();
         if (SELF.service.afterActionInsert)
             SELF.service.afterActionInsert(SELF.UpdateController);
-        SELF.service.page.hideAlert().hideAlert();
+        //SELF.service.page.hideAlert();
   }
 
   function hide(buttons){
@@ -208,10 +208,11 @@ function ResponseController($service){
 
         if (parent.service.initialize)
             parent.service.initialize(parent.UpdateController);
-        if (response)
-            init({});
-        else
-            init({hideAlert:true});
+        init();
+        // if (response)
+        //     init({});
+        // else
+        //     init({hideAlert:true});
      };
      this.remove= function(response, recordRow) {
          let rowDeleted = parent.UpdateController.remove();
@@ -272,22 +273,17 @@ function UpdateController(service){
       }
   }();
 
-  // function hideAlert(){
-  //    if (service.page.alert)
-  //        j$.ui.Alert.hide(service.page.alert);
-  // }
-
   function reset(){
       service.page.reset();
   }
 
-  function refresh(options){
+  function refresh(){
      if (service.page.List)
         service.page.List.init(Resource); // já faz o reset();
      else
         SELF.reset();
-     if (options.hideAlert)
-        service.page.hideAlert();
+    //  if (options.hideAlert)
+    //     service.page.hideAlert();
   }
 
   function edit(recordRow){
@@ -295,7 +291,7 @@ function UpdateController(service){
         service.Fieldset.edit(record);
         if (service.page.child)
            service.page.child.notify({action:CONFIG.ACTION.EDIT.KEY, record:record});
-        service.page.hideAlert();
+        //service.page.hideAlert();
         return record;
   }
 
