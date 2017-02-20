@@ -78,13 +78,23 @@ function ActionController(ResponseController){
         }
 
         if (goAhead){
-           let confirmed = confirm("Confirma solicitação de exclusão?");
-           if (confirmed){
-               let idxList = SELF.List.getPosition(cell); // Idenifica a posição(linha) no grid (table)
-               let recordRow =(SELF.List.Pager.absolutePosition(idxList)); // Posicao no dataset(array)
-               let id = Resource.Dataset.id(recordRow);
-               Resource.remove(id, recordRow);
-           }
+           let confirmed=false;
+           j$.Confirm.show({title:"Exclusão de Registro", text:"Confirma a exclusão de registro?"}
+                     , action =>{
+                         if (action=="yes"){
+                           let idxList = SELF.List.getPosition(cell); // Idenifica a posição(linha) no grid (table)
+                           let recordRow =(SELF.List.Pager.absolutePosition(idxList)); // Posicao no dataset(array)
+                           let id = Resource.Dataset.id(recordRow);
+                           Resource.remove(id, recordRow);
+                         }
+                     });
+          //  let confirmed = confirm("Confirma solicitação de exclusão?");
+          //  if (confirmed){
+          //      let idxList = SELF.List.getPosition(cell); // Idenifica a posição(linha) no grid (table)
+          //      let recordRow =(SELF.List.Pager.absolutePosition(idxList)); // Posicao no dataset(array)
+          //      let id = Resource.Dataset.id(recordRow);
+          //      Resource.remove(id, recordRow);
+          //  }
         }
   }
 

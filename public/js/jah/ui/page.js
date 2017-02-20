@@ -202,7 +202,7 @@ j$.ui.Buttons=function(actionController, buttons, presetFunction){
     function preset(key,button, parent){
         if (parent && parent.id)
             Object.preset(button, {id: parent.id +'_'+ key});
-        Object.preset(button,{key:key, value:key, clas$:CONFIG.BUTTON.CLASS.DEFAULT});
+        Object.preset(button,{key:key, value:button.VALUE, clas$:CONFIG.BUTTON.CLASS.DEFAULT});
         if (actionController && dataExt.isString(actionController))
            button.onclick = actionController+'.' +key+'(this);';
         return button;
@@ -842,7 +842,7 @@ j$.ui.Modal=function(id, service, actionCallback) {
 };
 
 j$.Message =  new j$.ui.Modal("Message");
-j$.Confirme = new j$.ui.Modal("Confirme",{
+j$.Confirm = new j$.ui.Modal("Confirme",{
                  text: '<p><strong>MUDAR O TEXTO:</strong></p>j$.Confirme.text</br>ou</br>{text:"Meu texto"} no método show</p></br>'
                       +'<p><strong>MUDAR O TÍTULO:</strong></p>j$.Confirme.title</br>ou</br>{title:"Meu texto"} no método show</p></br>'
                       +'<p><strong>Experimente:</strong></p>j$.Confirme.show({title:"Meu texto", text:"Meu texto"}, function(action){alert(action);})</p></br>'
