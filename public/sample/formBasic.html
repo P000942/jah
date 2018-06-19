@@ -20,7 +20,7 @@
     <!-- <script src="../js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script> -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script src="../js/vendor/jquery.json-2.3.min.js"></script>
+    <!-- <script src="../js/vendor/jquery.json-2.3.min.js"></script> -->
     <!-- <script src="../js/vendor/bootstrap.min.js"></script> -->
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="../js/jah/config.js"></script>
@@ -105,7 +105,8 @@
                        Data:TYPE.DATE(),
                        Hora:TYPE.HOUR(),
                       Email:TYPE.EMAIL(50),
-                       Nome:TYPE.CHAR(25),
+                       Text:TYPE.CHAR(25),
+                       Nome:TYPE.NAME(40),
                    Telefone:TYPE.PHONE(),
                         CPF:TYPE.CPF(),
                        CNPJ:TYPE.CNPJ(),
@@ -113,7 +114,7 @@
                         CEP:TYPE.CEP(),
                       Placa:TYPE.Placa(),
                       Lista:TYPE.LIST({label:'Categoria', list:{'1':'Sistema', '2':'Projeto', '3':'Manutenção'}}),
-                      listUf:TYPE.TYPEAHEAD({label:'UF', resource:{name:'uf', text:'txEstado'}}),
+                     listUf:TYPE.TYPEAHEAD({label:'UF', resource:{name:'uf', text:'txEstado'}}),
                       Check:TYPE.BOOLEAN({label:'Ativo', list:{'true':{value:true, text:'Ativo'}, 'false': {value:false, text:'Cancelado'}}}),
                     Mascara:TYPE.MASK('(@@)###-9',{label:'Máscara Auto'}),
              MascaraUsuario:TYPE.MASK('(@@)###-9',{label:'Máscara', validator:{error:'Campo com valor inválido', handler:function(value){return false;}}})

@@ -180,12 +180,12 @@ j$.Resource = function(){
         }
       , create: function(resource, externalResponseHandler){
             let Definition = j$.Resource.parse(resource);
-            if (!j$.$R[Definition.name]){
+            //if (!j$.$R[Definition.name]){ // recurso não existe, será criado
                items[Definition.name] =new Resource(Definition, externalResponseHandler);
-            } else {
-               if (externalResponseHandler) // associa o externalResponseHandler ao recurso (ele pode ter sido criado por fora)
-                  items[Definition.name].externalResponseHandler = externalResponseHandler;
-            }
+            // } else {
+            //    if (externalResponseHandler) // associa o externalResponseHandler ao recurso (ele pode ter sido criado por fora)
+            //       items[Definition.name].externalResponseHandler = externalResponseHandler;
+            // }
             return items[Definition.name];
         }
       , context:context
@@ -852,7 +852,7 @@ j$.Resource.Store= function(){
    }
 }();
 
-//Task = j$.Resource.create("tasks");
+Task = j$.Resource.create("tasks");
 Papel = j$.Resource.create("papel");
 Documento = j$.Resource.create("http://10.70.4.100:8080/documento");
 
@@ -878,6 +878,8 @@ Uf = j$.Resource.create({name:'uf'
                           ,{"idUf":"2","sgUf":"AC","txEstado":"Acre"}
                           ,{"idUf":"3","sgUf":"SP","txEstado":"São Paulo"}
                           ,{"idUf":"4","sgUf":"RJ","txEstado":"Rio de Janeiro"}
+                          ,{"idUf":"5","sgUf":"PA","txEstado":"Pará"}
+                          ,{"idUf":"6","sgUf":"PR","txEstado":"Paraná"}
                        ]});
 
 j$.Resource.Store.add({name:"assunto"
@@ -995,16 +997,16 @@ j$.Resource.Store.add({
 // j$.$R.assunto.filter({txTitulo:'SUAD', idCategoriaAssunto:3})
 // Assunto.actionController.refresh(criteria, {filter:true})
 
-sortDemo = function(currentRow, nextRow){
-    var currentVal = DATATYPE.NUMBER.parse(currentRow.idCategoriaAssunto);
-    var nextVal    = DATATYPE.NUMBER.parse(nextRow.idCategoriaAssunto);
-    var r = 0;
-    if (currentVal < nextVal)
-        r = -1;
-    else if (currentVal > nextVal)
-        r = 1;
-    return r;
-};
+// sortDemo = function(currentRow, nextRow){
+//     var currentVal = DATATYPE.NUMBER.parse(currentRow.idCategoriaAssunto);
+//     var nextVal    = DATATYPE.NUMBER.parse(nextRow.idCategoriaAssunto);
+//     var r = 0;
+//     if (currentVal < nextVal)
+//         r = -1;
+//     else if (currentVal > nextVal)
+//         r = 1;
+//     return r;
+// };
 // j$.$R.assunto.orderBy(sortDemo,"idCategoriaAssunto")
 // j$.$R.assunto.orderBy(j$.$S.Assunto.Fieldset.Items.idCategoriaAssunto.sortOrder(),"idCategoriaAssunto")
 //j$.$R.assunto.put(13,{idAssunto: "13", idCategoriaAssunto: "1", txTitulo: "TesteW"})

@@ -1,20 +1,20 @@
 var urlPartial = CONFIG.SERVER.CONTEXT+ 'partial.html';
 var adapter={
     services:{
-               Papel:{caption:'Papel'   ,  crud:true, title:'Cadastro de Papel',  onClick:openPapel}
-          ,  Usuario:{caption:'Usuário' ,  crud:true, title:'Cadastro de Usuário'}
-          ,  Documento:{caption:'Documento' ,  crud:true, title:'Cadastro de Documento'}
-          ,  Assunto:{caption:'Assunto' ,  crud:true, title:'Cadastro de Assunto', modal:true}
-  ,SituacaoAtividade:{caption:'Situação',  crud:true, title:'Cadastro de Situações da Atividade'}
-          ,  Partial:{partial:urlPartial,             title:'Conheça a história e a caminhada da Comunidade'}
-          ,   Pessoa:{caption:'Pessoa'  , query:true, title:'Exemplo de consulta'}
-          ,   Basico:{caption:'Básico'  , query:true, title:'Consulta Básica', resource:'pessoa'}
-          ,   Tarefa:{caption:'Tarefa'  ,  crud:true, title:'Tarefa'         , resource:'tarefa'}
-          , Mensagem:{caption:'Mensagem', query:true, title:'Mensagem'       , resource:'mensagem', modal:true}
+                 Papel:{caption:'Papel'    ,   crud:true, title:'Cadastro de Papel',  onClick:openPapel}
+          ,    Usuario:{caption:'Usuário'  ,   crud:true, title:'Cadastro de Usuário'}
+          ,  Documento:{caption:'Documento',   crud:true, title:'Cadastro de Documento'}
+          ,    Assunto:{caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto', modal:true}
+  ,  SituacaoAtividade:{caption:'Situação' ,   crud:true, title:'Cadastro de Situações da Atividade'}
+          ,    Partial:{partial:urlPartial ,              title:'Conheça a história e a caminhada da Comunidade'}
+          ,     Pessoa:{caption:'Pessoa'   ,  query:true, title:'Exemplo de consulta'}
+          ,     Basico:{caption:'Básico'   ,  query:true, title:'Consulta Básica', resource:'pessoa'}
+          ,     Tarefa:{caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa'}
+          ,   Mensagem:{caption:'Mensagem' ,  query:true, title:'Mensagem'       , resource:'mensagem', modal:true}
         }
    , design:{
-           Tabelas:{caption:'Tabelas', items:['Papel','Usuario','Documento']}
-         ,  Outros:['Assunto', 'SituacaoAtividade','Partial'] // key e caption serão igual a "Outros"
+             Tabelas:{caption:'Tabelas', items:['Papel','Usuario','Documento']}
+         ,    Outros:['Assunto', 'SituacaoAtividade','Partial'] // key e caption serão igual a "Outros"
          ,  Consulta:['Pessoa','Basico']
        }
 };
@@ -22,7 +22,6 @@ System.using("js/crud/modelo.js"); // Didatico para ver como carregar um arquivo
 
 j$.ui.Page.createAdapter(adapter);
 
-// google.setOnLoadCallback(function() {
 $(document).ready(function(){
     j$.Dashboard.init(j$.ui.Adapter);
     j$.ui.Page.Helper.init();

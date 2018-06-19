@@ -152,6 +152,8 @@ j$.ui.type.HintIcon= function(parent, id, hint, text){
                       SELF.text=msg;
                   if (!i$(id))
                      element=j$.ui.Render.hint(parent, id, SELF.show);
+                  else
+                     element=i$(id);
                   element.className = SELF.class;
               }
             , set:function(msg){SELF.text=msg; }
@@ -217,6 +219,7 @@ var TYPE = function() {
    ,   LOWERCASE: function(size,properties){return new j$.ui.type.LowerCase(size,properties);}
    ,   UPPERCASE: function(size,properties){return new j$.ui.type.UpperCase(size,properties);}
    ,        CHAR: function(size,properties){return new j$.ui.type.Char(size,properties);}
+   ,        NAME: function(size,properties){return new j$.ui.type.Name(size,properties);}
    ,    PASSWORD: function(size,properties){return new j$.ui.type.Password(size,properties);}
    ,     INTEGER: function(size,properties){return new j$.ui.type.Integer(size,properties);}
    ,     NUMERIC: function(size,decimal,properties){return new j$.ui.type.Numeric(size,decimal,properties);}
@@ -326,8 +329,9 @@ superMask=function(mask){
 //TYPE.TEST.assert(TYPE.NUMERIC(),'1');
 //TYPE.TEST.assert(TYPE.BOOLEAN({list:{'true':{value:true, text:'Ativo'}, 'false':{value:false, text:'Desativado'}}}),true);
 //TYPE.TEST.assert(TYPE.BOOLEAN({list:{'true':{value:1, text:'Ativo'}, 'false': {value:9, text:'Cancelado'}}}),1);
-
 //TYPE.TEST.assert(TYPE.LIST({list:{'M':'Masculino', 'F':'Feminino'}}),'M');
+
+
 Element.prototype.bind = function(field) {
     this.field =field;
     if (!field.binded){
@@ -393,8 +397,7 @@ function superType(Type, Properties) {
                    value = (value)?value:SELF.value();
                    if (SELF.Resource && !value.isEmpty()){
                        if (SELF.type==='text')
-                          // SELF.Resource.Requester.get(SELF.Resource.url, value);
-                           SELF.Resource.Requester.get(value);
+                           SELF.Resource.get(value);
                    }
             }
       };
@@ -588,6 +591,10 @@ j$.ui.type.Money=function(size, Properties){
    this.format= function(value) {return dataExt.format.money(value); };
 }
 
+j$.ui.type.Char=function(size, Properties){
+   this.inherit = superType;
+   this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{error:ERROR.MESSAGE.Char}}, Properties);
+}
 j$.ui.type.Letter=function(size, Properties){
    this.inherit = superType;
    this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:function(value){return value.isLetter();}, error:ERROR.MESSAGE.Letter}, mask:{format:'@'.repeat(size)}}, Properties);
@@ -599,6 +606,16 @@ j$.ui.type.UpperCase=function(size, Properties){
 j$.ui.type.LowerCase=function(size, Properties){
    this.inherit = superType;
    this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:function(value){return value.isLetter();}, error:ERROR.MESSAGE.Letter}, mask:{format:'a'.repeat(size)}}, Properties);
+}
+
+j$.ui.type.Name=function(size, Properties){
+   this.inherit = superType;
+   this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:function(value){return value.isName();}, error:ERROR.MESSAGE.Name}}, Properties);
+}
+
+j$.ui.type.Email=function(size, Properties){
+   this.inherit = superType;
+   this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:function(value){return value.isEmail();}, error:ERROR.MESSAGE.Email}}, Properties);
 }
 
 j$.ui.type.Date=function(Properties){
@@ -616,15 +633,7 @@ j$.ui.type.Phone=function(Properties){
    this.inherit({size:11, validator:{handler:function(value){withoutMask=true;return value.isPhone(withoutMask);}, error:ERROR.MESSAGE.Phone}, mask:{format:'(000)0000-0000|(___)____-____', strip:'()-'}}, Properties);
 }
 
-j$.ui.type.Email=function(size, Properties){
-   this.inherit = superType;
-   this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:function(value){return value.isEmail();}, error:ERROR.MESSAGE.Email}}, Properties);
-}
 
-j$.ui.type.Char=function(size, Properties){
-   this.inherit = superType;
-   this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{error:ERROR.MESSAGE.Char}}, Properties);
-}
 j$.ui.type.Password=function(size, Properties){
    this.inherit = superType;
    this.inherit({size:size, type:'password', dataType:DATATYPE.CHAR, validator:{error:ERROR.MESSAGE.Password}}, Properties);

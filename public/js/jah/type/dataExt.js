@@ -295,7 +295,7 @@ Date.prototype.format = function (mask, utc) {
 	return dateFormat(this, mask, utc);
 };
 
-var Test = function(){
+var testAlfa = function(){
     return{Date:function(value){console.log("isDate('"    +value+ "'):"+ value.isDate())},
           Digit:function(value){console.log("isDigit('"   +value+ "'):"+ value.isDigit())},
          Letter:function(value){console.log("isLetter('"  +value+ "'):"+ value.isLetter())},
@@ -312,7 +312,7 @@ var Test = function(){
     }
 }();
 
-var Testa = function(){
+var testNum = function(){
     return{CPF:function(value){console.log('ehCpf('     +value+ '):'+ value.ehCpf())},
           CNPJ:function(value){console.log('ehCnpj('    +value+ '):'+ value.ehCnpj())},
            CCA:function(value){console.log('ehCca('     +value+ '):'+ value.ehCca())},

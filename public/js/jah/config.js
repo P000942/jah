@@ -12,6 +12,7 @@ var CONFIG = {
             ,        Money: "Entre somente com valores numéricos"
             ,       Letter: "Entre somente com letras"
             ,         Char: ""
+            ,         Name: "Informe um nome válido"
             ,     Password: "Senha inválida"
             ,      Integer: "Entre somente o número sem casas decimais"
             ,        Email: "Email com formatação inválida"
