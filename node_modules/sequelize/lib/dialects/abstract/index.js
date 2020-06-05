@@ -1,8 +1,6 @@
 'use strict';
 
-var AbstractDialect = function() {
-
-};
+class AbstractDialect {}
 
 AbstractDialect.prototype.supports = {
   'DEFAULT': true,
@@ -13,8 +11,7 @@ AbstractDialect.prototype.supports = {
   'ORDER NULLS': false,
   'UNION': true,
   'UNION ALL': true,
-  /* What is the dialect's keyword for INSERT IGNORE */
-  'IGNORE': '',
+  'RIGHT JOIN': true,
 
   /* does the dialect support returning values for inserted/updated fields */
   returnValues: false,
@@ -32,19 +29,28 @@ AbstractDialect.prototype.supports = {
   },
   /* Do we need to say DEFAULT for bulk insert */
   bulkDefault: false,
-  /* The dialect's words for INSERT IGNORE */
-  ignoreDuplicates: '',
-  /* Does the dialect support ON DUPLICATE KEY UPDATE */
-  updateOnDuplicate: false,
   schemas: false,
   transactions: true,
+  settingIsolationLevelDuringTransaction: true,
   transactionOptions: {
     type: false
   },
   migrations: true,
   upserts: true,
+  inserts: {
+    ignoreDuplicates: '', /* dialect specific words for INSERT IGNORE or DO NOTHING */
+    updateOnDuplicate: false, /* whether dialect supports ON DUPLICATE KEY UPDATE */
+    onConflictDoNothing: '' /* dialect specific words for ON CONFLICT DO NOTHING */
+  },
   constraints: {
-    restrict: true
+    restrict: true,
+    addConstraint: true,
+    dropConstraint: true,
+    unique: true,
+    default: false,
+    check: true,
+    foreignKey: true,
+    primaryKey: true
   },
   index: {
     collate: true,
@@ -53,6 +59,7 @@ AbstractDialect.prototype.supports = {
     concurrently: false,
     type: false,
     using: true,
+    functionBased: false
   },
   joinTableDependent: true,
   groupedLimit: true,
@@ -62,3 +69,5 @@ AbstractDialect.prototype.supports = {
 };
 
 module.exports = AbstractDialect;
+module.exports.AbstractDialect = AbstractDialect;
+module.exports.default = AbstractDialect;
