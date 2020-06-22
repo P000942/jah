@@ -25,15 +25,19 @@
                     this.Interface.container=idTarget;
                 j$.ui.Page.create(this, modal).init();
             }
+            , autoRequest:false // padrão é fazer o carregamento automático do recurso
             , resource:{name:'assunto'
                         , id:'idAssunto'
                      , local:true // recurso local (não está no servidor)
                      , cache:true // pega os dados que estão no cache.
-                     , autoCharge:true // TODO: faz o carregamento automático do recurso
                    }
             , child:{   Tarefa:{caption:'Ver Tarefa'
-                             , fieldset:{idTarefa:TYPE.INTEGER(4,{label:'Código', readOnly:true})
-                                        ,txTarefa:TYPE.CHAR(30,{label:'Tarefa', mandatory:true})}}
+                             , bindBy:"idAssunto"
+                             , fieldset:{idAssunto:TYPE.INTEGER(4,{label:'Assunto', readOnly:true, parentKey:true})
+                                        , idTarefa:TYPE.INTEGER(4,{label:'Código', readOnly:true})
+                                        , txTarefa:TYPE.CHAR(30,{label:'Tarefa', mandatory:true})
+                                        }
+                    }
                       , Mensagem:{caption:'Ver Mensagem'}
                     }
         });

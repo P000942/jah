@@ -341,10 +341,14 @@ Element.prototype.bind = function(field) {
 
 function superType(Type, Properties) {
    var SELF=this;
-   Object.preset(SELF,{align:ALIGN.LEFT, mandatory:false, autotab:false, label:'', hint:null, persist:true, defaultValue:'', type:'text'
-                     ,id:'', key:null, list:null, readOnly:false, binded:false, order:ORDER.NONE, disabled:false, onFilter:false
-                     ,inputField:false, dataType:DATATYPE.NUMBER, size:null, maxlength:0, validator:null, mask:null
-                     ,Header:{clas$:null, id:null}, Report:{}, Record:{value:'', formattedValue:''}, attributes:null});
+   Object.preset(SELF,{align:ALIGN.LEFT, mandatory:false, autotab:false, label:''
+                     , hint:null, persist:true, defaultValue:'', type:'text'
+                     , id:'', key:null, list:null, readOnly:false
+                     , binded:false, order:ORDER.NONE, disabled:false, onFilter:false
+                     , inputField:false, dataType:DATATYPE.NUMBER, size:null
+                     , maxlength:0, validator:null, mask:null
+                     , Header:{clas$:null, id:null}
+                     , Report:{}, Record:{value:'', formattedValue:''}, attributes:null});
 /*   this.id  - Eh o identificador no form.
    this.key - eh como estah definido no dataset (column)
 */
@@ -541,14 +545,17 @@ function superType(Type, Properties) {
         var mask = null;
         // Primeiro verifica o que vem do no Type, que são o valores que já vem por padrão
         if (Type){
-            Object.setIfExist(SELF, Type, ['align','size','validator','mask','autotab','type','label','dataType','list','attributes']);
+            Object.setIfExist(SELF, Type, ['align','size','validator','mask','autotab'
+                                          ,'type','label','dataType','list','attributes']);
             if (Type.mask)
                 mask=Type.mask;
         }
         // Depois verifica o que vem em Porperties, que é o que vem do usuário;
         if (Properties){
             Object.setIfExist(SELF, Properties,
-                             ['evaluate','autotab', 'label','mandatory', 'align', 'readOnly', 'disabled', 'defaultValue', 'type', 'dataType', 'list', 'hint','attributes']);
+                             ['evaluate','autotab', 'label','mandatory', 'align'
+                            , 'readOnly', 'disabled', 'defaultValue', 'type'
+                            , 'dataType', 'list', 'hint','attributes']);
             if (Properties.resource){
                 // SELF.AdapterResource = j$.Resource.ResponseHandler;  // Quando tiver RESOURCE
                 // SELF.AdapterResource(Properties, SELF);
@@ -859,6 +866,26 @@ j$.ui.Fieldset = function(fields) {
         }
         return record;
     };
+    this.RecordBy = function(keys){
+        let record = {};
+        const keyType = dataExt.type(keys);
+        switch (keyType) {
+            case "String": record[keys]= SELF.Items[keys].value();
+                 break; 
+            case "Array": 
+                keys.forEach(key => {record[key]= SELF.Items[key].value()})
+                break;
+            default:
+                console.log(`"${keyType}" não é um tipo reconhecido em "Fieldset.RecordBy"`);
+        } 
+        return record;
+    };   
+    this.setDefaults = function(provider){
+        for (let key in provider){
+            if (this.Items[key])
+                this.Items[key].defaultValue=provider[key];
+        }
+    }; 
      // varre as campos e devolve um registro com o conteúdo dos campos
     this.sweep = function(action){
         let record = {};

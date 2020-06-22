@@ -328,8 +328,9 @@ j$.ui.Pager=function(parent, pager , actionController){
 j$.service = function(){
    var items = {};
    function base(adpater, service){
-        var $i=this;
+        let $i=this;
         this.id=adpater.key;
+        this.getBindFields = getBindFields;
         //this.Page;
         this.Interface= {
              container:CONFIG.LAYOUT.CONTENT
@@ -342,10 +343,15 @@ j$.service = function(){
         };
         // DEFINIR O RESOURCE
         Object.setIfExist($i,adpater,['resource']); // Primeiro procurar obter do serviço
-        Object.setIfExist($i,service,['resource','init',,'child','initialize','onOpen','afterActionInsert','onSuccess','onError','validate']); // Em seguida das propriedades informadas (este prevalece)
+        Object.setIfExist($i,service,['resource','init','child','autoRequest','bindBy'
+                                    ,'initialize','onOpen','afterActionInsert'
+                                    ,'onSuccess','onError','validate']); // Em seguida das propriedades informadas (este prevalece)
         if (service.Interface)
            Object.setIfExist($i.Interface,service.Interface,['id','design','container','Buttons','List']);
-
+        if (service.Parent && service.constructor.name == "j$.ui.Child") {
+           Object.setIfExist($i,service,['Parent']);
+           $i.Child = service; // bindBy
+        }
         // DEFINIR O TÍTULO
         if (adpater.title) // se tiver o title no serviço usa-o como caption do form
            $i.Interface.title = adpater.title;
@@ -358,6 +364,7 @@ j$.service = function(){
            $i.Fieldset = new j$.ui.Fieldset(adpater.fieldset);
         else // cria um fieldset padrão com código e descrição
            $i.Fieldset = new j$.ui.Fieldset(j$.ui.Fieldset.make($i.id));
+        // DEFINIR os métodos default  
         if ($i.init==undefined){
             $i.init=function(idTarget, modal, param){
                if (idTarget)
@@ -365,6 +372,20 @@ j$.service = function(){
                j$.ui.Page.create($i, modal).init();
             };
         }
+        if ($i.autoRequest==undefined){
+            $i.autoRequest=function(parms){
+                $i.Resource.get(getBindFields(parms));
+            };
+        }
+        function getBindFields(BindFields){
+            if (!BindFields){
+               if ($i.Parent && $i.Child){
+                  BindFields = $i.Parent.service.Fieldset.RecordBy($i.Child.bindBy);
+                  $i.Child.service.Fieldset.setDefaults(BindFields);
+               }
+            }
+            return BindFields;
+        }       
     }
     function crud(adpater, service){
        this.inherit = base;
@@ -666,21 +687,27 @@ j$.ui.Form=function(service, modal) {
     }
     $i.reset = function(){
         $i.hideAlert();
+        $i.service.getBindFields();
         $i.form.reset(); // inputs do form
         $i.service.Fieldset.reset(); // atributo dos fields (class, valor default, etc)
         if ($i.List)
            $i.List.index=RC.NONE;
     }
+    // function initBindFields(){
+    //     let BindFields = null;
+    //     if ($i.Parent && $i.Child)
+    //         parms = $i.Parent.service.Fieldset.RecordBy($i.Child.bindBy);
+    //     return BindFields;
+    // }
     if (!service.Interface.Buttons)
         service.Interface.Buttons = DEFAULT_BUTTON_PRESET();
 
     if (service.child){
        $i.child = new j$.Observer($i);
       // $i.child={} // Contém os objetos filhos - no caso para a página
-                   // no service.child tem os dados declarados para criar os filhos, no page.child, os objetos criados.
-       for (var key in service.child){
+                     // no service.child tem os dados declarados para criar os filhos, no page.child, os objetos criados.
+       for (let key in service.child){
            $i.child.add(key, new j$.ui.Child(key,$i, service.child[key]))
-           //$i.child[key] = new j$.ui.Child(key,$i, service.child[key])
        }
        service.Interface.Buttons.CHILD = {value:CONFIG.ACTION.SUBVISION.VALUE}
        service.Interface.Buttons.CHILD.submenu=$i.child;
@@ -704,17 +731,24 @@ j$.ui.Form=function(service, modal) {
         $i.display();
         if (service.onOpen)
            service.onOpen();
+        if (service.autoRequest)
+           service.autoRequest();
     };
 };
 
 j$.ui.Child=function(key, parent, properties){
    var $i = this;
+   let idService  = parent.service.id;
+   let txGetValue = `j$.$S.${idService}.Fieldset.Items.${parent.service.resource.id}.value()`;
+   let idResourceValue = '';
    $i.Parent = parent; // Página que está criando os filhos
+   $i.Parent.key = parent.service.id;
    Object.join($i, properties);
    var initialized = function(){
-       $i.id = $i.Parent.service.id +''+key.toFirstUpper();
+       $i.id = idService +''+key.toFirstUpper();
+       //j$.$S[idService].Fieldset.Items
        Object.preset($i,j$.service.adapter.get(key)) // Vai copiar todas as propriedades do adapter.services que não exite no service
-       $i.onclick = $i.Parent.actionController+'.child("'+key+'")';
+       $i.onclick = $i.Parent.actionController+'.child("'+key+'",' + txGetValue+ ')';
        if ($i.crud || $i.query){
           $i.service = j$.service.make(key,$i);
        }
@@ -727,12 +761,20 @@ j$.ui.Child=function(key, parent, properties){
       var record =  $i.Parent.service.Fieldset.sweep();
 //      j$.Dashboard.openItem($i, record);
    }
-   //TODO: O que fazer aqui?
+   //#TODO: O que fazer aqui?
+   //Se tiver editado, tem que atualizar o registro
+   //Se for um novo ou exclusão, pode fechar a form/tab/etc
    $i.notify=function(notification){
-      if (notification.action==CONFIG.ACTION.EDIT.KEY)
+      if (notification.action==CONFIG.ACTION.EDIT.KEY){
          console.log("#TODO:"+ $i.key +" - "+ JSON.stringify(notification.record));
+         //idResourceValue=notification.record[idResource];
+         if ($i.service.page && $i.service.autoRequest)
+            $i.service.autoRequest(); 
+      }
    }
 };
+Object.defineProperty(j$.ui.Child, 'name', { writable: true });
+j$.ui.Child.name = "j$.ui.Child";
 
 j$.Observer=function(Parent){
     var $i = this;

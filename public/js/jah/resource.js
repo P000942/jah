@@ -1,18 +1,19 @@
 /*
    Created by Geraldo Gomes
 
-   j$.Resource
-     .Resource
-     .ResponseHandler
-     .Resquester
-     .Dataset
-     .Pager
-     .Parser
-     .store
+   j$.Resource         
+     .Resource         => Contem todas as informacoes e objetos que tratam o recurso
+     .ResponseHandler  => Trata as respostas HTTP
+     .Resquester       => Faz as solitacoes HTTP
+     .Dataset          => Um recordset, para posicionar e localizar os registros
+     .Pager            => Um helper para controlar paginação
+     .Parser           => Conversor dos dados do formato de origem para o do recordset
+     .store            => É o repositório onde ficam os dados
  */
  j$.Requester = function(){
      var context = CONFIG.RESOURCE.CONTEXT;
      function URL(url, responseHandler){
+       // console.log(`URL==>>${url}`);
         return (url) ?url
                      :responseHandler.Resource.url;
      };
@@ -29,6 +30,7 @@
     //  }
      function cacheRequest(url, parameter, responseHandler){
         let response=null;
+        //console.log(`cacheRequest==>>${url} / ${parameter}`);
         if (responseHandler.Resource.cache){ // vai no cache se permitido ir no cache, senao sempre vai no servidor
            response=j$.Resource.Store.restore(url);
            if (parameter && response){
@@ -38,6 +40,7 @@
         return response;
      }
      function search(source, parameter, id) {
+        //console.log(`search==>>${source} / ${parameter} / ${id}`);
           let response = null
           if (parameter){ //GET "http://localhost:3000/assunto com boby={idAssunto:1}
              if (dataExt.isObject(parameter)){
@@ -60,6 +63,7 @@
           return response;
      }
      function request(http){
+         //console.log(`request==>${http}`);
           new Ajax.Request(http.url, {
                 parameters: http.parameters
           ,         method: http.method
@@ -74,6 +78,7 @@
      }
      return{
        get:function(url, parameter, responseHandler) {
+            //console.log(`get==>${url}`);
             var http ={url: URL(url, responseHandler)
                      , method:'GET'
                      , onFailure: responseHandler.failure
@@ -86,6 +91,7 @@
 
             if (!cached) {// não resolveu no cache.
                if (responseHandler.Resource.local) { //Se não for recurso local, pede http
+               // console.log(`get==>Resource.local`);
                   responseHandler.get(null);
                   responseHandler.failure (
                      j$.Resource.DefaultHandler.formatError(CONFIG.HTTP.STATUS.NOT_FOUND.VALUE, "Nenhum resultado foi encontrado para a solicitação")
@@ -96,11 +102,12 @@
                          http.parameters = JSON.stringify(parameter);
                       else
                          http.url += "/"+parameter;
-
+                     console.log(`get==>${http.url} / ${http.parameters}`); 
                    }
                    request(http);
                }
             } else{
+           //     console.log(`get==>vai resolver no cache`);
               if (responseHandler)
                   responseHandler.get(cached);
             }
@@ -180,12 +187,14 @@ j$.Resource = function(){
         }
       , create: function(resource, externalResponseHandler){
             let Definition = j$.Resource.parse(resource);
-            //if (!j$.$R[Definition.name]){ // recurso não existe, será criado
+            //#todo: verifica se resource jah existe para não recriar
+            if (!j$.$R[Definition.name]){ // recurso não existe, será criado
                items[Definition.name] =new Resource(Definition, externalResponseHandler);
-            // } else {
-            //    if (externalResponseHandler) // associa o externalResponseHandler ao recurso (ele pode ter sido criado por fora)
-            //       items[Definition.name].externalResponseHandler = externalResponseHandler;
-            // }
+            } else {
+                if (externalResponseHandler) // associa o externalResponseHandler ao recurso (ele pode ter sido criado por fora)
+                   items[Definition.name].bind(externalResponseHandler);
+                //items[Definition.name].externalResponseHandler = externalResponseHandler;
+            }
             return items[Definition.name];
         }
       , context:context
@@ -217,11 +226,15 @@ j$.Resource = function(){
         createResponder(external_responseHandler);
         createRequester();
         createDataset(resource)
+        function bind(external_responseHandler){
+            createResponder(external_responseHandler);
+        }
 
         function initialize(resource){
            Object.preset($r
                       ,{
                               recharge:recharge
+                      ,           bind:bind
                       , handleResponse:j$.Resource.DefaultHandler.handler
                       ,        Dataset:null
                       ,         Parser:new j$.Resource.Parser.Default($r)
@@ -234,11 +247,11 @@ j$.Resource = function(){
         function parseName(resource){
             return resource.name;
         };
-
         function createResponder(externalResponseHandler){
            if  (externalResponseHandler)
                $r.externalResponseHandler = externalResponseHandler;
-           $r.ResponseHandler = new j$.Resource.ResponseHandler($r);
+           if (!$r.ResponseHandler)    
+              $r.ResponseHandler = new j$.Resource.ResponseHandler($r);
         }
         function createRequester(){
               $r.Requester=($r.local)
@@ -262,7 +275,8 @@ j$.Resource = function(){
         }
     }
     function ResponseHandler(Resource){
-       /* external_responseHandler será acionado depois que faz as atualizações internas (store)
+       /* ResponseHandler: responde internamente aos métodos do resource
+        * external_responseHandler: será acionado depois que faz as atualizações internas (store)
         * naum informah-lo eh indicacao da necessidade de criar um REQUESTER que irah acionar este ResponseHandler
        */
        let SELF = this;
@@ -806,10 +820,10 @@ j$.Resource.Store= function(){
                store[Resource.context][Resource.name]=source;
          }
       }
-    , restore:function(resource){
+    , restore:function(urlResource){
           //restore('resourceName') ou restore('http://localhost:8080/app/resourceName')
           //recupera um recurso que está armazenado
-          var res = j$.Resource.parse(resource);
+          var res = j$.Resource.parse(urlResource);
           var source = store[res.context][res.name];
           if (source == null){ // Procura em todos os contextos
              for (var urlContext in store){
@@ -818,12 +832,12 @@ j$.Resource.Store= function(){
           }
           return source;
       }
-    , exists:function(resource){
-          var res = j$.Resource.parse(resource);
+    , exists:function(urlResource){
+          var res = j$.Resource.parse(urlResource);
           return !(store[res.context][res.name]==undefined);
       }
-    , remove:function(resource){
-          var res = j$.Resource.parse(resource);
+    , remove:function(urlResource){
+          var res = j$.Resource.parse(urlResource);
           delete store[res.context][res.name];
       }
     , Source: function(name){
@@ -934,6 +948,15 @@ j$.Resource.Store.add({name:"categoriaAssunto"
 //                               ,{"idPapel":"2","txPapel":"Analista"}
 //                               ,{"idPapel":"3","txPapel":"Arquiteto"}
 //                           ]});
+j$.Resource.Store.add({name:"tarefa"
+                       //, context:CONFIG.RESOURCE.CONTEXT
+                       , source:[
+                               {"idAssunto":"1","idTarefa":"1","txTarefa":"Desenhar Projeto"}
+                              ,{"idAssunto":"1","idTarefa":"2","txTarefa":"Desenvolver Projeto"}
+                              ,{"idAssunto":"1","idTarefa":"3","txTarefa":"Testar Projeto"}
+                              ,{"idAssunto":"2","idTarefa":"2","txTarefa":"Desenvolver Projeto"}
+                              ,{"idAssunto":"2","idTarefa":"3","txTarefa":"Testar Projeto"}
+                          ]});
 
 j$.Resource.Store.add({name:"situacaoAtividade"
                        //, context:CONFIG.RESOURCE.CONTEXT

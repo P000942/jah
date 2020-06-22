@@ -305,11 +305,11 @@ j$.Dashboard = function(){
       , openItem:function(item, record){
            if (!item.url && !item.onCLick){
                if (item.partial)
-                   j$.Dashboard.Tabs.openPartial(item);
+                   j$.Dashboard.Tabs.openPartial(item, null, record); //#Todo: passar o record
                else if (item.modal){
                    j$.service.c$[item.key].init(null, item.modal, record);
                } else
-                   j$.Dashboard.Tabs.delegateTo(item);
+                   j$.Dashboard.Tabs.delegateTo(item, null, record); //#Todo: passar o record
            }
       }
       , idContent:idContent
@@ -320,6 +320,7 @@ j$.Dashboard = function(){
 j$.Dashboard.Tabs=function(){
     var tabs;
     var idContent='tabs';
+    let ftmKey = (service) =>{ return "tab_"+service.Parent.key+'_'+service.key}
     return{
        create: function(){
             tabs = j$.ui.Tabs.create(j$.Dashboard.Tabs.idContent,j$.Dashboard.idContent);
@@ -327,19 +328,19 @@ j$.Dashboard.Tabs=function(){
        , open:function(properties){
           return tabs.open(properties);
        }
-       , delegateTo:function(menu, event){
-            j$.Dashboard.Tabs.open({key:"tab_"+menu.Parent.key+'_'+menu.key,
-                   caption:menu.caption, title: menu.title
+       , delegateTo:function(service, event, record){
+            j$.Dashboard.Tabs.open({key:ftmKey(service),
+                   caption:service.caption, title: service.title
                   , onLoad: function(tab){
-                         j$.service.c$[menu.key].init(tab.idContent);
+                         j$.service.c$[service.key].init(tab.idContent);
                     }
             });
        }
-       , openPartial:function(menu, event){
-            j$.Dashboard.Tabs.open({key:"tab_"+menu.Parent.key+'_'+menu.key,
-                   caption:menu.caption,
+       , openPartial:function(service, event, record){
+            j$.Dashboard.Tabs.open({key:ftmKey(service),
+                   caption:service.caption,
                     onLoad:function(tab){
-                        tab.showURL(menu.url);
+                        tab.showURL(service.url);
                     }
             });
        }
