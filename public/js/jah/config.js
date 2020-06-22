@@ -108,6 +108,7 @@ var CONFIG = {
        ,   INFO:{KEY:'info',   VALUE:'Nota'     , ICON:'ikon-info'}
        ,    YES:{KEY:'yes',    VALUE:'Sim'      , ICON:'icon-check', COLOR:'#51A351'}
        ,     NO:{KEY:'no',     VALUE:'Não'      , ICON:'icon-arrow-left', COLOR:'#BD362F'}
+       ,  INIT:{KEY:'init',    VALUE:'Iniciar'  , ICON:''}
      ,SUBVISION:{KEY:'subvision', VALUE:'Detalhes', ICON:'icon-list'}
     }
     , CRUD:{BUTTONS:{}

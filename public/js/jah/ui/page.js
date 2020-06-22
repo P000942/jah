@@ -330,7 +330,7 @@ j$.service = function(){
    function base(adpater, service){
         let $i=this;
         this.id=adpater.key;
-        this.getBindFields = getBindFields;
+        //this.getBindFields = getBindFields;
         //this.Page;
         this.Interface= {
              container:CONFIG.LAYOUT.CONTENT
@@ -374,17 +374,8 @@ j$.service = function(){
         }
         if ($i.autoRequest==undefined){
             $i.autoRequest=function(parms){
-                $i.Resource.get(getBindFields(parms));
+                $i.Resource.get(parms);
             };
-        }
-        function getBindFields(BindFields){
-            if (!BindFields){
-               if ($i.Parent && $i.Child){
-                  BindFields = $i.Parent.service.Fieldset.RecordBy($i.Child.bindBy);
-                  $i.Child.service.Fieldset.setDefaults(BindFields);
-               }
-            }
-            return BindFields;
         }       
     }
     function crud(adpater, service){
@@ -687,7 +678,6 @@ j$.ui.Form=function(service, modal) {
     }
     $i.reset = function(){
         $i.hideAlert();
-        $i.service.getBindFields();
         $i.form.reset(); // inputs do form
         $i.service.Fieldset.reset(); // atributo dos fields (class, valor default, etc)
         if ($i.List)
@@ -729,15 +719,21 @@ j$.ui.Form=function(service, modal) {
         else
            service.actionController =  j$.ui.Controller.create(service);
         $i.display();
+        if (service.Child)
+           service.Child.notify({action:CONFIG.ACTION.INIT.KEY});
         if (service.onOpen)
            service.onOpen();
-        if (service.autoRequest)
-           service.autoRequest();
+        if (service.autoRequest){
+           let parms = null;
+           if (service.Child)
+              parms = service.Child.bindFields;
+           service.autoRequest(parms);
+        }   
     };
 };
 
 j$.ui.Child=function(key, parent, properties){
-   var $i = this;
+   let $i = this;
    let idService  = parent.service.id;
    let txGetValue = `j$.$S.${idService}.Fieldset.Items.${parent.service.resource.id}.value()`;
    let idResourceValue = '';
@@ -765,13 +761,32 @@ j$.ui.Child=function(key, parent, properties){
    //Se tiver editado, tem que atualizar o registro
    //Se for um novo ou exclusão, pode fechar a form/tab/etc
    $i.notify=function(notification){
+      if ($i.service.page){
+         getBindFields();
+         showLegends();
+      }
       if (notification.action==CONFIG.ACTION.EDIT.KEY){
          console.log("#TODO:"+ $i.key +" - "+ JSON.stringify(notification.record));
-         //idResourceValue=notification.record[idResource];
-         if ($i.service.page && $i.service.autoRequest)
-            $i.service.autoRequest(); 
+         if ($i.service.page && $i.service.autoRequest){
+            $i.service.autoRequest($i.bindFields); 
+         }
       }
    }
+   function getBindFields(BindFields){
+       $i.bindFields = null;
+       $i.bindFields = $i.Parent.service.Fieldset.RecordBy($i.bindBy);
+       $i.service.Fieldset.setDefaults($i.bindFields);
+       return $i.bindFields;
+    }  
+    function showLegends(BindFields){
+        // Object.keys($i.service.Fieldset.Items).forEach( key=>{
+        //    
+        for (let key in $i.service.Fieldset.Items){   
+            let field = $i.service.Fieldset.Items[key];
+            if (field.parentLegend)
+               field.Legend.show($i.Parent.service.Fieldset.Items[field.parentLegend].value());
+        };
+     }      
 };
 Object.defineProperty(j$.ui.Child, 'name', { writable: true });
 j$.ui.Child.name = "j$.ui.Child";

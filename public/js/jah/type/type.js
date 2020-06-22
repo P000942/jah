@@ -340,7 +340,7 @@ Element.prototype.bind = function(field) {
 };
 
 function superType(Type, Properties) {
-   var SELF=this;
+   let SELF=this;
    Object.preset(SELF,{align:ALIGN.LEFT, mandatory:false, autotab:false, label:''
                      , hint:null, persist:true, defaultValue:'', type:'text'
                      , id:'', key:null, list:null, readOnly:false
@@ -375,6 +375,8 @@ function superType(Type, Properties) {
             , show:function(text){
                  if(!i$(id))
                     $(SELF.inputField.parentElement).append("<span class='" +CONFIG.LEGEND.CLASS+ "' id='" +id+ "'>"+text+"</span>");
+                 else
+                   i$(id).content(text);
             }
             , set:function(response){
                   SELF.Legend.hide();
@@ -553,7 +555,7 @@ function superType(Type, Properties) {
         // Depois verifica o que vem em Porperties, que é o que vem do usuário;
         if (Properties){
             Object.setIfExist(SELF, Properties,
-                             ['evaluate','autotab', 'label','mandatory', 'align'
+                             ['evaluate','autotab', 'label','mandatory', 'align', 'parentLegend'
                             , 'readOnly', 'disabled', 'defaultValue', 'type'
                             , 'dataType', 'list', 'hint','attributes']);
             if (Properties.resource){
