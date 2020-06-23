@@ -2,8 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-var RC = {NOT_FOUND:-1, NONE:-1}
-var CONFIG = {
+const RC = {NOT_FOUND:-1, NONE:-1}
+const CONFIG = {
     ERROR:{
            MESSAGE:{
                  Mandatory: "Campo de preenchimento obrigatório"
@@ -102,14 +102,14 @@ var CONFIG = {
        ,   UNDO:{KEY:'undo',   VALUE:'Desfazer' , ICON:'icon-undo'}
        , FILTER:{KEY:'Filter', VALUE:'Filtrar'  , ICON:'icon-filter'}
        ,   SORT:{KEY:'sort',   VALUE:'Ordenar'  , ICON:''}
-       ,     OK:{KEY:'ok',     VALUE:'OK'       , ICON:'icon-check', COLOR:'#51A351'}
+       ,     OK:{KEY:'ok',     VALUE:'OK'       , ICON:'icon-check'     , COLOR:'#51A351'}
        , CANCEL:{KEY:'cancel', VALUE:'Cancelar' , ICON:'icon-arrow-left', COLOR:'#BD362F'}
        ,  ERROR:{KEY:'error',  VALUE:'Erro'     , ICON:'ikon-error'}
        ,   INFO:{KEY:'info',   VALUE:'Nota'     , ICON:'ikon-info'}
-       ,    YES:{KEY:'yes',    VALUE:'Sim'      , ICON:'icon-check', COLOR:'#51A351'}
+       ,    YES:{KEY:'yes',    VALUE:'Sim'      , ICON:'icon-check'     , COLOR:'#51A351'}
        ,     NO:{KEY:'no',     VALUE:'Não'      , ICON:'icon-arrow-left', COLOR:'#BD362F'}
        ,  INIT:{KEY:'init',    VALUE:'Iniciar'  , ICON:''}
-     ,SUBVISION:{KEY:'subvision', VALUE:'Detalhes', ICON:'icon-list'}
+       ,SUBVISION:{KEY:'subvision', VALUE:'Detalhes', ICON:'icon-list'}
     }
     , CRUD:{BUTTONS:{}
           , GRID:{BUTTONS:{}}
@@ -121,12 +121,12 @@ var CONFIG = {
           , DEFAULT: 'CRUD'   // O template de GRID default
     }
     , QUERY:{BUTTONS:{}
-              , GRID:{BUTTONS:{}}
-           , CONTEXT: 'js/query/'
+          , GRID:{BUTTONS:{}}
+          , CONTEXT: 'js/query/'
             }
     , HINT:{
-         ERROR:{CLASS:'hint-error'}
-        , INFO:{CLASS:'hint-info'}
+          ERROR:{CLASS:'hint-error'}
+         , INFO:{CLASS:'hint-info'}
     }
     , ALERT:{
           ERROR:{CLASS:'alert-danger'}
@@ -134,15 +134,16 @@ var CONFIG = {
       ,    INFO:{CLASS:'alert-info'}
     }
     , LEGEND:{CLASS:'text-legend'}
-    , INPUT:{CLASS:{DEFAULT:'input_text', ERROR:'input_error',FOCUS:'input_focus'}}
+    ,  INPUT:{CLASS:{DEFAULT:'input_text', ERROR:'input_error',FOCUS:'input_focus'}}
     , BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
-    , PAGER:{CLASS:'pagination pagination-sm'}
+    ,  PAGER:{CLASS:'pagination pagination-sm'}
 };
 //
 //CONFIG.ICON ={new:'icon-o-plus' , search:'icon-search',   edit:'icon-edit'  , save:'icon-o-check'
 //          , print:'icon-print'    ,  trash:'icon-trash' , filter:'icon-filter', back:'icon-o-arrow-left', next:'icon-o-arrow-right'
 //          ,    ok:'icon-o-check',  close:'icon-o-x',    home:'icon-home', undo:'icon-undo'};
 
+//@note: Retorna o objeto com o status http
 CONFIG.HTTP.STATUS.get = status =>{
           var res = Object.getByValue(CONFIG.HTTP.STATUS, status,'VALUE');
           if (res){
@@ -152,6 +153,7 @@ CONFIG.HTTP.STATUS.get = status =>{
           CONFIG.HTTP.STATUS.UNKNOWN.VALUE = status;
           return CONFIG.HTTP.STATUS.UNKNOWN;
        }
+
 CONFIG.CRUD.BUTTONS={
        BACK:{value:CONFIG.ACTION.BACK.VALUE}
    ,    GET:{value:CONFIG.ACTION.SEARCH.VALUE}
@@ -159,6 +161,7 @@ CONFIG.CRUD.BUTTONS={
    ,   SAVE:{value:CONFIG.ACTION.SAVE.VALUE}
    ,  PRINT:{value:CONFIG.ACTION.PRINT.VALUE}
 };
+
 CONFIG.QUERY.BUTTONS={
        BACK:{value:CONFIG.ACTION.BACK.VALUE}
    ,    SEARCH:{value:CONFIG.ACTION.SEARCH.VALUE}
@@ -181,7 +184,7 @@ CONFIG.QUERY.GRID.BUTTONS={
 //CONFIG.preset(CONFIG.CRUD.GRID.BUTTONS, ['edit','remove'], actionController);
 //CONFIG.preset(CONFIG.CRUD.GRID.BUTTONS, null, actionController);
 //QUESTION: Será que o ideal não fazer 'mixin' ou 'inheritsFrom'?
-CONFIG.preset=function(PRESET, keys, actionController){
+CONFIG.preset=(PRESET, keys, actionController)=>{
     var values={};
     if (dataExt.isString(keys))
        values[keys.toUpperCase()]=set(keys);
@@ -209,17 +212,17 @@ CONFIG.preset=function(PRESET, keys, actionController){
 };
 
 // Copia o preset dos buttons de um CRUD
-CONFIG.CRUD.preset=function(keys, actionController){
+CONFIG.CRUD.preset=(keys, actionController)=>{
     return CONFIG.preset(CONFIG.CRUD.BUTTONS, keys, actionController);
 };
-CONFIG.QUERY.preset=function(keys, actionController){
+CONFIG.QUERY.preset=(keys, actionController)=>{
     return CONFIG.preset(CONFIG.QUERY.BUTTONS, keys, actionController);
 };
 // CONFIG.CONFIRM.preset=function(keys, actionController){
 //     return CONFIG.preset(CONFIG.CONFIRM.BUTTONS, keys, actionController);
 // };
 // Copia o preset dos buttons do GRID de um CRUD
-CONFIG.CRUD.GRID.preset=function(keys, actionController){
+CONFIG.CRUD.GRID.preset=(keys, actionController)=>{
     return CONFIG.preset(CONFIG.CRUD.GRID.BUTTONS, keys, actionController);
 };
 
@@ -249,31 +252,31 @@ CONFIG.SYNONYM={
       ,subvision:['subvision','child', 'details','filhos', 'detalhes']
 };
 
-CONFIG.synonym=function(value){
+CONFIG.synonym= value=>{
     for (var key in CONFIG.SYNONYM){
         if (CONFIG.SYNONYM[key].has(value.toLowerCase()))
             return key;
     }
 };
 
-CONFIG.icon=function(vl_key, source){
+CONFIG.icon=(vl_key, source)=>{
     source=(source)?source.toUpperCase():'ACTION';
     var key =CONFIG.synonym(vl_key); // Obtém a chave correta considerando os sinônimos
     return (key)?CONFIG[source][key.toUpperCase()].ICON:null;    // Retorna o icone
 };
-CONFIG.color=function(vl_key, source){
+CONFIG.color=(vl_key, source)=>{
     source=(source)?source.toUpperCase():'ACTION';
     var key =CONFIG.synonym(vl_key);
     return (key)?CONFIG[source][key.toUpperCase()].COLOR:null;    // Retorna o icone
 };
 //
-CONFIG.class=function(vl_key, source){
+CONFIG.class=(vl_key, source)=>{
     source=(source)?source.toUpperCase():'ACTION';
     var key =CONFIG.synonym(vl_key); // Obtém a chave correta considerando os sinônimos
     return (key)?CONFIG[source][key.toUpperCase()].CLASS:null;
 };
 
-CONFIG.action=function(vl_key){
+CONFIG.action= vl_key =>{
     var key =CONFIG.synonym(vl_key); // Obtém a chave correta considerando os sinônimos
     var action={}
     if (key)
@@ -282,14 +285,14 @@ CONFIG.action=function(vl_key){
     return (key)?action:null;
 };
 //CONFIG.action(CONFIG.ACTION.SAVE.KEY);
-CONFIG.hint=function(vl_key){
+CONFIG.hint= vl_key =>{
     return {icon:CONFIG.icon(vl_key), hint:CONFIG.class(vl_key,'hint')}
 };
 //CONFIG.hint(CONFIG.ACTION.INFO.KEY);
 //CONFIG.hint(CONFIG.ACTION.ERROR.KEY);
 
-var ERROR = function() {
-    var handle =null;
+const ERROR = function() {
+    let handle =null;
     function subscribe(message, field){
         for (var i=0; i < CONFIG.ERROR.SUBSCRIBE.length; i++){
             if (field[CONFIG.ERROR.SUBSCRIBE[i]])
@@ -298,43 +301,39 @@ var ERROR = function() {
         return message;
     }
     return {
-	init:function(objectHandle){handle=objectHandle;},
-        show:function(message,field) {
+	init: objectHandle=>{handle=objectHandle;},
+        show: (message,field) => {
             message=subscribe(message,field);
             if (handle)
                handle.callback(message,field);
             else
                ERROR.on(message, field);
         },
-        on:function(msg, field){
-            field.Error.on(msg);
-        },
-        off:function(field){
-            field.Error.off();
-        },
+        on: (msg, field)=>{field.Error.on(msg)},
+        off: field=>{field.Error.off()},
         MESSAGE:CONFIG.ERROR.MESSAGE
     };
 }();
 
-var EXCEPTION = function() {
-    var handle =null;
-    var formatMessage=function(exception, text){
+const EXCEPTION = function() {
+    let handle =null;
+    let formatMessage=(exception, text)=>{
         var message=exception.id +":"+ exception.text;
         if (text != undefined)
            message += "\n"+ text;
     };
     return {
-	init:function(objectHandle){handle=objectHandle;}
-      , show:function(exception,text) {
+	init: objectHandle =>{handle=objectHandle}
+      , show:(exception,text) => {
             if (handle)
                handle.callback(exception,text);
             else
                EXCEPTION.on(exception,text);
         }
-      , on:function(exception,text){
+      , on: (exception,text)=>{
             console.log(formatMessage(exception,text));
         }
-      , format:function(exception,text){
+      , format: (exception,text)=>{
             return formatMessage(exception,text);
         }
 //        off:function(field){
