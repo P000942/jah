@@ -1,6 +1,5 @@
 //console.log(['name','key'].indexOf('keys'));
-//console.log(" Geraldo Gomes ".split(/\s/gi));
-
+//console.log(" Geraldo Gomes ".split(/\s/gi))
 String.prototype.trim = function(){
     return this.replace(/^\s*/, "").replace(/\s*$/, "");
 }
@@ -11,7 +10,7 @@ String.prototype.isEmpty = function(){
     if(this.trim().length==0){return true;};
     return false;
 }
-//Test.isEmpty(' ');Test.isEmpty(''); Test.isEmpty('_');
+//Test$.isEmpty(' ');Test$.isEmpty(''); Test$.isEmpty('_');
 
 String.prototype.repeat = function (n){
   var r="";
@@ -258,7 +257,7 @@ Date.prototype.format = function (mask, utc) {
 	return dateFormat(this, mask, utc);
 };
 
-var testAlfa = function(){
+var Test$ = function(){
     return{Date:function(value){console.log("isDate('"    +value+ "'):"+ value.isDate())},
           Digit:function(value){console.log("isDigit('"   +value+ "'):"+ value.isDigit())},
          Letter:function(value){console.log("isLetter('"  +value+ "'):"+ value.isLetter())},
@@ -275,7 +274,7 @@ var testAlfa = function(){
     }
 }();
 
-var testNum = function(){
+var Testa = function(){
     return{CPF:function(value){console.log('ehCpf('     +value+ '):'+ value.ehCpf())},
           CNPJ:function(value){console.log('ehCnpj('    +value+ '):'+ value.ehCnpj())},
            CCA:function(value){console.log('ehCca('     +value+ '):'+ value.ehCca())},
@@ -382,12 +381,12 @@ String.prototype.isName = function(){
 
 //// Aqui estão os testes
 //// Observer que n�o estah considerando espacos em branco
-//Test.isName(" Geraldo Gomes ");
-//Test.isName(" Geraldo F. Gomes ");
-//Test.isName(" Joseh Geraldo Gomes ");
-//Test.isName(" Geraldo  ");
-//Test.isName(" Geraldo A ");
-//Test.isName(" A Gomes ");
+//Test$.isName(" Geraldo Gomes ");
+//Test$.isName(" Geraldo F. Gomes ");
+//Test$.isName(" Joseh Geraldo Gomes ");
+//Test$.isName(" Geraldo  ");
+//Test$.isName(" Geraldo A ");
+//Test$.isName(" A Gomes ");
 
 
 
@@ -403,43 +402,43 @@ String.prototype.isLetter = function(){
     }
     return true;
 }
-//Test.Letter('A'); Test.Letter('1'); Test.Letter('a'); Test.Letter('�'); Test.Letter('�');
+//Test$.Letter('A'); Test$.Letter('1'); Test$.Letter('a'); Test$.Letter('�'); Test$.Letter('�');
 
 
 String.prototype.isDigit = function(){
     return (!this.regexValidate(/^[0-9]{1,1}$/))?false:true;
 }
-//Test.Digit(''); Test.Digit('23,59'); Test.Digit('00,00'); Test.Digit('24');Test.Digit('1'); Test.Digit('A'); Test.Digit('100000001,1'), Test.Digit('1,A');Test.Digit('A,1');
+//Test$.Digit(''); Test$.Digit('23,59'); Test$.Digit('00,00'); Test$.Digit('24');Test$.Digit('1'); Test$.Digit('A'); Test$.Digit('100000001,1'), Test$.Digit('1,A');Test$.Digit('A,1');
 
 String.prototype.isNumeric = function(){
     var expReg =/(\d{1,}[,]{1}\d{1,})|(^\d+$)/;
     return (!this.regexValidate(expReg))?false:true;
 }
-//Test.Numeric('23,59'); Test.Numeric('00,00'); Test.Numeric('24'); Test.Numeric('1');Test.Numeric('12,132'); Test.Numeric('A'); Test.Numeric('100000001,1'), Test.Numeric('1,A');Test.Numeric('A,1');
+//Test$.Numeric('23,59'); Test$.Numeric('00,00'); Test$.Numeric('24'); Test$.Numeric('1');Test$.Numeric('12,132'); Test$.Numeric('A'); Test$.Numeric('100000001,1'), Test$.Numeric('1,A');Test$.Numeric('A,1');
 
 String.prototype.isInteger = function(){
     return (!this.regexValidate(/^[0-9]{1,}$/))?false:true;
 }
-//Test.Integer(''); Test.Integer('23,59'); Test.Integer('00,00'); Test.Integer('24');Test.Integer('1'); Test.Integer('A'); Test.Integer('100000001,1'), Test.Integer('1,A');Test.Integer('A,1');
+//Test$.Integer(''); Test$.Integer('23,59'); Test$.Integer('00,00'); Test$.Integer('24');Test$.Integer('1'); Test$.Integer('A'); Test$.Integer('100000001,1'), Test$.Integer('1,A');Test$.Integer('A,1');
 
 String.prototype.isMoney = function(){
     //var expReg =/^[0-9]{1,}[,]{0,1}[0-9]{1,2}$/;
     var expReg =/^(\d{1,}[,]{1}\d{1,2}$)|(^\d+$)/;
     return (!this.regexValidate(expReg))?false:true;
 }
-//Test.Money('23,59'); Test.Money('00,00'); Test.Money('24');Test.Money('12,132'); Test.Money('A'); Test.Money('100000001,1'), Test.Money('1,A');Test.Money('A,1');
+//Test$.Money('23,59'); Test$.Money('00,00'); Test$.Money('24');Test$.Money('12,132'); Test$.Money('A'); Test$.Money('100000001,1'), Test$.Money('1,A');Test$.Money('A,1');
 
 String.prototype.isDate = function(){
     var expReg = /^((((0?[1-9]|[12]\d|3[01])[\.\-\/](0?[13578]|1[02])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|[12]\d|30)[\.\-\/](0?[13456789]|1[012])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|1\d|2[0-8])[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|(29[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00)))|(((0[1-9]|[12]\d|3[01])(0[13578]|1[02])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|[12]\d|30)(0[13456789]|1[012])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|1\d|2[0-8])02((1[6-9]|[2-9]\d)?\d{2}))|(2902((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00))))$/;
     return (!this.regexValidate(expReg))?false:true;
 }
-//Test.Date('29/02/2011'); Test.Date('28/02/2011'); Test.Date('29/02/2008');Test.Date('31/04/2011'); Test.Date('31/05/2011'); Test.Date('31/08/2008');
+//Test$.Date('29/02/2011'); Test$.Date('28/02/2011'); Test$.Date('29/02/2008');Test$.Date('31/04/2011'); Test$.Date('31/05/2011'); Test$.Date('31/08/2008');
 
 String.prototype.isHour = function(){
     var expReg =/^([0-1][0-9]|[2][0-3]):[0-5][0-9]$/;
     return (!this.regexValidate(expReg))?false:true;
 }
-//Test.Hour('23:59'); Test.Hour('00:00'); Test.Hour('24:00');Test.Hour('12:00'); Test.Hour('25:00'); Test.Hour('12:60');
+//Test$.Hour('23:59'); Test$.Hour('00:00'); Test$.Hour('24:00');Test$.Hour('12:00'); Test$.Hour('25:00'); Test$.Hour('12:60');
 
 String.prototype.isPhone = function(withoutMask){
     var expReg =/\(?\d{3}\)?\d{4}-\d{4}/;
@@ -447,7 +446,7 @@ String.prototype.isPhone = function(withoutMask){
         expReg = /\d{11}/;
     return (!this.regexValidate(expReg))?false:true;
 }
-//Test.Phone('(092)8122-0911'); Test.Phone('(092)81220911'); Test.Phone('(092) 8122-0911');Test.Phone('(92)8122-0911'); Test.Phone('8122-0911'); Test.Phone('12:60');
+//Test$.Phone('(092)8122-0911'); Test$.Phone('(092)81220911'); Test$.Phone('(092) 8122-0911');Test$.Phone('(92)8122-0911'); Test$.Phone('8122-0911'); Test$.Phone('12:60');
 
 String.prototype.isEmail = function(){
     var expReg = /^[A-Za-z0-9_\-\.]+@[A-Za-z0-9_\-\.]{2,}\.[A-Za-z0-9]{2,}(\.[A-Za-z0-9])?/;
@@ -456,7 +455,7 @@ String.prototype.isEmail = function(){
 Boolean.prototype.isEmpty = function(){
     return false;
 }
-//Test.Email('abc@xiba.com'); Test.Email('abc@xiba'); Test.Email('abc_xiba');
+//Test$.Email('abc@xiba.com'); Test$.Email('abc@xiba'); Test$.Email('abc_xiba');
 
 String.prototype.mask = function(mask){
     mask =mask.replace(/[#]/g,'9'); // para adequar as m�scaras usadas na edi��o
@@ -493,10 +492,16 @@ String.prototype.mask = function(mask){
         rest = mask.trim().length - value.length;
         return " ".repeat(rest) + value;
     }
+    function $A(iterable) {
+        if (!iterable) return [];
+        // var length = iterable.length || 0, results = new Array(length);
+        // while (length--) results[length] = iterable[length];
+        return iterable.split("");
+    }
 };
-//Test.Mask("1111222","9,99"); Test.Mask("11112011","##/##/####"); Test.Mask("11222","99.990,00"); Test.Mask("1","000.000");Test.Mask("9281220911","(000)0000-0000");
-//Test.Mask("jgg1111","AAA-0000"); Test.Mask("JGG1111","aaa-0000");Test.Mask("jgG1111","@@@-0000");
-//Test.Mask("jgg1111","AaA-0000");
+//Test$.Mask("1111222","9,99"); Test$.Mask("11112011","##/##/####"); Test$.Mask("11222","99.990,00"); Test$.Mask("1","000.000");Test$.Mask("9281220911","(000)0000-0000");
+//Test$.Mask("jgg1111","AAA-0000"); Test$.Mask("JGG1111","aaa-0000");Test$.Mask("jgG1111","@@@-0000");
+//Test$.Mask("jgg1111","AaA-0000");
 
 String.prototype.isValidInMask = function(mask){
     mask =mask.replace(/[#]/g,'9'); // para adequar as m�scaras usadas na edi��o
@@ -521,10 +526,10 @@ String.prototype.isValidInMask = function(mask){
     }
     return valid;
 };
-//Test.isValidInMask("1111","####");
-//Test.isValidInMask("(92)111-abc","(99)999-aaa"); Test.isValidInMask("92111abc","(99)999-aaa"); Test.isValidInMask("(92)111-a1c","(99)999-aaa");
-//Test.isValidInMask("1111","@###");
-//Test.isValidInMask("A111","@###");
+//Test$.isValidInMask("1111","####");
+//Test$.isValidInMask("(92)111-abc","(99)999-aaa"); Test$.isValidInMask("92111abc","(99)999-aaa"); Test$.isValidInMask("(92)111-a1c","(99)999-aaa");
+//Test$.isValidInMask("1111","@###");
+//Test$.isValidInMask("A111","@###");
 
 
 // String.prototype.pixel = function(fontSize){
@@ -595,7 +600,7 @@ dataExt.format = function(){
     };
 }();
 
-
+//@note: procura por valor no objeto e retorna array com as propriedades que contem o valor
 Object.getByValue = function(object, value, attribute="value"){
    let items=[]
    for (var key in object){
@@ -815,37 +820,82 @@ Function.prototype.inheritsFrom = function(parentClassOrObject){
 // var felix = new Gato( "Felix" );
 // felix.grite();
 
-Array.prototype.each = function(callback /*, parms*/){
-    var len = this.length;
-    if (typeof callback != "function")
-       throw new TypeError();
+//#Depreciado: substituir por forEach
+// Array.prototype.each = function(callback /*, parms*/){
+//     var len = this.length;
+//     if (typeof callback != "function")
+//        throw new TypeError();
 
-    //var parms = arguments[1];
-    for (var i = 0; i < len; i++){
-      if (i in this)
-    	  callback(this[i]);
-    	  //callback.call(parms, this[i], i, this);
-    }
-};
+//     //var parms = arguments[1];
+//     for (var i = 0; i < len; i++){
+//       if (i in this)
+//     	  callback(this[i]);
+//     	  //callback.call(parms, this[i], i, this);
+//     }
+// };
+Array.prototype.each = Array.prototype.forEach;
 
-Array.prototype.has = function(value){
-   return (this.indexOf(value)>-1)?true:false;
-};
+//#Depreciado: substituir por .includes
+// Array.prototype.has = function(value){
+//    return (this.indexOf(value)>-1)?true:false;
+// };
+Array.prototype.has = Array.prototype.includes;
 // var aux = [1,'test',2]; aux.has(1);aux.has('test');aux.has(4)
 // Alias para o each
-Array.prototype.sweep = Array.prototype.each
+Array.prototype.sweep = Array.prototype.forEach;
 
-Array.prototype.exists = function(item, callback){
-    var len = this.length;
+//var aux=[{a:1, b:2},{a:2, b:2},{a:3, b:2},{a:4, b:2}]
+//console.log(aux.select( function(item){ return (item.a<3);} ));
+Array.prototype.select = function(callback /*, parms*/){
+    var results = [];
     if (typeof callback != "function")
-       throw new TypeError();
+    throw new TypeError();
 
-    for (var i = 0; i < len; i++){
+    for (var i = 0; i < this.length; i++){
         if (i in this){
-    	   if (callback(item, this[i]))
-    	      return true;
+           if (callback(this[i]))
+               results.push(this[i]);
         }
     }
-    return false;
+    return results;
 };
+// Array.prototype.exists = function(item, callback){
+//     var len = this.length;
+//     if (typeof callback != "function")
+//        throw new TypeError();
 
+//     for (var i = 0; i < len; i++){
+//         if (i in this){
+//     	   if (callback(item, this[i]))
+//     	      return true;
+//         }
+//     }
+//     return false;
+// };
+
+//depreciado: substituido por .find
+// Array.prototype.find = function(callback){
+//     if (typeof callback != "function")
+//         throw new TypeError();
+//     for (var i = 0; i < this.length; i++){
+//         if (i in this){
+//            if (callback(this[i],i))
+//                return this[i];
+//         }
+//     }
+// };
+//depreciado: substituido por .map
+// Array.prototype.collect = function(callback){
+//     var results = [];
+//     if (typeof callback != "function")
+//         throw new TypeError();
+
+//     for (var i = 0; i < this.length; i++){
+//         if (i in this){
+//                results.push(callback(this[i]));
+//         }
+//     }
+//     return results;
+// };
+    //   var aux=[1, 2,3];
+    //   console.log(aux.collect( function(item){ return (item*2);} ));

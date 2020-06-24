@@ -3,18 +3,21 @@
  * and open the template in the editor.
  */
 //google.load("jquery", "1.7.1");
+function i$(id) {
+    return document.getElementById(id);
+}
 var NO_IE=document.getElementById&&!document.all;
 var System = function(){
-    var result = null;
-    var _QueryString={};
-    var importJS=function (file){
+    let result = null;
+    let _QueryString={};
+    let importJS= file =>{
         var headTag = document.getElementsByTagName('head')[0];
         var script  = document.createElement("script");
         script.type ="text/javascript";
         script.src = file;
         headTag.appendChild(script);
     };
-    var importCSS = function (file, media){
+    let importCSS =  (file, media) =>{
        if (media == undefined)
            media = "screen";
         var headTag = document.getElementsByTagName('head')[0];
@@ -25,16 +28,14 @@ var System = function(){
         headTag.appendChild(script);
     };
     return{
-        using:function(url, media){
+        using: (url, media) =>{
             if (url.toUpperCase().indexOf('.CSS') > -1)
                importCSS(url, media);
             else if (url.toUpperCase().indexOf('.JS') > -1)
                importJS(url);
         }
-      , parameters:function(key){
-            return _QueryString[key];
-        }
-      , init:function(){
+      , parameters: key=>{return _QueryString[key]}
+      , init:()=>{
             if (System.Browser.msie){
                 MOUSE.BUTTON.LEFT = 1;
                 MOUSE.BUTTON.CENTER = 4;
@@ -43,7 +44,7 @@ var System = function(){
             System.Hint.init();
             /* pegar os parametros passados na URL */
             var parms=location.search.replace(/\x3F/,"").replace(/\x2B/g," ").split("&");
-            if(parms!=""){
+            if (parms!=""){
                 for(i=0;i<parms.length;i++){
                     nvar=parms[i].split("=");
                     _QueryString[nvar[0]]=unescape(nvar[1]);
@@ -55,89 +56,150 @@ var System = function(){
       , api:{prototype:false, jquery:false}
     };
 }();
-var j$={ui:{},sys:System,sample:{}};
-j$.$V=function(key){
-   var shortCut = {"$C":"Controller:","$P":"Page:","$R":"Resource:","$S":"Service:"};
+const j$={ui:{},sys:System,sample:{}};
+//@note: util apenas em dsv para ver os objetos/colecoes e seus respectivos shortcut - que estão instanciados
+//j$.$V() ou j$.$V("$R")
+j$.$V= key =>{
+   let shortCut = {"$C":"Controller:","$P":"Page:","$R":"Resource:","$S":"Service:"};
    for (id in shortCut){
       if (j$[id]){
          if (key){
-            console.log(shortCut[id]+key);
-            if (id=="$R")
-               console.log(j$[id][key.toFirstLower()]);
-            else
-               console.log(j$[id][key]);
+            if (id==key)
+               console.log(j$[id]);
          }else{
-            console.log(shortCut[id]);
+            console.log(shortCut[id]+id);
             console.log(j$[id]);
-        }
+         }
       }
    }
 }
 
 if (window['jQuery'] != undefined)
    System.api.jquery=true;
-if (window['Prototype']!=undefined){
-   System.api.prototype=true;
-}else{
-   window['Ajax']={
-      Request:function(url, properties){
-          var options={url:url};
-          if (properties.parameters)
-              options.data = properties.parameters;
-          if (properties.method)
-              options.type = properties.method.toUpperCase();
-          else
-              options.type = 'GET';
-          if (properties.asynchronous)
-              options.async = properties.asynchronous;
-          if (properties.encoding)
-              options.scriptCharset = properties.encoding;
-          if (properties.evalJSON)
-              options.dataType = 'json';
-          if (properties.contentType)
-                  options.contentType = properties.contentType;
-          if (properties.onSuccess)
-              options.success = properties.onSuccess;
-          if (properties.onFailure)
-              options.error = properties.onFailure;
-          if (properties.onComplete)
-              options.complete = properties.onComplete;
-          if (properties.postBody && (options.type == 'POST' || options.type == 'PUT')){
-              options.processData = false;
-              options.data = properties.postBody;
-          }
-          $.ajax(options);
-      }
-    , Updater:function(idContent, url, parm){
-            $.ajax({
-            url: url,
-            cache: false,
-            data: parm.parameters,
-            complete:parm.onComplete
-            }).done(function( html ) {
-               $("#"+idContent).append(html);
-            });
+
+// Extender UI
+if (System.api.jquery){
+    Element.prototype.stylize = function(properties) {
+        if (properties){
+            if (typeof properties =='string'){
+               if (properties.match(/[:;]/gi)==null) //Se tem ':' eh uma string com style
+                   this.className = properties;
+               else                             //senao, pode ser o nome de uma class
+                   this.style.cssText = properties;
+            }else{
+                for (var att in properties){
+                    if (att.trim().toLowerCase() == 'clas$')
+                        this.className = properties[att];
+                    else
+                       this.style[att]=properties[att];
+                }
+            }
+        }
+    }
+    Element.prototype.insert = function(content) {
+        var id = "#" + this.id;
+        if (dataExt.isString(content)){
+            $(id).append(content);
+        }else{
+            if (content.after)
+               $(id).after(content.after);
+            if (content.bottom)
+               $(id).append(content.bottom);
+            if (content.before)
+               $(id).before(content.before);
+            if (content.top)
+               $(id).prepend(content.top);
+        }
+    }
+    Element.prototype.remove = function() {
+        $("#" + this.id).remove();
+
+    }
+    Element.prototype.addClassName = function(className) {
+        $("#" + this.id).addClass(className);
+    }
+    Element.prototype.hide = function() {
+        $("#" + this.id).hide();
+    }
+    Element.prototype.show = function() {
+        $("#" + this.id).show();
+    }
+    Element.prototype.toggle = function() {
+        $("#" + this.id).toggle();
+    }
+    Event.observe = function(node, event, callback) {
+        var element = null;
+        if (dataExt.isString(node))
+            element = $("#" + node);
+        else
+            element = $("#" + node.id);
+        element.bind(event, callback);
      }
-   };
+    Event.element=function(event){return event.target}
+
+    window['Ajax']={
+        Request:function(url, properties){
+            var options={url:url};
+            if (properties.parameters)
+                options.data = properties.parameters;
+            if (properties.method)
+                options.type = properties.method.toUpperCase();
+            else
+                options.type = 'GET';
+            if (properties.asynchronous)
+                options.async = properties.asynchronous;
+            if (properties.encoding)
+                options.scriptCharset = properties.encoding;
+            if (properties.evalJSON)
+                options.dataType = 'json';
+            if (properties.contentType)
+                    options.contentType = properties.contentType;
+            if (properties.onSuccess)
+                options.success = properties.onSuccess;
+            if (properties.onFailure)
+                options.error = properties.onFailure;
+            if (properties.onComplete)
+                options.complete = properties.onComplete;
+            if (properties.postBody && (options.type == 'POST' || options.type == 'PUT')){
+                options.processData = false;
+                options.data = properties.postBody;
+            }
+            $.ajax(options);
+        }
+      , Updater:function(idContent, url, parm){
+              $.ajax({
+              url: url,
+              cache: false,
+              data: parm.parameters,
+              complete:parm.onComplete
+              }).done(function( html ) {
+                 $("#"+idContent).append(html);
+              });
+       }
+     };
 }
 
 
+
+
+
 // google.setOnLoadCallback(function(a,b) {
+//executa quando abre a pagina web
  $(document).ready(function(){
     System.Browser = function(){
         return {
-            getPosOffSet: function (what, offsettype){
-                    var totaloffset=(offsettype=="left")? what.offsetLeft : what.offsetTop;
-                    var parentEl=what.offsetParent;
+            getPosOffSet: (what, offsettype)=>{
+                    let totaloffset=(offsettype=="left")? what.offsetLeft : what.offsetTop;
+                    let parentEl=what.offsetParent;
                     while (parentEl!=null){
                         totaloffset=(offsettype=="left")? totaloffset+parentEl.offsetLeft : totaloffset+parentEl.offsetTop;
                         parentEl=parentEl.offsetParent;
                 }
                 return totaloffset;
             }
-        ,clearEdge:function (obj, whichedge, target){
-                        var edgeoffset=0;
-                        var windowedge=null;
+        ,clearEdge: (obj, whichedge, target)=>{
+                        let edgeoffset=0;
+                        let windowedge=null;
                         if (target == undefined)
                             target = dropmenuobj;
                         if (whichedge=="rightedge"){
@@ -153,7 +215,7 @@ if (window['Prototype']!=undefined){
                         }
                         return edgeoffset;
             }
-            , compatible:function(){return (System.Browser.msie||System.Browser.gecko||System.Browser.webkit||System.Browser.opera||System.Browser.safari)?true:false;}
+            , compatible:()=>{return (System.Browser.msie||System.Browser.gecko||System.Browser.webkit||System.Browser.opera||System.Browser.safari)?true:false;}
 //            , msie:(System.api.prototype)?Prototype.Browser.IE:$.browser.msie
 //            , gecko:(System.api.prototype)?Prototype.Browser.Gecko:$.browser.mozilla
 //            , opera:(System.api.prototype)?Prototype.Browser.Opera:$.browser.opera
@@ -164,9 +226,9 @@ if (window['Prototype']!=undefined){
     }();
 
     System.Hint = function(){
-        var idHint="hintbox";
+        let idHint="hintbox";
         return{
-            init:function(){
+            init:()=>{
                 // cria o container para montar o elemento hint
                 if (i$(idHint)==undefined){
                     var divblock=document.createElement("div");
@@ -174,7 +236,7 @@ if (window['Prototype']!=undefined){
                     document.body.appendChild(divblock);
                 }
             },
-            show:function(hintText, obj, e, clas$, tipwidth){
+            show:(hintText, obj, e, clas$, tipwidth)=>{
                 if ((System.Browser.msie||NO_IE) && i$(idHint)){
                     var hintBox=i$(idHint);
                     hintBox.style.height='';
@@ -201,7 +263,7 @@ if (window['Prototype']!=undefined){
                                          -  ((hintBox.offsetHeight - obj.offsetHeight)/2)-2) + 'px';
                 }
             },
-            hide:function(e){
+            hide: e =>{
                 i$(idHint).style.visibility="hidden";
                 i$(idHint).style.left="-500px";
             }
@@ -210,34 +272,34 @@ if (window['Prototype']!=undefined){
     System.init();
     //alert('ops');
 });
-System.Action = function(){ //antes era apenas Action
-   var self = this;
+System.Action = ()=>{ 
+   let self = this;
    this.actions = col_actions = [];
 
-   this.addAction = function(action){ //antes eraa 'addAction'
+   this.addAction = function(action){ 
       self.actions.push(action);
    };
-   this.execute = function(o){
-      var result = false;
+   this.execute = o =>{
+      let result = false;
       for (var i=0; i < this.actions.length; i++){
           result=self.actions[i](o);
       }
       return result;
    };
-   this.clear = function (){
+   this.clear = ()=>{
        self.actions = [];
    };
 };
-var NOW = new Date();
-var KEY = {F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123,
+const NOW = new Date();
+const KEY = {F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123,
            ENTER:13, ESC:27, COMMA:44, BACKSPACE:8, TAB:9, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, INS:45, DEL:46, REFRESH:116};
-var ALIGN = {LEFT:'left', CENTER:'center', RIGHT:'right', JUSTIFY:'justify'};
+const ALIGN = {LEFT:'left', CENTER:'center', RIGHT:'right', JUSTIFY:'justify'};
 
-var MOUSE = {BUTTON:{LEFT:0,CENTER:1,RIGHT:2}};
+const MOUSE = {BUTTON:{LEFT:0,CENTER:1,RIGHT:2}};
 
-var ORDER = {ASCENDING:'ASC', DESCENDING:'DESC', NONE:'NONE'};
-ORDER.CLASS =  function(order){
-     var _class = "";
+const ORDER = {ASCENDING:'ASC', DESCENDING:'DESC', NONE:'NONE'};
+ORDER.CLASS =  order =>{
+    let _class = "";
      switch(order) {
        case ORDER.NONE:
             _class = null;
@@ -251,14 +313,14 @@ ORDER.CLASS =  function(order){
      }
     return _class;
 };
-var FILTER ={};
-FILTER.CLASS =  function(filter){
+const FILTER ={};
+FILTER.CLASS =  filter =>{
     return (filter)?'list-ikon ikon-filter':null;
 };
 
 j$.util = function(){
-    var sequence = {};
-    var getId = function(key, id){
+    let sequence = {};
+    let getId = function(key, id){
             if (id!=undefined){
                 if (!id.isEmpty())
                     return id;
@@ -277,11 +339,11 @@ j$.util = function(){
 
 
 j$.Dashboard = function(){
-    var idContent=CONFIG.LAYOUT.CONTENT;
-    var idToolbar='toolbar';
+    let idContent=CONFIG.LAYOUT.CONTENT;
+    let idToolbar='toolbar';
 
     return{
-        init:function(properties){
+        init: properties=>{
             //menubar = j$.ui.Menu.create("menubar");
             j$.Dashboard.Menubar.create();
             j$.Dashboard.Tabs.create();
@@ -289,7 +351,7 @@ j$.Dashboard = function(){
             j$.Dashboard.Menubar.bindToTabs(properties.services, properties.design);
             j$.Dashboard.Sidebar.bindToTabs(properties.services, properties.design);
         }
-      , bindItem:function(item){
+      , bindItem: item =>{
            if (!item.url && !item.onCLick){
                if (item.partial)
                    item.onClick=j$.Dashboard.Tabs.openPartial;
@@ -302,7 +364,7 @@ j$.Dashboard = function(){
                item.byPass =true;
            }
       }
-      , openItem:function(item, record){
+      , openItem: (item, record) => {
            if (!item.url && !item.onCLick){
                if (item.partial)
                    j$.Dashboard.Tabs.openPartial(item, null, record); //#Todo: passar o record
@@ -318,17 +380,15 @@ j$.Dashboard = function(){
 }();
 
 j$.Dashboard.Tabs=function(){
-    var tabs;
-    var idContent='tabs';
+    let tabs;
+    let idContent='tabs';
     let ftmKey = (service) =>{ return "tab_"+service.Parent.key+'_'+service.key}
     return{
-       create: function(){
-            tabs = j$.ui.Tabs.create(j$.Dashboard.Tabs.idContent,j$.Dashboard.idContent);
-       }
-       , open:function(properties){
+       create: ()=>{ tabs = j$.ui.Tabs.create(j$.Dashboard.Tabs.idContent,j$.Dashboard.idContent) }
+       , open: properties =>{
           return tabs.open(properties);
        }
-       , delegateTo:function(service, event, record){
+       , delegateTo: (service, event, record)=>{
             j$.Dashboard.Tabs.open({key:ftmKey(service),
                    caption:service.caption, title: service.title
                   , onLoad: function(tab){
@@ -336,7 +396,7 @@ j$.Dashboard.Tabs=function(){
                     }
             });
        }
-       , openPartial:function(service, event, record){
+       , openPartial:(service, event, record)=>{
             j$.Dashboard.Tabs.open({key:ftmKey(service),
                    caption:service.caption,
                     onLoad:function(tab){
@@ -344,28 +404,26 @@ j$.Dashboard.Tabs=function(){
                     }
             });
        }
-       , getTab:function(menu_key, item_key){
-          return tabs.getItem("tab_"+menu_key+'_'+item_key);
-       }
+       , getTab: (menu_key, item_key) =>{ return tabs.getItem("tab_"+menu_key+'_'+item_key) }
        , idContent:idContent
     };
 }();
 j$.Dashboard.Menubar=function(){
-    var menubar;
-    var idContent='menubar';
+    let menubar;
+    let idContent='menubar';
     return{
           //menu={key:'', caption:'', url:'', hint:'', items:[]}
          bindItems: function(menu, Items){
-             var menuBase = menubar.addMenu(menu);
-             for (var idx=0; idx<menu.items.length;  idx++){
-                 var item = Items[menu.items[idx]];
+            let menuBase = menubar.addMenu(menu);
+             for (let idx=0; idx<menu.items.length;  idx++){
+                let item = Items[menu.items[idx]];
                  j$.Dashboard.bindItem(item);
                  menuBase.add(item);
              }
          }
        ,  bindToTabs: function(Items, design){
-                for (var key in design){
-                    var menu = design[key];
+                for (let key in design){
+                    let menu = design[key];
                     if (dataExt.isArray(menu))
                         menu = {items:design[key]};
                     Object.preset(menu, {key:key, caption:key});
@@ -393,15 +451,15 @@ j$.Dashboard.Menubar=function(){
 }();
 
 j$.Dashboard.Sidebar=function(){
-    var menubar;
-    var idContent='sidebar';
-    var items={};
+    let menubar;
+    let idContent='sidebar';
+    let items={};
     return{
           //menu={key:'', caption:'', url:'', hint:'', items:[]}
          bindItems: function(menu, Items){
              //var menuBase = menubar.addMenu(menu);
-             for (var idx=0; idx<menu.items.length;  idx++){
-                 var item = Items[menu.items[idx]];
+             for (let idx=0; idx<menu.items.length;  idx++){
+                 let item = Items[menu.items[idx]];
                  if (item.partial && !item.url)
                      item.url = item.partial;
                  item.Parent=menu;
@@ -410,26 +468,26 @@ j$.Dashboard.Sidebar=function(){
 
                  j$.Dashboard.Sidebar.Items[menu.key]=menu;
 
-                 var onClick ="href='javascript:"
+                 let onClick ="href='javascript:"
                  +"j$.Dashboard.Sidebar.Items."+menu.key+".Items."+item.key+".open(\""+menu.key+"\",\""+item.key +"\")' ";
-                 var clas$ =" class='sidebar_link' ";
+                 let clas$ =" class='sidebar_link' ";
                  menu.dropbox.target.insert('<div class="wrap_sidebar_link"><a '+ onClick + clas$ + '>' +item.caption+ '</a></div>');
 
                  if (item.partial)
                     item.open=function(menu_key, item_key){
-                        var menu_item=j$.Dashboard.Sidebar.Items[menu_key].Items[item_key];
+                        let menu_item=j$.Dashboard.Sidebar.Items[menu_key].Items[item_key];
                         j$.Dashboard.Tabs.openPartial(menu_item);
                     };
                  else
                     item.open=function(menu_key, item_key){
-                        var menu_item=j$.Dashboard.Sidebar.Items[menu_key].Items[item_key];
+                        let menu_item=j$.Dashboard.Sidebar.Items[menu_key].Items[item_key];
                         j$.Dashboard.Tabs.delegateTo(menu_item);
                     };
              }
          }
        ,  bindToTabs: function(Items, design){
-                for (var key in design){
-                    var menu = design[key];
+                for (let key in design){
+                    let menu = design[key];
                     if (dataExt.isArray(menu))
                         menu = {items:design[key]};
                     Object.preset(menu, {key:key, caption:key});
@@ -447,7 +505,7 @@ j$.Dashboard.Sidebar=function(){
 }();
 
 j$.Node=function(inheritor, properties){
-    var self_node = this;
+    let self_node = this;
     this.Items={};
     this.length = 0;
     this.c$ = this.Items;
@@ -455,10 +513,10 @@ j$.Node=function(inheritor, properties){
     this.type = inheritor.type;
     this.Root = inheritor.Root;
     this.Parent = inheritor.Parent;
-    var util = function(){
+    let util = function(){
         return{
              formatKey:function(){
-                 var key='';
+                let key='';
                  if (dataExt.type(properties)=='String')
                      key=properties.toKey();
                  else if (properties.key)
@@ -494,40 +552,40 @@ j$.Node=function(inheritor, properties){
     function Items(key){
          return self_node.Items[key];
     }
-    this.addItem = function(key, item){
+    this.addItem = (key, item)=>{
         self_node.length +=1;
         self_node.Items[key]=item;
     };
-    this.removeItem = function(key){
+    this.removeItem = key=>{
         self_node.length -=1;
         self_node.Items[key]=null;
     };
-    this.show =function (){
+    this.show =()=>{
         console.log(self_node.key +"."+ self_node.caption);
-        for (var key in self_node.c$)
+        for (let key in self_node.c$)
                self_node.c$[key].show();
     };
-    this.first =function (){
-        for (var key in self_node.c$)
+    this.first = ()=>{
+        for (let key in self_node.c$)
             return self_node.c$[key];
     };
 };
 
 j$.ui.Open = function(){
     return{
-        url: function(url, idContent){
+        url: (url, idContent)=>{
             if (idContent)
                j$.ui.Open.partial(url, CONFIG.LAYOUT.CONTENT);
             else
                window.location = url;
         },
-        partial:function(url, idContent, complete){
+        partial:(url, idContent, complete)=>{
                 if (!idContent)
                      idContent = CONFIG.LAYOUT.CONTENT;
 
-                var pars = '';
+                let pars = '';
                 if (!url.isEmpty()) {
-                   var myAjax = new Ajax.Updater( idContent, url, {method: 'get', parameters: pars, onComplete:complete});
+                    let myAjax = new Ajax.Updater( idContent, url, {method: 'get', parameters: pars, onComplete:complete});
                 }
        }
     };

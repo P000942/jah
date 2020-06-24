@@ -420,7 +420,8 @@ j$.Resource = function(){
        var $i = this;
        var ROW = {FIRST:0, LAST:0}
        var originalSource = null;
-       Object.preset($i,{Columns:null, get:get, update:update, insert:insert, remove:remove, find:find, findIndex:findIndex,  exists:exists
+       Object.preset($i,{Columns:null, get:get, update:update, insert:insert, remove:remove
+                         , find:find, findIndex:findIndex, exists:exists
                          ,id:id, DataSource:DataSource, count:-1,position:0});
 
        this.createPager= page =>{
@@ -745,8 +746,6 @@ j$.Resource.Pager=function(dataset, page){
        }
    };
 }
-
-
 /*
     A proposta eh ter independencia em relacao ao parser dos recursos.
     Caso os recursos venham em XML ou outro formato.
@@ -887,6 +886,7 @@ j$.Resource.Store.add(
                       ]});
 // Vai adicionar direto no context default
 Uf = j$.Resource.create({name:'uf'
+                         ,text:'txEstado' //Importante para definir o campo que é usado para descrição quando foge do padrao (padrao: txUF)
                          ,source:[
                            {"idUf":"1","sgUf":"AM","txEstado":"Amazonas"}
                           ,{"idUf":"2","sgUf":"AC","txEstado":"Acre"}
