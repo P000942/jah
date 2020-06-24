@@ -369,16 +369,26 @@ function superType(Type, Properties) {
    this.Legend= function(){
        //var element=null;
        var id;
+       let prepareToRequest= value=>{
+          SELF.Legend.hide();
+          value = (value)?value:SELF.value();
+          if (!value.isEmpty()){
+             let fields={};
+             fields[SELF.resource.id] = value;
+             return fields;
+          }else
+             return null;
+       }
        return {
-              init:function(){ id = SELF.id +'_legend'; }
-            , hide:function(){if(i$(id)) $('#'+id).remove();}
-            , show:function(text){
+              init:() =>{ id = SELF.id +'_legend'; }
+            , hide:() =>{if(i$(id)) $('#'+id).remove();}
+            , show:text =>{
                  if(!i$(id))
                     $(SELF.inputField.parentElement).append("<span class='" +CONFIG.LEGEND.CLASS+ "' id='" +id+ "'>"+text+"</span>");
                  else
                    i$(id).content(text);
             }
-            , set:function(response){
+            , set:  response => {
                   SELF.Legend.hide();
                   var text='';
                   if (SELF.Resource){
@@ -398,15 +408,14 @@ function superType(Type, Properties) {
                   } else if (response && dataExt.isString(response) && !response.isEmpty())
                      SELF.Legend.show(response);
               }
-            , request:function(value){
-                   SELF.Legend.hide();
-                   value = (value)?value:SELF.value();
-                   if (SELF.Resource && !value.isEmpty()){
-                       if (SELF.type==='text')
-                           SELF.Resource.get(value);
+            , request: value =>{
+                   fields = prepareToRequest(value);
+                   if (SELF.Resource && dataExt.isDefined(fields)){
+                       if (SELF.type=='text')
+                           SELF.Resource.get(fields);
                    }
             }
-      };
+      }
    }();
 
    //response para o resource
@@ -557,11 +566,11 @@ function superType(Type, Properties) {
             Object.setIfExist(SELF, Properties,
                              ['evaluate','autotab', 'label','mandatory', 'align', 'parentLegend'
                             , 'readOnly', 'disabled', 'defaultValue', 'type'
-                            , 'dataType', 'list', 'hint','attributes']);
+                            , 'dataType', 'list', 'hint','attributes', 'resource']);
             if (Properties.resource){
                 // SELF.AdapterResource = j$.Resource.ResponseHandler;  // Quando tiver RESOURCE
                 // SELF.AdapterResource(Properties, SELF);
-                 SELF.Resource =  j$.Resource.create(Properties.resource, SELF);
+                 SELF.Resource =  j$.Resource.create(SELF.resource, SELF);
             }
         }
         SELF.mask = new superMask(mask);
