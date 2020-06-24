@@ -720,7 +720,7 @@ j$.ui.Form=function(service, modal) {
            service.actionController =  j$.ui.Controller.create(service);
         $i.display();
         if (service.Child)
-           service.Child.notify({action:CONFIG.ACTION.INIT.KEY});
+           service.Child.notify({action:CONFIG.ACTION.INIT});
         if (service.onOpen)
            service.onOpen();
         if (service.autoRequest){
@@ -765,7 +765,7 @@ j$.ui.Child=function(key, parent, properties){
          getBindFields();
          showLegends();
       }
-      if (notification.action==CONFIG.ACTION.EDIT.KEY){
+      if (notification.action===CONFIG.ACTION.EDIT){
          console.log("#TODO:"+ $i.key +" - "+ JSON.stringify(notification.record));
          if ($i.service.page && $i.service.autoRequest){
             $i.service.autoRequest($i.bindFields); 

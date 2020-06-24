@@ -300,7 +300,7 @@ function UpdateController(service){
         let record = Resource.Dataset.get(recordRow);
         service.Fieldset.edit(record);
         if (service.page.child)
-           service.page.child.notify({action:CONFIG.ACTION.EDIT.KEY, record:record});
+           service.page.child.notify({action:CONFIG.ACTION.EDIT, record:record});
         //service.page.hideAlert();
         return record;
   }
