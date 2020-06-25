@@ -281,13 +281,13 @@ j$.Resource = function(){
        */
        let SELF = this;
       // SELF.handleResponse = j$.Resource.DefaultHandler.handler;
-       SELF.failure =failure;
-       SELF.get    = get;
-       SELF.post   = post;
-       SELF.put    = put;
-       SELF.remove = remove;
-       SELF.filter = filter;
-       SELF.sort = sort;
+       SELF.failure = failure;
+       SELF.get     = get;
+       SELF.post    = post;
+       SELF.put     = put;
+       SELF.remove  = remove;
+       SELF.filter  = filter;
+       SELF.sort    = sort;
 
        var initialized=function(){
            SELF.Resource = Resource;
@@ -755,12 +755,11 @@ j$.Resource.Pager=function(dataset, page){
     j$.Resource.Parser.Default = j$.Resource.Parser.Xml;
  */
 j$.Resource.Parser.Json= function(Resource){
-      var SELF = this;
+      let SELF = this;
       this.toListset=function(response){
-        var Listset={list:{}, count:-1, maxlength:0};
-        var json = j$.Resource.DefaultHandler.handler(response);
-        var dataset =  SELF.toDataset(json);
-        //j$.Resource.Store.add(Resource);
+        let Listset={list:{}, count:-1, maxlength:0};
+        let json = j$.Resource.DefaultHandler.handler(response);
+        let dataset =  SELF.toDataset(json);
         Listset.count = dataset.count;
         dataset.sweep(function(row, record){
            try {
@@ -805,8 +804,8 @@ j$.Resource.Parser.Json= function(Resource){
 j$.Resource.Parser.Default = j$.Resource.Parser.Json;
 
 j$.Resource.Store= function(){
-   var store={};
-   var context = j$.Resource.context;
+   let store={};
+   let context = j$.Resource.context;
    store[context]={};
    return{
       add:function(resource, keep){
@@ -832,11 +831,11 @@ j$.Resource.Store= function(){
           return source;
       }
     , exists:function(urlResource){
-          var res = j$.Resource.parse(urlResource);
+          let res = j$.Resource.parse(urlResource);
           return !(store[res.context][res.name]==undefined);
       }
     , remove:function(urlResource){
-          var res = j$.Resource.parse(urlResource);
+          let res = j$.Resource.parse(urlResource);
           delete store[res.context][res.name];
       }
     , Source: function(name){
@@ -846,7 +845,7 @@ j$.Resource.Store= function(){
               return store[context] //Pega o recurso do contexto padrao
       }
     , Data: store
-   };
+   }
 
    function assertContext(context){
       if (!store[context])

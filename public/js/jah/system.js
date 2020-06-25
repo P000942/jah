@@ -1,8 +1,7 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this template, choose Tools 
  * and open the template in the editor.
  */
-//google.load("jquery", "1.7.1");
 function i$(id) {
     return document.getElementById(id);
 }
@@ -57,6 +56,7 @@ var System = function(){
     };
 }();
 const j$={ui:{},sys:System,sample:{}};
+
 //@note: util apenas em dsv para ver os objetos/colecoes e seus respectivos shortcut - que estão instanciados
 //j$.$V() ou j$.$V("$R")
 j$.$V= key =>{
@@ -113,7 +113,6 @@ if (System.api.jquery){
     }
     Element.prototype.remove = function() {
         $("#" + this.id).remove();
-
     }
     Element.prototype.addClassName = function(className) {
         $("#" + this.id).addClass(className);
@@ -179,8 +178,54 @@ if (System.api.jquery){
      };
 }
 
+Element.prototype.content= function(value){
+    if (value == undefined){
+      var value = '';
+      switch(dataExt.type(this)){
+        case 'HTMLSelectElement':
+          value = this.selectedIndex;
+          break;
+        case 'HTMLInputElement':
+          if (this.type == "radio" || this.type == "checkbox")
+            value = this.checked;
+          if (this.type == "text" || this.type == "hidden")
+            value = this.value;
+            break;
+        default:
+          value= this.textContent;
+      }
+      return value;
+    }else{
+      switch(dataExt.type(this)){
+        case 'HTMLSelectElement':
+          this.value = value;
+          break;
+        case 'HTMLInputElement':
+          if (this.type == "radio" || this.type == "checkbox")
+            this.checked = value;
+          if (this.type == "text" || this.type == "hidden")
+            this.value = value;
+            break;
+        default:
+          this.textContent=value;
+      }
+    }
+  }
 
-
+String.prototype.pixel = function(fontSize){
+    i$('w_len').style.fontSize=fontSize + "px";
+    i$('w_len').innerHTML = "X".repeat(this.length + 1);
+    return {width:i$('w_len').getWidth(), height:i$('w_len').getHeight()};
+}
+//alert("123451234512".pixel(10).width);
+//alert("123451234512".pixel(10).height);
+String.prototype.point = function(fontSize){
+    i$('w_len').style.fontSize=fontSize + "pt";
+    i$('w_len').innerHTML = "X".repeat(this.length + 1);
+    return {width:i$('w_len').getWidth(), height:i$('w_len').getHeight()};
+}
+//alert("123451234512".point(10).width);
+//alert("123451234512".point(10).height);
 
 
 // google.setOnLoadCallback(function(a,b) {

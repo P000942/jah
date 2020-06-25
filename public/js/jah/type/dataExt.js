@@ -13,7 +13,7 @@ String.prototype.isEmpty = function(){
 //Test$.isEmpty(' ');Test$.isEmpty(''); Test$.isEmpty('_');
 
 String.prototype.repeat = function (n){
-  var r="";
+  let r="";
   var s=this;
   for (var a=0;a<n;a++)
       r+=s;
@@ -22,7 +22,7 @@ String.prototype.repeat = function (n){
 // TESTE: 'X'.repeat(10)
 
 String.prototype.noAccent = function (){
-  var r=this; var hash={a:'áàã', e:'éê', i:'í', o:'ÓÔ', u:'úü', c:'ç', n:'ñ'};
+    let r=this; var hash={a:'áàã', e:'éê', i:'í', o:'ÓÔ', u:'úü', c:'ç', n:'ñ'};
   for (var key in hash){
       //er = '(/[' +hash[key]+ ']/gi)';
       r = r.replace(eval('(/[' +hash[key]+ ']/g)'),key);
@@ -33,11 +33,11 @@ String.prototype.noAccent = function (){
 // TESTE: 'X'.repeat(10)
 
 String.prototype.toCapitalize = function (){
-  var r=this.split(/\s/gi); var text='';
-  for (var i=0; r.length>i;i++){
+    let r=this.split(/\s/gi); var text='';
+    for (let i=0; r.length>i;i++){
       text += r[i].trim().substr(0,1).toUpperCase() + r[i].trim().substr(1).toLowerCase() + ' ';
-  }
-  return text;
+    }
+    return text;
 };
 String.prototype.toFirstLower = function (){
    return this.replace(/^[A-Z]/,this[0].toLowerCase())
@@ -46,9 +46,9 @@ String.prototype.toFirstUpper = function (){
    return this.replace(/^[a-z]/,this[0].toUpperCase())
 };
 String.prototype.toSeparate = function (delimiters){
-  var text='';
+    let text='';
   if (dataExt.isArray(delimiters)){
-      for (var i=0; delimiters.length > i;i++)
+      for (let i=0; delimiters.length > i;i++)
           text += delimiters[i];
   } else {
     text += delimiters;
@@ -61,15 +61,15 @@ String.prototype.toSeparate = function (delimiters){
 String.prototype.toCaption = function (delimiters){
    if (delimiters==undefined)
       delimiters = '_.-';
-   var ar =  this.toSeparate(delimiters);
-   for (var i=0; ar.length>i;i++)
+   let ar =  this.toSeparate(delimiters);
+   for (let i=0; ar.length>i;i++)
        ar[i]=ar[i].stripChar('_.<>*!$&;:"\'@+#-%^)(').trim(); // Remove Caracteres
    return ar.join(' ').toCapitalize().trim();
 };
 //"jose_geraldo.gomes-final".r.toCaption("_.-");
 
 String.prototype.toKey = function (){
-  var r=this;
+  let r=this;
   r = r.stripChar('_.<>*!$&;:"\'@+#%^)(-'); //Remove Caracteres
   r = r.toCapitalize();
   r = r.replace(/\s/gi,''); // Remove espaços
@@ -79,9 +79,9 @@ String.prototype.toKey = function (){
 //"id_nome&mt.for-da$xxx&".toKey()
 
 String.prototype.stripChar = function (delimiters){
-  var r =this; var text=''; var er='';
+    let r =this, text='', er='';
   if (dataExt.isArray(delimiters)){
-      for (var i=0; delimiters.length > i;i++)
+      for (let i=0; delimiters.length > i;i++)
           text += delimiters[i];
   } else {
     text += delimiters;
@@ -99,6 +99,16 @@ String.prototype.stripChar = function (delimiters){
 //alert('04 150.945-5'.replace(/\s|[.-]/gi, ''));
 //console.log("José Geraldo Ferreira Gomes".replace(/\s|[' ']/gi, ''));
 
+String.prototype.startsWith=function(pattern) {
+    return this.lastIndexOf(pattern, 0) === 0;
+}
+//"Jose".startsWith("J"); "Jose".startsWith("j")
+
+String.preset= function(value, vlDefault='') {
+    return value == null ? vlDefault : String(value);
+}
+//let aux=null; String.preset(aux)
+//zen = vl => String.preset(vl); zen(null); zen()
 
 //window.document.write("<span id='w_len' style='display:none;'>X</span>");
 /*Função que padroniza valor*/
@@ -118,17 +128,17 @@ function numberFormat( number, decimals, dec_point, thousands_sep ) {
     // *     exemplo 6: number_format(67.311, 2);
     // *     retorno 6: '67.31'
 
-    var n = number, prec = decimals;
+    let n = number, prec = decimals;
     n = !isFinite(+n) ? 0 : +n;
     prec = !isFinite(+prec) ? 0 : Math.abs(prec);
-    var sep = (typeof thousands_sep == "undefined") ? '.' : thousands_sep;
-    var dec = (typeof dec_point == "undefined") ? ',' : dec_point;
+    let sep = (typeof thousands_sep == "undefined") ? '.' : thousands_sep;
+    let dec = (typeof dec_point == "undefined") ? ',' : dec_point;
 
-    var s = (prec > 0) ? n.toFixed(prec) : Math.round(n).toFixed(prec);
+    let s = (prec > 0) ? n.toFixed(prec) : Math.round(n).toFixed(prec);
       //fix for IE parseFloat(0.55).toFixed(0) = 0;
 
-    var abs = Math.abs(n).toFixed(prec);
-    var _, i;
+    let abs = Math.abs(n).toFixed(prec);
+    let _, i;
 
     if (abs >= 1000) {
         _ = abs.split(/\D/);
@@ -146,7 +156,7 @@ function numberFormat( number, decimals, dec_point, thousands_sep ) {
 }
 
 var dateFormat = function () {
-	var	token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
+	let	token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
 		timezone = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g,
 		timezoneClip = /[^-+\dA-Z]/g,
 		pad = function (val, len) {
@@ -158,7 +168,7 @@ var dateFormat = function () {
 
 	// Regexes and supporting functions are cached through closure
 	return function (date, mask, utc) {
-		var dF = dateFormat;
+		let dF = dateFormat;
 
 		// You can't provide utc if you skip other args (use the "UTC:" mask prefix)
 		if (arguments.length == 1 && Object.prototype.toString.call(date) == "[object String]" && !/\d/.test(date)) {
@@ -178,7 +188,7 @@ var dateFormat = function () {
 			utc = true;
 		}
 
-		var	_ = utc ? "getUTC" : "get",
+		let	_ = utc ? "getUTC" : "get",
 			d = date[_ + "Date"](),
 			D = date[_ + "Day"](),
 			m = date[_ + "Month"](),
@@ -297,13 +307,13 @@ String.prototype.regexValidate = function(regularExpression){
 }
 
 String.prototype.module11 = function(nrDigit, limiteMult)  {
-   var dig;
-   var NumDig = (nrDigit)?nrDigit:1;
-   var LimMult = (limiteMult)?limiteMult:this.length;
-   var value = this;
+    let dig;
+    let NumDig = (nrDigit)?nrDigit:1;
+    let LimMult = (limiteMult)?limiteMult:this.length;
+    let value = this;
 
-   var Soma = 0;
-   var Mult = 2;
+    let Soma = 0;
+    let Mult = 2;
       for(i=value.length-1; i>=0; i--)      {
          Soma += (Mult * parseInt(value.charAt(i)));
          if(++Mult > LimMult) Mult = 2;
@@ -328,36 +338,36 @@ String.prototype.digitoCca = function()  {
 //Testa.digitoCpf('417660402'); Testa.digitoCca('04150945');Testa.digitoCnpj('073114610001');
 
 String.prototype.ehCpf = function()  {
-    var digito = this.substr(this.length-2,2);
-    var num = this.substr(0,this.length-2);
-    var digito_ok = num.digitoCpf();
+    let digito = this.substr(this.length-2,2);
+    let num = this.substr(0,this.length-2);
+    let digito_ok = num.digitoCpf();
     return (digito_ok == digito )?true:false;
 }
 //Testa.CPF('41766040268'); Testa.CPF('41766040267');
 String.prototype.ehCnpj = function()  {
-    var digito = this.substr(this.length-2,2);
-    var num = this.substr(0,this.length-2);
-    var digito_ok = num.digitoCnpj();
+    let digito = this.substr(this.length-2,2);
+    let num = this.substr(0,this.length-2);
+    let digito_ok = num.digitoCnpj();
     return (digito_ok == digito )?true:false;
 }
 //Testa.CNPJ('07311461000125'); Testa.CNPJ('07311461000124');
 String.prototype.ehCca = function()  {
-    var digito = this.substr(this.length-1,1);
-    var num = this.substr(0,this.length-1);
-    var digito_ok = num.digitoCca();
+    let digito = this.substr(this.length-1,1);
+    let num = this.substr(0,this.length-1);
+    let digito_ok = num.digitoCca();
     return (digito_ok == digito )?true:false;
 }
 //Testa.CCA('041509455'); Testa.CCA('041509456');
 
 String.prototype.ehCep = function(){
-    var expReg =/^[0-9]{5}[-]{0,1}[0-9]{3}$/;
+    let expReg =/^[0-9]{5}[-]{0,1}[0-9]{3}$/;
     return (!this.regexValidate(expReg))?false:true;
 }
 //Testa.CEP('69029-080'); Testa.CEP('6902-080'); Testa.CEP('69029-0801'); Testa.CEP('69029-80'); Testa.CEP('690219-080');
 
 
 String.prototype.ehPlaca = function(){
-    var expReg =/^[A-Z]{3}[-]{0,1}[0-9]{4}$/;
+    let expReg =/^[A-Z]{3}[-]{0,1}[0-9]{4}$/;
 //    if (withoutMask)
 //        expReg = /^[A-Z]{3}{0,1}[0-9]{4}$/;
     return (!this.regexValidate(expReg))?false:true;
@@ -367,10 +377,10 @@ String.prototype.ehPlaca = function(){
 
 // Esse � o script
 String.prototype.isName = function(){
-    var words = this.replace(/^\s*/, "").replace(/\s*$/, "").split(/\s/gi);
-    var nameIsValid = (words.length>1);
+    let words = this.replace(/^\s*/, "").replace(/\s*$/, "").split(/\s/gi);
+    let nameIsValid = (words.length>1);
     if (nameIsValid){
-        for (var i=0; i<words.length; i++){
+        for (let i=0; i<words.length; i++){
             nameIsValid = (words[i].length>1);
             if (!nameIsValid)
                 break;
@@ -393,8 +403,8 @@ String.prototype.isName = function(){
 String.prototype.isLetter = function(){
 //    return (!this.regexValidate(/^[:alpha:]/))?false:true;
     if (this.isEmpty()){return false;}
-    var alfabeto = "ABCDEFGHIJKLWMNOPQRSTUVXYZ�ÁÉÍÓÚÃÕÊÔ ";
-    var campo_maiusculo = this.toUpperCase();
+    let alfabeto = "ABCDEFGHIJKLWMNOPQRSTUVXYZ�ÁÉÍÓÚÃÕÊÔ ";
+    let campo_maiusculo = this.toUpperCase();
     for (cont = 0; cont < campo_maiusculo.length; cont++ ){
             var parte_campo = campo_maiusculo.charAt(cont);
             if ( alfabeto.indexOf(parte_campo) == -1 )
@@ -411,7 +421,7 @@ String.prototype.isDigit = function(){
 //Test$.Digit(''); Test$.Digit('23,59'); Test$.Digit('00,00'); Test$.Digit('24');Test$.Digit('1'); Test$.Digit('A'); Test$.Digit('100000001,1'), Test$.Digit('1,A');Test$.Digit('A,1');
 
 String.prototype.isNumeric = function(){
-    var expReg =/(\d{1,}[,]{1}\d{1,})|(^\d+$)/;
+    let expReg =/(\d{1,}[,]{1}\d{1,})|(^\d+$)/;
     return (!this.regexValidate(expReg))?false:true;
 }
 //Test$.Numeric('23,59'); Test$.Numeric('00,00'); Test$.Numeric('24'); Test$.Numeric('1');Test$.Numeric('12,132'); Test$.Numeric('A'); Test$.Numeric('100000001,1'), Test$.Numeric('1,A');Test$.Numeric('A,1');
@@ -423,25 +433,25 @@ String.prototype.isInteger = function(){
 
 String.prototype.isMoney = function(){
     //var expReg =/^[0-9]{1,}[,]{0,1}[0-9]{1,2}$/;
-    var expReg =/^(\d{1,}[,]{1}\d{1,2}$)|(^\d+$)/;
+    let expReg =/^(\d{1,}[,]{1}\d{1,2}$)|(^\d+$)/;
     return (!this.regexValidate(expReg))?false:true;
 }
 //Test$.Money('23,59'); Test$.Money('00,00'); Test$.Money('24');Test$.Money('12,132'); Test$.Money('A'); Test$.Money('100000001,1'), Test$.Money('1,A');Test$.Money('A,1');
 
 String.prototype.isDate = function(){
-    var expReg = /^((((0?[1-9]|[12]\d|3[01])[\.\-\/](0?[13578]|1[02])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|[12]\d|30)[\.\-\/](0?[13456789]|1[012])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|1\d|2[0-8])[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|(29[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00)))|(((0[1-9]|[12]\d|3[01])(0[13578]|1[02])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|[12]\d|30)(0[13456789]|1[012])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|1\d|2[0-8])02((1[6-9]|[2-9]\d)?\d{2}))|(2902((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00))))$/;
+    let expReg = /^((((0?[1-9]|[12]\d|3[01])[\.\-\/](0?[13578]|1[02])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|[12]\d|30)[\.\-\/](0?[13456789]|1[012])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|1\d|2[0-8])[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|(29[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00)))|(((0[1-9]|[12]\d|3[01])(0[13578]|1[02])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|[12]\d|30)(0[13456789]|1[012])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|1\d|2[0-8])02((1[6-9]|[2-9]\d)?\d{2}))|(2902((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00))))$/;
     return (!this.regexValidate(expReg))?false:true;
 }
 //Test$.Date('29/02/2011'); Test$.Date('28/02/2011'); Test$.Date('29/02/2008');Test$.Date('31/04/2011'); Test$.Date('31/05/2011'); Test$.Date('31/08/2008');
 
 String.prototype.isHour = function(){
-    var expReg =/^([0-1][0-9]|[2][0-3]):[0-5][0-9]$/;
+    let expReg =/^([0-1][0-9]|[2][0-3]):[0-5][0-9]$/;
     return (!this.regexValidate(expReg))?false:true;
 }
 //Test$.Hour('23:59'); Test$.Hour('00:00'); Test$.Hour('24:00');Test$.Hour('12:00'); Test$.Hour('25:00'); Test$.Hour('12:60');
 
 String.prototype.isPhone = function(withoutMask){
-    var expReg =/\(?\d{3}\)?\d{4}-\d{4}/;
+    let expReg =/\(?\d{3}\)?\d{4}-\d{4}/;
     if (withoutMask)
         expReg = /\d{11}/;
     return (!this.regexValidate(expReg))?false:true;
@@ -449,7 +459,7 @@ String.prototype.isPhone = function(withoutMask){
 //Test$.Phone('(092)8122-0911'); Test$.Phone('(092)81220911'); Test$.Phone('(092) 8122-0911');Test$.Phone('(92)8122-0911'); Test$.Phone('8122-0911'); Test$.Phone('12:60');
 
 String.prototype.isEmail = function(){
-    var expReg = /^[A-Za-z0-9_\-\.]+@[A-Za-z0-9_\-\.]{2,}\.[A-Za-z0-9]{2,}(\.[A-Za-z0-9])?/;
+    let expReg = /^[A-Za-z0-9_\-\.]+@[A-Za-z0-9_\-\.]{2,}\.[A-Za-z0-9]{2,}(\.[A-Za-z0-9])?/;
     return (!this.regexValidate(expReg))?false:true;
 }
 Boolean.prototype.isEmpty = function(){
@@ -461,20 +471,20 @@ String.prototype.mask = function(mask){
     mask =mask.replace(/[#]/g,'9'); // para adequar as m�scaras usadas na edi��o
     mask =mask.replace(/[@]/g,'X'); // para evitar que retira quando da remo��o de todos os caracteres especiais;
     mask = (mask=='9,99')?'999.999.999.999,99':mask;
-    var value=this.stripChar(mask.replace(/\w|[@]/g,"")); // Retira os separadores, caso estejam no valor;
+    let value=this.stripChar(mask.replace(/\w|[@]/g,"")); // Retira os separadores, caso estejam no valor;
     value=stuff(value.trim(), mask.replace(/\W/g,""));
-    var masks=mask.replace(/\W/g," ").split(' '); // monta um array  com as m�scaras - sem os separadores
-    var separators=$A(mask.replace(/\w/g,"")); // monta um array  com os separadores
-    var startSeparator = (mask[0].match(/\W/))?mask[0]:''; // Pega o separador, quando tem na primeira posi��o
-    var formattedText="";
-    var initPosition = 0;
+    let masks=mask.replace(/\W/g," ").split(' '); // monta um array  com as m�scaras - sem os separadores
+    let separators=$A(mask.replace(/\w/g,"")); // monta um array  com os separadores
+    let startSeparator = (mask[0].match(/\W/))?mask[0]:''; // Pega o separador, quando tem na primeira posi��o
+    let formattedText="";
+    let initPosition = 0;
     for (i=0;i<masks.length;i++){
-        var separator=separators[i]?separators[i]:'';
-        var maskSplit =  masks[i].trim()// pegar parte da m�scara para a formata��o
-        var part = value.substr(initPosition, maskSplit.length);  // pega a parte que indicada na m�scara, segunda separador
-        var maskedText = '';
+        let separator=separators[i]?separators[i]:'';
+        let maskSplit =  masks[i].trim()// pegar parte da m�scara para a formata��o
+        let part = value.substr(initPosition, maskSplit.length);  // pega a parte que indicada na m�scara, segunda separador
+        let maskedText = '';
         for (k=0;k<part.length;k++){
-            var character = part[k];
+            let character = part[k];
             if (character==' ' && maskSplit[k]=='0')
                 character=character.replace(character,'0');
             else if (maskSplit[k]=='A')
@@ -506,12 +516,12 @@ String.prototype.mask = function(mask){
 String.prototype.isValidInMask = function(mask){
     mask =mask.replace(/[#]/g,'9'); // para adequar as m�scaras usadas na edi��o
     mask =mask.replace(/[@]/g,'X'); // para evitar que retira quando da remo��o de todos os caracteres especiais;
-    var value=this.stripChar(mask.replace(/\w|[@]/g,"")).trim(); // Retira os separadores, caso estejam no valor;
-    var masks=mask.replace(/\W/g,""); // remove os separadores
-    var valid=false;
+    let value=this.stripChar(mask.replace(/\w|[@]/g,"")).trim(); // Retira os separadores, caso estejam no valor;
+    let masks=mask.replace(/\W/g,""); // remove os separadores
+    let valid=false;
     for (i=0;i<masks.length;i++){
-        var character = value[i];
-        var maskChar=masks[i];
+        let character = value[i];
+        let maskChar=masks[i];
 
         if ('09'.indexOf(maskChar)!=-1){ //Valida se eh numero
             valid = character.isDigit();
@@ -583,8 +593,8 @@ var dataExt = function(){
 dataExt.format = function(){
     return {
         money:function(p_value){
-           var decimal =2;
-           var value = p_value.toString().replace(/[',']/gi,'.');
+            let decimal =2;
+            let value = p_value.toString().replace(/[',']/gi,'.');
            return numberFormat(value, decimal);
         }
       ,record:function(name, parent){
@@ -603,7 +613,7 @@ dataExt.format = function(){
 //@note: procura por valor no objeto e retorna array com as propriedades que contem o valor
 Object.getByValue = function(object, value, attribute="value"){
    let items=[]
-   for (var key in object){
+   for (let key in object){
        if (dataExt.isObject(object[key])){
           if (object[key][attribute]){// objeto tem uma propriedade value
              if (object[key][attribute] == value)
@@ -625,9 +635,9 @@ Object.getByValue = function(object, value, attribute="value"){
 // console.log("   Object.getByValue(z,2,'key') ->:" +  Object.getByValue(z,2,"key"));
 // console.log("   Object.getByValue(z,3,'key') ->:" +  Object.getByValue(z,3,"key"));
 
-// definir um valor para uma propriedade de um método, caso a mesma nao seja informada;
+//@note: definir um valor para uma propriedade de um método, caso a mesma nao seja informada;
 // é uma forma de garantir que certa propriedade estará presente no objeto
-Object.preset = function(receiver, propertie, defaultvalue){
+Object.preset = (receiver, propertie, defaultvalue)=>{
     if (dataExt.isObject(propertie)){ // copia propriedades do objeto
        for (var key in propertie){
            Object.preset(receiver, key, propertie[key]);
@@ -647,16 +657,14 @@ Object.preset = function(receiver, propertie, defaultvalue){
 // aux = Object.preset({a:1,b:2},{x:1, y:2});
 // aux = Object.preset({a:1,b:2,x:null,y:''},{x:1, y:2});
 
-
+//@note: Junta o objeto provider ao objeto receiver
 Object.join = function(receiver,provider, properties){
-// Junta o objeto provider ao objeto receiver
     if (properties) { // Um Join apenas com algumas propriedades
        for(var i=0; i<properties.length; i++)
           Object.preset(receiver, properties[i], provider[properties[i]]);
-    } else { // Um Join com todas as propriedades
-       for (var key in provider){
+    } else {          // Um Join com todas as propriedades
+       for (var key in provider)
            Object.preset(receiver, key, provider[key]);
-       }
     }
     return receiver;
 };
@@ -664,23 +672,19 @@ Object.join = function(receiver,provider, properties){
 //Object.join(aux,{x:1, y:2},['x'])
 //aux = Object.join({a:1,b:2},{x:1, y:2});
 //aux = Object.join({a:1,b:2,x:null,y:''},{x:1, y:2});
-Object.merge = function(server,provider, properties){
-// Junta o objeto server e provider em objeto receiver
-    var receiver={};
 
+//@note: Junta o objeto server e provider em objeto receiver(novo objeto)
+Object.merge = function(server,provider, properties){
+    let receiver={};
     if (properties) { // Um Merge apenas com algumas propriedades
        for(var i=0; i<properties.length; i++){
           Object.preset(receiver, properties[i], server[properties[i]]);
           Object.preset(receiver, properties[i], provider[properties[i]]);
        }
-    } else { // Um Merge com todas as propriedades
-       for (var key in server){ // copia todas as propriedades do SERVER para o RECEIVER
+    } else {         // Um Merge com todas as propriedades
+       for (var key in server) // copia todas as propriedades do SERVER para o RECEIVER
            receiver[key]= server[key];
-       }
        Object.join(receiver,provider);
-       // for (var key in provider){//
-       //     Object.preset(receiver, key, provider[key]);
-       // }
     }
     return receiver;
 };
@@ -688,12 +692,13 @@ Object.merge = function(server,provider, properties){
 //Object.merge(aux,{x:1, y:2},['x'])
 //aux = Object.merge({a:1,b:2},{x:1, y:2});
 //aux = Object.merge({a:1,b:2,x:null,y:''},{x:1, y:2});
+
+//@note: SE EXISTIR NO PROVIDER,sobrescreve ou adiciona atributos definidos em Properties no RECEIVER
 Object.setIfExist = function(receiver, provider, properties){
-    //SE EXISTIR NO PROVIDER,sobrescreve ou adiciona atributos definidos em Properties no RECEIVER
+    
     if (dataExt.isArray(properties)){
-       for (var idx=0; properties.length>idx;idx++){
+       for (let idx=0; properties.length>idx;idx++)
            Object.setIfExist(receiver, provider, properties[idx]);
-       }
     }else{
         if (provider[properties]!=undefined && provider[properties]!=null)
             receiver[properties] = provider[properties];
@@ -705,12 +710,14 @@ Object.setIfExist = function(receiver, provider, properties){
 //Object.setIfExist(aux,{c:4,d:'abc'},'c')
 //Object.setIfExist(aux,{c:4,d:'abc'},['c','d','g'])
 //Object.setIfExist(aux,{c:4,d:'abc'},'z')
-Object.mixin=function(receiver,provider, methods){
+
+//@note:
+Object.mixin=function(receiver, provider, methods){
     if (methods) { // Um Mixin fornecendo alguns métodos
-       for (var i=0; i<methods.length; i++)
+       for (let i=0; i<methods.length; i++)
          receiver.prototype[methods[i]] = provider.prototype[methods[i]];
-    } else { // Um Mixin fornecendo todos os métodos
-      for (var method in provider.prototype) { // verificando se a classe receptora já possui tal método do loop...
+    } else {       // Um Mixin fornecendo todos os métodos
+      for (let method in provider.prototype) { // verificando se a classe receptora já possui tal método do loop...
         if (receiver.prototype[method]==undefined)
            receiver.prototype[method] = provider.prototype[method];
       }
@@ -730,18 +737,18 @@ Object.mixin=function(receiver,provider, methods){
 
 Object.compare = function(source, target, key){
 // compara se conteúdo do literal target existe em source
-    var r = true;
+    let r = true;
     if (key) { // compara por uma chave
         if (dataExt.isString(key)) // a chave de comparação é simples
            r = (source[key] == target[key])?true:false;
         else{ // a chave de comparação é composta por mais de um atributo
-           for(var i=0; i<key.length;i++){
+           for(let i=0; i<key.length;i++){
               if (source[key[i]] != target[key[i]])
                  return false;
            }
         }
     } else { // compara com todas as propriedades existente no objeto de comparação(target)
-       for (var fld in target){
+       for (let fld in target){
            if (source[fld] != target[fld])
               return false;
        }
@@ -754,9 +761,9 @@ Object.compare = function(source, target, key){
 // Object.compare({a:1, b:3, x:'A'}, {a:1, b:3, y:'B'})
 // Object.compare({a:1, b:3, x:'A'}, {a:1, b:3})
 
+//@note: verifica se source contains criteria
 Object.contains = function(source, criteria, key){
-// verifica se source contains criteria
-    var r = true;
+    let r = true;
     if (dataExt.isObject(criteria)) {
       for (let key in criteria){
          if (!dataExt.isDefined(source[key]) || source[key]!=criteria[key])
@@ -775,15 +782,15 @@ Object.contains = function(source, criteria, key){
 // Object.contains({a:1, b:3, x:'A'}, {a:1, b:2})
 // Object.contains({a:1, b:3, x:'A'}, 1,'a')
 
-Object.build = function(key, value){
-   let obj ={}
+Object.build = (key, value)=>{
+    let obj ={}
    obj[key]=value;
    return obj;
 }
 // console.log(Object.build("A",4))
 // ->Object {A: 4}
 
-Object.presetValues = function(receiver, provider){
+Object.presetValues = (receiver, provider)=>{
     //SE EXISTIR NO PROVIDER,sobrescreve ou adiciona atributos definidos em Properties no RECEIVER
     for (let key in provider){
         if (receiver[key])
@@ -845,7 +852,7 @@ Array.prototype.has = Array.prototype.includes;
 Array.prototype.sweep = Array.prototype.forEach;
 
 //var aux=[{a:1, b:2},{a:2, b:2},{a:3, b:2},{a:4, b:2}]
-//console.log(aux.select( function(item){ return (item.a<3);} ));
+//console.log(aux.select(item=>{ return (item.a<3)} ));
 Array.prototype.select = function(callback /*, parms*/){
     var results = [];
     if (typeof callback != "function")
@@ -899,3 +906,67 @@ Array.prototype.select = function(callback /*, parms*/){
 // };
     //   var aux=[1, 2,3];
     //   console.log(aux.collect( function(item){ return (item*2);} ));
+
+String.prototype.gsub=function(pattern, replacement) {
+    let result = '', source = this, match;
+    function prepareReplacement(replacement) {
+        if (dataExt.isFunction(replacement)) return replacement;
+        var template = new Template(replacement);
+        return function(match) { return template.evaluate(match) };
+    }
+    replacement = prepareReplacement(replacement);
+
+    if (dataExt.isString(pattern))
+        pattern = RegExp.escape(pattern);
+
+    if (!(pattern.length || pattern.source)) {
+        replacement = replacement('');
+        return replacement + source.split('').join(replacement) + replacement;
+    }
+
+    while (source.length > 0) {
+        if (match = source.match(pattern)) {
+        result += source.slice(0, match.index);
+        result += String.preset(replacement(match));
+        source  = source.slice(match.index + match[0].length);
+        } else {
+        result += source, source = '';
+        }
+    }
+    return result;
+    }
+
+function Template(template, pattern) {
+    let $this=this;
+    let initialized= function() {
+        $this.template = template.toString();
+        $this.pattern = pattern || Template.Pattern;
+    }();
+    
+    this.evaluate= function(object) {
+        return $this.template.gsub($this.pattern
+            , function(match) {
+                    if (object == null) return (match[1] + '');
+                    let before = match[1] || '';
+                    if (before == '\\') return match[2];
+            
+                    let ctx = object, expr = match[3],
+                        pattern = /^([^.[]+|\[((?:.*?[^\\])?)\])(\.|\[|$)/;
+            
+                    match = pattern.exec(expr);
+                    if (match == null) return before;
+            
+                    while (match != null) {
+                    var comp = match[1].startsWith('[') ? match[2].replace(/\\\\]/g, ']') : match[1];
+                    ctx = ctx[comp];
+                    if (null == ctx || '' == match[3]) break;
+                    expr = expr.substring('[' == match[3] ? match[1].length : match[0].length);
+                    match = pattern.exec(expr);
+                    }
+                    return before + String.preset(ctx);
+        });
+    }
+};
+    Template.Pattern = /(^|.|\r|\n)(#\{(.*?)\})/;
+    // var myDiv = new Template("<div class='page' id='#{id}'></div>"); ou var myDiv = new Template("<div class='page' id='#[id]'></div>",/(^|.|\r|\n)($\[(.*?)\])/);
+    // myDiv.evaluate({id:'id.999'});
