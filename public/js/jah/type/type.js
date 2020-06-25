@@ -370,14 +370,10 @@ function superType(Type, Properties) {
        //var element=null;
        var id;
        let prepareToRequest= value=>{
-          SELF.Legend.hide();
-          value = (value)?value:SELF.value();
-          if (!value.isEmpty()){
-             let fields={};
-             fields[SELF.resource.id] = value;
-             return fields;
-          }else
-             return null;
+           SELF.Legend.hide();
+           value = (value)?value:SELF.value();
+           return (value.isEmpty()) ?null
+                                  :Object.build(SELF.resource.id,value);
        }
        return {
               init:() =>{ id = SELF.id +'_legend'; }
