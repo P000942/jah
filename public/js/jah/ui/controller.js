@@ -152,7 +152,7 @@ function ResponseController($service){
    hide(['PRINT','INSERT','SAVE','CHILD']);
 
    function print(){
-      r3port=window.open("report.html", SELF.service.id ,'toolbar=no,location=no,directories=no,status=no,menubar=yes,scrollbars=yes,resizable=yes, height=600,width=800, fullscreen=yes');
+      r3port=window.open("report.html", SELF.service.id ,'toolbar=no,location=no,directories=no,status=no,menubar=yes,scrollbars=yes,resizable=yes, height=1024,width=1280, fullscreen=yes');
    }
 
   function sort(sort){

@@ -60,7 +60,7 @@ var ReportFactory = function(){
         restore:function(){
              return {
                   Dataset: self.opener[self.name].Resource.Dataset,
-                 Fieldset: self.opener[self.name].Interface.Fieldset,
+                 Fieldset: self.opener[self.name].Fieldset,
                   caption: self.opener[self.name].Interface.title
              }
         }
@@ -74,7 +74,7 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
    this.ops= function(a){alert(a);}
    this.newPage= function() {
             //this.preparePage();
-            var std_page = new Template("<div class='page' id='#{id}'></div>");
+            //var std_page = new Template("<div class='page' id='#{id}'></div>");
             //this.Page.id = "PG" + (this.Page.Control.number);
             $report.Page.id = "PG" + ($report.Page.Pager.Control.number);
             // Adiciona a pÃ¡gina ao hash de pÃ¡ginas
@@ -82,10 +82,10 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
             //$report.pages.set($report.Page.id,{page:$report.Page});
             with ($report){
                 // Inserir a div da pÃ¡gina no html
-                var html = std_page.evaluate(Page);
+                let html = `<div class='page' id='${page.id}'></div>`;//std_page.evaluate(Page);
                 $report.body.insert(html);
                 // Define o tamanho da página
-                var p_style =
+                let p_style =
                           {height: Page.Style.height  + 'mm', width: Page.Style.width  + 'mm',
                         marginTop: Page.Style.marginTop + 'mm',
                      marginBottom: Page.Style.marginBottom + 'mm',
@@ -300,52 +300,52 @@ function Columns(page, Fieldset){
 }
 
 function HeaderDetail(columns, report){
-   var $this=this;
-   var initialize=function(){
+   let $this=this;
+   let initialize=function(){
         $this.id = "";
         $this.sortFunction = "ReportFactory.reports(" + report.idx + ").sort";
         $this.Page = null;
         $this.Columns = columns;//.Array;
         //$this.height = 0;
     }();
-    this.write= function(page) {
+    this.write= page => {
        // $this.height = page.HeaderDetail.Style.height
         $this.id = "headerDetail-" + page.id;
         $this.Page = page;
-        var std = new Template("<div class='header-detail-wrap'  id='headerDetail-#{id}'><ul></ul></div>");
-	      var html = std.evaluate($this.Page);
-	      i$($this.Page.id).insert(html);
+        let html = `<div class='header-detail-wrap' id='headerDetail-${page.id}'><ul></ul></div>`;
+	    //var html = std.evaluate($this.Page);
+	    i$($this.Page.id).insert(html);
 
-        var p_style = {height: (page.HeaderDetail.Style.height)  + 'pt',
+        let p_style = {height: (page.HeaderDetail.Style.height)  + 'pt',
                       lineHeight: (page.HeaderDetail.Style.height)  + 'pt',
-                    marginBottom: page.HeaderDetail.Style.marginBottom + 'mm'};
+                      marginBottom: page.HeaderDetail.Style.marginBottom + 'mm'};
 
         i$($this.id).stylize(p_style);
 
         $this.writeColumns();
     };
-    this.writeColumns= function() {
+    this.writeColumns= () => {
         for (key in $this.Columns.Items)
             $this.writeColumn(this.Columns.Items[key])
     };
     this.writeColumn=function(column) {
         if (!column.persist) return false;
-        var clas$ = "header-detail-column "
+        let clas$ = "header-detail-column "
         if (column.Header.clas$)
             clas$ += column.Header.clas$;
 
         id = column.id + "-" + $this.id;
-        var html = "<li onclick='" +$this.sortFunction+ "(\"" + column.key + "\")' id='" + id + "'>"
+        let html = "<li onclick='" +$this.sortFunction+ "(\"" + column.key + "\")' id='" + id + "'>"
                 + "<a>" +column.label+ "</a>"
                 + "</li>";
 
-	      $('#'+$this.id+' > ul').append(html);
+	    $('#'+$this.id+' > ul').append(html);
 
-        var p_left =  column.Report.leftPos + "mm";
-        var p_width = column.Report.size + "mm";
-        var p_fontSize = $this.Page.Detail.Header.Font.size + 'pt';
+        let p_left =  column.Report.leftPos + "mm";
+        let p_width = column.Report.size + "mm";
+        let p_fontSize = $this.Page.Detail.Header.Font.size + 'pt';
 
-        var p_style = { width: p_width, left: p_left,
+        let p_style = { width: p_width, left: p_left,
                         fontSize:p_fontSize,
                         textAlign: column.align
                       };
@@ -368,8 +368,9 @@ var Detail = function(Columns, report){
         this.Dataset = dataset;
         this.id = "detail-" + Page.id;
         this.Page = Page;
-        var std = new Template("<div class='detail' id='detail-#{id}'></div>");
-        var html = std.evaluate(Page);
+        let html = `<div class='detail' id='detail-${Page.id}'></div>`;
+        // var std = new Template("<div class='detail' id='detail-#{id}'></div>");
+        // var html = std.evaluate(Page);
         i$(Page.id).insert(html);
         // Para definir o tamanho para as linhas de detalhe
         // Depende da propriedade de Page.Detail.height
@@ -428,32 +429,33 @@ var Detail = function(Columns, report){
 };
 
 function Header(){
-  var $this=this;
-    var initialized= function(){
+    let $this=this;
+    let initialized= function(){
         $this.id = "";
         $this.titleWidth = 0;
     }();
-    this.write= function(page) {
+    this.write= page => {
         $this.id = "header-" + page.id;
+        let idHeaderTitle = "header-title-" + page.id;
             // Calcula o centro da página para colocar os tÃ­tulos
             // 31 é a medida das imagens laterais
         $this.titleWidth = (page.Style.width - 31);
         page.Header.Title = $this.prepareTitle(page.Header.Title);
-        var std = new Template(
-		    "<div class='header' id='header-#{id}'>"
+        //var std = new Template(
+        let html = `<div class='header' id='${$this.id}'>`
                 	+ "<div class='header-logo-left'><img /></div>"
-			 + "<div class='header-title'  id='header-title-#{id}'>"
-			     + "<label class='header-title1'>#{Header.Title.line1}</label><br />"
-			     + "<label class='header-title2'>#{Header.Title.line2}</label><br />"
-			     + "<label class='header-title3'>#{Header.Title.line3}</label>"
-			 + "</div>"
-			 + "<div class='header-logo-right'><img /></div>"
-                + "</div>");
-    	 var html = std.evaluate(page);
+			        + `<div class='header-title'  id='${idHeaderTitle}'>`
+			          + `<label class='header-title1'>${page.Header.Title.line1}</label><br />`
+			          + `<label class='header-title2'>${page.Header.Title.line2}</label><br />`
+			          + `<label class='header-title3'>${page.Header.Title.line3}</label>`
+			        + "</div>"
+			        + "<div class='header-logo-right'><img /></div>"
+                 + "</div>";
+    	 //var html = std.evaluate(page);
     	 i$(page.id).insert(html);
         // Para definir o centro do Header - centralizar as linhas de tÃ­tulo
         // Depende da propriedade de Page.Header.width
-       i$('header-title-' + page.id).stylize({width: this.titleWidth + 'mm'});
+       i$(idHeaderTitle).stylize({width: this.titleWidth + 'mm'});
         // Definir altura do cabecalho
        var p_style = {height: page.Header.Style.height + 'mm',
                     marginTop: page.Header.Style.marginTop + 'mm',
@@ -464,7 +466,7 @@ function Header(){
     // Isso facilitarÃ¡ o desenvolvimento, pois, as linhas de cabeÃ§alho poderÃ£o ter tÃ­tulos como:
     // secretaria, setor, etc
     // Essa funcÃ§Ã£o adequa esses nomes, transformando o objeto de tÃ­tulo em um array com os valores
-    this.prepareTitle= function(title){
+    this.prepareTitle= title =>{
         var titles = [];//$H(title).values();
         for (var key in title)
             titles.push(title[key]);
@@ -475,27 +477,24 @@ function Header(){
 };
 
 function Footer(){
-  var $this=this;
-  var initialize=function(){
+  let $this=this;
+  let initialize=function(){
         this.id = "";
   }();
   this.write= function(page) {
         this.id = "footer-" + page.id;
-        var std = new Template(
-		  "<div class='footer' id='footer-#{id}'>"
-                	+ "<div class='footer-date'>#{Footer.date}</div>"
-			+ "<div class='footer-hour'>#{Footer.hour}</div>"
-			+ "<div class='footer-note'>#{Footer.note}</div>"
-			+ "<div class='footer-position'>"
+        let html = `<div class='footer' id='${this.id}'>`
+                   + `<div class='footer-date'>${page.Footer.date}</div>`
+			       + `<div class='footer-hour'>${page.Footer.hour}</div>`
+			       + `<div class='footer-note'>${page.Footer.note}</div>`
+			       + "<div class='footer-position'>"
                                 + (page.Pager.Record.first) + "/"
-                                + (page.Pager.Record.last) + "-"
+                                + (page.Pager.Record.last)  + "-"
                                 + (page.Pager.Record.count)
                         + "</div>"
-			+ "<div class='footer-page'>"
-                        + "#{Pager.Control.number}/#{Pager.Control.last}"
-                        + "</div>"
-                + "</div>");
-	    var html = std.evaluate(page);
+			       + `div class='footer-page'>${page.Pager.Control.number}/${page.Pager.Control.last}</div>`
+                + "</div>";
+	    //var html = std.evaluate(page);
     	i$(page.id).insert(html);
 
       var p_style = {height: page.Footer.Style.height + 'mm',
