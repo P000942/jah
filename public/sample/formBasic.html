@@ -18,8 +18,8 @@
     <link rel="stylesheet" href="../css/layout.css" />
 
     <!-- <script src="../js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script> -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script> -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- <script src="../js/vendor/jquery.json-2.3.min.js"></script> -->
     <!-- <script src="../js/vendor/bootstrap.min.js"></script> -->
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -96,7 +96,7 @@
     };
 
     myPage.Fieldset= new j$.ui.Fieldset({
-                     Digito:TYPE.DIGIT({label:'Dígito', resource:{name:'estadoCivil', local:true}, hint:'informe o código aparece a legenda.'}),
+                     Digito:TYPE.DIGIT({label:'Dígito', resource:{name:'estadoCivil', local:true, id:"idEstadoCivil"}, hint:'informe o código aparece a legenda.'}),
                   ufLegenda:TYPE.UPPERCASE(2,{label:'UF com Legenda', resource:{name:'uf', local:true, id:'sgUf', text:'txEstado'}}),
                    Numerico:TYPE.NUMERIC(4,2,{label:'Numérico', mandatory:true}),
                    Dinheiro:TYPE.MONEY(10),
