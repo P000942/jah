@@ -10,24 +10,14 @@
      .Parser           => Conversor dos dados do formato de origem para o do recordset
      .store            => É o repositório onde ficam os dados
  */
- j$.Requester = function(){
-     var context = CONFIG.RESOURCE.CONTEXT;
+
+ j$.Requester = function(){ // É  uma instancia única
+     let context = CONFIG.RESOURCE.CONTEXT;
      function URL(url, responseHandler){
        // console.log(`URL==>>${url}`);
         return (url) ?url
                      :responseHandler.Resource.url;
      };
-    //  function cacheRequest(url, parameter, responseHandler){
-    //     var response;
-    //     if (parameter == undefined){
-    //        if (responseHandler.Resource.cache){ // vai no cache se permitido ir no cache, senao sempre vai no servidor
-    //           response=j$.Resource.Store.restore(url);
-    //           if (response)
-    //              responseHandler.get(response);
-    //         }
-    //     }
-    //     return response;
-    //  }
      function cacheRequest(url, parameter, responseHandler){
         let response=null;
         //console.log(`cacheRequest==>>${url} / ${parameter}`);
@@ -150,7 +140,7 @@
    }
 }();
 
-j$.Resource = function(){
+j$.Resource = function(){ // Factory: Criar os recursos
     var items = {};
     let properties=['name','context','source','local','cache','key','id','text', 'autoCharge','url'];
     var context = CONFIG.RESOURCE.CONTEXT;
@@ -196,7 +186,7 @@ j$.Resource = function(){
                 //items[Definition.name].externalResponseHandler = externalResponseHandler;
             }
             return items[Definition.name];
-        }
+        }       
       , context:context
       , ResponseHandler:ResponseHandler
       , Requester:Requester
@@ -384,19 +374,8 @@ j$.Resource = function(){
              responseHandler.remove(responseHandler.Resource.Dataset.get(recordRow),recordRow);
         };
 
-        this.get= function(parameter) {
-              //  if (parameter){ // simula o "http://localhost:3000/assunto/1"
-              //      responseHandler.Resource.Dataset = new j$.Resource.Dataset(j$.Resource.Store.restore(url), responseHandler.Resource);
-              //      var res= responseHandler.Resource.Dataset.find(function(row,record){
-              //          if (record[responseHandler.Resource.id] == parameter){
-              //             return true;
-              //          }
-              //      });
-              //      request(res, responseHandler.get);
-              //  }else{
-              //     request(j$.Resource.Store.restore(url),responseHandler.get);
-              //  }
-              return j$.Requester.get(url, parameter,responseHandler)
+        this.get= function(parameter, handler=responseHandler) { //handler provavelmente só vem preenchido quando o recurso é usado é um controle
+             return j$.Requester.get(url, parameter,handler)
        };
        this.search= function(parameter) {
             return j$.Requester.get(url, parameter,responseHandler)
@@ -849,7 +828,7 @@ j$.Resource.Store= function(){
 
    function assertContext(context){
       if (!store[context])
-          store[context]={}; // Cria um contesto nova caso não exista
+          store[context]={}; // Cria um contexto novo, caso não exista
    }
 
    function getResourceInContext(urlContext, resourceName){
@@ -875,14 +854,21 @@ j$.Resource.Store.add(
                             {"idTabela":"1","txTabela":"Descrição tabela 1"}
                            ,{"idTabela":"2","txTabela":"Descrição tabela 2"}
                     ]});
-j$.Resource.Store.add(
-                        {"http://localhost/jah/resources/estadoCivil":
-                          [
-                            {"idEstadoCivil":"1","txEstadoCivil":"Solteiro"}
-                           ,{"idEstadoCivil":"2","txEstadoCivil":"Casado"}
-                           ,{"idEstadoCivil":"3","txEstadoCivil":"Divorciado"}
-                           ,{"idEstadoCivil":"4","txEstadoCivil":"Viúvo"}
-                      ]});
+Uf = j$.Resource.create({name:'estadoCivil'
+                    ,source:[
+                        {"idEstadoCivil":"1","txEstadoCivil":"Solteiro"}
+                        ,{"idEstadoCivil":"2","txEstadoCivil":"Casado"}
+                        ,{"idEstadoCivil":"3","txEstadoCivil":"Divorciado"}
+                        ,{"idEstadoCivil":"4","txEstadoCivil":"Viúvo"}
+                  ]});
+// j$.Resource.Store.add(
+//                         {"http://localhost/jah/resources/estadoCivil":
+//                           [
+//                             {"idEstadoCivil":"1","txEstadoCivil":"Solteiro"}
+//                            ,{"idEstadoCivil":"2","txEstadoCivil":"Casado"}
+//                            ,{"idEstadoCivil":"3","txEstadoCivil":"Divorciado"}
+//                            ,{"idEstadoCivil":"4","txEstadoCivil":"Viúvo"}
+//                       ]});
 // Vai adicionar direto no context default
 Uf = j$.Resource.create({name:'uf'
                          ,text:'txEstado' //Importante para definir o campo que é usado para descrição quando foge do padrao (padrao: txUF)

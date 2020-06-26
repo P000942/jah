@@ -1,5 +1,5 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this template, choose Tools 
  * and open the template in the editor.
  */
 j$.ui.type={};
@@ -390,8 +390,8 @@ function superType(Type, Properties) {
                   if (SELF.Resource){
                       var record = SELF.Resource.handleResponse(response);
                       if (record){
-                          if (record[SELF.Resource.text]!=undefined){
-                              text = record[SELF.Resource.text];
+                          if (record[0][SELF.Resource.text]!=undefined){
+                              text = record[0][SELF.Resource.text];
                               SELF.Legend.show(text)
                           }
                       }
@@ -408,7 +408,7 @@ function superType(Type, Properties) {
                    fields = prepareToRequest(value);
                    if (SELF.Resource && dataExt.isDefined(fields)){
                        if (SELF.type=='text')
-                           SELF.Resource.get(fields);
+                           SELF.Resource.get(fields, SELF);
                    }
             }
       }
