@@ -300,7 +300,6 @@ digitoModule11:function(value,dig,lim){console.log('Module11('   +value+ '):'+ v
     }
 }();
 
-
 String.prototype.regexValidate = function(regularExpression){
     if (this.isEmpty()){return false;}
     return (!this.match(regularExpression))?false:true;

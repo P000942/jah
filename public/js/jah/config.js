@@ -1,5 +1,5 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this template, choose Tools 
  * and open the template in the editor.
  */
 const RC = {NOT_FOUND:-1, NONE:-1}
@@ -226,8 +226,6 @@ CONFIG.CRUD.GRID.preset=(keys, actionController)=>{
     return CONFIG.preset(CONFIG.CRUD.GRID.BUTTONS, keys, actionController);
 };
 
-
-
 CONFIG.SYNONYM={
              new:['new', 'insert', 'novo', 'inserir', 'incluir']
       ,   remove:['remove','delete','del','excluir','trash']
@@ -330,7 +328,7 @@ const EXCEPTION = function() {
             else
                EXCEPTION.on(exception,text);
         }
-      , on: (exception,text)=>{
+      ,   on: (exception,text)=>{
             console.log(formatMessage(exception,text));
         }
       , format: (exception,text)=>{

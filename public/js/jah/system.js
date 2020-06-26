@@ -5,8 +5,8 @@
 function i$(id) {
     return document.getElementById(id);
 }
-var NO_IE=document.getElementById&&!document.all;
-var System = function(){
+const NO_IE=document.getElementById&&!document.all;
+const System = function(){
     let result = null;
     let _QueryString={};
     let importJS= file =>{
@@ -227,7 +227,6 @@ String.prototype.point = function(fontSize){
 //alert("123451234512".point(10).width);
 //alert("123451234512".point(10).height);
 
-
 // google.setOnLoadCallback(function(a,b) {
 //executa quando abre a pagina web
  $(document).ready(function(){
@@ -242,7 +241,7 @@ String.prototype.point = function(fontSize){
                 }
                 return totaloffset;
             }
-        ,clearEdge: (obj, whichedge, target)=>{
+            ,clearEdge: (obj, whichedge, target)=>{
                         let edgeoffset=0;
                         let windowedge=null;
                         if (target == undefined)
@@ -269,118 +268,6 @@ String.prototype.point = function(fontSize){
             , body:(document.compatMode && document.compatMode!="BackCompat")? document.documentElement : document.body
         };
     }();
-
-    System.Hint = function(){
-        let idHint="hintbox";
-        return{
-            init:()=>{
-                // cria o container para montar o elemento hint
-                if (i$(idHint)==undefined){
-                    var divblock=document.createElement("div");
-                    divblock.setAttribute("id", idHint);
-                    document.body.appendChild(divblock);
-                }
-            },
-            show:(hintText, obj, e, clas$, tipwidth)=>{
-                if ((System.Browser.msie||NO_IE) && i$(idHint)){
-                    var hintBox=i$(idHint);
-                    hintBox.style.height='';
-                    hintBox.innerHTML=hintText;
-                    if (clas$==undefined)
-                        clas$='hint-info';
-                    hintBox.className = 'hint ' + clas$;
-
-                    hintBox.style.left=hintBox.style.top=-500 ;
-                    if (tipwidth!=""){
-                        hintBox.widthobj=hintBox.style;
-                        hintBox.widthobj.width=tipwidth;
-                    }
-                    hintBox.x=System.Browser.getPosOffSet(obj, "left");
-                    hintBox.y=System.Browser.getPosOffSet(obj, "top");
-                    obj.onmouseout=System.Hint.hide;
-                    if (hintBox.offsetHeight<34)
-                        hintBox.style.height='34px';
-                    hintBox.style.left=(hintBox.x - System.Browser.clearEdge(obj, "rightedge", hintBox)+obj.offsetWidth +5) + "px";
-                    hintBox.style.top =(hintBox.y - System.Browser.clearEdge(obj, "bottomedge", hintBox)) +"px";
-                    hintBox.style.visibility="visible";
-                    if ((hintBox.offsetHeight - obj.offsetHeight)>0)
-                       hintBox.style.top = ((hintBox.y - System.Browser.clearEdge(obj, "bottomedge", hintBox))
-                                         -  ((hintBox.offsetHeight - obj.offsetHeight)/2)-2) + 'px';
-                }
-            },
-            hide: e =>{
-                i$(idHint).style.visibility="hidden";
-                i$(idHint).style.left="-500px";
-            }
-        };
-    }();
-    System.init();
-    //alert('ops');
-});
-System.Action = ()=>{ 
-   let self = this;
-   this.actions = col_actions = [];
-
-   this.addAction = function(action){ 
-      self.actions.push(action);
-   };
-   this.execute = o =>{
-      let result = false;
-      for (var i=0; i < this.actions.length; i++){
-          result=self.actions[i](o);
-      }
-      return result;
-   };
-   this.clear = ()=>{
-       self.actions = [];
-   };
-};
-const NOW = new Date();
-const KEY = {F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123,
-           ENTER:13, ESC:27, COMMA:44, BACKSPACE:8, TAB:9, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, INS:45, DEL:46, REFRESH:116};
-const ALIGN = {LEFT:'left', CENTER:'center', RIGHT:'right', JUSTIFY:'justify'};
-
-const MOUSE = {BUTTON:{LEFT:0,CENTER:1,RIGHT:2}};
-
-const ORDER = {ASCENDING:'ASC', DESCENDING:'DESC', NONE:'NONE'};
-ORDER.CLASS =  order =>{
-    let _class = "";
-     switch(order) {
-       case ORDER.NONE:
-            _class = null;
-            break;
-       case ORDER.ASCENDING:
-            _class = "list-ikon ikon-sort-asc";
-            break;
-       case ORDER.DESCENDING:
-            _class = "list-ikon ikon-sort-desc";
-            break;
-     }
-    return _class;
-};
-const FILTER ={};
-FILTER.CLASS =  filter =>{
-    return (filter)?'list-ikon ikon-filter':null;
-};
-
-j$.util = function(){
-    let sequence = {};
-    let getId = function(key, id){
-            if (id!=undefined){
-                if (!id.isEmpty())
-                    return id;
-            }
-            if (key==undefined)
-                key = 'SequenceId';
-            if (sequence[key]==undefined)
-                sequence[key]=0;
-            sequence[key]=sequence[key]+1;
-            return key + "_" + sequence[key];
-    };
-    return{
-        getId:getId
-    };
-}();
 
 
 j$.Dashboard = function(){
@@ -634,4 +521,117 @@ j$.ui.Open = function(){
                 }
        }
     };
+}();
+
+
+System.Hint = function(){
+    let idHint="hintbox";
+    return{
+        init:()=>{
+            // cria o container para montar o elemento hint
+            if (i$(idHint)==undefined){
+                var divblock=document.createElement("div");
+                divblock.setAttribute("id", idHint);
+                document.body.appendChild(divblock);
+            }
+        },
+        show:(hintText, obj, e, clas$, tipwidth)=>{
+            if ((System.Browser.msie||NO_IE) && i$(idHint)){
+                var hintBox=i$(idHint);
+                hintBox.style.height='';
+                hintBox.innerHTML=hintText;
+                if (clas$==undefined)
+                    clas$='hint-info';
+                hintBox.className = 'hint ' + clas$;
+
+                hintBox.style.left=hintBox.style.top=-500 ;
+                if (tipwidth!=""){
+                    hintBox.widthobj=hintBox.style;
+                    hintBox.widthobj.width=tipwidth;
+                }
+                hintBox.x=System.Browser.getPosOffSet(obj, "left");
+                hintBox.y=System.Browser.getPosOffSet(obj, "top");
+                obj.onmouseout=System.Hint.hide;
+                if (hintBox.offsetHeight<34)
+                    hintBox.style.height='34px';
+                hintBox.style.left=(hintBox.x - System.Browser.clearEdge(obj, "rightedge", hintBox)+obj.offsetWidth +5) + "px";
+                hintBox.style.top =(hintBox.y - System.Browser.clearEdge(obj, "bottomedge", hintBox)) +"px";
+                hintBox.style.visibility="visible";
+                if ((hintBox.offsetHeight - obj.offsetHeight)>0)
+                   hintBox.style.top = ((hintBox.y - System.Browser.clearEdge(obj, "bottomedge", hintBox))
+                                     -  ((hintBox.offsetHeight - obj.offsetHeight)/2)-2) + 'px';
+            }
+        },
+        hide: e =>{
+            i$(idHint).style.visibility="hidden";
+            i$(idHint).style.left="-500px";
+        }
+    };
+}();
+System.init();
+//alert('ops');
+});
+System.Action = ()=>{ 
+let self = this;
+this.actions = col_actions = [];
+
+this.addAction = function(action){ 
+  self.actions.push(action);
+};
+this.execute = o =>{
+  let result = false;
+  for (var i=0; i < this.actions.length; i++){
+      result=self.actions[i](o);
+  }
+  return result;
+};
+this.clear = ()=>{
+   self.actions = [];
+};
+};
+const NOW = new Date();
+const KEY = {F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123,
+       ENTER:13, ESC:27, COMMA:44, BACKSPACE:8, TAB:9, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, INS:45, DEL:46, REFRESH:116};
+const ALIGN = {LEFT:'left', CENTER:'center', RIGHT:'right', JUSTIFY:'justify'};
+
+const MOUSE = {BUTTON:{LEFT:0,CENTER:1,RIGHT:2}};
+
+const ORDER = {ASCENDING:'ASC', DESCENDING:'DESC', NONE:'NONE'};
+ORDER.CLASS =  order =>{
+let _class = "";
+ switch(order) {
+   case ORDER.NONE:
+        _class = null;
+        break;
+   case ORDER.ASCENDING:
+        _class = "list-ikon ikon-sort-asc";
+        break;
+   case ORDER.DESCENDING:
+        _class = "list-ikon ikon-sort-desc";
+        break;
+ }
+return _class;
+};
+const FILTER ={};
+FILTER.CLASS =  filter =>{
+return (filter)?'list-ikon ikon-filter':null;
+};
+
+j$.util = function(){
+let sequence = {};
+let getId = function(key, id){
+        if (id!=undefined){
+            if (!id.isEmpty())
+                return id;
+        }
+        if (key==undefined)
+            key = 'SequenceId';
+        if (sequence[key]==undefined)
+            sequence[key]=0;
+        sequence[key]=sequence[key]+1;
+        return key + "_" + sequence[key];
+};
+return{
+    getId:getId
+};
 }();
