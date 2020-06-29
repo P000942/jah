@@ -6,7 +6,7 @@ j$.ui.Menu = function(){
     var items = {};
     //var idMenu = 'submenu'
     return{
-       create: function(idContent){
+       create:  idContent =>{
              items[idContent] =new j$.ui.Menu.Navbar(idContent);//MENU.create(idContent);
              return items[idContent];
       }
@@ -21,14 +21,14 @@ j$.ui.Dropdown = function(){
     var items = {};
     //var idMenu = 'submenu'
     return{
-       create: function(idContent, caption){
+       create: (idContent, caption)=>{
              items[idContent] =new j$.ui.Menu.Dropdown(idContent, caption);//MENU.create(idContent);
              return items[idContent];
       }
-      , get:function(key){return items[key];}
+      , get:key=>{return items[key];}
       , Items:items
       , c$:items
-      , C$:function(key){return items[key];}
+      , C$:key=>{return items[key];}
      // , id:idMenu
     };
 }();
@@ -37,8 +37,8 @@ j$.ui.Dropdown = function(){
 
 
 j$.ui.Menu.Designer =function(){
-    var formatLink = function(properties){
-              var attLink = 'href=\'javascript:';
+    let formatLink = properties =>{
+              let attLink = 'href=\'javascript:';
               if (properties.url && !properties.byPass){
                  attLink +=  'j$.ui.Open.url("'+ properties.url + '"';
                  if (properties.idContainer) // Container é usado para quando for partial
@@ -50,9 +50,9 @@ j$.ui.Menu.Designer =function(){
           };
     return{
 
-       format: function(properties){
-              var attClass = ''; var attDropdown = ''; var attCarret = ''; var attDropdownUl =''; var attLi=''; var attIcon='';
-              var attHint = (properties.title)? 'title="' + properties.title + '"' : '';
+       format: properties=>{
+              let attClass = '', attDropdown = '', attCarret = '', attDropdownUl ='', attLi='', attIcon='';
+              let attHint = (properties.title)? 'title="' + properties.title + '"' : '';
               if (properties.active){
                   attClass='class="active"';
                   properties.Root.active=true;
@@ -85,52 +85,52 @@ j$.ui.Menu.Navbar =function(idContent){
     this.render = render;
 
     function create(){
-        var id = idContent+'Root';
+        let id = idContent+'Root';
         // $("#"+idContent).append('<div class="navbar-inner"></div>');
         // $("#"+idContent+" > .navbar-inner").append('<div class="container"> </div>');
         // $("#"+idContent+" > .navbar-inner > .container").append('<ul id="' +id+'" class="nav inline"></ul>');
-        $("#"+idContent).append('<div class="container"></div>');
-        $("#"+idContent+" > .container").append('<div class="navbar-collapse collapse"> </div>');
+        $("#"+idContent).append(`<div class="container"></div>`);
+        $("#"+idContent+" > .container").append(`<div class="navbar-collapse collapse"> </div>`);
         $("#"+idContent+" > .container > .navbar-collapse").append('<ul id="' +id+'" class="nav navbar-nav"></ul>');
         return id;
     };
 
     //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
     function addMenu(properties){
-        var menu = new j$.ui.Menu.Item(self_navbar, properties);
+        let menu = new j$.ui.Menu.Item(self_navbar, properties);
         self_navbar.addItem(menu.key,menu);
 	return menu;
     }
 
     function render(){
-        for (var key in self_navbar.c$)
+        for (let key in self_navbar.c$)
             self_navbar.c$[key].render();
     }
 };
 
 j$.ui.Menu.Dropdown =function(idContent, caption){
     var self_dropdown = this;
-    var wCaption=(caption)?caption:'';
+    let wCaption=(caption)?caption:'';
     this.inherit=j$.Node;
     this.inherit({type:'Dropdown', Root:self_dropdown, Parent:null},{key:idContent, id:create(), caption:wCaption});
     this.addMenu = addMenu;
     this.render = render;
 
     function create(){
-        var id = idContent+'Root';
+        let id = idContent+'Root';
         $("#"+idContent).append('<ul id="' +id+'" class="dropdown inline"></ul>');
         return id;
     };
 
     //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
     function addMenu(properties){
-        var menu = new j$.ui.Menu.Item(self_dropdown, properties);
+        let menu = new j$.ui.Menu.Item(self_dropdown, properties);
         self_dropdown.addItem(menu.key,menu);
       	return menu;
     }
 
     function render(){
-        for (var key in self_dropdown.c$)
+        for (let key in self_dropdown.c$)
             self_dropdown.c$[key].render();
     }
 };
@@ -142,8 +142,8 @@ j$.ui.Menu.Base=function(inheritor, properties){
     this.render = render;
     var util = function(){
         return{
-             formatLink: function(){
-                var url=false;
+             formatLink: ()=>{
+                let url=false;
                 if (properties.url){
                     url = properties.url;
                      self_base.idContainer=null;
@@ -153,7 +153,7 @@ j$.ui.Menu.Base=function(inheritor, properties){
                 // Se tem um LINK e tem container irá se comportar como partial
                 return url;
            }
-           , checkActive: function(){
+           , checkActive: ()=>{
                  return (properties.active !=undefined && !self_base.Root.active && self_base.type=='Menu')?properties.active:false;
            }
         };
@@ -175,13 +175,13 @@ j$.ui.Menu.Base=function(inheritor, properties){
 
     this.submenu = function(){
        return{
-          add:function(properties){
-              var submenu = new j$.ui.Menu.Subitem(self_base, properties);
+          add:properties=>{
+              let submenu = new j$.ui.Menu.Subitem(self_base, properties);
               self_base.addItem(submenu.key, submenu);
               return submenu;
            }
-         , render:function(menu){
-             for (var key in self_base.c$){
+         , render:menu=>{
+             for (let key in self_base.c$){
                  $('#'+self_base.id).append(self_base.c$[key].render());
              }
          }
@@ -189,9 +189,9 @@ j$.ui.Menu.Base=function(inheritor, properties){
     }();
     this.add=self_base.submenu.add;
     this.divider = function(){
-          var ct = 0;
+          let ct = 0;
           return{
-              add:function(){
+              add:()=>{
                   ct +=1;
                   self_base.addItem('divider'+ct,divider);
                   return divider;
@@ -200,9 +200,9 @@ j$.ui.Menu.Base=function(inheritor, properties){
     }();
 
     var divider=function(){
-          var format=function(){return '<li class="divider"></li>';};
+          let format=function(){return '<li class="divider"></li>';};
           return {
-              render:function(){
+              render:()=>{
                   $('#'+self_base.id).append(format());
               }
           };
