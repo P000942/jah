@@ -112,19 +112,24 @@ if (System.api.jquery){
         }
     }
     Element.prototype.remove = function() {
-        $("#" + this.id).remove();
+        if (!this.id.isEmpty())
+           $("#" + this.id).remove();
     }
     Element.prototype.addClassName = function(className) {
-        $("#" + this.id).addClass(className);
+        if (!this.id.isEmpty())
+           $("#" + this.id).addClass(className);
     }
     Element.prototype.hide = function() {
-        $("#" + this.id).hide();
+        if (!this.id.isEmpty())
+           $("#" + this.id).hide();
     }
     Element.prototype.show = function() {
-        $("#" + this.id).show();
+        if (!this.id.isEmpty())
+            $("#" + this.id).show();
     }
     Element.prototype.toggle = function() {
-        $("#" + this.id).toggle();
+        if (!this.id.isEmpty())
+            $("#" + this.id).toggle();
     }
     Event.observe = function(node, event, callback) {
         var element = null;
