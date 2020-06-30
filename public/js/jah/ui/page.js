@@ -372,7 +372,7 @@ j$.service = function(){
                j$.ui.Page.create($i, modal).init();
             };
         }
-        if ($i.autoRequest==undefined){
+        if ($i.autoRequest==undefined  && dataExt.isCrud($i.constructor.name)){
             $i.autoRequest=function(parms){
                 $i.Resource.get(parms);
             };
