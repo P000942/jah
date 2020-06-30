@@ -35,7 +35,36 @@ and open the template in the editor.
 
         <nav id="nav-left"><div  id="sidebar"></div></nav>
 
-        <section id="content_section"><div id='content'></div></section>
+        <section id="content_section"><div id='content'>
+            <ul class="nav navbar-nav" id="menubarRoot1111">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Dropup
+                      <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                      <li><a href="#">Ação</a></li>
+                      <li><a href="#">Outra ação</a></li>
+                      <li><a href="#">Algo mais aqui</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a href="#">Link separado</a></li>
+                      <li class="dropdown-submenu">
+                        <a class="dropdown-toggle" id="dropdownMenu4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Submenu
+                            <!-- <span class="caret"></span> -->
+                          </a>
+                       <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <li><a href="#">Ação</a></li>
+                        <li><a href="#">Outra ação</a></li>
+                      </ul>
+                  </li>
+                    </ul>
+                </li>
+
+
+            </ul>
+
+        </div></section>
 
         <aside id="nav-right"></aside>
 
@@ -55,7 +84,9 @@ and open the template in the editor.
                 menu_link.add({caption:'Link', icon:'icon-pencil', url:'http://localhost:8383/jah/partial.html', hint:'Conheça a história e a caminhada da Comunidade'});
                 menu_link.add({caption:'onClick', icon:'icon-pencil', onClick:function(){alert("onClick");}, hint:'Veja como estamos organizados'});
                 menu_link.divider.add();
-                var menu_album = menu_link.submenu.add({key: 'Album', caption:'Álbum',         url:'http://localhost:8383/jah/partial.html', hint:'Veja um álbum de nosso trabalho de evagelização!'});
+                var menu_album = menu_link.submenu.add({key: 'Album', caption:'Álbum'
+                                                   // , url:'http://localhost:8383/jah/partial.html'
+                                                    , hint:'Veja um álbum de nosso trabalho de evagelização!'});
                 j$.ui.Menu.c$.menubar.Items.Link.Items.Album.add({caption:'Album 01'});
                 menu_album.add('Album 02');
                 j$.ui.Menu.c$.menubar.Items.Link.Items.Album.divider.add();

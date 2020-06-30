@@ -61,10 +61,14 @@ j$.ui.Menu.Designer =function(){
                   attIcon='<i class="'+properties.icon+'"></i>';
               }
               if (properties.length>0){
-                 attClass = (properties.type=='Menu')?'class="dropdown"':'class="dropdown-submenu"';
+                 attCarret = '<b class="caret"></b>'; 
+                 attClass  = 'class="dropdown"';
                  attDropdown = 'class="dropdown-toggle" data-toggle="dropdown"';
-                 attDropdownUl = '<ul id="'+properties.id+'"  class="dropdown-menu"></ul>';
-                 attCarret = '<b class="caret"></b>';
+                 attDropdownUl = '<ul id="'+properties.id+'"  class="dropdown-menu"></ul>';  
+                 if (properties.type=='Submenu') {
+                    attClass  ='class="dropdown-submenu"';
+                    attCarret ='';
+                 }
               } else {
                 attLi='id="'+properties.id+'"';
               }
