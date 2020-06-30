@@ -11,14 +11,11 @@
     <link type="text/css" rel="stylesheet" href="css/layout.css" />    
     <link type="text/css" rel="stylesheet" href="css/report/report.css" />
     
-    <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
-    <script src="js/vendor/jsapi.js"></script>
-    <script src="js/vendor/jquery-1.9.1.js"></script>
-    <script src="js/vendor/jquery.json-2.3.min.js"></script>
+    <script src="js/vendor/jquery-3.5.1.js"></script>
 
+    <script type="text/javascript" src="js/jah/type/dataExt.js"></script> 
     <script type="text/javascript" src="js/jah/config.js"></script>    
     <script type="text/javascript" src="js/jah/system.js"></script>
-    <script type="text/javascript" src="js/jah/type/dataExt.js"></script> 
     <script type="text/javascript" src="js/jah/type/type.js"></script>
     <script type="text/javascript" src="js/jah/resource.js"></script> 
 
@@ -27,14 +24,17 @@
      <script type="text/javascript">
         var app=function(){
             return {
-                init: function(){                             
-                    var report =  ReportFactory.create(SEFAZ.Report.Page,FieldNovo, dataSource);
+                init: function(){ 
+                    //@note: opÃ§Ã£o usando o Dataset que foi criado localmente                           
+                    //var report =  ReportFactory.create(SEFAZ.Report.Page,FieldNovo, dataSource);   
+                    //@note: opÃ§Ã£o usando o Dataset que estÃ¡ Resource      
+                    var report =  ReportFactory.create(SEFAZ.Report.Page,FieldNovo, j$.$R.pessoa.Dataset);
                     report.start();
                 }
             };
         }();   
          var FieldNovo=new j$.ui.Fieldset({
-                             id:TYPE.INTEGER(4,{label:'Código'}),
+                             id:TYPE.INTEGER(4,{label:'Cï¿½digo'}),
                            data:TYPE.DATE({label:'Data'}),
                            nome:TYPE.CHAR(20,{label:'Nome'}),                                        
                           ativo:TYPE.BOOLEAN({label:'Ativo', list:{'true':{value:true, text:'Ativo'}, 'false':{value:false, text:'Desativado'}}}),
@@ -42,6 +42,7 @@
                           valor:TYPE.MONEY(10,{label:'Valor'}),
                              vl:TYPE.MASK("999.99",{label:'Mask'})
          });    
+    //@note: um exemplo de como criar um dataset
     var dataSource = new j$.Resource.Dataset( [
     {id:01, nome: 'Coxinha',    data:'1971/10/10', ativo:false, valor:12,      sexo:'M', vl:1101},
     {id:02, nome: 'Doquinha',   data:'1971/11/20', ativo:false, valor:991001,  sexo:'F', vl:112},
@@ -51,13 +52,13 @@
     {id:07, nome: 'Seu Jose',   data:'1971/10/21', ativo:false, valor:991001,  sexo:'F', vl:117},
     {id:08, nome: 'Tadeu',      data:'1971/10/10', ativo:true,  valor:10.10,   sexo:'M', vl:118},
     {id:09, nome: 'Numvouw',    data:'1971/10/11', ativo:true,  valor:1001.2,  sexo:'F', vl:119},
-    {id:10, nome: 'Vovó',      data:'1971/10/12', ativo:true,  valor:1001.2,  sexo:'F', vl:211},
+    {id:10, nome: 'Vovï¿½',      data:'1971/10/12', ativo:true,  valor:1001.2,  sexo:'F', vl:211},
     {id:11, nome: 'Foca',       data:'1971/10/01', ativo:true,  valor:1001.50, sexo:'M', vl:212},
-    {id:12, nome: 'Negão    ', data:'1971/10/02', ativo:false, valor:991001,  sexo:'F', vl:213},
+    {id:12, nome: 'Negï¿½o    ', data:'1971/10/02', ativo:false, valor:991001,  sexo:'F', vl:213},
     {id:13, nome: 'Robinho   ', data:'1971/10/03', ativo:true,  valor:10.10,   sexo:'M', vl:214},
     {id:14, nome: 'Papai Noel', data:'1971/10/04', ativo:true,  valor:1001.2,  sexo:'F', vl:215},
     {id:15, nome: 'Puf',        data:'1971/10/05', ativo:false, valor:991001,  sexo:'F', vl:216},
-    {id:16, nome: 'Ursão',     data:'1971/10/06', ativo:true,  valor:10.10,   sexo:'M', vl:217},
+    {id:16, nome: 'Ursï¿½o',     data:'1971/10/06', ativo:true,  valor:10.10,   sexo:'M', vl:217},
     {id:17, nome: 'Chimbinha',  data:'1971/10/07', ativo:false, valor:991001,  sexo:'F', vl:218},
     {id:18, nome: 'Taputo',     data:'1971/10/08', ativo:true,  valor:10.10,   sexo:'M', vl:219},
     {id:19, nome: 'Tin Loren',  data:'1971/10/09', ativo:true,  valor:1001.2,  sexo:'F', vl:311},
@@ -70,7 +71,7 @@
     {id:26, nome: 'Salsicha',   data:'1971/11/10', ativo:true,  valor:10.10,   sexo:'M', vl:318},
     {id:27, nome: 'Chimbinha',  data:'1971/11/11', ativo:false, valor:991001,  sexo:'F', vl:319},
     {id:28, nome: 'Barney',     data:'1971/11/12', ativo:true,  valor:10.10,   sexo:'M', vl:410},
-    {id:29, nome: 'Pescoço',    data:'1971/11/13', ativo:true,  valor:1001.2,  sexo:'F', vl:411},
+    {id:29, nome: 'Pescoï¿½o',    data:'1971/11/13', ativo:true,  valor:1001.2,  sexo:'F', vl:411},
     {id:30, nome: 'Madruga',    data:'1971/11/14', ativo:true,  valor:1001.2,  sexo:'F', vl:412},
     {id:31, nome: 'Capim',      data:'1971/11/15', ativo:true,  valor:1001.50, sexo:'M', vl:413},
     {id:32, nome: 'Curaca  ',   data:'1971/11/16', ativo:false, valor:991001,  sexo:'F', vl:414},

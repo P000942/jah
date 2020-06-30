@@ -13,24 +13,16 @@ and open the template in the editor.
 
     <link rel="stylesheet" href="../css/bootstrap.css">
     <link rel="stylesheet" href="../css/font-awesome.css">
-    <!-- <link rel="stylesheet" href="../css/jasny-bootstrap.css"> -->
 
     <link rel="stylesheet" href="../css/bootstrap-responsive.min.css">
-    <!-- <link rel="stylesheet" href="../css/jasny-bootstrap-responsive.css"> -->
-    <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/layout.css" />
 
-    <script src="../js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
-    <script src="../js/vendor/jsapi.js"></script>
     <script src="../js/vendor/jquery-2.2.4.min.js"></script>
-    <script src="../js/vendor/jquery.json-2.3.min.js"></script>
     <script src="../js/vendor/bootstrap.min.js"></script>
-    <script src="../js/vendor/jasny-bootstrap.js"></script>
+    <script src="../js/jah/type/dataExt.js"></script>
     <script src="../js/jah/config.js"></script>
     <script src="../js/jah/system.js"></script>
-    <script src="../js/jah/type/dataExt.js"></script>
     <script src="../js/jah/ui/menu.js"></script>
-
 </head>
 <body>
     <div id="page" class='page'>
@@ -55,26 +47,27 @@ and open the template in the editor.
 </body>
 </html>
 <script type="text/javascript">
-google.setOnLoadCallback(function(a,b) {
-    var menu = j$.ui.Menu.create("menubar");
-    menu.addMenu({caption:"Home", active:true});
-    var menu_link = menu.addMenu("Link");
-             menu_link.add({caption:'Link', icon:'icon-pencil', url:'http://localhost:8383/jah/partial.html', hint:'Conheça a história e a caminhada da Comunidade'});
-             menu_link.add({caption:'onClick', icon:'icon-pencil', onClick:function(){alert("onClick");}, hint:'Veja como estamos organizados'});
-             menu_link.divider.add();
-             var menu_album = menu_link.submenu.add({key: 'Album', caption:'Álbum',         url:'http://localhost:8383/jah/partial.html', hint:'Veja um álbum de nosso trabalho de evagelização!'});
-             j$.ui.Menu.c$.menubar.Items.Link.Items.Album.add({caption:'Album 01'});
-             menu_album.add('Album 02');
-             j$.ui.Menu.c$.menubar.Items.Link.Items.Album.divider.add();
-             j$.ui.Menu.c$.menubar.Items.Link.Items.Album.add({caption:'Album 03', url:'http://localhost:8383/jah/partial.html'});
-             j$.ui.Menu.c$.menubar.Items.Link.Items.Album.add();
-    var menu_partial = menu.addMenu({caption:"Partial", hint:"Exibe o link usando ajax."});
-             menu_partial.add({caption:'Visão Geral',   partial:'http://localhost:8383/jah/partial.html', hint:'Conheça a história e a caminhada da Comunidade'});
-             menu_partial.add({caption:'Semenentinha',  partial:'http://localhost:8383/jah/partial.html', hint:'Veja como estamos organizados'});
-             menu_partial.add({caption:'Assunto',       hint:'Veja um álbum de nosso trabalho de evagelização!',
-                  onClick:function(menu){j$.Dashboard.Tabs.open({key:menu.key, caption:menu.caption, onLoad: function(tab){Assunto.init(tab.idContent);}});}
-              });
-    menu.addMenu("Tabela");
-    menu.render();
-});
+// google.setOnLoadCallback(function(a,b) {
+    $(document).ready(function(){
+        var menu = j$.ui.Menu.create("menubar");
+        menu.addMenu({caption:"Home", active:true});
+        var menu_link = menu.addMenu("Link");
+                menu_link.add({caption:'Link', icon:'icon-pencil', url:'http://localhost:8383/jah/partial.html', hint:'Conheça a história e a caminhada da Comunidade'});
+                menu_link.add({caption:'onClick', icon:'icon-pencil', onClick:function(){alert("onClick");}, hint:'Veja como estamos organizados'});
+                menu_link.divider.add();
+                var menu_album = menu_link.submenu.add({key: 'Album', caption:'Álbum',         url:'http://localhost:8383/jah/partial.html', hint:'Veja um álbum de nosso trabalho de evagelização!'});
+                j$.ui.Menu.c$.menubar.Items.Link.Items.Album.add({caption:'Album 01'});
+                menu_album.add('Album 02');
+                j$.ui.Menu.c$.menubar.Items.Link.Items.Album.divider.add();
+                j$.ui.Menu.c$.menubar.Items.Link.Items.Album.add({caption:'Album 03', url:'http://localhost:8383/jah/partial.html'});
+                j$.ui.Menu.c$.menubar.Items.Link.Items.Album.add();
+        var menu_partial = menu.addMenu({caption:"Partial", hint:"Exibe o link usando ajax."});
+                menu_partial.add({caption:'Visão Geral',   partial:'http://localhost:8383/jah/partial.html', hint:'Conheça a história e a caminhada da Comunidade'});
+                menu_partial.add({caption:'Semenentinha',  partial:'http://localhost:8383/jah/partial.html', hint:'Veja como estamos organizados'});
+                menu_partial.add({caption:'Assunto',       hint:'Veja um álbum de nosso trabalho de evagelização!',
+                    onClick:function(menu){j$.Dashboard.Tabs.open({key:menu.key, caption:menu.caption, onLoad: function(tab){Assunto.init(tab.idContent);}});}
+                });
+        menu.addMenu("Tabela");
+        menu.render();
+    });
 </script>
