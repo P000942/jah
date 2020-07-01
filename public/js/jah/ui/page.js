@@ -372,7 +372,7 @@ j$.service = function(){
                j$.ui.Page.create($i, modal).init();
             };
         }
-        if ($i.autoRequest==undefined  && dataExt.isCrud($i.constructor.name)){
+        if ($i.autoRequest==undefined  && dataExt.isCrud($i)){
             $i.autoRequest=function(parms){
                 $i.Resource.get(parms);
             };
@@ -755,7 +755,6 @@ j$.ui.Child=function(key, parent, properties){
    }
    $i.refresh=function(){
       var record =  $i.Parent.service.Fieldset.sweep();
-//      j$.Dashboard.openItem($i, record);
    }
    //#TODO: O que fazer aqui?
    //Se tiver editado, tem que atualizar o registro
@@ -772,7 +771,8 @@ j$.ui.Child=function(key, parent, properties){
          }
       }
    }
-   function getBindFields(BindFields){
+   //@note: retorna um Record com os campos que ligam filho e pai
+   function getBindFields(BindFields){ 
        $i.bindFields = null;
        $i.bindFields = $i.Parent.service.Fieldset.RecordBy($i.bindBy);
        $i.service.Fieldset.setDefaults($i.bindFields);
