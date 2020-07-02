@@ -105,6 +105,7 @@ j$.ui.Render= function(){
              return i$(properties.id);
          }
          , formatButton:function(properties){
+             //#todo: formata class 2x desnecessariamente
              return '<a' +j$.ui.Render.attributes(properties,['value', 'element'])+ '>'+j$.ui.Render.icon(properties)+properties.value+'</a>';
          }
          , formatButtonDropdown:function(properties){

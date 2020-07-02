@@ -12,7 +12,7 @@ var adapter={
           ,     Tarefa:{caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa'}
           ,   Mensagem:{caption:'Mensagem' ,  query:true, title:'Mensagem'       , resource:'mensagem', modal:true}
         }
-   , design:{
+   , design:{ // Para montar os menus e sebmenus
              Tabelas:{caption:'Tabelas', items:['Papel','Usuario','Documento']}
          ,    Outros:['Assunto', 'SituacaoAtividade','Partial'] // key e caption serão igual a "Outros"
          ,  Consulta:['Pessoa','Basico']
@@ -66,7 +66,7 @@ j$.ui.Page.Helper = function(){
            , onActivate  :function(tab){console.log("onActivate."+tab.key);}
            , onDeactivate:function(tab){console.log("onDeactivate."+tab.key);}
              });
-    // DID�TICO: Apenas para saber como fazer para colocar num tab
+    // DID�TICO: Apenas para saber como para colocar num tab
     //     tabs.add({key:"tab_Assunto", caption:"Assunto",
     //                               onLoad: function(tab){ Assunto.init("tab_Assunto");},
     //                               onActivate:function(tab){console.log("onActivate."+tab.key);},
@@ -87,15 +87,16 @@ function openPapel(){
     j$.Dashboard.Tabs.open({key:"Papel", caption:"Papel", onLoad: function(tab){Papel.init(tab.idContent);}});
 }
 
-//google.setOnLoadCallback(function() {
+//@note: Está presente aqui apenas para exemplificar o uso
 $(document).ready(function(){
   j$.Message.show({
                  text: 'Texto de mensagem para fazer um teste de uma janela modal'
             , title: "Mensagem Modal"
             , fixed:true // indica que não terá o botão de fechar do modal
             , actionController:{
-                cancelar:function(){console.log("cancel");}
-                ,     ok:function(){console.log("ok"); return true;}
+                cancelar:()=>{console.log("cancel")}
+                ,     ok:()=>{console.log("ok"); return true;}
+                ,  ajuda:()=>{console.log("Ajuda"); return true;}
               }
             , hide:true
         });

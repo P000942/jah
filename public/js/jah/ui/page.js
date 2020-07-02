@@ -28,7 +28,7 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
     let self_grid = this;
     TEMPLATE =(TEMPLATE) ?TEMPLATE :CONFIG.GRID.DEFAULT;
     self_grid.index=RC.NONE;
-    var pager = null;
+    let pager = null;
 
     Object.preset(self_grid,{table:null, Designer:designer() });
 
@@ -41,7 +41,7 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
 
     this.Buttons = new j$.ui.Buttons(self_grid.actionController, page.service.Interface.List.Buttons, CONFIG[TEMPLATE].GRID.preset);
 
-    this.init=function(Resource, wrapGrid){
+    this.init=(Resource, wrapGrid)=>{
         self_grid.index=RC.NONE;
         pager = Resource.Dataset.createPager(page.service.Interface.List);
         if (!wrapGrid)
@@ -54,7 +54,7 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
         }
     };
 
-    this.getPosition=function(cell){
+    this.getPosition=cell=>{
         self_grid.index=RC.NONE; //REVIEW: Pode dá chabu
         if (cell)
            self_grid.index= cell.parentNode.parentNode.rowIndex -1;
@@ -62,9 +62,9 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
     };
 
     function designer(){
-        var ws={ clsRow:'even', ctCell:0, lastRow:null};
-        ws.change=function(field, create){
-            var column;
+        let ws={ clsRow:'even', ctCell:0, lastRow:null};
+        ws.change= (field, create)=>{
+            let column;
             if (field.persist){
                 if (create){ // Quando está criando as colunas de uma nova linha da tabela
                     column = ws.lastRow.insertCell(ws.ctCell);
@@ -76,7 +76,7 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
              }
              return column;
         };
-        ws.getRow=function(row){
+        ws.getRow=row=>{
             ws.ctCell=0;
             if (row && row>-1)
                ws.lastRow=self_grid.table.rows[row];
@@ -85,38 +85,38 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
             return ws.lastRow;
         };
         return{
-           table:function(wrap){
+           table:wrap=>{
               if (!i$(wrap.id+'_list')){
                 wrap.insert("<div class='wrap_list' id='" +wrap.id+ "ListWrap'></div>");
-                var wrapList = i$(wrap.id+"ListWrap");
+                let wrapList = i$(wrap.id+"ListWrap");
                 wrapList.insert("<table class='list' id='"+wrap.id+ "_list'></table>");
               }
               self_grid.table =i$(wrap.id+'_list');
            }
-         , clear:function(){self_grid.table.innerHTML='';}
-         , getRow:function(row){return ws.getRow(row);}
-         , addRow:function(){
+         , clear:()=>{self_grid.table.innerHTML='';}
+         , getRow:row=>{return ws.getRow(row);}
+         , addRow:()=>{
                 ws.getRow();
                 ws.lastRow.className=ws.clsRow;
                 ws.clsRow=(ws.clsRow==='even')?ws.clsRow = 'odd':ws.clsRow = 'even';
                 return ws.lastRow;
          }
-         , deleteRow:function(row){self_grid.table.deleteRow(row);}
-         , addColumn:function(field){ws.change(field, true);}
-         , changeColumn:function(field){ws.change(field, false);}
-         , addButtons:function(){
-             var cell =ws.lastRow.insertCell(ws.ctCell);
+         , deleteRow:row=>{self_grid.table.deleteRow(row);}
+         , addColumn:field=>{ws.change(field, true);}
+         , changeColumn:field=>{ws.change(field, false);}
+         , addButtons:()=>{
+             let cell =ws.lastRow.insertCell(ws.ctCell);
              cell.innerHTML = self_grid.Buttons.format();
          }
-         , header:function(){
-                var header = self_grid.table.createTHead();
-                var headerDetail = header.insertRow(0);
-                for(var key in page.service.Fieldset.Items){
-                    var df = page.service.Fieldset.Items[key];
+         , header:()=>{
+             let header = self_grid.table.createTHead();
+             let headerDetail = header.insertRow(0);
+                for(let key in page.service.Fieldset.Items){
+                    let df = page.service.Fieldset.Items[key];
                     if (df.persist){
-                        var idListHeader = self_grid.table.id+"_header."+key;
-                        var label = document.createElement("th");
-                        var clas$ = (df.Header.clas$)?' class="' +df.Header.clas$+ '"':'';
+                        let idListHeader = self_grid.table.id+"_header."+key;
+                        let label = document.createElement("th");
+                        let clas$ = (df.Header.clas$)?' class="' +df.Header.clas$+ '"':'';
 
                         // ---------------------- Retira os dois pontos do label
                         label.innerHTML="<div " +clas$+" id='"+ idListHeader +"'>"+ df.label.replace(/[:]/g,'') +"</div>";
@@ -143,7 +143,7 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
             }
           , remove:function(pos){
                    let row = self_grid.getPosition(pos);
-                   var pageNumber =pager.Control.number;
+                   let pageNumber =pager.Control.number;
                    self_grid.Designer.deleteRow(row);
                    pager.restart();
                    if (pageNumber>pager.Control.last)
@@ -188,14 +188,14 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
 };
 
 j$.ui.Buttons=function(actionController, buttons, presetFunction){
-    var self_button=this;
-    var wrapButtons;
-    var wrap;
+    let self_button=this;
+    let wrapButtons;
+    let wrap;
     Object.preset(self_button,{Items:getItems()});
-    presetFunction =(presetFunction)?presetFunction:function(){return{};};
+    presetFunction =(presetFunction)?presetFunction:()=>{};
     // Obter o grupos de buttons
     function getItems(){
-        var values = (buttons)?buttons :presetFunction(null, actionController);
+        let values = (buttons)?buttons :presetFunction(null, actionController);
         return values;
     };
     // Colocar os valores default
@@ -210,34 +210,34 @@ j$.ui.Buttons=function(actionController, buttons, presetFunction){
 
     function submenu(button){
        if (button.submenu){
-          var root  = $("#"+button.id+" > ul")[0].id; // obtendo o root para os elementos
-          for (var key in button.submenu.c$){
-             var subitem = Object.merge({},button.submenu.c$[key]);
+          let root  = $("#"+button.id+" > ul")[0].id; // obtendo o root para os elementos
+          for (let key in button.submenu.c$){
+             let subitem = Object.merge({},button.submenu.c$[key]);
              subitem.id = button.id + subitem.key;
              j$.ui.Render.li(i$(root),subitem);
           }
        }
     }
 
-    this.create=function(Wrap){
+    this.create=Wrap=>{
         wrap = Wrap;
         wrapButtons=j$.ui.Render.wrap(wrap, wrap.id+ '_button', 'wrap_command');
-        for (var key in self_button.Items){
+        for (let key in self_button.Items){
             self_button.add(key,self_button.Items[key]);
         };
     };
 
-    this.add=function(key, button){
+    this.add=(key, button)=>{
          preset(key.toLowerCase(),button, wrap);
          button['element'] = j$.ui.Render.button(wrapButtons, button);
          if (actionController && dataExt.isObject(actionController) && actionController[button.key])
              $(button['element']).click(actionController[button.key]);
          submenu(button);
     };
-    this.format=function(parent){
-        var html='';
-        for (var key in self_button.Items){
-            var button=self_button.Items[key];
+    this.format=parent=>{
+        let html='';
+        for (let key in self_button.Items){
+            let button=self_button.Items[key];
             preset(key.toLowerCase(),button, parent);
             html+=j$.ui.Render.formatButton(button);
         };
@@ -249,12 +249,12 @@ j$.ui.Buttons=function(actionController, buttons, presetFunction){
 // pager (): é o que controla data, faz o calculos de pagina e devolve os registro para exibir na página
 // j$.ui.Pager: É o componente que cria os elementos visuais de html para navegação e recebe a ações para o controller
 j$.ui.Pager=function(parent, pager , actionController){
-    var self_pager=this;
-    var wrap;
+    let self_pager=this;
+    let wrap;
 
     Object.preset(self_pager,{clas$:CONFIG.PAGER.CLASS, pager:pager});
     function parse(values){
-         var properties = values;
+        let properties = values;
          if (dataExt.isString(properties))
              properties = {value:properties, key:properties};
          Object.preset(properties, {key:properties.value});
@@ -274,7 +274,7 @@ j$.ui.Pager=function(parent, pager , actionController){
          return properties;
     }
 
-    this.create=function(Wrap){
+    this.create=Wrap=>{
         if (!actionController)
             actionController = parent.id.toCapitalize().trim()+ ".actionController.List.Pager";
         if (i$(parent.id+ '_pager'))
@@ -283,22 +283,22 @@ j$.ui.Pager=function(parent, pager , actionController){
             wrap=j$.ui.Render.wrapperUl(Wrap, parent.id+ '_pager', self_pager.clas$);
         self_pager.clear();
     };
-    this.clear=function(){if (wrap) wrap.innerHTML='';};
+    this.clear=()=>{if (wrap) wrap.innerHTML='';};
 
-    this.add=function(values, clas$){
+    this.add= (values, clas$)=>{
          clas$ = (clas$)?' class="' +clas$+ '"':'';
-         var properties = parse(values);
-         var value = (properties.value.isNumeric())?properties.value:'';
+         let properties = parse(values);
+         let value = (properties.value.isNumeric())?properties.value:'';
          Object.preset(properties, {
                onclick:'javascript:'+actionController+'.' +properties.method+ '('+value+')'});
          wrap.insert('<li' +clas$+ '><a' +j$.ui.Render.attributes(properties,'value')+ '>'+properties.caption+'</a></li>');
     };
-    this.createNavigator=function(wrap){
+    this.createNavigator=wrap=>{
         self_pager.create(wrap);
         self_pager.add("first",(pager.Control.first===pager.Control.number)?'disabled':'');
         self_pager.add("back",(pager.Control.first===pager.Control.number)?'disabled':'');
-        var pagerPosition=pager.positions();
-        for (var row=pagerPosition.first; row<=pagerPosition.last; row++){
+        let pagerPosition=pager.positions();
+        for (let row=pagerPosition.first; row<=pagerPosition.last; row++){
             self_pager.add(row.toString(),(row===pager.Control.number)?'active':'');
         }
         self_pager.add("next",(pager.Control.last===pager.Control.number)?'disabled':'');
@@ -306,27 +306,28 @@ j$.ui.Pager=function(parent, pager , actionController){
     };
     this.Controller=function(callbackPopulate){
         let nbr = RC.NONE;
-        var ws = {callback:callbackPopulate};
-        var populate=function(number){
+        let ws = {callback:callbackPopulate};
+        let populate=number=>{
                 nbr=number;
                 if (number)
                     pager.get(number);
                 ws.callback(pager);
         };
         return {
-           first:function(){populate(pager.Control.first);}
-          , back:function(){populate(pager.Control.number-1);}
-          , next:function(){populate(pager.Control.number+1);}
-          , last:function(){populate(pager.Control.last);}
-          ,  get:function(number){populate(number);}
-          , absolutePosition:function(row){return pager.absolutePosition(row);}
-          , number:()=>{return nbr;}
+           first:()=>{populate(pager.Control.first)}
+          , back:()=>{populate(pager.Control.number-1)}
+          , next:()=>{populate(pager.Control.number+1)}
+          , last:()=>{populate(pager.Control.last)}
+          ,  get:number=>{populate(number)}
+          , absolutePosition:row=>{return pager.absolutePosition(row)}
+          , number:()=>nbr
           // , Control:pager.Con
         };
     };
 };
+//@note: Factory - para criar os servicos
 j$.service = function(){
-   var items = {};
+   let items = {};
    function base(adpater, service){
         let $i=this;
         this.id=adpater.key;
@@ -348,7 +349,7 @@ j$.service = function(){
                                     ,'onSuccess','onError','validate']); // Em seguida das propriedades informadas (este prevalece)
         if (service.Interface)
            Object.setIfExist($i.Interface,service.Interface,['id','design','container','Buttons','List']);
-        if (service.Parent && service.constructor.name == "j$.ui.Child") {
+        if (service.Parent && service.constructor.name == "Child") {
            Object.setIfExist($i,service,['Parent']);
            $i.Child = service; // bindBy
         }
@@ -391,21 +392,80 @@ j$.service = function(){
        }
     }
 
+    function Child(key, parent, properties){
+        let $i = this;
+        let idService  = parent.service.id;
+        let txGetValue = `j$.$S.${idService}.Fieldset.Items.${parent.service.resource.id}.value()`;
+        let idResourceValue = '';
+        $i.Parent = parent; // Página que está criando os filhos
+        $i.Parent.key = parent.service.id;
+        Object.join($i, properties);
+        var initialized = function(){
+            $i.id = idService +''+key.toFirstUpper();
+            //j$.$S[idService].Fieldset.Items
+            Object.preset($i,j$.service.adapter.get(key)) // Vai copiar todas as propriedades do adapter.services que não exite no service
+            $i.onclick = $i.Parent.actionController+'.child("'+key+'",' + txGetValue+ ')';
+            if ($i.crud || $i.query){
+               $i.service = j$.service.make(key,$i);
+            }
+        }();
+        $i.open=function(){
+            let record =  $i.Parent.service.Fieldset.sweep();
+            j$.Dashboard.openItem($i, record);
+        }
+        $i.refresh=function(){
+            let record =  $i.Parent.service.Fieldset.sweep();
+        }
+        //#TODO: O que fazer aqui?
+        //Se tiver editado, tem que atualizar o registro
+        //Se for um novo ou exclusão, pode fechar a form/tab/etc
+        $i.notify=function(notification){
+           if ($i.service.page){
+              getBindFields();
+              showLegends();
+           }
+           if (notification.action===CONFIG.ACTION.EDIT){
+              console.log("#TODO:"+ $i.key +" - "+ JSON.stringify(notification.record));
+              if ($i.service.page && $i.service.autoRequest){
+                 $i.service.autoRequest($i.bindFields); 
+              }
+           }
+        }
+        //@note: retorna um Record com os campos que ligam filho e pai
+        function getBindFields(BindFields){ 
+            $i.bindFields = null;
+            $i.bindFields = $i.Parent.service.Fieldset.RecordBy($i.bindBy);
+            $i.service.Fieldset.setDefaults($i.bindFields);
+            return $i.bindFields;
+         }  
+         function showLegends(BindFields){
+             // Object.keys($i.service.Fieldset.Items).forEach( key=>{
+             //    
+             for (let key in $i.service.Fieldset.Items){   
+                let field = $i.service.Fieldset.Items[key];
+                 if (field.parentLegend)
+                    field.Legend.show($i.Parent.service.Fieldset.Items[field.parentLegend].value());
+             };
+          }      
+     };
    return {
-       get:function(key){return items[key];}
+       get:key=>{return items[key];}
      , Items:items
      , c$:items
-     , C$:function(key){return items[key];}
+     , C$:key=>{return items[key];}
      , createCrud: function(key, service){
-           return this.create(key, new crud(j$.service.adapter.get(key),service));
+           return this.create(key, new crud(j$.service.adapter.get(key), service));
        }
      , createQuery: function(key, service){
-           return this.create(key, new query(j$.service.adapter.get(key),service));
+           return this.create(key, new query(j$.service.adapter.get(key), service));
        }
-     , create:function(key, service){
+    , createChild: function(key, parent, service){
+        return new Child(key, parent, service);
+    }
+    , create:function(key, service){
           if (!key)
               throw new TypeError(CONFIG.EXCEPTION.SERVICE_NULL.text);
-          if (service.constructor.name=="Object"){
+          if (service.constructor.name=="Object"){ //para o servicos que sao criados manualmente
              items[key]=new base(j$.service.adapter.get(key),service);
           } else
              items[key]=service;
@@ -439,9 +499,9 @@ j$.service = function(){
 j$.$S = j$.service.c$;
 
 j$.ui.Page = function(){
-   var items = {};
+   let items = {};
    var modal =function(wrap,form, fixed){
-       var SELF = this;
+       let SELF = this;
        //this.show = show;
        this.display=show;
        function show(){
@@ -455,7 +515,7 @@ j$.ui.Page = function(){
        }
        var create=function(){
           SELF.clear();
-          var txFixed=(fixed)?'':"<button type='button' class='close'  data-dismiss='modal'>&times;</button>";
+          let txFixed=(fixed)?'':"<button type='button' class='close'  data-dismiss='modal'>&times;</button>";
           $(wrap).append("<div id='" +form.id+ "Modal' class='modal fade' role='dialog'>"
                         +  "<div class='modal-dialog'>"
                         +    "<div class='modal-content'>"
@@ -483,31 +543,24 @@ j$.ui.Page = function(){
        }();
    }
    var form =function(wrap,form){
-       var SELF = this;
-       //this.show = show;
+       let _form = this;
        this.display=show;
-       function show(){
-           SELF.form.show();
-       }
-       this.clear=function(){
-           wrap.innerHTML="";
-       }
-       this.hide=function(){
-           SELF.form.hide();
-       }
+       function show(){ _form.form.show()}
+       this.clear=()=>{ wrap.innerHTML=""}
+       this.hide=()=>{_form.form.hide()}
        var create=function(){
-          SELF.clear();
+          _form.clear();
           $(wrap).append("<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>");
           $('#'+form.id).append("<fieldset class='crud' id='" +form.id+ "Fieldset'><legend id='" +form.id+ "Header' class='crud'>" +form.title+ "</legend></fieldset>");
           $('#'+form.id+' > fieldset').append("<div id='" +form.id+ "Alert'></div>");
           $('#'+form.id).append("<div id='" +form.id+ "Footer'></div>");
-          SELF.body = i$(form.id);
-          SELF.form = i$(form.id);
-          SELF.fieldset =i$(form.id+"Fieldset");
-          SELF.caption = i$(form.id+"Header");
-          SELF.header =i$(form.id+"Header");
-          SELF.footer =i$(form.id+'Footer');
-          SELF.alert = i$(form.id+"Alert")
+          _form.body     = i$(form.id);
+          _form.form     =i$(form.id);
+          _form.fieldset =i$(form.id+"Fieldset");
+          _form.caption  =i$(form.id+"Header");
+          _form.header   =i$(form.id+"Header");
+          _form.footer   =i$(form.id+'Footer');
+          _form.alert    =i$(form.id+"Alert")
        }();
    }
    return {
@@ -515,34 +568,34 @@ j$.ui.Page = function(){
            items[service.id] = new j$.ui.Form(service, modal);
            return items[service.id];
        }
-     , get:function(key){return items[key];}
+     , get:key=>{return items[key]}
      , Items:items
      , c$:items
-     , C$:function(key){return items[key];}
-     , createAdapter: function(adapter){j$.ui.Adapter = new j$.ui.adapterFactory(adapter); return j$.ui.Adapter;}
+     , C$:key=>{return items[key]}
+     , createAdapter: adapter=>{j$.ui.Adapter = new j$.ui.adapterFactory(adapter); return j$.ui.Adapter;}
      , Designer:function(){
-          var addField=function(form, section, fieldset, design, key){
+          let addField=(form, section, fieldset, design, key)=>{
               if (fieldset.item(key)){
-                  var id =   form.id +'_'+key;
-                  var wrap = j$.ui.Render.wrap(section, id+'_'+ design.clas$.column, design.clas$.column);
-                  fieldset.item(key).create(wrap, id, key, design);
-                  wrap.stylize(design.columnStyle);
+                 let id =   form.id +'_'+key;
+                 let wrap = j$.ui.Render.wrap(section, id+'_'+ design.clas$.column, design.clas$.column);
+                 fieldset.item(key).create(wrap, id, key, design);
+                 wrap.stylize(design.columnStyle);
               }
           };
-          var addRow=function(page, section, fieldset, fields, design){
-              var wrapRow = j$.ui.Render.wrap(section, null,design.clas$.row);
+          let addRow= (page, section, fieldset, fields, design)=>{
+              let wrapRow = j$.ui.Render.wrap(section, null,design.clas$.row);
               if (dataExt.isArray(fields)){
-                  for (var i=0; i<fields.length; i++)
+                  for (let i=0; i<fields.length; i++)
                       addField(page.form, wrapRow, fieldset, design, fields[i]) ;
               }else
                   addField(page.form, wrapRow, fieldset, design, fields);
               wrapRow.stylize(design.lineStyle);
               return wrapRow;
           };
-          var addSection=function(page, section, fieldset, design){
+          let addSection=(page, section, fieldset, design)=>{
                 section.stylize(design.style);
                 if (dataExt.isArray(design.fields[0])){
-                    for (var k=0; k<design.fields.length; k++)
+                    for (let k=0; k<design.fields.length; k++)
                         addRow(page, section, fieldset, design.fields[k], design);
                 }else{
                     addRow(page, section, fieldset, design.fields, design) ;
@@ -556,10 +609,11 @@ j$.ui.Page = function(){
                      j$.ui.Page.Designer.standard(page, page.fieldset, page.service.Fieldset);
                  }
               }
-            , design: function(page, designs, container){
-                    for (var i=0; i<designs.length; i++){
-                        var section = container;
-                        var design=designs[i];
+            , design: (page, designs, container)=>{
+                    for (let i=0; i<designs.length; i++){
+                        let masterSection
+                          , section = container
+                          , design  = designs[i];
                         if (design.container != undefined)
                             section =i$(design.container);
 
@@ -574,63 +628,63 @@ j$.ui.Page = function(){
                                         console.log(exception.id +":"+  exception.text + "'['"+design.frame+"']");
                                 }
                         }
-                        var type=design.type.split(/[.]/g);
-                        for (var k=0; k<type.length; k++){
+                        let type=design.type.split(/[.]/g);
+                        for (let k=0; k<type.length; k++){
                             section = j$.ui.Page.Designer[type[k]](page, section,  page.service.Fieldset, design);
                             if (!section)
                                 section = container;
-                            if (k===0)
-                               var masterSection = section;
+                            if (k==0)
+                                masterSection = section;
                             design.id=null;
                         }
                         if (design.design)
                            j$.ui.Page.Designer.design(page, design.design, masterSection);
                     }
             }
-            , standard:function(page, section, fieldset){
+            , standard:(page, section, fieldset)=>{
                   if (fieldset){
-                     for (var key in fieldset.Items){
-                        var design={labelStyle:{width:'140px'}, clas$:{row:'wrap_classic_section',column:'wrap_classic_field'}};
+                     for (let key in fieldset.Items){
+                        let design={labelStyle:{width:'140px'}, clas$:{row:'wrap_classic_section',column:'wrap_classic_field'}};
                         addField(page.form, section, fieldset, design, key);
                      }
                   }
               }
-            ,   classic:function(page, section, fieldset, design){
+            ,   classic:(page, section, fieldset, design)=>{
                     design.clas$={row:'wrap_classic_section',column:'wrap_classic_field'};
-                    var wrapRow = addRow(page, section, fieldset, design.fields, design);
+                    let wrapRow = addRow(page, section, fieldset, design.fields, design);
                     wrapRow.stylize(design.style);
                     return wrapRow;
               }
-            ,   inLine:function(page, section, fieldset, design){
+            ,   inLine:(page, section, fieldset, design)=>{
                     design.clas$={row:'wrap_inLine_row',column:'wrap_inLine_field', design:design};
-                    var wrapSection = j$.ui.Render.wrap(section, design.id, 'wrap_inLine_section');
+                    let wrapSection = j$.ui.Render.wrap(section, design.id, 'wrap_inLine_section');
                     addSection(page, wrapSection, fieldset, design);
                     return wrapSection;
               }
-            ,   column:function(page, section, fieldset, design){
+            ,   column:(page, section, fieldset, design)=>{
                     if (!design.labelStyle)
                         design.labelStyle='input_column_label';
                     else
                         design.labelStyle.clas$='input_column_label';
                     design.clas$={row:'wrap_column_row',column:'wrap_column_field'};
-                    var wrapSection = j$.ui.Render.wrap(section, design.id, 'wrap_column_section');
+                    let wrapSection = j$.ui.Render.wrap(section, design.id, 'wrap_column_section');
                     wrapSection.style.width='0px';
                     addSection(page, wrapSection, fieldset, design);
                     return wrapSection;
               }
-            , line:function(page, section, fieldset, design){
-                    var wrapLine = j$.ui.Render.line(section, design.id, 'wrap_line', design.title);
+            , line:(page, section, fieldset, design)=>{
+                let wrapLine = j$.ui.Render.line(section, design.id, 'wrap_line', design.title);
                     wrapLine.stylize(design.style);
               }
-            , table:function(fields){}
-            , section:function(fields){}
-            , slidebox:function(page, section, fieldset, design){
+            , table:fields=>{}
+            , section:fields=>{}
+            , slidebox:(page, section, fieldset, design)=>{
                  return TYPE.SLIDEBOX({container:section, id:design.id, legend:design.title}).target;
               }
-            , framebox:function(page, section, fieldset, design){
+            , framebox:(page, section, fieldset, design)=>{
                  return TYPE.FRAMEBOX({container:section, id:design.id, legend:design.title}).target;
               }
-            , dropbox:function(page, section, fieldset, design){
+            , dropbox:(page, section, fieldset, design)=>{
                  return TYPE.DROPBOX({container:section, id:design.id, legend:design.title}).target;
               }
             , form:form
@@ -646,7 +700,7 @@ j$.ui.Form=function(service, modal) {
     this.service = service;
     service.page = this;
 
-    var DEFAULT_BUTTON_PRESET = CONFIG.CRUD.preset;
+    let DEFAULT_BUTTON_PRESET = CONFIG.CRUD.preset;
 
     if (service.constructor && service.constructor.name==="query")
         DEFAULT_BUTTON_PRESET = CONFIG.QUERY.preset;
@@ -657,26 +711,20 @@ j$.ui.Form=function(service, modal) {
     });
     Object.preset(service.Interface,{Buttons:false});
     Object.preset(service,{
-         onSuccess:function(ACTION){
-                 j$.ui.Alert.success($i.alert, ACTION.MESSAGE.SUCCESS);
-               }
-       ,   onError:function(ACTION){
-                 j$.ui.Alert.error($i.alert, ACTION.MESSAGE.ERROR);
-              }
-       ,   onFailure:function(response){
-                j$.ui.Alert.error($i.alert, response.msg);
-       }
+         onSuccess: ACTION=>{j$.ui.Alert.success($i.alert, ACTION.MESSAGE.SUCCESS)}
+       ,   onError: ACTION=>{j$.ui.Alert.error($i.alert, ACTION.MESSAGE.ERROR)}
+       , onFailure: response=>{j$.ui.Alert.error($i.alert, response.msg)}
     });
     if (!service.Interface.id)
         service.Interface.id = service.id.toFirstLower();
     // se for modal, herda de um template próprio para modal
     this.inherit = (modal) ?j$.ui.Page.Designer.modal :j$.ui.Page.Designer.form
     $i.inherit($i.container, service.Interface);
-    $i.hideAlert=function(){
+    $i.hideAlert=()=>{
        if ($i.alert)
            j$.ui.Alert.hide($i.alert);
     }
-    $i.reset = function(){
+    $i.reset = ()=>{
         $i.hideAlert();
         $i.form.reset(); // inputs do form
         $i.service.Fieldset.reset(); // atributo dos fields (class, valor default, etc)
@@ -697,7 +745,7 @@ j$.ui.Form=function(service, modal) {
       // $i.child={} // Contém os objetos filhos - no caso para a página
                      // no service.child tem os dados declarados para criar os filhos, no page.child, os objetos criados.
        for (let key in service.child){
-           $i.child.add(key, new j$.ui.Child(key,$i, service.child[key]))
+           $i.child.add(key, new j$.service.createChild(key,$i, service.child[key]))
        }
        service.Interface.Buttons.CHILD = {value:CONFIG.ACTION.SUBVISION.VALUE}
        service.Interface.Buttons.CHILD.submenu=$i.child;
@@ -732,67 +780,8 @@ j$.ui.Form=function(service, modal) {
     };
 };
 
-j$.ui.Child=function(key, parent, properties){
-   let $i = this;
-   let idService  = parent.service.id;
-   let txGetValue = `j$.$S.${idService}.Fieldset.Items.${parent.service.resource.id}.value()`;
-   let idResourceValue = '';
-   $i.Parent = parent; // Página que está criando os filhos
-   $i.Parent.key = parent.service.id;
-   Object.join($i, properties);
-   var initialized = function(){
-       $i.id = idService +''+key.toFirstUpper();
-       //j$.$S[idService].Fieldset.Items
-       Object.preset($i,j$.service.adapter.get(key)) // Vai copiar todas as propriedades do adapter.services que não exite no service
-       $i.onclick = $i.Parent.actionController+'.child("'+key+'",' + txGetValue+ ')';
-       if ($i.crud || $i.query){
-          $i.service = j$.service.make(key,$i);
-       }
-   }();
-   $i.open=function(){
-      var record =  $i.Parent.service.Fieldset.sweep();
-      j$.Dashboard.openItem($i, record);
-   }
-   $i.refresh=function(){
-      var record =  $i.Parent.service.Fieldset.sweep();
-   }
-   //#TODO: O que fazer aqui?
-   //Se tiver editado, tem que atualizar o registro
-   //Se for um novo ou exclusão, pode fechar a form/tab/etc
-   $i.notify=function(notification){
-      if ($i.service.page){
-         getBindFields();
-         showLegends();
-      }
-      if (notification.action===CONFIG.ACTION.EDIT){
-         console.log("#TODO:"+ $i.key +" - "+ JSON.stringify(notification.record));
-         if ($i.service.page && $i.service.autoRequest){
-            $i.service.autoRequest($i.bindFields); 
-         }
-      }
-   }
-   //@note: retorna um Record com os campos que ligam filho e pai
-   function getBindFields(BindFields){ 
-       $i.bindFields = null;
-       $i.bindFields = $i.Parent.service.Fieldset.RecordBy($i.bindBy);
-       $i.service.Fieldset.setDefaults($i.bindFields);
-       return $i.bindFields;
-    }  
-    function showLegends(BindFields){
-        // Object.keys($i.service.Fieldset.Items).forEach( key=>{
-        //    
-        for (let key in $i.service.Fieldset.Items){   
-            let field = $i.service.Fieldset.Items[key];
-            if (field.parentLegend)
-               field.Legend.show($i.Parent.service.Fieldset.Items[field.parentLegend].value());
-        };
-     }      
-};
-Object.defineProperty(j$.ui.Child, 'name', { writable: true });
-j$.ui.Child.name = "j$.ui.Child";
-
 j$.Observer=function(Parent){
-    var $i = this;
+    let $i = this;
     $i.Items={};
     $i.length = 0;
     $i.c$ =  $i.Items;
@@ -801,7 +790,7 @@ j$.Observer=function(Parent){
     function getItem(key){
        return $i.Items[key];
     }
-    $i.add = function(key, item){
+    $i.add = (key, item)=>{
        $i.length +=1;
        if (!item.Parent && $i.Parent)
           item.Parent = $i.Parent;
@@ -809,11 +798,11 @@ j$.Observer=function(Parent){
           item.key = key
        $i.Items[key]=item;
     };
-    $i.remove = function(key){
+    $i.remove = key=>{
        $i.length -=1;
        $i.Items[key]=null;
     };
-    $i.notify =function (notification){
+    $i.notify =notification =>{
        for (var key in $i.c$)
            $i.c$[key].notify(notification);
     };
@@ -821,7 +810,7 @@ j$.Observer=function(Parent){
        for (var key in $i.c$)
            return $i.c$[key];
     };
-    $i.sweep = function(action, param){
+    $i.sweep = (action, param)=>{
         for(var key in $i.c$){
            action($i.c$[key], param);
         }
@@ -830,15 +819,15 @@ j$.Observer=function(Parent){
 };
 
 j$.ui.Modal=function(id, service, actionCallback) {
-    var $this = this;
+    let $this = this;
     if (service)
        Object.preset($this, service);
        //this.properties=(helper)?helper:{fixed:false};
     this.callback = actionCallback;
     //this.fixed = fixed(helper);
     $this.inherit = j$.ui.Page.Designer.modal;
-    var ws ={buttons:{}, controller:{}}
-    var callback=function(key, action){
+    let ws ={buttons:{}, controller:{}}
+    let callback=function(key, action){
         this.execute=function(){
            if (!action())
               $this.hide();
@@ -850,9 +839,9 @@ j$.ui.Modal=function(id, service, actionCallback) {
         $this.footer.hide();
         if (actionController){
            $this.footer.innerHTML ='';
-           for(var key in actionController){
+           for(let key in actionController){
                ws.buttons[key]=CONFIG.action(key);
-               var action=new callback(key, actionController[key]);
+               let action=new callback(key, actionController[key]);
                ws.controller[key]=action.execute;
            }
            $this.Buttons = new j$.ui.Buttons(ws.controller, ws.buttons);
@@ -880,7 +869,7 @@ j$.ui.Modal=function(id, service, actionCallback) {
            $this.caption.show();
     }
 
-    this.show= function(service, actionCallback) {
+    this.show= (service, actionCallback) =>{
         if (service)
              Object.setIfExist($this, service, ['text','title','actionController','fixed']);
         if (actionCallback)
@@ -898,7 +887,9 @@ j$.ui.Modal=function(id, service, actionCallback) {
     };
 };
 
-j$.Message =  new j$.ui.Modal("Message");
+j$.Message = new j$.ui.Modal("Message");
+//@Teste: j$.Message.show({title:"Meu Titulo", text: "Conteudoi da mensagem"});
+
 j$.Confirm = new j$.ui.Modal("Confirme",{
                  text: '<p><strong>MUDAR O TEXTO:</strong></p>j$.Confirme.text</br>ou</br>{text:"Meu texto"} no método show</p></br>'
                       +'<p><strong>MUDAR O TÍTULO:</strong></p>j$.Confirme.title</br>ou</br>{title:"Meu texto"} no método show</p></br>'
@@ -906,10 +897,11 @@ j$.Confirm = new j$.ui.Modal("Confirme",{
               , title: "Título- Mude em j$.Confirme.title"
               , fixed:true // indica que não terá o botão de fechar do modal
             , actionController:{
-                   no:function(){return false;}
-                , yes:function(){return false;}
+                   no:()=>{return false;}
+                , yes:()=>{return false;} //é false porque informa que a janela será fechada
               }
 });
+//@Teste:  j$.Confirm.show();
 
 j$.Alert = new j$.ui.Modal("Alert",{
                  text: '<p><strong>MUDAR O TEXTO:</strong></p>j$.Alert.text</br>ou</br>{text:"Meu texto"} no método show</p></br>'
@@ -917,17 +909,18 @@ j$.Alert = new j$.ui.Modal("Alert",{
                       +'<p><strong>Experimente:</strong></p>j$.Alert.show({title:"Meu texto", text:"Meu texto"}, function(action){alert(action);})</p></br>'
               , title: "Título- Mude em j$.Alert.title"
             , actionController:{
-                     ok:function(){return false;}
+                     ok:()=>{return false;}
               }
 });
+//@Teste: j$.Alert.show()
 
 j$.ui.adapterFactory = function(adapter){
-   var $this=this;
+   let $this=this;
    this.services=adapter.services;
    this.design=adapter.design;
-   this.load = function(){ // Fazer carga dos JS
-       for (var key in adapter.services){
-           var item = adapter.services[key];
+   this.load = ()=>{ // Fazer carga dos JS
+       for (let key in adapter.services){
+           let item = adapter.services[key];
            item.key = key;
            if (!item.partial && !item.url){
               if (item.crud)
@@ -937,7 +930,7 @@ j$.ui.adapterFactory = function(adapter){
            }
        }
    }
-   this.getService=function(key){
+   this.getService=key=>{
       if ($this.services[key])
          return $this.services[key];
       else
