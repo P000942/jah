@@ -79,21 +79,21 @@ const CONFIG = {
     , BOOLEAN:{'true':{value:true, text:'sim'}, 'false':{value:false, text:'Não'}}
     , LAYOUT:{CONTENT:'content', ALERT_CONTENT:'wrapAlert'}
     , ACTION:{
-           BACK:{KEY:'back',   VALUE:'Voltar'   , ICON:'icon-arrow-left'}
-       , SEARCH:{KEY:'search', VALUE:'Pesquisar', ICON:'icon-search'}
-       ,    NEW:{KEY:'new',    VALUE:'Incluir'  , ICON:'icon-plus'
+           BACK:{KEY:'back',   VALUE:'Voltar'   , ICON:'icon-circle-arrow-left' , COLOR:'#51A351'}
+       , SEARCH:{KEY:'search', VALUE:'Pesquisar', ICON:'icon-search'    , COLOR:'#51A351'}
+       ,    NEW:{KEY:'new',    VALUE:'Incluir'  , ICON:'icon-plus-sign' , COLOR:'#51A351'
                 , MESSAGE:{
                   SUCCESS:'Inclusão realizada com sucesso.'
                   , ERROR:'<strong>ERRO NA INCLUSÃO!</strong>Verifique os erros assinalados e faça as correções'}
                 }
-       ,   SAVE:{KEY:'save',   VALUE:'Salvar'   , ICON:'icon-save'
+       ,   SAVE:{KEY:'save',   VALUE:'Salvar'   , ICON:'icon-save'  , COLOR:'#51A351'
                 , MESSAGE:{
                   SUCCESS:'Atualização realizada com sucesso.'
                   , ERROR:'<strong>ERRO NA ATUALIZAÇÂO!</strong> Verifique os erros assinalados e faça as correções'}
                 }
-       ,  PRINT:{KEY:'print',  VALUE:'Imprimir' , ICON:'icon-print'}
-       ,   EDIT:{KEY:'edit',   VALUE:'Editar'   , ICON:'icon-edit'}
-       , REMOVE:{KEY:'remove', VALUE:'Excluir'  , ICON:'icon-trash'    , MESSAGE:{SUCCESS:'Exclusão realizada com sucesso.'}}
+       ,  PRINT:{KEY:'print',  VALUE:'Imprimir' , ICON:'icon-print'    , COLOR:'#51A351'}
+       ,   EDIT:{KEY:'edit',   VALUE:'Editar'   , ICON:'icon-edit'     , COLOR:'#51A351'}
+       , REMOVE:{KEY:'remove', VALUE:'Excluir'  , ICON:'icon-trash'    , COLOR:'#BD362F' , MESSAGE:{SUCCESS:'Exclusão realizada com sucesso.'}}
        ,  FIRST:{KEY:'first',  VALUE:'Primeiro' , ICON:''}
        ,   NEXT:{KEY:'next',   VALUE:'Próximo'  , ICON:'icon-arrow-right'}
        ,   LAST:{KEY:'last',   VALUE:'Último'   , ICON:''}
@@ -102,10 +102,11 @@ const CONFIG = {
        ,   UNDO:{KEY:'undo',   VALUE:'Desfazer' , ICON:'icon-undo'}
        , FILTER:{KEY:'Filter', VALUE:'Filtrar'  , ICON:'icon-filter'}
        ,   SORT:{KEY:'sort',   VALUE:'Ordenar'  , ICON:''}
-       ,     OK:{KEY:'ok',     VALUE:'OK'       , ICON:'icon-check'     , COLOR:'#51A351'}
-       , CANCEL:{KEY:'cancel', VALUE:'Cancelar' , ICON:'icon-arrow-left', COLOR:'#BD362F'}
+       ,     OK:{KEY:'ok',     VALUE:'OK'       , ICON:'icon-ok-circle'        , COLOR:'#51A351'}
+       , CANCEL:{KEY:'cancel', VALUE:'Cancelar' , ICON:'icon-circle-arrow-left', COLOR:'#BD362F'}
        ,  ERROR:{KEY:'error',  VALUE:'Erro'     , ICON:'ikon-error'}
-       ,   INFO:{KEY:'info',   VALUE:'Nota'     , ICON:'ikon-info'}
+       ,   INFO:{KEY:'info',   VALUE:'Nota'     , ICON:'ikon-info' }
+       ,   HELP:{KEY:'help',   VALUE:'Ajuda'    , ICON:'icon-question-sign'  , COLOR:'#51A351'}
        ,    YES:{KEY:'yes',    VALUE:'Sim'      , ICON:'icon-check'     , COLOR:'#51A351'}
        ,     NO:{KEY:'no',     VALUE:'Não'      , ICON:'icon-arrow-left', COLOR:'#BD362F'}
        ,  INIT:{KEY:'init',    VALUE:'Iniciar'  , ICON:''}
@@ -245,6 +246,7 @@ CONFIG.SYNONYM={
       ,     undo:['undo','desfazer']
       ,    error:['error','erro','err']
       ,     info:['information', 'info']
+      ,     help:['Help','ajuda']
       ,      yes:['yes', 'sim']
       ,       no:['no', 'not','não']
       ,subvision:['subvision','child', 'details','filhos', 'detalhes']
