@@ -209,16 +209,22 @@ fieldset > legend{
 }
 
 .showbox, .hidebox{
-    margin-top:2px; margin-left:3px; margin-right: 3px;
+    margin-top:2px; margin-left:3px; margin-right: 0px;
     float: left; cursor: pointer; width:16px; height:16px;
+    font-family: FontAwesome;
 }
-.showbox{
+/* .showbox{
     background: url(../../images/icon/hide.png)  no-repeat center;
 }
 .hidebox{
     background: url(../../images/icon/arrow_right.png) no-repeat center;
+} */
+.showbox:before{
+    content: "\f0d8";
 }
-
+.hidebox:before{
+    content: "\f0da";
+}
 .wrap_command {text-align:left;
 	padding:2px 0px 2px 0px;
         display:block;

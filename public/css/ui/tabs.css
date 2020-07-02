@@ -33,17 +33,28 @@ a.link_tab:hover{
 }
 
 a.link_tab_close, a.link_tab_close:hover{ text-decoration:none;
-                 padding: 0 10px 0 1px;
-                 margin: 2px 0 0 6px;
+                 padding: 0 2px 0 1px;
+                 margin: 2px 0 0 2px;
                  background-repeat:no-repeat;
                  background-position:center;
+                 font-family: FontAwesome;
+                 font-size: 13pt;
 }
-a.link_tab_close{ text-decoration:none;
+/* a.link_tab_close{ text-decoration:none;
                  background-image: url(../../images/icon/dialog-close.png);
 }
-
 a.link_tab_close:hover{   text-decoration:none;
                background-image: url(../../images/icon/dialog-close-hover.png);
+} */
+a.link_tab_close:after{  
+  color: lightgrey;
+  content: "\f057";
+  font-size: 13pt;
+}
+a.link_tab_close:hover:after{    
+ color:crimson;
+ content: "\f057";
+ font-size: 14pt;
 }
 
 
