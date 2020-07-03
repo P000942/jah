@@ -250,7 +250,7 @@ function ResponseController($service){
                idxListEdited = pos.index
             parent.UpdateController.update(idxListEdited,record, rowEdit);
          } else {
-             parent.UpdateController.update(RC.NONE,record);
+             parent.UpdateController.update( c$.RC.NONE,record);
          }
           NEW_RECORD=false;
           EDITED=true;
@@ -326,7 +326,7 @@ function UpdateController(service){
 
   function update(idxList, record, recordRow){
       service.Fieldset.populate(record);
-      if (service.page.List && idxList != RC.NONE)
+      if (service.page.List && idxList !=  c$.RC.NONE)
           service.page.List.Detail.update(idxList+1, record);
       if (recordRow)
          edit(recordRow);

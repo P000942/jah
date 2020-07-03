@@ -27,7 +27,7 @@
 j$.ui.Grid=function(page, wrap, TEMPLATE){
     let self_grid = this;
     TEMPLATE =(TEMPLATE) ?TEMPLATE :CONFIG.GRID.DEFAULT;
-    self_grid.index=RC.NONE;
+    self_grid.index= c$.RC.NONE;
     let pager = null;
 
     Object.preset(self_grid,{table:null, Designer:designer() });
@@ -42,7 +42,7 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
     this.Buttons = new j$.ui.Buttons(self_grid.actionController, page.service.Interface.List.Buttons, CONFIG[TEMPLATE].GRID.preset);
 
     this.init=(Resource, wrapGrid)=>{
-        self_grid.index=RC.NONE;
+        self_grid.index= c$.RC.NONE;
         pager = Resource.Dataset.createPager(page.service.Interface.List);
         if (!wrapGrid)
             wrapGrid=wrap;
@@ -55,7 +55,7 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
     };
 
     this.getPosition=cell=>{
-        self_grid.index=RC.NONE; //REVIEW: Pode dá chabu
+        self_grid.index= c$.RC.NONE; //REVIEW: Pode dá chabu
         if (cell)
            self_grid.index= cell.parentNode.parentNode.rowIndex -1;
         return self_grid.index;
@@ -169,7 +169,7 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
           , populate:function(){
                 page.reset(); // o formulário
                  self_grid.Detail.clear();
-                if (pager.Record.count != RC.NOT_FOUND){
+                if (pager.Record.count !=  c$.RC.NOT_FOUND){
                     pager.sweep(function(row, record){
                        self_grid.Detail.add(record,true);
                     });
@@ -305,7 +305,7 @@ j$.ui.Pager=function(parent, pager , actionController){
         self_pager.add("last",(pager.Control.last===pager.Control.number)?'disabled':'');
     };
     this.Controller=function(callbackPopulate){
-        let nbr = RC.NONE;
+        let nbr =  c$.RC.NONE;
         let ws = {callback:callbackPopulate};
         let populate=number=>{
                 nbr=number;
@@ -729,7 +729,7 @@ j$.ui.Form=function(service, modal) {
         $i.form.reset(); // inputs do form
         $i.service.Fieldset.reset(); // atributo dos fields (class, valor default, etc)
         if ($i.List)
-           $i.List.index=RC.NONE;
+           $i.List.index= c$.RC.NONE;
     }
     // function initBindFields(){
     //     let BindFields = null;

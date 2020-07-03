@@ -2,7 +2,6 @@
  * To change this template, choose Tools 
  * and open the template in the editor.
  */
-const RC = {NOT_FOUND:-1, NONE:-1}
 const c$ = {
                RC:{NOT_FOUND:-1, NONE:-1}
 }
