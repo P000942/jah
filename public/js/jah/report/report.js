@@ -123,14 +123,14 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
   this.filter=function(event, colName, value){
              var field = $report.Columns.Items[colName];
              switch(event.button) {
-               case MOUSE.BUTTON.CENTER:
+               case c$.MOUSE.BUTTON.CENTER:
                   $report.Columns.filterNone(colName);
                   $report.Dataset.filter($report.Columns.Items[colName], field.value(value));
                   $report.clear();
                   $report.Page.Pager.restart($report.Dataset);
                   $report.start()
-               case MOUSE.BUTTON.RIGHT: break;
-               case MOUSE.BUTTON.LEFT:break;
+               case c$.MOUSE.BUTTON.RIGHT: break;
+               case c$.MOUSE.BUTTON.LEFT:break;
              }
       }
   this.clear= function(){
@@ -157,8 +157,8 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
                             Header:{Font:DEFAULT.HEADER.COLUMN.FONT},
                               Font:DEFAULT.DETAIL.COLUMN.FONT};
         var std_Footer = {Style:{height:3.45, marginTop: 0, marginBottom:0},
-                             note: '', date: NOW.format(DEFAULT.MASK.DATE),
-                             hour: NOW.format(DEFAULT.MASK.HOUR)};
+                             note: '', date: c$.NOW.format(DEFAULT.MASK.DATE),
+                             hour: c$.NOW.format(DEFAULT.MASK.HOUR)};
         var std_Page   = {Style:{height:0, width:0, marginTop: 0, marginBottom:0.5, marginLeft:1, MarginRight:1}
                           ,  id:'', Paper: DEFAULT.PAGE.PAPER, RowsPerPage:0};
         //self = $report;

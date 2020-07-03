@@ -47,7 +47,7 @@ function ActionController(ResponseController){
   Object.setIfExist(SELF, ResponseController,['edit','insert','back','print','List','child', 'refresh']);
 
   function filter(event, key, value){
-        if (event.ctrlKey && event.button==MOUSE.BUTTON.LEFT){
+        if (event.ctrlKey && event.button==c$.MOUSE.BUTTON.LEFT){
             let criteria = ResponseController.service.Fieldset.filter.toggle(key, value)
             Resource.filter(criteria);
         }

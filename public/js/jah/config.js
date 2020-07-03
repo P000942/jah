@@ -2,9 +2,44 @@
  * To change this template, choose Tools 
  * and open the template in the editor.
  */
-const c$ = {
-               RC:{NOT_FOUND:-1, NONE:-1}
+const c$ = {  NOW: new Date()
+           ,   RC:{NOT_FOUND:-1, NONE:-1}
+           ,ALIGN:{LEFT:'left', CENTER:'center', RIGHT:'right', JUSTIFY:'justify'}
+           ,MOUSE:{BUTTON:{LEFT:0,CENTER:1,RIGHT:2}}
+           ,ORDER:{ASCENDING:'ASC', DESCENDING:'DESC', NONE:'NONE'}
+           ,  KEY:{F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123
+                , TAB:9, ENTER:13, ESC:27, COMMA:44, BACKSPACE:8, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, INS:45, DEL:46, REFRESH:116}
+           ,FILTER:{}
 }
+// c$.NOW = new Date();
+// c$.KEY = {F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123,
+//        ENTER:13, ESC:27, COMMA:44, BACKSPACE:8, TAB:9, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, INS:45, DEL:46, REFRESH:116};
+// c$.ALIGN = {LEFT:'left', CENTER:'center', RIGHT:'right', JUSTIFY:'justify'};
+
+// c$.MOUSE = {BUTTON:{LEFT:0,CENTER:1,RIGHT:2}};
+
+// c$.ORDER = {ASCENDING:'ASC', DESCENDING:'DESC', NONE:'NONE'};
+
+c$.ORDER.CLASS =  order =>{
+    let _class = "";
+    switch(order) {
+        case c$.ORDER.NONE:
+                _class = null;
+                break;
+        case c$.ORDER.ASCENDING:
+                _class = "list-ikon ikon-sort-asc";
+                break;
+        case c$.ORDER.DESCENDING:
+                _class = "list-ikon ikon-sort-desc";
+                break;
+    }
+    return _class;
+};
+// c$.FILTER ={};
+c$.FILTER.CLASS =  filter =>{
+    return (filter)?'list-ikon ikon-filter':null;
+};
+
 const CONFIG = {
     ERROR:{
            MESSAGE:{
@@ -293,54 +328,3 @@ CONFIG.hint= vl_key =>{
 //CONFIG.hint(CONFIG.ACTION.INFO.KEY);
 //CONFIG.hint(CONFIG.ACTION.ERROR.KEY);
 
-const ERROR = function() {
-    let handle =null;
-    function subscribe(message, field){
-        for (var i=0; i < CONFIG.ERROR.SUBSCRIBE.length; i++){
-            if (field[CONFIG.ERROR.SUBSCRIBE[i]])
-               message = message.replace("@"+CONFIG.ERROR.SUBSCRIBE[i],field[CONFIG.ERROR.SUBSCRIBE[i]]);
-        }
-        return message;
-    }
-    return {
-	init: objectHandle=>{handle=objectHandle;},
-        show: (message,field) => {
-            message=subscribe(message,field);
-            if (handle)
-               handle.callback(message,field);
-            else
-               ERROR.on(message, field);
-        },
-        on: (msg, field)=>{field.Error.on(msg)},
-        off: field=>{field.Error.off()},
-        MESSAGE:CONFIG.ERROR.MESSAGE
-    };
-}();
-
-const EXCEPTION = function() {
-    let handle =null;
-    let formatMessage=(exception, text)=>{
-        var message=exception.id +":"+ exception.text;
-        if (text != undefined)
-           message += "\n"+ text;
-    };
-    return {
-	init: objectHandle =>{handle=objectHandle}
-      , show:(exception,text) => {
-            if (handle)
-               handle.callback(exception,text);
-            else
-               EXCEPTION.on(exception,text);
-        }
-      ,   on: (exception,text)=>{
-            console.log(formatMessage(exception,text));
-        }
-      , format: (exception,text)=>{
-            return formatMessage(exception,text);
-        }
-//        off:function(field){
-//            field.Error.off();
-//        },
-     , ITEM:CONFIG.EXCEPTION
-    };
-}();

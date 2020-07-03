@@ -86,8 +86,8 @@ var Typecast = {
                                 //keychar = String.fromCharCode(keynum);
                                 //console.log('EVENT:'+e.type+'; which:' +e.which + '; keyCode:' + e.keyCode  + '; keynum:' + keynum+'; keyChar:'+keychar);
                                 
-				if(keynum==KEY.ENTER){return
-                                }else if(keynum==KEY.ESC){}
+				if(keynum==c$.KEY.ENTER){return
+                                }else if(keynum==c$.KEY.ESC){}
 				else{}
 				return false;
 			},
@@ -105,7 +105,7 @@ var Typecast = {
 
                                 // console.log('EVENT:'+e.type+'; which:' +e.which + '; keyCode:' + e.keyCode  + '; keynum:' + keyNum+'; keyChar:'+keychar+' maskCurrent:'+maskCurrent);
 
-				if(keyNum==KEY.BACKSPACE && this.AllowInsert){
+				if(keyNum==c$.KEY.BACKSPACE && this.AllowInsert){
 					var preBackspaceCursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0];
 					mask.CursorManager.Move(this, -1);
 					var postBackspaceCursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0];
@@ -114,30 +114,30 @@ var Typecast = {
 					mask.Render(this);
 				}
 
-				if(keyNum==KEY.TAB){return}
+				if(keyNum==c$.KEY.TAB){return}
 
-				else if(keyNum==KEY.END){
+				else if(keyNum==c$.KEY.END){
 					var startIdx = Typecast.Behaviours.Mask.MaskManager.FindNearestMaskCharacter(this, this.DataIndex[this.DataIndex.length-1], 1);
 					Typecast.Behaviours.Mask.CursorManager.SetPosition(this, startIdx);
 				}
 
-				else if(keyNum==KEY.HOME){
+				else if(keyNum==c$.KEY.HOME){
 					Typecast.Behaviours.Mask.CursorManager.SetPosition(this, this.MaskIndex[0]);
 				}
 
-				else if(keyNum==KEY.LEFT || keyNum==KEY.UP){
+				else if(keyNum==c$.KEY.LEFT || keyNum==c$.KEY.UP){
 					mask.CursorManager.Move(this, -1);
 				}
 
-				else if(keyNum==KEY.RIGHT  || keyNum==KEY.DOWN){
+				else if(keyNum==c$.KEY.RIGHT  || keyNum==c$.KEY.DOWN){
 					mask.CursorManager.Move(this, 1);
 				}
 
-				else if(keyNum==KEY.INS && this.AllowInsert){
+				else if(keyNum==c$.KEY.INS && this.AllowInsert){
 					mask.CursorManager.ToggleInsert(this);
 				}
 
-				else if(keyNum==KEY.DEL){
+				else if(keyNum==c$.KEY.DEL){
 					if(this.InsertActive){
 						mask.DataManager.RemoveCharacterByShiftLeft(this);
 					}else{
@@ -171,7 +171,7 @@ var Typecast = {
 				}
 
 				//Refresh
-				else if(keyNum==KEY.REFRESH){
+				else if(keyNum==c$.KEY.REFRESH){
 					return
 				}
 

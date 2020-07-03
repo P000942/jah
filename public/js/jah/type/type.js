@@ -342,10 +342,10 @@ Element.prototype.bind = function(field) {
 
 function superType(Type, Properties) {
    let SELF=this;
-   Object.preset(SELF,{align:ALIGN.LEFT, mandatory:false, autotab:false, label:''
+   Object.preset(SELF,{align:c$.ALIGN.LEFT, mandatory:false, autotab:false, label:''
                      , hint:null, persist:true, defaultValue:'', type:'text'
                      , id:'', key:null, list:null, readOnly:false
-                     , binded:false, order:ORDER.NONE, disabled:false, onFilter:false
+                     , binded:false, order:c$.ORDER.NONE, disabled:false, onFilter:false
                      , inputField:false, dataType:DATATYPE.NUMBER, size:null
                      , maxlength:0, validator:null, mask:null
                      , Header:{clas$:null, id:null}
@@ -542,14 +542,14 @@ function superType(Type, Properties) {
         SELF.onFilter = (dataExt.isDefined(showFilter))
                     ?showFilter
                     :!SELF.onFilter
-        SELF.Header.clas$ = FILTER.CLASS(SELF.onFilter);
+        SELF.Header.clas$ = c$.FILTER.CLASS(SELF.onFilter);
     };
     // Ver DATATYPE - � fazer um parse para um valor correto.
     function parseValue(value){
         SELF.dataType.parse(value);
     }
    function defineProperties(Type, Properties) {
-        //var properties={autotab:false, label:'', mandatory:false, locked:false, defaultValue:'', align:ALIGN.LEFT, size:null, validator:null, mask:null}
+        //var properties={autotab:false, label:'', mandatory:false, locked:false, defaultValue:'', align:c$.ALIGN.LEFT, size:null, validator:null, mask:null}
         var mask = null;
         // Primeiro verifica o que vem do no Type, que são o valores que já vem por padrão
         if (Type){
@@ -580,7 +580,7 @@ function superType(Type, Properties) {
 
 j$.ui.type.Digit=function(Properties) {
    this.inherit = superType;
-   this.inherit({size:1, align:ALIGN.RIGHT, validator:{handler:function(value){return value.isDigit();}, error:ERROR.MESSAGE.Digit}, mask:{format:'#|_', strip:'_'}}, Properties);
+   this.inherit({size:1, align:c$.ALIGN.RIGHT, validator:{handler:function(value){return value.isDigit();}, error:ERROR.MESSAGE.Digit}, mask:{format:'#|_', strip:'_'}}, Properties);
 }
 
 j$.ui.type.Numeric=function(size,decimal, Properties){
@@ -592,17 +592,17 @@ j$.ui.type.Numeric=function(size,decimal, Properties){
       //mask += '|'+'_'.repeat(size)+','+'_'.repeat(decimal);
       _size = size+decimal+1;
    }
-   this.inherit({size:_size, align:ALIGN.RIGHT, validator:{handler:function(value){return value.isNumeric();}, error:ERROR.MESSAGE.Numeric}, mask:{format:mask}}, Properties);
+   this.inherit({size:_size, align:c$.ALIGN.RIGHT, validator:{handler:function(value){return value.isNumeric();}, error:ERROR.MESSAGE.Numeric}, mask:{format:mask}}, Properties);
 }
 j$.ui.type.Integer=function(size, Properties){
    this.inherit = superType;
-   this.inherit({size:size, align:ALIGN.RIGHT, validator:{handler:function(value){return value.isInteger();}, error:ERROR.MESSAGE.Integer}, mask:{format:'#'.repeat(size)}}, Properties);
+   this.inherit({size:size, align:c$.ALIGN.RIGHT, validator:{handler:function(value){return value.isInteger();}, error:ERROR.MESSAGE.Integer}, mask:{format:'#'.repeat(size)}}, Properties);
 }
 
 j$.ui.type.Money=function(size, Properties){
    this.inherit = superType;
    var mask = '9'.repeat(size-3)+'0,'+'00';
-   this.inherit({size:size+1, align:ALIGN.RIGHT, validator:{handler:function(value){return value.isNumeric();}, error:ERROR.MESSAGE.Money}, mask:{format:mask, empty:','}}, Properties);
+   this.inherit({size:size+1, align:c$.ALIGN.RIGHT, validator:{handler:function(value){return value.isNumeric();}, error:ERROR.MESSAGE.Money}, mask:{format:mask, empty:','}}, Properties);
    this.format= function(value) {return dataExt.format.money(value); };
 }
 
@@ -969,14 +969,14 @@ j$.ui.Fieldset = function(fields) {
             if (key && key != $ORT.key) {
                $ORT.key =  key;
                $ORT.field =  SELF.Items[key];
-               $ORT.order =  ORDER.NONE;
+               $ORT.order =  c$.ORDER.NONE;
                field = $ORT.field;
             }
         }
         $ORT.clear = ()=>{
             for(let key in SELF.Items){
                 if (key != $ORT.key)
-                   SELF.Items[key].Header.clas$ = ORDER.CLASS(ORDER.NONE);
+                   SELF.Items[key].Header.clas$ = c$.ORDER.CLASS(c$.ORDER.NONE);
             }
         }
         $ORT.asc=(currentRow, nextRow)=>{
@@ -1000,21 +1000,21 @@ j$.ui.Fieldset = function(fields) {
               return r;
           }
         $ORT.orderBy=order => {
-              if ($ORT.toggle(order) != ORDER.NONE)
-                 return ($ORT.order == ORDER.DESCENDING) ? $ORT.desc : $ORT.asc;
+              if ($ORT.toggle(order) != c$.ORDER.NONE)
+                 return ($ORT.order == c$.ORDER.DESCENDING) ? $ORT.desc : $ORT.asc;
               else
                  return null;
            }
         $ORT.toggle=order => {
                  // Quando indicar que não há classificação, passa order=ORDER.NONE
                  if (!order){
-                    if ($ORT.order == ORDER.NONE || $ORT.order == ORDER.DESCENDING)
-                        order = ORDER.ASCENDING;
+                    if ($ORT.order == c$.ORDER.NONE || $ORT.order == c$.ORDER.DESCENDING)
+                        order = c$.ORDER.ASCENDING;
                     else
-                        order = ORDER.DESCENDING;
+                        order = c$.ORDER.DESCENDING;
                  }
                  $ORT.order = order;
-                 field.Header.clas$ = ORDER.CLASS(order);
+                 field.Header.clas$ = c$.ORDER.CLASS(order);
                  return order;
               }
     };
