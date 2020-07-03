@@ -551,7 +551,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
                 if (Object.contains($i.DataSource[row],criteria,Resource.key))
                    return row;
             }
-            return RC.NOT_FOUND;
+            return  c$.RC.NOT_FOUND;
         }
 
         function exists(record, key){ //verifica se um registro existe
@@ -563,7 +563,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
                 if (Object.compare($i.DataSource[row], record, key)) //compara os valores de uma instancia
                    return row;
             }
-            return RC.NOT_FOUND;
+            return  c$.RCNOT_FOUND;
         }
     }
 
