@@ -569,7 +569,7 @@ var dataExt = function(){
       ,   isObject:function(obj){ return (dataExt.type(obj)==='Object');}
       ,     isCrud:function(obj){
                 return (dataExt.isDefined(obj))
-                      ?(obj.constructor.name==='crud')
+                      ?(obj.constructor.name==='Crud')
                       :false;
             }
       , isFunction:function(obj){ return (dataExt.type(obj)==='Function');}

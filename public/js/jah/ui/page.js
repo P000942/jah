@@ -325,72 +325,75 @@ j$.ui.Pager=function(parent, pager , actionController){
         };
     };
 };
+
 //@note: Factory - para criar os servicos
 j$.service = function(){
    let items = {};
-   function base(adpater, service){
-        let $i=this;
-        this.id=adpater.key;
-        //this.getBindFields = getBindFields;
-        //this.Page;
-        this.Interface= {
-             container:CONFIG.LAYOUT.CONTENT
-             ,      id:$i.id.toFirstLower()
-             , Buttons:CONFIG.CRUD.preset()
-             ,    List:{limit:CONFIG.GRID.MAXLINE
-                    , maxpage:CONFIG.GRID.MAXPAGE
-                    , Buttons:CONFIG.CRUD.GRID.BUTTONS
-                  }
-        };
-        // DEFINIR O RESOURCE
-        Object.setIfExist($i,adpater,['resource']); // Primeiro procurar obter do serviço
-        Object.setIfExist($i,service,['resource','init','child','autoRequest','bindBy'
-                                    ,'initialize','onOpen','afterActionInsert'
-                                    ,'onSuccess','onError','validate']); // Em seguida das propriedades informadas (este prevalece)
-        if (service.Interface)
-           Object.setIfExist($i.Interface,service.Interface,['id','design','container','Buttons','List']);
-        if (service.Parent && service.constructor.name == "Child") {
-           Object.setIfExist($i,service,['Parent']);
-           $i.Child = service; // bindBy
-        }
-        // DEFINIR O TÍTULO
-        if (adpater.title) // se tiver o title no serviço usa-o como caption do form
-           $i.Interface.title = adpater.title;
-        Object.setIfExist($i.Interface,service,['title']); // vai prevaler como CAPTION do interface
+   class CrudBase{
+        constructor(adpater, service){
+            let $i=this;
+            this.id=adpater.key;
+            this.Interface= {
+                container:CONFIG.LAYOUT.CONTENT
+                ,      id:$i.id.toFirstLower()
+                , Buttons:CONFIG.CRUD.preset()
+                ,    List:{limit:CONFIG.GRID.MAXLINE
+                        , maxpage:CONFIG.GRID.MAXPAGE
+                        , Buttons:CONFIG.CRUD.GRID.BUTTONS
+                    }
+            };
+            // DEFINIR O RESOURCE
+            Object.setIfExist($i, adpater, ['resource']); // Primeiro procurar obter do serviço
+            Object.setIfExist($i, service, ['resource','init','child','autoRequest','bindBy'
+                                         , 'initialize','onOpen','afterActionInsert'
+                                         , 'onSuccess','onError','validate']); // Em seguida das propriedades informadas (este prevalece)
+            if (service.Interface)
+               Object.setIfExist($i.Interface,service.Interface,['id','design','container','Buttons','List']);
+            if (service.Parent && service.constructor.name == "Child") {
+                Object.setIfExist($i,service,['Parent']);
+                $i.Child = service; // bindBy
+            }
 
-        // DEFINIR O FIELDSET
-        if (service.fieldset)
-           $i.Fieldset = new j$.ui.Fieldset(service.fieldset);
-        else if (adpater.fieldset)
-           $i.Fieldset = new j$.ui.Fieldset(adpater.fieldset);
-        else // cria um fieldset padrão com código e descrição
-           $i.Fieldset = new j$.ui.Fieldset(j$.ui.Fieldset.make($i.id));
-        // DEFINIR os métodos default  
-        if ($i.init==undefined){
-            $i.init=function(idTarget, modal, param){
-               if (idTarget)
-                  $i.Interface.container=idTarget;
-               j$.ui.Page.create($i, modal).init();
-            };
+            // DEFINIR O TÍTULO
+            if (adpater.title) // se tiver o title no serviço usa-o como caption do form
+                $i.Interface.title = adpater.title;
+            Object.setIfExist($i.Interface,service,['title']); // vai prevaler como CAPTION do interface
+
+            // DEFINIR O FIELDSET
+            if (service.fieldset)
+                $i.Fieldset = new j$.ui.Fieldset(service.fieldset);
+            else if (adpater.fieldset)
+                $i.Fieldset = new j$.ui.Fieldset(adpater.fieldset);
+            else // cria um fieldset padrão com código e descrição
+                $i.Fieldset = new j$.ui.Fieldset(j$.ui.Fieldset.make($i.id));
+            
+            // DEFINIR os métodos default  
+            if ($i.init==undefined){
+                $i.init=function(idTarget, modal, param){
+                if (idTarget)
+                    $i.Interface.container=idTarget;
+                j$.ui.Page.create($i, modal).init();
+                };
+            }
+            if ($i.autoRequest==undefined  && dataExt.isCrud($i)){
+                $i.autoRequest=function(parms){
+                    $i.Resource.get(parms);
+                };
+            }      
         }
-        if ($i.autoRequest==undefined  && dataExt.isCrud($i)){
-            $i.autoRequest=function(parms){
-                $i.Resource.get(parms);
-            };
-        }       
-    }
-    function crud(adpater, service){
-       this.inherit = base;
-       this.inherit(adpater, service);
-    }
-    function query(adpater, service){
-       this.inherit = base;
-       this.inherit(adpater, service);
-       with(this.Interface){
-          Buttons = CONFIG.QUERY.preset();
-          List.Buttons =CONFIG.QUERY.GRID.BUTTONS;
-       }
-    }
+   }
+   class Crud extends CrudBase{
+        constructor(adpater, service){
+            super(adpater, service);
+        }
+   }
+   class Query extends CrudBase{
+        constructor(adpater, service){
+            super(adpater, service);
+            this.Interface.Buttons = CONFIG.QUERY.preset();
+            this.Interface.List.Buttons =CONFIG.QUERY.GRID.BUTTONS;
+        }
+   }
 
     function Child(key, parent, properties){
         let $i = this;
@@ -454,10 +457,10 @@ j$.service = function(){
      , c$:items
      , C$:key=>{return items[key];}
      , createCrud: function(key, service){
-           return this.create(key, new crud(j$.service.adapter.get(key), service));
+           return this.create(key, new Crud(j$.service.adapter.get(key), service));
        }
      , createQuery: function(key, service){
-           return this.create(key, new query(j$.service.adapter.get(key), service));
+           return this.create(key, new Query(j$.service.adapter.get(key), service));
        }
     , createChild: function(key, parent, service){
         return new Child(key, parent, service);
@@ -466,7 +469,7 @@ j$.service = function(){
           if (!key)
               throw new TypeError(CONFIG.EXCEPTION.SERVICE_NULL.text);
           if (service.constructor.name=="Object"){ //para o servicos que sao criados manualmente
-             items[key]=new base(j$.service.adapter.get(key),service);
+             items[key]=new CrudBase(j$.service.adapter.get(key),service);
           } else
              items[key]=service;
           window[key] = items[key];
@@ -938,3 +941,26 @@ j$.ui.adapterFactory = function(adapter){
    }
    this.load();
 };
+
+class Area {
+    constructor(altura, largura) {
+    //   i$ = this;
+      this.altura = altura;
+      this.largura = largura;
+     // 
+    }
+    get calc(){ // Getterprop privada
+        this.log(); 
+        return i$.altura * i$.largura;
+    }
+
+    log () { // método privado
+        return 'Funcionou!';
+    }
+    aux =()=> {console.log('Funcionou aux!');}
+    
+    static init = () => {
+        aux();
+    }
+}
+//r = new Area(20,25);
