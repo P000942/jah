@@ -395,62 +395,59 @@ j$.service = function(){
         }
    }
 
-    function Child(key, parent, properties){
-        let $i = this;
-        let idService  = parent.service.id;
-        let txGetValue = `j$.$S.${idService}.Fieldset.Items.${parent.service.resource.id}.value()`;
-        let idResourceValue = '';
-        $i.Parent = parent; // Página que está criando os filhos
-        $i.Parent.key = parent.service.id;
-        Object.join($i, properties);
-        var initialized = function(){
-            $i.id = idService +''+key.toFirstUpper();
-            //j$.$S[idService].Fieldset.Items
-            Object.preset($i,j$.service.adapter.get(key)) // Vai copiar todas as propriedades do adapter.services que não exite no service
-            $i.onclick = $i.Parent.actionController+'.child("'+key+'",' + txGetValue+ ')';
-            if ($i.crud || $i.query){
-               $i.service = j$.service.make(key,$i);
-            }
-        }();
-        $i.open=function(){
-            let record =  $i.Parent.service.Fieldset.sweep();
-            j$.Dashboard.openItem($i, record);
+   class Child{
+        constructor(key, parent, properties){
+            Object.join(this, properties);
+            this.Parent = parent; // Página que está criando os filhos
+           // let initialized = function(){
+                let idService  = parent.service.id;
+                let txGetValue = `j$.$S.${idService}.Fieldset.Items.${parent.service.resource.id}.value()`;
+                this.id = idService +''+key.toFirstUpper();
+                Object.preset(this,j$.service.adapter.get(key)) // Vai copiar todas as propriedades do adapter.services que não exite no service
+                this.onclick = this.Parent.actionController+'.child("'+key+'",' + txGetValue+ ')';
+                if (this.crud || this.query)
+                    this.service = j$.service.make(key,this);
+           // }();
+        }    
+        open(){
+            let record =  this.Parent.service.Fieldset.sweep();
+            j$.Dashboard.openItem(this, record);
         }
-        $i.refresh=function(){
-            let record =  $i.Parent.service.Fieldset.sweep();
+        refresh(){
+            return  this.Parent.service.Fieldset.sweep();
         }
         //#TODO: O que fazer aqui?
         //Se tiver editado, tem que atualizar o registro
         //Se for um novo ou exclusão, pode fechar a form/tab/etc
-        $i.notify=function(notification){
-           if ($i.service.page){
-              getBindFields();
-              showLegends();
-           }
-           if (notification.action===CONFIG.ACTION.EDIT){
-              console.log("#TODO:"+ $i.key +" - "+ JSON.stringify(notification.record));
-              if ($i.service.page && $i.service.autoRequest){
-                 $i.service.autoRequest($i.bindFields); 
-              }
-           }
+        notify=function(notification){
+            if (this.service.page){
+                this.getBindFields();
+                this.showLegends();
+            }
+            if (notification.action===CONFIG.ACTION.EDIT){
+                console.log("#TODO:"+ this.key +" - "+ JSON.stringify(notification.record));
+                if (this.service.page && this.service.autoRequest){
+                    this.service.autoRequest(this.bindFields); 
+                }
+            }
         }
         //@note: retorna um Record com os campos que ligam filho e pai
-        function getBindFields(BindFields){ 
-            $i.bindFields = null;
-            $i.bindFields = $i.Parent.service.Fieldset.RecordBy($i.bindBy);
-            $i.service.Fieldset.setDefaults($i.bindFields);
-            return $i.bindFields;
-         }  
-         function showLegends(BindFields){
-             // Object.keys($i.service.Fieldset.Items).forEach( key=>{
-             //    
-             for (let key in $i.service.Fieldset.Items){   
-                let field = $i.service.Fieldset.Items[key];
-                 if (field.parentLegend)
-                    field.Legend.show($i.Parent.service.Fieldset.Items[field.parentLegend].value());
-             };
-          }      
-     };
+        getBindFields(BindFields){ 
+            this.bindFields = null;
+            this.bindFields = this.Parent.service.Fieldset.RecordBy(this.bindBy);
+            this.service.Fieldset.setDefaults(this.bindFields);
+            return this.bindFields;
+        }  
+        //@note: exibe a descrição do serviço pai
+        showLegends(BindFields){
+            for (let key in this.service.Fieldset.Items){   
+                let field = this.service.Fieldset.Items[key];
+                if (field.parentLegend)
+                    field.Legend.show(this.Parent.service.Fieldset.Items[field.parentLegend].value());
+            };
+        }      
+    };  
+
    return {
        get:key=>{return items[key];}
      , Items:items
