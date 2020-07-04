@@ -3,20 +3,20 @@
  * and open the template in the editor.
  */
 j$.ui.type={};
-var DATATYPE = {NUMBER:{parse:function(value){return parseFloat(value);}},
-                  DATE:{parse:function(value){return new Date(value);}},
-                  CHAR:{parse:function(value){return value;}},
-               BOOLEAN:{parse:function(value){return value;}},
-                  LIST:{parse:function(value){return value;}}
+var DATATYPE = {NUMBER:{parse:value=>{return parseFloat(value);}},
+                  DATE:{parse:value=>{return new Date(value);}},
+                  CHAR:{parse:value=>{return value;}},
+               BOOLEAN:{parse:value=>{return value;}},
+                  LIST:{parse:value=>{return value;}}
                };
 
 j$.ui.Render= function(){
       return {
-          attributes:function(attributes, exception){
+          attributes:(attributes, exception)=>{
                 //formata outros atributos de html do formulárioa para renderizar
-                var result = ' ';
-                var ignore=function(att){
-                    var go=false;
+                let result = ' ';
+                let ignore=att=>{
+                    let go=false;
                     if (['key','caption','icon'].indexOf(att)>-1){
                        go= true;
                     } else if (exception){
@@ -26,8 +26,8 @@ j$.ui.Render= function(){
                     }
                     return go;
                 };
-                for (var attribute in attributes){
-                    var att = attribute.replace(/[$]/g,'s');
+                for (let attribute in attributes){
+                    let att = attribute.replace(/[$]/g,'s');
                     if (att.indexOf('data_')>-1)
                        att = att.replace('data_','data-');
                     else
@@ -38,28 +38,28 @@ j$.ui.Render= function(){
                 }
                 return result;
           }
-         , wrap:function(wrap, id, clas$){
-              var id = j$.util.getId(clas$, id);
-              if (!i$(id))
-                 wrap.insert("<div id='" +id+ "' class='" +clas$+ "'></div>");
-              return i$(id);
+         , wrap:(wrap, id, clas$)=>{
+              let id$ = j$.util.getId(clas$, id);
+              if (!i$(id$))
+                 wrap.insert("<div id='" +id$+ "' class='" +clas$+ "'></div>");
+              return i$(id$);
           }
-        , label: function(wrap, label, inputId, clas$, mandatory){
-             var att={id:(inputId)?inputId+ 'Label':j$.util.getId('Label')
+        , label: (wrap, label, inputId, clas$, mandatory)=>{
+             let att={id:(inputId)?inputId+ 'Label':j$.util.getId('Label')
                    , for:(inputId)? inputId:null
                    , clas$:(clas$)?clas$:'input_label'
                };
                label =(label)?label : att.id;
              if (!i$(att.id)){
-                 var required =(mandatory) ?'<span class="required">*</span>' :'';
+                 let required =(mandatory) ?'<span class="required">*</span>' :'';
                  wrap.insert("<label " +j$.ui.Render.attributes(att,'label')+ "'>" +label+required+ ":</label>");
              }
              return i$(att.id);
         }
-        , input:function(wrap, id, inputType, maxlength, attributes){
+        , input:(wrap, id, inputType, maxlength, attributes)=>{
               if (!i$(id)){
-                 var size =(maxlength)?" size='" +maxlength+ "'":"";
-                 var type = (inputType)?inputType:'text';
+                 let size =(maxlength)?" size='" +maxlength+ "'":"";
+                 let type = (inputType)?inputType:'text';
                  if (type==='select')
                     wrap.insert("<"+type+ " id='" +id+ "' name='" +id+ "' " +j$.ui.Render.attributes(attributes)+ " ></" +type+ ">");
                  else
@@ -68,24 +68,24 @@ j$.ui.Render= function(){
               return i$(id);
           }
 
-        , hint:function(parent, id, method){
+        , hint:(parent, id, method)=>{
                  parent.insert({after:"<span id='" +id+ "'></span>"});
                  $('#'+id).mouseover(method);
                  return i$(id);
          }
-         , wrapperUl:function(wrap, id, wrapStyle){
-               var wrapId =j$.util.getId(wrapStyle, id);
+         , wrapperUl:(wrap, id, wrapStyle)=>{
+            let wrapId =j$.util.getId(wrapStyle, id);
                $(wrap).append("<div class='wrapperUl' id='" +wrapId+ "_wrap'></div>");
                $("#"+wrapId+"_wrap").append('<ul class="' +wrapStyle+ '" id="' +wrapId+'"></ul>');
                return i$(wrapId);
            }
-         , li:function(wrap, properties){
+         , li:(wrap, properties)=>{
              wrap.insert('<li><a ' +j$.ui.Render.attributes({id:properties.id, onclick:properties.onclick})+' >' +properties.caption+ '</a></li>');
              return i$(properties.id);
          }
-         , line:function(section, id, wrapStyle, title){
-               var wrapId =j$.util.getId(wrapStyle, id);
-               var legend="";
+         , line:(section, id, wrapStyle, title)=>{
+               let wrapId =j$.util.getId(wrapStyle, id);
+               let legend="";
                if (title!=undefined){
                   if (dataExt.isString(title))
                      legend ="<legend class='" +wrapStyle+ "_legend' id='" +wrapId+ "_legend'>"+ title+"</legend>";
@@ -97,27 +97,27 @@ j$.ui.Render= function(){
                    i$(wrapId+ "_legend").stylize(title.style);
                return i$(wrapId);
            }
-         , button:function(wrap, properties){
+         , button:(wrap, properties)=>{
              if (!properties.submenu)
                  wrap.insert(j$.ui.Render.formatButton(properties));
              else
                  wrap.insert(j$.ui.Render.formatButtonDropdown(properties));
              return i$(properties.id);
          }
-         , formatButton:function(properties){
+         , formatButton:(properties)=>{
              //#todo: formata class 2x desnecessariamente
              return '<a' +j$.ui.Render.attributes(properties,['value', 'element'])+ '>'+j$.ui.Render.icon(properties)+properties.value+'</a>';
          }
-         , formatButtonDropdown:function(properties){
+         , formatButtonDropdown:(properties)=>{
              return '<div id="' +properties.id+ '"  class="btn-group">'
                    +'<a' +j$.ui.Render.attributes(properties,['value','onclick','submenu','id'])+ '>'+j$.ui.Render.icon(properties)+'</a>'
                    +'<button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>'
                    +'<ul id="'+properties.id+'Menu" class="dropdown-menu">'
                    +'</ul></div>';
          }
-         , icon:function(properties){
-             var iconClass;
-             var key = properties;
+         , icon:(properties)=>{
+            let iconClass;
+            let key = properties;
              if (dataExt.isString(properties))
                 iconClass = CONFIG.icon(key);
              else if(dataExt.isObject(properties)){
@@ -125,13 +125,13 @@ j$.ui.Render= function(){
                 iconClass =(properties.icon) ?properties.icon :CONFIG.icon(key)
              }
              if (iconClass){
-                var color = CONFIG.color(key);
-                var txColor=(color)?' style="color:' +color+ ';" '  :'';
+                let color = CONFIG.color(key);
+                let txColor=(color)?' style="color:' +color+ ';" '  :'';
                 return '<i class="' +iconClass+ '"' +txColor+ '></i>';
              }else
                 return '';
          }
-         , alert:function(wrap, msg, clas$){
+         , alert:(wrap, msg, clas$)=>{
              clas$ = (clas$)? "class='alert " +clas$+ "'": "class='alert'";
              var html= '<div '+clas$+ '>'
                      + '<button type="button" class="close" data-dismiss="alert">×</button>'
@@ -142,30 +142,30 @@ j$.ui.Render= function(){
 }();
 
 j$.ui.type.HintIcon= function(parent, id, hint, text){
-       var SELF = this;
-       var element;
+    let SELF = this;
+    let element;
        hint = (hint)?hint:CONFIG.ACTION.INFO.KEY;
        Object.preset(SELF, CONFIG.hint(hint));
-       var id = j$.util.getId( (parent.id)?parent.id:'HintIcon', id);
+       let id$ = j$.util.getId( (parent.id)?parent.id:'HintIcon', id);
        Object.preset(this, {
-              on:function(msg){
+              on:msg=>{
                   if (msg)
                       SELF.text=msg;
-                  if (!i$(id))
-                     element=j$.ui.Render.hint(parent, id, SELF.show);
+                  if (!i$(id$))
+                     element=j$.ui.Render.hint(parent, id$, SELF.show);
                   else
-                     element=i$(id);
+                     element=i$(id$);
                   element.className = SELF.class;
               }
-            , set:function(msg){SELF.text=msg; }
-            , get:function(){return SELF.text;}
-            , reset:function(){SELF.text='';}
-            , off:function(){if(i$(id)) $('#'+id).remove(); }
-            , hide:function(){System.Hint.hide(SELF.Element);  }
-            , class: 'ikon-hint ' + SELF.icon
+            ,   set:(msg)=>{SELF.text=msg; }
+            ,   get:()=>{return SELF.text;}
+            , reset:()=>{SELF.text='';}
+            ,   off:()=>{if(i$(id$)) $('#'+id$).remove(); }
+            , hide:()=>{System.Hint.hide(SELF.Element);  }
+            ,class: 'ikon-hint ' + SELF.icon
             , text: (text && dataExt.isString(text))?text:''
         });
-        this.show=function(event, msg){
+        this.show=(event, msg)=>{
              if (msg)
                  SELF.text=msg;
                  System.Hint.show(SELF.text, element, event, "hint " + SELF.hint);
@@ -176,10 +176,10 @@ j$.ui.type.HintIcon= function(parent, id, hint, text){
 };
 
 j$.ui.Alert= function(){
-    var $alert = this;
+    let $alert = this;
     this.wrap = CONFIG.LAYOUT.ALERT_CONTENT;
     return {
-       show:function(wrap, msg, alertClass){
+       show:(wrap, msg, alertClass)=>{
            if (!wrap) wrap=$alert.wrap;
            wrap.innerHTML='';
            if (dataExt.isString(msg))
@@ -187,22 +187,22 @@ j$.ui.Alert= function(){
            else if (dataExt.isArray(msg) && msg.length === 1){
                j$.ui.Render.alert(wrap, msg[0], alertClass);
            }else{
-               var html='<lu>'
+            let html='<lu>'
                msg.each(function(text){html+='<li>' +text +'</li>'});
                html+='</lu>'
                j$.ui.Render.alert(wrap, html , alertClass);
            }
        }
-     ,   error:function(wrap, msg){
+     ,   error:(wrap, msg)=>{
                   j$.ui.Alert.show(wrap, msg, CONFIG.ALERT.ERROR.CLASS)
                }
-     ,    info:function(wrap, msg){
+     ,    info:(wrap, msg)=>{
                   j$.ui.Alert.show(wrap, msg, CONFIG.ALERT.INFO.CLASS)
                }
-     , success:function(wrap, msg){
+     , success:(wrap, msg)=>{
                   j$.ui.Alert.show(wrap, msg, CONFIG.ALERT.SUCCESS.CLASS)
                }
-     , hide:function(wrap){
+     , hide:wrap=>{
          if (!wrap) wrap=$alert.wrap;
              wrap.innerHTML='';
      }
@@ -211,32 +211,32 @@ j$.ui.Alert= function(){
 
 var TYPE = function() {
     return {
-        SLIDEBOX: function(properties){return new j$.ui.frame.slidebox(properties);}
-   ,    FRAMEBOX: function(properties){return new j$.ui.frame.framebox(properties);}
-   ,     DROPBOX: function(properties){return new j$.ui.frame.dropbox(properties);}
-   ,       DIGIT: function(properties){return new j$.ui.type.Digit(properties);}
-   ,     BOOLEAN: function(properties){return new j$.ui.type.Boolean(properties);}
-   ,      LETTER: function(size,properties){return new j$.ui.type.Letter(size,properties);}
-   ,   LOWERCASE: function(size,properties){return new j$.ui.type.LowerCase(size,properties);}
-   ,   UPPERCASE: function(size,properties){return new j$.ui.type.UpperCase(size,properties);}
-   ,        CHAR: function(size,properties){return new j$.ui.type.Char(size,properties);}
-   ,        NAME: function(size,properties){return new j$.ui.type.Name(size,properties);}
-   ,    PASSWORD: function(size,properties){return new j$.ui.type.Password(size,properties);}
-   ,     INTEGER: function(size,properties){return new j$.ui.type.Integer(size,properties);}
-   ,     NUMERIC: function(size,decimal,properties){return new j$.ui.type.Numeric(size,decimal,properties);}
-   ,        MASK: function(mask,properties){return new j$.ui.type.Mask(mask,properties);}
-   ,        LIST: function(properties){return new j$.ui.type.List(properties);}
-   ,   TYPEAHEAD: function(properties){return new j$.ui.type.Typeahead(properties);}
-   ,       MONEY: function(size,properties){return new j$.ui.type.Money(size,properties);}
-   ,       EMAIL: function(size,properties){return new j$.ui.type.Email(size,properties);}
-   ,        DATE: function(properties){return new j$.ui.type.Date(properties);}
-   ,        HOUR: function(size,properties){return new j$.ui.type.Hour(size,properties);}
-   ,       PHONE: function(size,properties){return new j$.ui.type.Phone(size,properties);}
-   ,         CPF: function(properties){return new j$.ui.type.Cpf(properties);}
-   ,        CNPJ: function(properties){return new j$.ui.type.Cnpj(properties);}
-   ,         CCA: function(properties){return new j$.ui.type.Cca(properties);}
-   ,         CEP: function(properties){return new j$.ui.type.Cep(properties);}
-   ,       Placa: function(properties){return new j$.ui.type.Placa(properties);}
+        SLIDEBOX: properties=>{return new j$.ui.frame.slidebox(properties)}
+   ,    FRAMEBOX: properties=>{return new j$.ui.frame.framebox(properties)}
+   ,     DROPBOX: properties=>{return new j$.ui.frame.dropbox(properties)}
+   ,       DIGIT: properties=> {return new j$.ui.type.Digit(properties)}
+   ,     BOOLEAN: properties=>{return new j$.ui.type.Boolean(properties)}
+   ,      LETTER: (size,properties)=>{return new j$.ui.type.Letter(size,properties)}
+   ,   LOWERCASE: (size,properties)=>{return new j$.ui.type.LowerCase(size,properties)}
+   ,   UPPERCASE: (size,properties)=>{return new j$.ui.type.UpperCase(size,properties)}
+   ,        CHAR: (size,properties)=>{return new j$.ui.type.Char(size,properties)}
+   ,        NAME: (size,properties)=>{return new j$.ui.type.Name(size,properties)}
+   ,    PASSWORD: (size,properties)=>{return new j$.ui.type.Password(size,properties)}
+   ,     INTEGER: (size,properties)=>{return new j$.ui.type.Integer(size,properties)}
+   ,     NUMERIC: (size,decimal,properties)=>{return new j$.ui.type.Numeric(size,decimal,properties)}
+   ,        MASK: (mask,properties)=>{return new j$.ui.type.Mask(mask,properties)}
+   ,        LIST: properties=>{return new j$.ui.type.List(properties)}
+   ,   TYPEAHEAD: properties=>{return new j$.ui.type.Typeahead(properties)}
+   ,       MONEY: (size,properties)=>{return new j$.ui.type.Money(size,properties)}
+   ,       EMAIL: (size,properties)=>{return new j$.ui.type.Email(size,properties)}
+   ,        DATE: properties=>{return new j$.ui.type.Date(properties)}
+   ,        HOUR: (size,properties)=>{return new j$.ui.type.Hour(size,properties)}
+   ,       PHONE: (size,properties)=>{return new j$.ui.type.Phone(size,properties)}
+   ,         CPF: properties=>{return new j$.ui.type.Cpf(properties)}
+   ,        CNPJ: properties=>{return new j$.ui.type.Cnpj(properties)}
+   ,         CCA: properties=>{return new j$.ui.type.Cca(properties)}
+   ,         CEP: properties=>{return new j$.ui.type.Cep(properties)}
+   ,       Placa: properties=>{return new j$.ui.type.Placa(properties)}
    ,         TEST:function(properties){return {
                    assert:function(obj, value){
                                 console.log('assert('    +value+ '):');
@@ -253,8 +253,8 @@ var TYPE = function() {
 }();
 TYPE.HELPER = {
     getElementIndex:function(obj) {
-	var form = obj.form;
-	for (var i=0; i<form.elements.length; i++) {
+    let form = obj.form;
+	for (let i=0; i<form.elements.length; i++) {
 		if (obj.id == form.elements[i].id) {
 			return i;
 			}
@@ -262,14 +262,14 @@ TYPE.HELPER = {
 	return -1;
     },
     getLabel: function (inputField){
-        var labelField = {label:'', mandatory:false};
-        var lbl="";
+        let labelField = {label:'', mandatory:false};
+        let lbl="";
         if(inputField.parentNode){
           if(inputField.parentNode.tagName=='label'){
             lbl=inputField.parentNode.innerHTML;
           }
         }
-        var labels=document.getElementsByTagName("label"),i;
+        let labels=document.getElementsByTagName("label"),i;
         for( i=0; i<labels.length;i++ ){
            if(labels[i].htmlFor==inputField.id){
               lbl=labels[i].innerHTML;
@@ -288,9 +288,9 @@ TYPE.HELPER = {
 };
 
 superMask=function(mask){
-    var SELF=this;
+    let SELF=this;
     Object.preset(SELF,{format:null, prompt:null, strip:null, mask:null, size:1, TCMask:null});
-    var initialized = function(){
+    let initialized = function(){
         if (mask){
             Object.setIfExist(SELF,mask,['strip','empty']);
             if (mask.format){
@@ -303,12 +303,12 @@ superMask=function(mask){
             }
         }
     }();
-    this.format = function(value){
+    this.format = value=>{
         return (SELF.mask)?value.mask(SELF.mask) :value;
     };
-    this.unformat = function(value){
-        var vl = (SELF.strip) ?value.stripChar(SELF.strip) :value.trim();
-        var vl = vl.stripChar("_"); // Remover o caracter de prompt
+    this.unformat = value=>{
+        let vl = (SELF.strip) ?value.stripChar(SELF.strip) :value.trim();
+        vl = vl.stripChar("_"); // Remover o caracter de prompt
         if (SELF.empty && vl==SELF.empty)
            vl =''
         return vl;
@@ -360,7 +360,7 @@ function superType(Type, Properties) {
               create:function(wrap, id,  key, design){
                    if (SELF.label.isEmpty())
                        SELF.label=(key) ?key :id;
-                   var wrapInput = j$.ui.Render.wrap(wrap,id+'_wrapLabel','wrap_label');
+                       let wrapInput = j$.ui.Render.wrap(wrap,id+'_wrapLabel','wrap_label');
 
                    j$.ui.Render.label(wrapInput, SELF.label, id, 'input_label' ,SELF.mandatory)
                    wrapInput.stylize(design.labelStyle);
@@ -369,7 +369,7 @@ function superType(Type, Properties) {
    }();
    this.Legend= function(){
        //var element=null;
-       var id;
+       let id;
        let prepareToRequest= value=>{
            SELF.Legend.hide();
            value = (value)?value:SELF.value();
@@ -377,8 +377,8 @@ function superType(Type, Properties) {
                                   :Object.build(SELF.resource.id,value);
        }
        return {
-              init:() =>{ id = SELF.id +'_legend'; }
-            , hide:() =>{if(i$(id)) $('#'+id).remove();}
+              init:() =>{id = SELF.id +'_legend'}
+            , hide:() =>{if(i$(id)) $('#'+id).remove()}
             , show:text =>{
                  if(!i$(id))
                     $(SELF.inputField.parentElement).append("<span class='" +CONFIG.LEGEND.CLASS+ "' id='" +id+ "'>"+text+"</span>");
@@ -387,9 +387,9 @@ function superType(Type, Properties) {
             }
             , set:  response => {
                   SELF.Legend.hide();
-                  var text='';
+                  let text='';
                   if (SELF.Resource){
-                      var record = SELF.Resource.handleResponse(response);
+                    let record = SELF.Resource.handleResponse(response);
                       if (record){
                           if (record[0][SELF.Resource.text]!=undefined){
                               text = record[0][SELF.Resource.text];
@@ -416,35 +416,35 @@ function superType(Type, Properties) {
    }();
 
    //response para o resource
-   this.get=function(response){
+   this.get=response=>{
        SELF.Legend.set(response);
    };
-   this.edit= function(value){
+   this.edit= value=>{
        if (value == undefined)
            value = SELF.Record.value;
         i$(SELF.id).content(value);
         i$(SELF.id).className = CONFIG.INPUT.CLASS.DEFAULT; //"input_text";
    };
-   this.format= function(p_value) {
+   this.format= p_value=> {
         return  (SELF.mask) ?SELF.mask.format(p_value) :SELF.value(p_value);
    };
-   this.identify=function (wrap, id, key, design){
+   this.identify= (wrap, id, key, design)=>{
        SELF.id =j$.util.getId(SELF.type, id);
        SELF.key =(key)?key : SELF.id;
        if (!design) design={};
        SELF.design = design;
        SELF.Label.create(wrap, SELF.id, key, SELF.design);
    }
-   this.create= function(wrap, id, key, design) {
+   this.create= (wrap, id, key, design) =>{
        SELF.identify(wrap, id, key, design);
-       var wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput','wrap_input');
+       let wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput','wrap_input');
        j$.ui.Render.input(wrapInput, SELF.id, SELF.type, SELF.maxlength, SELF.attributes);
        wrapInput.stylize(SELF.design.inputStyle);
        SELF.bind(i$(SELF.id));
    };
-   this.text =function(p_value){return SELF.value(p_value);}; // Se tem um texto associado ou uma lista (pode ser usado para um AJAX)
-   this.value =function(p_value){ // Retorna o valor sem m�scara (caso haja)
-          var value;
+   this.text =p_value=>{return SELF.value(p_value);}; // Se tem um texto associado ou uma lista (pode ser usado para um AJAX)
+   this.value =p_value=>{ // Retorna o valor sem m�scara (caso haja)
+          let value;
           if (p_value)
               value=p_value;
           else{
@@ -454,9 +454,9 @@ function superType(Type, Properties) {
           if (SELF.mask){value = SELF.mask.unformat(value);}
           return value.trim();
    };
-   this.validate= function(p_value){
-        var value = SELF.value(p_value);
-        var valid=SELF.isValid(value);
+   this.validate= p_value=>{
+        let value = SELF.value(p_value);
+        let valid=SELF.isValid(value);
         if (!valid && ERROR){
             SELF.Error.set((value.isEmpty()?ERROR.MESSAGE.Mandatory:SELF.validator.error));
             ERROR.show(SELF.Error.get(),SELF);
@@ -466,9 +466,9 @@ function superType(Type, Properties) {
         SELF.inputField.className = (valid)?CONFIG.INPUT.CLASS.DEFAULT:CONFIG.INPUT.CLASS.ERROR;
         return valid;
    };
-   this.isValid= function(p_value){
-        var value = SELF.value(p_value);
-        var valid=true;
+   this.isValid= p_value=>{
+        let value = SELF.value(p_value);
+        let valid=true;
         if (!value.isEmpty()){ // se tem valor, assume o memso como verdadeiro
            if (SELF.validator.handler) // se tem handle, v�lida
               valid=SELF.validator.handler(value);
@@ -477,27 +477,27 @@ function superType(Type, Properties) {
         return valid;
    };
 
-   this.reset= function(){
+   this.reset= ()=>{
       ERROR.off(SELF);
            if (!SELF.defaultValue.isEmpty())
               i$(SELF.id).value=SELF.defaultValue;
            i$(SELF.id).className = CONFIG.INPUT.CLASS.DEFAULT;
    };
 
-   this.bind = function(inputField){
+   this.bind = inputField=>{
        SELF.binded=true;
        SELF.inputField=inputField;
        SELF.inputField.bind(SELF);
        SELF.id =inputField.id;
        if (!SELF.key)
            SELF.key =SELF.id;
-       var hint = "";
+        let hint = "";
 
        SELF.Error = new j$.ui.type.HintIcon(inputField, inputField.id+'_error', CONFIG.ACTION.ERROR.KEY);
        if (SELF.hint)
           SELF.Hint = new j$.ui.type.HintIcon(inputField, inputField.id+'_info', CONFIG.ACTION.INFO.KEY, SELF.hint);
 
-       var labelField = TYPE.HELPER.getLabel(inputField);
+       let labelField = TYPE.HELPER.getLabel(inputField);
        if (SELF.label.isEmpty()){
            SELF.label=inputField.id;
            if (!labelField.label.isEmpty())
@@ -507,7 +507,7 @@ function superType(Type, Properties) {
            SELF.mandatory = labelField.mandatory;
 
        if (SELF.validator)
-           Event.observe(inputField, 'blur',  function(e){TYPE.HANDLE.lostFocus(e,SELF.validate);});
+           Event.observe(inputField, 'blur',  (e)=>{TYPE.HANDLE.lostFocus(e,SELF.validate);});
        else
            Event.observe(inputField, 'blur',  TYPE.HANDLE.lostFocus);
 
@@ -515,7 +515,7 @@ function superType(Type, Properties) {
         case 'text':
            SELF.Legend.init();
            if (SELF.autotab)
-               Event.observe(inputField, 'keyup', function(){TYPE.HANDLE.autotab(inputField,SELF.maxlength);});
+               Event.observe(inputField, 'keyup', ()=>{TYPE.HANDLE.autotab(inputField,SELF.maxlength);});
 
            SELF.mask.render(inputField);
            //inputField.className = inputField.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
@@ -530,15 +530,15 @@ function superType(Type, Properties) {
           break
        }
 
-       inputField.readOnly = SELF.readOnly;
-       inputField.disabled = SELF.disabled;
+       inputField.readOnly    = SELF.readOnly;
+       inputField.disabled    = SELF.disabled;
        inputField.defaultValue=SELF.defaultValue;
-       inputField.className = inputField.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
+       inputField.className   = inputField.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
 
        Event.observe(inputField, 'focus', TYPE.HANDLE.focus, false);
    };
 
-    this.filterToggle=function(showFilter){
+    this.filterToggle=showFilter=>{
         SELF.onFilter = (dataExt.isDefined(showFilter))
                     ?showFilter
                     :!SELF.onFilter
@@ -550,7 +550,7 @@ function superType(Type, Properties) {
     }
    function defineProperties(Type, Properties) {
         //var properties={autotab:false, label:'', mandatory:false, locked:false, defaultValue:'', align:c$.ALIGN.LEFT, size:null, validator:null, mask:null}
-        var mask = null;
+        let mask = null;
         // Primeiro verifica o que vem do no Type, que são o valores que já vem por padrão
         if (Type){
             Object.setIfExist(SELF, Type, ['align','size','validator','mask','autotab'
@@ -580,30 +580,30 @@ function superType(Type, Properties) {
 
 j$.ui.type.Digit=function(Properties) {
    this.inherit = superType;
-   this.inherit({size:1, align:c$.ALIGN.RIGHT, validator:{handler:function(value){return value.isDigit();}, error:ERROR.MESSAGE.Digit}, mask:{format:'#|_', strip:'_'}}, Properties);
+   this.inherit({size:1, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isDigit();}, error:ERROR.MESSAGE.Digit}, mask:{format:'#|_', strip:'_'}}, Properties);
 }
 
 j$.ui.type.Numeric=function(size,decimal, Properties){
    this.inherit = superType;
-   var mask = '#'.repeat(size);
-   var _size = size;
+   let mask = '#'.repeat(size);
+   let _size = size;
    if (decimal){
       mask += ','+'#'.repeat(decimal);
       //mask += '|'+'_'.repeat(size)+','+'_'.repeat(decimal);
       _size = size+decimal+1;
    }
-   this.inherit({size:_size, align:c$.ALIGN.RIGHT, validator:{handler:function(value){return value.isNumeric();}, error:ERROR.MESSAGE.Numeric}, mask:{format:mask}}, Properties);
+   this.inherit({size:_size, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isNumeric();}, error:ERROR.MESSAGE.Numeric}, mask:{format:mask}}, Properties);
 }
 j$.ui.type.Integer=function(size, Properties){
    this.inherit = superType;
-   this.inherit({size:size, align:c$.ALIGN.RIGHT, validator:{handler:function(value){return value.isInteger();}, error:ERROR.MESSAGE.Integer}, mask:{format:'#'.repeat(size)}}, Properties);
+   this.inherit({size:size, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isInteger();}, error:ERROR.MESSAGE.Integer}, mask:{format:'#'.repeat(size)}}, Properties);
 }
 
 j$.ui.type.Money=function(size, Properties){
    this.inherit = superType;
    var mask = '9'.repeat(size-3)+'0,'+'00';
-   this.inherit({size:size+1, align:c$.ALIGN.RIGHT, validator:{handler:function(value){return value.isNumeric();}, error:ERROR.MESSAGE.Money}, mask:{format:mask, empty:','}}, Properties);
-   this.format= function(value) {return dataExt.format.money(value); };
+   this.inherit({size:size+1, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isNumeric();}, error:ERROR.MESSAGE.Money}, mask:{format:mask, empty:','}}, Properties);
+   this.format= value=> {return dataExt.format.money(value); };
 }
 
 j$.ui.type.Char=function(size, Properties){
@@ -612,40 +612,40 @@ j$.ui.type.Char=function(size, Properties){
 }
 j$.ui.type.Letter=function(size, Properties){
    this.inherit = superType;
-   this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:function(value){return value.isLetter();}, error:ERROR.MESSAGE.Letter}, mask:{format:'@'.repeat(size)}}, Properties);
+   this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.isLetter();}, error:ERROR.MESSAGE.Letter}, mask:{format:'@'.repeat(size)}}, Properties);
 }
 j$.ui.type.UpperCase=function(size, Properties){
    this.inherit = superType;
-   this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:function(value){return value.isLetter();}, error:ERROR.MESSAGE.Letter}, mask:{format:'A'.repeat(size)}}, Properties);
+   this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.isLetter();}, error:ERROR.MESSAGE.Letter}, mask:{format:'A'.repeat(size)}}, Properties);
 }
 j$.ui.type.LowerCase=function(size, Properties){
    this.inherit = superType;
-   this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:function(value){return value.isLetter();}, error:ERROR.MESSAGE.Letter}, mask:{format:'a'.repeat(size)}}, Properties);
+   this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.isLetter();}, error:ERROR.MESSAGE.Letter}, mask:{format:'a'.repeat(size)}}, Properties);
 }
 
 j$.ui.type.Name=function(size, Properties){
    this.inherit = superType;
-   this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:function(value){return value.isName();}, error:ERROR.MESSAGE.Name}}, Properties);
+   this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.isName();}, error:ERROR.MESSAGE.Name}}, Properties);
 }
 
 j$.ui.type.Email=function(size, Properties){
    this.inherit = superType;
-   this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:function(value){return value.isEmail();}, error:ERROR.MESSAGE.Email}}, Properties);
+   this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.isEmail();}, error:ERROR.MESSAGE.Email}}, Properties);
 }
 
 j$.ui.type.Date=function(Properties){
    this.inherit = superType;
-   this.inherit({size:10, dataType:DATATYPE.DATE, validator:{handler:function(value){return value.isDate();}, error:ERROR.MESSAGE.Date}, mask:{format:'00/00/0000|__/__/____', strip:'_', empty:'//'}}, Properties);
+   this.inherit({size:10, dataType:DATATYPE.DATE, validator:{handler:value=>{return value.isDate();}, error:ERROR.MESSAGE.Date}, mask:{format:'00/00/0000|__/__/____', strip:'_', empty:'//'}}, Properties);
 }
 
 j$.ui.type.Hour=function(Properties){
    this.inherit = superType;
-   this.inherit({size:4, validator:{handler:function(value){return value.isHour();}, error:ERROR.MESSAGE.Hour}, mask:{format:'00:00|__:__',empty:':'}}, Properties);
+   this.inherit({size:4, validator:{handler:value=>{return value.isHour();}, error:ERROR.MESSAGE.Hour}, mask:{format:'00:00|__:__',empty:':'}}, Properties);
 }
 
 j$.ui.type.Phone=function(Properties){
    this.inherit = superType;
-   this.inherit({size:11, validator:{handler:function(value){withoutMask=true;return value.isPhone(withoutMask);}, error:ERROR.MESSAGE.Phone}, mask:{format:'(000)0000-0000|(___)____-____', strip:'()-'}}, Properties);
+   this.inherit({size:11, validator:{handler:value=>{withoutMask=true;return value.isPhone(withoutMask);}, error:ERROR.MESSAGE.Phone}, mask:{format:'(000)0000-0000|(___)____-____', strip:'()-'}}, Properties);
 }
 
 
@@ -656,43 +656,43 @@ j$.ui.type.Password=function(size, Properties){
 
 j$.ui.type.Cpf=function(Properties){
    this.inherit = superType;
-   this.inherit({size:11, validator:{handler:function(value){return value.ehCpf();}, error:ERROR.MESSAGE.Cpf}, mask:{format:'000.000.000-00|___.___.___-__', strip:'.-'}}, Properties);
+   this.inherit({size:11, validator:{handler:value=>{return value.ehCpf();}, error:ERROR.MESSAGE.Cpf}, mask:{format:'000.000.000-00|___.___.___-__', strip:'.-'}}, Properties);
 }
 
 j$.ui.type.Cnpj=function(Properties){
    this.inherit = superType;
-   this.inherit({size:14, validator:{handler:function(value){return value.ehCnpj();}, error:ERROR.MESSAGE.Cnpj}, mask:{format:'00.000.000/0000-00|__.___.___/____-__', strip:'-/.'}}, Properties);
+   this.inherit({size:14, validator:{handler:value=>{return value.ehCnpj();}, error:ERROR.MESSAGE.Cnpj}, mask:{format:'00.000.000/0000-00|__.___.___/____-__', strip:'-/.'}}, Properties);
 }
 
 j$.ui.type.Cca=function(Properties){
    this.inherit = superType;
-   this.inherit({size:9, validator:{handler:function(value){return value.ehCca();}, error:ERROR.MESSAGE.Cca}, mask:{format:'00.000.000-0|__.___.___-_', strip:'.-'}}, Properties);
+   this.inherit({size:9, validator:{handler:value=>{return value.ehCca();}, error:ERROR.MESSAGE.Cca}, mask:{format:'00.000.000-0|__.___.___-_', strip:'.-'}}, Properties);
 }
 
 j$.ui.type.Placa=function(Properties){
    this.inherit = superType;
-   this.inherit({size:7, dataType:DATATYPE.CHAR, validator:{handler:function(value){return value.ehPlaca();}, error:ERROR.MESSAGE.Placa}, mask:{format:'AAA-0000|___-____', strip:'.-'}}, Properties);
+   this.inherit({size:7, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.ehPlaca();}, error:ERROR.MESSAGE.Placa}, mask:{format:'AAA-0000|___-____', strip:'.-'}}, Properties);
 }
 
 j$.ui.type.Cep=function(Properties){
    this.inherit = superType;
-   this.inherit({size:8, validator:{handler:function(value){return value.ehCep();}, error:ERROR.MESSAGE.Cep}, mask:{format:'00000-000|_____-___', strip:'-'}}, Properties);
+   this.inherit({size:8, validator:{handler:value=>{return value.ehCep();}, error:ERROR.MESSAGE.Cep}, mask:{format:'00000-000|_____-___', strip:'-'}}, Properties);
 }
 
 j$.ui.type.Mask=function(mask, Properties){
-   var strip=mask.replace(/\w|[@]|[#]/g,""); // Pega somente caracteres especiais;
-   var prompt='|'+mask.replace(/\w|[@]|[#]/g,"_"); //Montar prompt para entrada de dados;
-   var dataType = (mask.replace(/\d|[#]/g,"").length>0)? DATATYPE.CHAR : DATATYPE.NUMBER;
-   var validator = {handler:function(value){return value.isValidInMask(mask);},error: "campo preenchido com formato inválido"};
-   this.inherit = superType;
-   this.inherit({validator:validator, dataType:dataType, mask:{format:mask+prompt, strip:strip}}, Properties);
+    let strip=mask.replace(/\w|[@]|[#]/g,""); // Pega somente caracteres especiais;
+    let prompt='|'+mask.replace(/\w|[@]|[#]/g,"_"); //Montar prompt para entrada de dados;
+    let dataType = (mask.replace(/\d|[#]/g,"").length>0)? DATATYPE.CHAR : DATATYPE.NUMBER;
+    let validator = {handler:value=>{return value.isValidInMask(mask);},error: "campo preenchido com formato inválido"};
+    this.inherit = superType;
+    this.inherit({validator:validator, dataType:dataType, mask:{format:mask+prompt, strip:strip}}, Properties);
 }
 
 j$.ui.type.List=function(Properties){
-   var SELF = this;
-   var list = null;
-   this.inherit = superType;
-   this.inherit({type:'select',  dataType:DATATYPE.LIST, validator:{handler:SELF.exists, error:ERROR.MESSAGE.List}}, Properties);
+    let SELF = this;
+    let list = null;
+    this.inherit = superType;
+    this.inherit({type:'select',  dataType:DATATYPE.LIST, validator:{handler:SELF.exists, error:ERROR.MESSAGE.List}}, Properties);
    function init(){
         if (Properties){
             if (Properties.list)
@@ -705,14 +705,14 @@ j$.ui.type.List=function(Properties){
         }
    }
    this.text = function(p_value){
-        var value=SELF.value(p_value);
-        var item = (list[value])?list[value]:"";
+        let value=SELF.value(p_value);
+        let item = (list[value])?list[value]:"";
         return item;
    };
    this.format = this.text;
    this.size = maxlen(list);
-   this.value = function(p_value){
-          var value='';
+   this.value = p_value=>{
+        let value='';
           if (p_value)
               value=p_value;
           else{
@@ -725,16 +725,14 @@ j$.ui.type.List=function(Properties){
           return value.trim();
    };
 
-   this.exists = function(value){
-       return (list[value])?true:false;
-   };
+   this.exists = value=>{ return (list[value])?true:false};
 
-   this.popule=function($list){
+   this.popule=$list=>{
        if ($list)
            list=$list;
        SELF.clear();
        for(key in list){
-            var option=document.createElement("option");
+            let option=document.createElement("option");
             option.text = list[key];
             option.value = key;
             if (key==SELF.defaultValue)
@@ -742,21 +740,19 @@ j$.ui.type.List=function(Properties){
             i$(SELF.id).add(option,i$(SELF.id).options[null]);
        }
    };
-   this.clear=function(){i$(SELF.id).innerHTML="";};
-   this.add=function(record){
-       console.log(record);
-   };
+   this.clear=()=>{i$(SELF.id).innerHTML=""}
+   this.add=record=>{ console.log(record)}
    //response para o resource
-   this.get=function(response){
-        var listset = SELF.Resource.Parser.toListset(response);
+   this.get=response=>{
+        let listset = SELF.Resource.Parser.toListset(response);
         list = listset.list;
         this.size = listset.maxlength;
    };
 
    function maxlen(list){
-        var max = 0;
+        let max = 0;
         for(key in list){
-           var item = list[key];
+           let item = list[key];
            if (item.length > max)
                 max = item.length;
         }
@@ -772,16 +768,16 @@ j$.ui.type.Typeahead=function(Properties){
 }
 
 j$.ui.type.Boolean=function(Properties){
-   var SELF = this;
-   var list = CONFIG.BOOLEAN;
+    let SELF = this;
+    let list = CONFIG.BOOLEAN;
    if (Properties)
        if (Properties.list)
            list = Properties.list;
-   var text = '';
+   let text = '';
    this.inherit = superType;
    this.inherit({type:'checkbox',  dataType:DATATYPE.BOOLEAN}, Properties);
-   this.text = function(p_value){
-          var value='';
+   this.text = p_value=>{
+          let value='';
           if (p_value != undefined)
               value=p_value;
           else{
@@ -792,8 +788,8 @@ j$.ui.type.Boolean=function(Properties){
           return SELF.local.text(value);
    };
    this.format = this.text;
-   this.value = function(p_value){
-          var value='';
+   this.value = p_value=>{
+          let value='';
           if (p_value != undefined)
               value=p_value;
           else{
@@ -803,25 +799,25 @@ j$.ui.type.Boolean=function(Properties){
           }
           return SELF.local.value(value);
    }
-   this.isValid= function(p_value){return true;};
+   this.isValid= p_value=>{return true}
    this.local= function(){
        return{
-           item:function(value){
+           item:value=>{
                if (typeof value == "string")
                    return list[value];
                else
                    return list[(value)?'true':'false'];
            },
-           text:function(value){
-                var item = SELF.local.item(value);
+           text:value=>{
+                let item = SELF.local.item(value);
                 return item.text;
            },
-           value:function(value){
-                var item = SELF.local.item(value);
+           value:value=>{
+                let item = SELF.local.item(value);
                 return item.value;
            },
            maxlen:function(){
-               var max=0;
+               let max=0;
                for (key in list){
                    var item = list[key];
                    if (item.text.length > max)
@@ -836,18 +832,18 @@ j$.ui.type.Boolean=function(Properties){
 }
 
 j$.ui.Fieldset = function(fields) {
-    var SELF = this;
+    let SELF = this;
     this.Items=fields;
     this.length=0;
     init();
 
     function init(){
-        for(var key in SELF.Items){
+        for(let key in SELF.Items){
             SELF.Items[key].id=key;
             SELF.length++;
         }
     }
-    this.item = function(key){
+    this.item = key=>{
         try {
             if (SELF.Items[key]==undefined)
                 throw CONFIG.EXCEPTION.INVALID_FIELD;
@@ -862,11 +858,11 @@ j$.ui.Fieldset = function(fields) {
     //this.get = SELF.item;
     // varre fieldset devolve um registro dos campos que estão preenchidos
     // útil para consultas
-    this.filled = function(action){
+    this.filled = action=>{
         let record = {};
-        for(var key in SELF.Items){
-            var value = SELF.Items[key].value();
-            var use = !value.toString().isEmpty();
+        for(let key in SELF.Items){
+            let value = SELF.Items[key].value();
+            let use = !value.toString().isEmpty();
             if (use && action)
                 use = action(SELF.Items[key]);
             if (use)
@@ -874,7 +870,7 @@ j$.ui.Fieldset = function(fields) {
         }
         return record;
     };
-    this.RecordBy = function(keys){
+    this.RecordBy = keys=>{
         let record = {};
         const keyType = dataExt.type(keys);
         switch (keyType) {
@@ -888,17 +884,17 @@ j$.ui.Fieldset = function(fields) {
         } 
         return record;
     };   
-    this.setDefaults = function(provider){
+    this.setDefaults = provider=>{
         for (let key in provider){
             if (this.Items[key])
                 this.Items[key].defaultValue=provider[key];
         }
     }; 
      // varre as campos e devolve um registro com o conteúdo dos campos
-    this.sweep = function(action){
+    this.sweep = action=>{
         let record = {};
-        for(var key in SELF.Items){
-            var field = SELF.Items[key];
+        for(let key in SELF.Items){
+            let field = SELF.Items[key];
             if (field.persist)
                record[key]= field.value();
             if (action)
@@ -906,25 +902,25 @@ j$.ui.Fieldset = function(fields) {
         }
         return record;
     };
-    this.createRecord = function(){
+    this.createRecord = ()=>{
        return SELF.sweep();
     };
     this.each = this.sweep;
-    this.reset = function(){
-       SELF.sweep(function(field){
+    this.reset = ()=>{
+       SELF.sweep(field=>{
             field.reset();
        });
     };
-    this.bindColumns = function(Columns){
-       SELF.sweep(function(field){
+    this.bindColumns = Columns=>{
+       SELF.sweep(field=>{
            if (Columns[field.key]===undefined)
                field.persist=false;
        });
     };
     // recebe um registro e popula conteúdo dos campos no Fieldset
-    this.populate = function(record, action){
-        for(var key in SELF.Items){
-            var field = SELF.Items[key];
+    this.populate = (record, action)=>{
+        for(let key in SELF.Items){
+            let field = SELF.Items[key];
 
             if (field.evaluate)
                record[key] = field.evaluate(record);
@@ -940,18 +936,14 @@ j$.ui.Fieldset = function(fields) {
                 action(field);
         }
     };
-    this.edit = function(record){
-      SELF.populate(record,
-         function(field){
-              field.edit(); // atualiza no form
-      });
-    }
+    // atualiza no form
+    this.edit = record=>{ SELF.populate(record, field=>{field.edit()})}
 
-    this.toQueryString = function(action){
+    this.toQueryString = action=>{
         return "?"+jQuery.param(SELF.filled(action));
     };
 
-    this.orderBy=(key)=>{ // forma semantica de criar o Sort
+    this.orderBy= key =>{ // forma semantica de criar o Sort
        if (!SELF.sort)
           SELF.sort = new Sort(key)
        else
@@ -980,9 +972,9 @@ j$.ui.Fieldset = function(fields) {
             }
         }
         $ORT.asc=(currentRow, nextRow)=>{
-              var currentVal = field.dataType.parse(currentRow[$ORT.key]);
-              var nextVal = field.dataType.parse(nextRow[$ORT.key]);
-              var r = 0;
+            let currentVal = field.dataType.parse(currentRow[$ORT.key]);
+            let nextVal = field.dataType.parse(nextRow[$ORT.key]);
+            let r = 0;
               if (currentVal < nextVal)
                   r = -1;
               else if (currentVal > nextVal)
@@ -990,22 +982,22 @@ j$.ui.Fieldset = function(fields) {
               return r;
           }
         $ORT.desc=(currentRow, nextRow)=>{
-              var currentVal = field.dataType.parse(currentRow[$ORT.key]);
-              var nextVal = field.dataType.parse(nextRow[$ORT.key]);
-              var r = 0;
+            let currentVal = field.dataType.parse(currentRow[$ORT.key]);
+            let nextVal = field.dataType.parse(nextRow[$ORT.key]);
+            let r = 0;
               if (currentVal > nextVal)
                  r = -1;
               else if (currentVal < nextVal)
                  r = 1;
               return r;
           }
-        $ORT.orderBy=order => {
+        $ORT.orderBy= order => {
               if ($ORT.toggle(order) != c$.ORDER.NONE)
                  return ($ORT.order == c$.ORDER.DESCENDING) ? $ORT.desc : $ORT.asc;
               else
                  return null;
            }
-        $ORT.toggle=order => {
+        $ORT.toggle= order => {
                  // Quando indicar que não há classificação, passa order=ORDER.NONE
                  if (!order){
                     if ($ORT.order == c$.ORDER.NONE || $ORT.order == c$.ORDER.DESCENDING)
@@ -1041,19 +1033,19 @@ j$.ui.Fieldset = function(fields) {
         };
     }();
 
-    this.execute = function(action){
+    this.execute = action=>{
         for(let key in SELF.Items){
            let field = this.Items[key];
            action(field,key);
         }
     };
 
-    this.show = function(){SELF.execute(function(field, key){console.log(key); console.log(input);});};
+    this.show = ()=>{SELF.execute((field, key)=>{console.log(key); console.log(input);});};
 };
 
 j$.ui.Fieldset.make=function(key){ // Método estático para criar um fieldset a partir
-  var rcd = dataExt.format.record(key);
-  var fieldset = {};
+  let rcd = dataExt.format.record(key);
+  let fieldset = {};
   // fieldset['id'+key.toFirstUpper()]=TYPE.INTEGER(4,{label:'Código', readOnly:true});
   // fieldset['tx'+key.toFirstUpper()]=TYPE.CHAR(30,{label:key.toFirstUpper(), mandatory:true});
   fieldset[rcd.id]=TYPE.INTEGER(4,{label:'Código', readOnly:true});
@@ -1062,14 +1054,15 @@ j$.ui.Fieldset.make=function(key){ // Método estático para criar um fieldset a
 }
 
 j$.ui.frame=function(){
-   var items={};
+   let me = this;
+   let items={};
    function slidebox(properties){
-        var self = this;
+        let self = this;
         Object.preset(properties, {container:i$('content'), style:'slidebox_show'});
         properties.id =j$.util.getId(properties.style, properties.id);
         Object.preset(self, properties);
-        var create=function(){
-            var idFieldset =properties.id + "_slidebox";
+        let create=function(){
+            let idFieldset =properties.id + "_slidebox";
             self.container.insert("<fieldset id='" +idFieldset+ "'>"
                         +"<legend class='slidebox_legend' id='" +self.id+ "_slidebox_legend'>"
                         +"<span title='Esconder' onclick='j$.ui.frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
@@ -1083,19 +1076,19 @@ j$.ui.frame=function(){
             self.button = i$(self.id+ "_button");
         }();
         items[self.id]=self;
-        Object.preset(self,{toggle:function(){j$.ui.frame.toggle(self.id);}
-                          , show  :function(){j$.ui.frame.show(self.id);}});
-        self.hide=function(){j$.ui.frame.hide(self.id);};
+        Object.preset(self,{toggle:()=>{j$.ui.frame.toggle(self.id)}
+                          , show  :()=>{j$.ui.frame.show(self.id)}});
+        self.hide=()=>{j$.ui.frame.hide(self.id)};
         if (properties.hide){self.hide();}
         return self;
    }
    function framebox(properties){
-        var self = this;
+        let self = this;
         Object.preset(properties, {container:i$('content'), style:'wrap_framebox'});
         properties.id =j$.util.getId(properties.style, properties.id);
         Object.preset(self, properties);
-        var create=function(){
-            var idFieldset =properties.id + "_framebox";
+        let create=function(){
+            let idFieldset =properties.id + "_framebox";
             self.container.insert("<div id='" +idFieldset+ "'>"
                         +"<div class='wrap_framebox_legend' id='" +self.id+ "_framebox_legend'>"
                         +"<span title='Esconder' onclick='j$.ui.frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
@@ -1109,19 +1102,19 @@ j$.ui.frame=function(){
             self.button = i$(self.id+ "_button");
         }();
         items[self.id]=self;
-        Object.preset(self,{toggle:function(){j$.ui.frame.toggle(self.id);}
-                          , show  :function(){j$.ui.frame.show(self.id);}});
-        self.hide=function(){j$.ui.frame.hide(self.id);};
+        Object.preset(self,{toggle:()=>{j$.ui.frame.toggle(self.id)}
+                          , show  :()=>{j$.ui.frame.show(self.id)}});
+        self.hide=()=>{j$.ui.frame.hide(self.id)};
         if (properties.hide){self.hide();}
         return self;
    }
    function dropbox(properties){
-        var self = this;
+        let self = this;
         Object.preset(properties, {container:i$('content'), style:'wrap_dropbox'});
         properties.id =j$.util.getId(properties.style, properties.id);
         Object.preset(self, properties);
-        var create=function(){
-            var idFieldset =properties.id + "_dropbox";
+        let create=function(){
+            let idFieldset =properties.id + "_dropbox";
             self.container.insert("<div id='" +idFieldset+ "'>"
                         +"<div class='wrap_dropbox_legend' id='" +self.id+ "_dropbox_legend'>"
                         +"<span title='Esconder' onclick='j$.ui.frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
@@ -1137,31 +1130,31 @@ j$.ui.frame=function(){
             self.button = i$(self.id+ "_button");
         }();
         items[self.id]=self;
-        Object.preset(self,{toggle:function(){j$.ui.frame.toggle(self.id);}
-                          , show  :function(){j$.ui.frame.show(self.id);}});
-        self.hide=function(){j$.ui.frame.hide(self.id);};
+        Object.preset(self,{toggle:()=>{j$.ui.frame.toggle(self.id)}
+                          , show  :()=>{j$.ui.frame.show(self.id)}});
+        self.hide=()=>{j$.ui.frame.hide(self.id)};
         if (properties.hide){self.hide();}
 
         return self;
    }
-   var toggle=function(id){
-        var frame = this.items[id];
+   let toggle=function(id){
+        let frame = this.items[id];
         if (frame.button.className == "showbox"){
             this.hide(id);
         } else {
             this.show(id);
         }
    };
-   var hide=function(id){
-       var frame = this.items[id];
+   let hide=function(id){
+       let frame = this.items[id];
            frame.button.className =  "hidebox";
            frame.button.title = "esconder";
            if (frame.constructor.name=='slidebox')
               frame.source.className = "slidebox_hide";
            frame.target.hide();
    };
-   var show=function(id){
-       var frame = this.items[id];
+   let show=function(id){
+       let frame = this.items[id];
            frame.button.className =  "showbox";
            frame.button.title = "Exibir";
            if (frame.constructor.name=='slidebox')
@@ -1182,30 +1175,30 @@ j$.ui.frame=function(){
 }();
 
 TYPE.HANDLE = {
-    focus: function(e){
+    focus: e=>{
         this.className = CONFIG.INPUT.CLASS.FOCUS;
     }
-  , info: function(obj,event, id){
-        var field = i$(id).field;
+  , info: (obj,event, id)=>{
+        let field = i$(id).field;
         System.Hint.show(field.hint,obj,event,"hint hint-info");
     }
-  , error: function(obj,event, id){
-        var field = i$(id).field;
+  , error: (obj,event, id)=>{
+        let field = i$(id).field;
         System.Hint.show(field.Error.get(),obj,event,"hint hint-error");
     }
-  , lostFocus: function(e, validate){
-       var inputField = Event.element(e);
-       var valid=true;
-       var value = (inputField.field!=undefined)?inputField.field.value():inputField.value;
+  , lostFocus: (e, validate)=>{
+       let inputField = Event.element(e);
+       let valid=true;
+       let value = (inputField.field!=undefined)?inputField.field.value():inputField.value;
        if (validate)
            valid=validate(value);
        inputField.className = (valid)?CONFIG.INPUT.CLASS.DEFAULT:CONFIG.INPUT.CLASS.ERROR;
        if (inputField.field.Resource)
            inputField.field.Legend.request();
     }
-  , autotab:function(obj,len){
-        var autotab = false;
-        var nextObj = null;
+  , autotab:(obj,len)=>{
+        let autotab = false;
+        let nextObj = null;
         if (len==0 || typeof len=="undefined"){
            len = obj.getAttribute('maxlength');
            if (len==0 || typeof len=="undefined"){
@@ -1213,9 +1206,9 @@ TYPE.HANDLE = {
            }
         }
 	if (obj.value.length == len || len==0) {
-		var form = obj.form;
-		var i = TYPE.HELPER.getElementIndex(obj);
-		var j=i+1;                              /* ==> pega index do pr�ximo elemento */
+		let form = obj.form;
+		let i = TYPE.HELPER.getElementIndex(obj);
+		let j=i+1;                              /* ==> pega index do pr�ximo elemento */
 		if (j >= form.elements.length) {j=0;} /* ==> se for o �ltimo posiciona no primeiro */
 		if (i == -1) {return autotab;}
 		while (j != i) {                        /* ==> procura o proximo elemento que pode receber foco */
