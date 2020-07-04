@@ -331,28 +331,28 @@ j$.Dashboard.Tabs=function(){
     let idContent='tabs';
     let ftmKey = (service) =>{ return "tab_"+service.Parent.key+'_'+service.key}
     return{
-    create: ()=>{ tabs = j$.ui.Tabs.create(j$.Dashboard.Tabs.idContent,j$.Dashboard.idContent) }
-    , open: properties =>{
-        return tabs.open(properties);
-    }
-    , delegateTo: (service, event, record)=>{
-            j$.Dashboard.Tabs.open({key:ftmKey(service)
-                , caption:service.caption, title: service.title
-                ,  onLoad: function(tab){
-                            j$.service.c$[service.key].init(tab.idContent);
-                          }
-            });
-    }
-    , openPartial:(service, event, record)=>{
-            j$.Dashboard.Tabs.open({key:ftmKey(service)
-                ,caption:service.caption
-                , onLoad:function(tab){
-                           tab.showURL(service.url);
-                        }
-            });
-    }
-    , getTab: (menu_key, item_key) =>{ return tabs.getItem("tab_"+menu_key+'_'+item_key) }
-    , idContent:idContent
+        create: ()=>{ tabs = j$.ui.Tabs.create(j$.Dashboard.Tabs.idContent,j$.Dashboard.idContent) }
+        , open: properties =>{
+            return tabs.open(properties);
+        }
+        , delegateTo: (service, event, record)=>{
+                j$.Dashboard.Tabs.open({key:ftmKey(service)
+                    , caption:service.caption, title: service.title
+                    ,  onLoad: function(tab){
+                                j$.service.c$[service.key].init(tab.idContent);
+                            }
+                });
+        }
+        , openPartial:(service, event, record)=>{
+                j$.Dashboard.Tabs.open({key:ftmKey(service)
+                    ,caption:service.caption
+                    , onLoad:function(tab){
+                            tab.showURL(service.url);
+                            }
+                });
+        }
+        , getTab: (menu_key, item_key) =>{ return tabs.getItem("tab_"+menu_key+'_'+item_key) }
+        , idContent:idContent
     };
 }();
 

@@ -8,11 +8,11 @@
 //    }
 //}();
 j$.ui.Tabs = function(){
-    var tabs = {};
+    let tabs = {};
     return{        
-         get:function(key){return tabs[key];}
-      , open:function(root,key){tabs[root].open(key);}  
-      , create: function(idTabs, idContent){
+         get:key=>{return tabs[key];}
+      , open:(root,key)=>{tabs[root].open(key);}  
+      , create: (idTabs, idContent)=>{
              tabs[idTabs] = new j$.ui.Tabs.Root(idTabs, idContent);
              return tabs[idTabs];
       }
@@ -22,12 +22,12 @@ j$.ui.Tabs = function(){
 }(); 
 
 j$.ui.Tabs.Root =function(idTab, idContent){ 
-    var SELF = this;    
-    var active_tab=null;
-    var idWrap = "wrap_"+idTab;    
+    let _root = this;    
+    let active_tab=null;
+    let idWrap = "wrap_"+idTab;    
     this.inherit=j$.Node;
-    this.inherit({type:'Tabroot', Root:SELF, Parent:null}, {key:idTab, id:idContent});   
-    Object.preset(SELF, {add:add, getItem: SELF.C$, open:open, toggle:toggle, activate:activate, close:close}); 
+    this.inherit({type:'Tabroot', Root:_root, Parent:null}, {key:idTab, id:idContent});   
+    Object.preset(_root, {add:add, getItem: _root.C$, open:open, toggle:toggle, activate:activate, close:close}); 
 
     var initialized=function(){
         if (!idContent){       
@@ -38,105 +38,97 @@ j$.ui.Tabs.Root =function(idTab, idContent){
         }
     }();
     function add(oTab){            
-        var tab = new Tab(SELF, oTab);   
-        SELF.addItem(tab.key,tab);
-	return tab;
+        let tab = new Tab(_root, oTab);   
+        _root.addItem(tab.key,tab);
+	    return tab;
     }  
-
     function open(oTab){
-        var tab= SELF.getItem(oTab.key);
+        let tab= _root.getItem(oTab.key);
         if (!tab)
-           tab=SELF.add(oTab);   	
-        SELF.activate(tab.key);
-	return tab;
+           tab=_root.add(oTab);   	
+        _root.activate(tab.key);
+	    return tab;
     }
 
-   // Exibe o TAB (ativo) se tiver escondido, e ESCONDE se tiver escondido (antigo onOff())
-   function toggle(){
+    // Exibe o TAB (ativo) se tiver escondido, e ESCONDE se tiver ativo   
+    function toggle(){
        if (active_tab){
-	  if (active_tab.active) 
-	     active_tab.hide();
-	  else
-	     active_tab.show();
+          if (active_tab.active) 
+              active_tab.hide();
+          else
+              active_tab.show();
        } 
-   }
+    }
    
-   // Coloca a tab indica(key) como ativa
-   function activate(key)
-   {	
-        var tab=SELF.getItem(key);	       
+    // Coloca a tab indica(key) como ativa
+    function activate(key){	
+        let tab=_root.getItem(key);	       
         if (active_tab)  // Verifica se há uma TAB ativa e desativa a mesma
-           active_tab.deactivate();
-	
-        active_tab=tab;		
+            active_tab.deactivate();
+        active_tab=tab;	
+        _root.active=tab;	
         tab.activate();
     }	
 
-   // fecha a tab indica(key) 
-   function close(key)
-   {	
-        var tab=SELF.getItem(key);
-   	if (active_tab){             
+    // fecha a tab indica(key) 
+    function close(key){	
+        let tab=_root.getItem(key);
+    	if (active_tab){             
             if (active_tab.key==key)
                 active_tab=null;
         }
         tab.close();
-        SELF.removeItem(key);        
-        if (SELF.length>0) {
-            SELF.activate(SELF.first().key);
+        _root.removeItem(key);        
+        if (_root.length>0) {
+            _root.activate(_root.first().key);
         };
-    }	
-        
+    }	  
     //tab={key:'' caption:''[, fixed:false, onLoad:function(){}, onActivate:function(){}, onDeactivate:function(){}]}
     function Tab(_parent, tab){   
-         var SELF_TAB = this;  
-         Object.preset(SELF_TAB,{append:addContent, update:updContent,clear:clearContent, showURL:showURL, render:render
+         let _tab = this;  
+         Object.preset(_tab,{append:addContent, update:updContent,clear:clearContent, showURL:showURL, render:render
                                , show:show, load:load, hide:hide, activate:activate, close:close, deactivate:deactivate 
                                , fixed:false, loaded:false, active:false, parent: _parent
                                , caption:tab.caption, id:tab.key, key:tab.key, idContent:tab.key+"_Content" 
                       });		  
-         //col=[];
-
-         this.title = function(title){ 
+         this.title = title=>{ 
               return false;
               if (title != undefined)                  
-                 SELF_TAB.Header.title.innerHTML=title;
+                 _tab.Header.title.innerHTML=title;
               else  
-                 return SELF_TAB.Header.title.innerHTML;
+                 return _tab.Header.title.innerHTML;
          };                  
          
          var initialized=function(){
-              Object.setIfExist(SELF_TAB, tab, ['onLoad','onActivate','onDeactivate', 'onClose', 'fixed','url']);
-              if (!SELF_TAB.onLoad && SELF_TAB.url){
-                  SELF_TAB.onLoad=function(tab){tab.showURL();};
+              Object.setIfExist(_tab, tab, ['onLoad','onActivate','onDeactivate', 'onClose', 'fixed','url']);
+              if (!_tab.onLoad && _tab.url){
+                  _tab.onLoad=function(tab){tab.showURL();};
               }
               createBase();              
          }();
          
          function createBase(){
-             var html = ""; 
-             if (i$(SELF_TAB.id)) { // Quando jah existe, remove
-                 html = i$(SELF_TAB.id).innerHTML;
-                 i$(i$(SELF_TAB.id).parentNode).removeChild(i$(SELF_TAB.id));  	
-                 i$(SELF_TAB.id);
+             let html = ""; 
+             if (i$(_tab.id)) { // Quando jah existe, remove
+                 html = i$(_tab.id).innerHTML;
+                 i$(i$(_tab.id).parentNode).removeChild(i$(_tab.id));  	
+                 i$(_tab.id);
              }             
-             i$(idTab).insert({bottom: SELF_TAB.render() + "\n"}); // cria o link da tab
-
+             i$(idTab).insert({bottom: _tab.render() + "\n"}); // cria o link da tab
              i$(idWrap).insert({bottom: 
-                                      "<div class='tab_wrap' id='" + SELF_TAB.id + "'>" 
-                                      +"<div class='tab_header' id='" + SELF_TAB.id + "_header'>"
-                                      +   "<span class='tab_header_title' id='" + SELF_TAB.id + "_header_title'></span>"
-                                      +   "<span class='tab_header_menu' id='" + SELF_TAB.id + "_header_menu'></span>"
+                                      "<div class='tab_wrap' id='" + _tab.id + "'>" 
+                                      +"<div class='tab_header' id='" + _tab.id + "_header'>"
+                                      +   "<span class='tab_header_title' id='" + _tab.id + "_header_title'></span>"
+                                      +   "<span class='tab_header_menu' id='" + _tab.id + "_header_menu'></span>"
                                       +"</div>"
-                                      +"<div class='tab' id='" + SELF_TAB.idContent + "'>" + html + "</div>"
+                                      +"<div class='tab' id='" + _tab.idContent + "'>" + html + "</div>"
                                       +"</div>\n"
                               }); // cria o container da tab               
-         }; 
-                
+         };          
          this.Header = function(){
-             var element = i$(SELF_TAB.id + "_header");
-             var titleElement = i$(SELF_TAB.id + "_header_title");
-             var create=function(){                     
+             let element = i$(_tab.id + "_header");
+             let titleElement = i$(_tab.id + "_header_title");
+             let create=function(){                     
                      if (tab.title == undefined)
                          element.hide();
                      else
@@ -145,37 +137,33 @@ j$.ui.Tabs.Root =function(idTab, idContent){
              }();                 
              return{
                  title:titleElement                
-               , menu:i$(SELF_TAB.id + "_header_menu")
+               , menu:i$(_tab.id + "_header_menu")
              };
          }();	
 
-         //SELF_TAB.Header.create();
+         //_tab.Header.create();
          this.Menu = function(){            
-             var menubar;
-             var create=function(){                     
-                 menubar=j$.ui.Dropdown.create(SELF_TAB.Header.menu.id);
+             let menubar;
+             let create=function(){                     
+                 menubar=j$.ui.Dropdown.create(_tab.Header.menu.id);
              }();             
              return{
-                 add:function(menu, Items){                     
+                 add:(menu, Items)=>{                     
                      var menuBase = menubar.addMenu(menu);
                      if (Items){
-                         for (var idx=0; idx<Items.length;  idx++){
-                            var item = Items[idx];    
+                         for (let idx=0; idx<Items.length;  idx++){
+                            let item = Items[idx];    
                             menuBase.add(item);                  
-                         }   
-//                         for (var idx=0; idx<menu.items.length;  idx++){
-//                            var item = Items[menu.items[idx]];    
-//                            menuBase.add(item);                  
-//                         }                           
+                         }                             
                      }                     
                  }
-               , bindToMenu: function(Items, design){
-                            for (var key in design){
-                                var menu = design[key];
+               , bindToMenu: (Items, design)=>{
+                            for (let key in design){
+                                let menu = design[key];
                                 if (dataExt.isArray(menu))
                                     menu = {items:design[key]};
                                 Object.preset(menu, {key:key, caption:key});                    
-                                SELF_TAB.Menu.add(menu, Items);                                                          
+                                _tab.Menu.add(menu, Items);                                                          
                             }
 
                  } 
@@ -185,82 +173,82 @@ j$.ui.Tabs.Root =function(idTab, idContent){
          
           // executar a ação associada a TAB indica(key)
           function load(){              
-              if (!SELF_TAB.loaded && SELF_TAB.onLoad)                  
-                  SELF_TAB.onLoad(SELF_TAB);
-                  //SELF_TAB.onLoad.execute(SELF_TAB);                                          
+              if (!_tab.loaded && _tab.onLoad)                  
+                  _tab.onLoad(_tab);
+                  //_tab.onLoad.execute(_tab);                                          
               this.loaded=true;
           }
 
           function activate(){   
-              SELF_TAB.load();
-              SELF_TAB.show();
-              //SELF_TAB.onActivate.execute(SELF_TAB); 
-              if (SELF_TAB.onActivate)
-                  SELF_TAB.onActivate(SELF_TAB);  
+              _tab.load();
+              _tab.show();
+              //_tab.onActivate.execute(_tab); 
+              if (_tab.onActivate)
+                  _tab.onActivate(_tab);  
               this.active =true;
           }
           
           function deactivate(){                                             
-              if (SELF_TAB.onDeactivate)
-                  SELF_TAB.onDeactivate(SELF_TAB);  
-              SELF_TAB.hide();
+              if (_tab.onDeactivate)
+                  _tab.onDeactivate(_tab);  
+              _tab.hide();
               this.active =false;
           }
 
           function close(){    
-              if (SELF_TAB.onClose)
-                  SELF_TAB.onClose(SELF_TAB);
-              SELF_TAB.hide();
-              i$("tab_link_"+SELF_TAB.key).remove(); 
-              i$(SELF_TAB.id).remove();               
+              if (_tab.onClose)
+                  _tab.onClose(_tab);
+              _tab.hide();
+              i$("tab_link_"+_tab.key).remove(); 
+              i$(_tab.id).remove();               
           }
 
           function hide(){	                
-                i$("tab_link_"+SELF_TAB.key).className="link_tab";  
-                i$(SELF_TAB.id).hide();
+                i$("tab_link_"+_tab.key).className="link_tab";  
+                i$(_tab.id).hide();
           }
-	  function show(){
-		i$("tab_link_"+SELF_TAB.key).className="active_link_tab";               
-		i$(SELF_TAB.id).show();		
-	  }
+          function show(){
+             i$("tab_link_"+_tab.key).className="active_link_tab";               
+             i$(_tab.id).show();		
+          }
 		  
-	  function render(){			 
-              var linkClose =(SELF_TAB.fixed)?'':"<a class='link_tab_close' href=\"javascript:j$.ui.Tabs.c$." + SELF_TAB.parent.key 
-                            + ".close('" + SELF_TAB.key + "');\" >&nbsp;&nbsp;</a>";              
+	      function render(){			 
+              let linkClose =(_tab.fixed)?'':"<a class='link_tab_close' href=\"javascript:j$.ui.Tabs.c$." + _tab.parent.key 
+                            + ".close('" + _tab.key + "');\" >&nbsp;&nbsp;</a>";              
               return "<span class='link_tab' onmouseover='j$.ui.Tabs.HANDLE.onmouseover(this);' onmouseout='j$.ui.Tabs.HANDLE.onmouseout(this);' id='tab_link_"+ this.key+"'>"
-                   +"<a class='link_tab' id='link_" + SELF_TAB.key +  "' " 
-		   + "href=\"javascript:j$.ui.Tabs.c$." + SELF_TAB.parent.key + ".activate('" + SELF_TAB.key + "');\" >"
-                   + SELF_TAB.caption + "</a>"
+                   +"<a class='link_tab' id='link_" + _tab.key +  "' " 
+		           + "href=\"javascript:j$.ui.Tabs.c$." + _tab.parent.key + ".activate('" + _tab.key + "');\" >"
+                   + _tab.caption + "</a>"
                    + linkClose +"</span>";
           }
 		  
-	  function addContent(html){			 
-	           SELF_TAB.idContent.insert({bottom:html}); 
-	  }
-	  function updContent(html){			 
-	           i$(SELF_TAB.idContent).innerHTML = html;
-	  }
-	  function clearContent(html){			 
-	           i$(SELF_TAB.idContent).innerHTML = "";
-	  }
+         function addContent(html){			 
+                _tab.idContent.insert({bottom:html}); 
+         }
+         function updContent(html){			 
+                i$(_tab.idContent).innerHTML = html;
+         }
+         function clearContent(html){			 
+                i$(_tab.idContent).innerHTML = "";
+         }
 		  
-	  function showURL(url, complete){
+	    function showURL(url, complete){
               if (!url)
-                  url=SELF_TAB.url;
-              j$.ui.Open.partial(url,SELF_TAB.idContent, complete);
-              SELF_TAB.loaded = true;  		  
-          } 		  
+                  url=_tab.url;
+              j$.ui.Open.partial(url,_tab.idContent, complete);
+              _tab.loaded = true;  		  
+        } 		  
    } //tab 	
 };
 
 j$.ui.Tabs.HANDLE = {
-    onmouseover: function(obj){
+    onmouseover: obj=>{
         if (obj.className.indexOf('active')>-1)
             obj.className = "active_link_tab_hover";
         else
             obj.className = "link_tab_hover";
     },
-    onmouseout: function(obj){
+    onmouseout: obj=>{
         if (obj.className.indexOf('active')>-1)
             obj.className = "active_link_tab";
         else        
