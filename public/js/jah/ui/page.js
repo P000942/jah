@@ -361,11 +361,11 @@ j$.service = function(){
 
             // DEFINIR O FIELDSET
             if (service.fieldset)
-                $i.Fieldset = new j$.ui.Fieldset(service.fieldset);
+                $i.Fieldset = j$.ui.createFieldset(service.fieldset);
             else if (adpater.fieldset)
-                $i.Fieldset = new j$.ui.Fieldset(adpater.fieldset);
+                $i.Fieldset = j$.ui.createFieldset(adpater.fieldset);
             else // cria um fieldset padrão com código e descrição
-                $i.Fieldset = new j$.ui.Fieldset(j$.ui.Fieldset.make($i.id));
+                $i.Fieldset = j$.ui.createFieldset(Fieldset.make($i.id));
             
             // DEFINIR os métodos default  
             if ($i.init==undefined){

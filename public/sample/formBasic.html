@@ -91,7 +91,7 @@
       ,    title:'Manter papéis'
     };
 
-    myPage.Fieldset= new j$.ui.Fieldset({
+    myPage.Fieldset= j$.ui.createFieldset({
                      Digito:TYPE.DIGIT({label:'Dígito', resource:{name:'estadoCivil', local:true, id:"idEstadoCivil"}, hint:'informe o código aparece a legenda.'}),
                   ufLegenda:TYPE.UPPERCASE(2,{label:'UF com Legenda', resource:{name:'uf', local:true, id:'sgUf', text:'txEstado'}}),
                    Numerico:TYPE.NUMERIC(4,2,{label:'Numérico', mandatory:true}),

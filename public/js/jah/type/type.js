@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 j$.ui.type={};
+j$.ui.createFieldset = (fields)=>{return new Fieldset(fields)}
 var DATATYPE = {NUMBER:{parse:value=>{return parseFloat(value);}},
                   DATE:{parse:value=>{return new Date(value);}},
                   CHAR:{parse:value=>{return value;}},
@@ -180,7 +181,6 @@ j$.ui.Alert= function(){
     this.wrap = CONFIG.LAYOUT.ALERT_CONTENT;
     return {
        show:function(msg, alertClass, wrap=i$($alert.wrap)){
-           //wrap.innerHTML='';
            this.hide(wrap);
            if (dataExt.isString(msg))
                j$.ui.Render.alert(wrap, msg, alertClass);
@@ -289,39 +289,71 @@ TYPE.HELPER = {
   }
 };
 
-superMask=function(mask){
-    let SELF=this;
-    Object.preset(SELF,{format:null, prompt:null, strip:null, mask:null, size:1, TCMask:null});
-    let initialized = function(){
+class Ma$k{
+    constructor(mask){
+        //let SELF=this;
+        Object.preset(this,{fmt:null, prompt:null, strip:null, mask:null, size:1, TCMask:null});
         if (mask){
-            Object.setIfExist(SELF,mask,['strip','empty']);
+            Object.setIfExist(this,mask,['strip','empty']);
             if (mask.format){
-                SELF.TCMask = 'TCMask['+ mask.format +']';
-                SELF.format = mask.format;
-                var vMask = mask.format.split(CONFIG.MASK.FieldDataSeparator);
-                SELF.mask = vMask[0];
-                SELF.prompt = (vMask.length>1) ? vMask[1] : null;
-                SELF.size = SELF.mask.length;
+                this.TCMask = 'TCMask['+ mask.format +']';
+                this.fmt = mask.format;
+                let vMask = mask.format.split(CONFIG.MASK.FieldDataSeparator);
+                this.mask = vMask[0];
+                this.prompt = (vMask.length>1) ? vMask[1] : null;
+                this.size = this.mask.length;
             }
         }
-    }();
-    this.format = value=>{
-        return (SELF.mask)?value.mask(SELF.mask) :value;
     };
-    this.unformat = value=>{
-        let vl = (SELF.strip) ?value.stripChar(SELF.strip) :value.trim();
+    format (value){return (this.mask)?value.mask(this.mask) :value}
+    unformat (value){
+        let vl = (this.strip) ?value.stripChar(this.strip) :value.trim();
         vl = vl.stripChar("_"); // Remover o caracter de prompt
-        if (SELF.empty && vl==SELF.empty)
+        if (this.empty && vl==this.empty)
            vl =''
         return vl;
     };
-    this.render = function(inputField){
-         if (SELF.TCMask){
-             inputField.addClassName(SELF.TCMask);
+    render (inputField){
+         if (this.TCMask){
+             inputField.addClassName(this.TCMask);
              Typecast.Format(inputField);
          }
     }
 }
+
+// superMask=function(mask){
+//     let SELF=this;
+//     Object.preset(SELF,{format:null, prompt:null, strip:null, mask:null, size:1, TCMask:null});
+//     let initialized = function(){
+//         if (mask){
+//             Object.setIfExist(SELF,mask,['strip','empty']);
+//             if (mask.format){
+//                 SELF.TCMask = 'TCMask['+ mask.format +']';
+//                 SELF.format = mask.format;
+//                 var vMask = mask.format.split(CONFIG.MASK.FieldDataSeparator);
+//                 SELF.mask = vMask[0];
+//                 SELF.prompt = (vMask.length>1) ? vMask[1] : null;
+//                 SELF.size = SELF.mask.length;
+//             }
+//         }
+//     }();
+//     this.format = value=>{
+//         return (SELF.mask)?value.mask(SELF.mask) :value;
+//     };
+//     this.unformat = value=>{
+//         let vl = (SELF.strip) ?value.stripChar(SELF.strip) :value.trim();
+//         vl = vl.stripChar("_"); // Remover o caracter de prompt
+//         if (SELF.empty && vl==SELF.empty)
+//            vl =''
+//         return vl;
+//     };
+//     this.render = function(inputField){
+//          if (SELF.TCMask){
+//              inputField.addClassName(SELF.TCMask);
+//              Typecast.Format(inputField);
+//          }
+//     }
+// }
 //TYPE.TEST.assert(TYPE.CCA(),'04.150.945-5');
 //TYPE.TEST.assert(TYPE.PHONE(),'(092)8122-0122');
 //TYPE.TEST.assert(TYPE.CNPJ(),'07.311.461/0001-24');
@@ -572,7 +604,7 @@ function superType(Type, Properties) {
                  SELF.Resource =  j$.Resource.create(SELF.resource, SELF);
             }
         }
-        SELF.mask = new superMask(mask);
+        SELF.mask = new Ma$k(mask);
         if (!SELF.size)
             SELF.size = SELF.mask.size;
 
@@ -833,70 +865,363 @@ j$.ui.type.Boolean=function(Properties){
    this.size = this.local.maxlen();
 }
 
-j$.ui.Fieldset = function(fields) {
-    let SELF = this;
-    this.Items=fields;
-    this.length=0;
-    init();
+// j$.ui.Fieldset = function(fields) {
+//     let SELF = this;
+//     this.Items=fields;
+//     this.length=0;
+//     init();
 
-    function init(){
-        for(let key in SELF.Items){
-            SELF.Items[key].id=key;
-            SELF.length++;
+//     function init(){
+//         for(let key in SELF.Items){
+//             SELF.Items[key].id=key;
+//             SELF.length++;
+//         }
+//     }
+//     this.item = key=>{
+//         try {
+//             if (SELF.Items[key]==undefined)
+//                 throw CONFIG.EXCEPTION.INVALID_FIELD;
+//             else
+//                 return SELF.Items[key];
+//         } catch(exception){
+//                if (exception==CONFIG.EXCEPTION.INVALID_FIELD)
+//                    console.log(exception.text +" '"+key+"'");
+//                return false;
+//         }
+//     }
+//     //this.get = SELF.item;
+//     // varre fieldset devolve um registro dos campos que estão preenchidos
+//     // útil para consultas
+//     this.filled = action=>{
+//         let record = {};
+//         for(let key in SELF.Items){
+//             let value = SELF.Items[key].value();
+//             let use = !value.toString().isEmpty();
+//             if (use && action)
+//                 use = action(SELF.Items[key]);
+//             if (use)
+//                 record[key]= value;
+//         }
+//         return record;
+//     };
+//     this.RecordBy = keys=>{
+//         let record = {};
+//         const keyType = dataExt.type(keys);
+//         switch (keyType) {
+//             case "String": record[keys]= SELF.Items[keys].value();
+//                  break; 
+//             case "Array": 
+//                 keys.forEach(key => {record[key]= SELF.Items[key].value()})
+//                 break;
+//             default:
+//                 console.log(`"${keyType}" não é um tipo reconhecido em "Fieldset.RecordBy"`);
+//         } 
+//         return record;
+//     };   
+//     this.setDefaults = provider=>{
+//         for (let key in provider){
+//             if (this.Items[key])
+//                 this.Items[key].defaultValue=provider[key];
+//         }
+//     }; 
+//      // varre as campos e devolve um registro com o conteúdo dos campos
+//     this.sweep = action=>{
+//         let record = {};
+//         for(let key in SELF.Items){
+//             let field = SELF.Items[key];
+//             if (field.persist)
+//                record[key]= field.value();
+//             if (action)
+//                 action(field);
+//         }
+//         return record;
+//     };
+//     this.createRecord = ()=>{
+//        return SELF.sweep();
+//     };
+//     this.each = this.sweep;
+//     this.reset = ()=>{
+//        SELF.sweep(field=>{
+//             field.reset();
+//        });
+//     };
+//     this.bindColumns = Columns=>{
+//        SELF.sweep(field=>{
+//            if (Columns[field.key]===undefined)
+//                field.persist=false;
+//        });
+//     };
+//     // recebe um registro e popula conteúdo dos campos no Fieldset
+//     this.populate = (record, action)=>{
+//         for(let key in SELF.Items){
+//             let field = SELF.Items[key];
+
+//             if (field.evaluate)
+//                record[key] = field.evaluate(record);
+
+//             if (record[key] != undefined){
+//                field.Record.value=record[key];
+//                field.Record.formattedValue=field.format(field.Record.value.toString());
+//             }else{
+//                field.Record.value=null;
+//                field.Record.formattedValue=null;
+//             }
+//             if (action)
+//                 action(field);
+//         }
+//     };
+//     // atualiza no form
+//     this.edit = record=>{ SELF.populate(record, field=>{field.edit()})}
+
+//     this.toQueryString = action=>{
+//         return "?"+jQuery.param(SELF.filled(action));
+//     };
+
+//     this.orderBy= key =>{ // forma semantica de criar o Sort
+//        if (!SELF.sort)
+//           SELF.sort = new Sort(key)
+//        else
+//           SELF.sort.init(key)
+//         return SELF.sort;
+//     }
+
+//     function Sort(key){ // Sort está no Fieldset e não no field para consumir menos recurso (não precisará uma instancia por field)
+//         let $ORT = this;
+//         let field =  null;
+//         $ORT.init = init;
+//         init(key);
+
+//         function init(key){
+//             if (key && key != $ORT.key) {
+//                $ORT.key =  key;
+//                $ORT.field =  SELF.Items[key];
+//                $ORT.order =  c$.ORDER.NONE;
+//                field = $ORT.field;
+//             }
+//         }
+//         $ORT.clear = ()=>{
+//             for(let key in SELF.Items){
+//                 if (key != $ORT.key)
+//                    SELF.Items[key].Header.clas$ = c$.ORDER.CLASS(c$.ORDER.NONE);
+//             }
+//         }
+//         $ORT.asc=(currentRow, nextRow)=>{
+//             let currentVal = field.dataType.parse(currentRow[$ORT.key]);
+//             let nextVal = field.dataType.parse(nextRow[$ORT.key]);
+//             let r = 0;
+//               if (currentVal < nextVal)
+//                   r = -1;
+//               else if (currentVal > nextVal)
+//                   r = 1;
+//               return r;
+//           }
+//         $ORT.desc=(currentRow, nextRow)=>{
+//             let currentVal = field.dataType.parse(currentRow[$ORT.key]);
+//             let nextVal = field.dataType.parse(nextRow[$ORT.key]);
+//             let r = 0;
+//               if (currentVal > nextVal)
+//                  r = -1;
+//               else if (currentVal < nextVal)
+//                  r = 1;
+//               return r;
+//           }
+//         $ORT.orderBy= order => {
+//               if ($ORT.toggle(order) != c$.ORDER.NONE)
+//                  return ($ORT.order == c$.ORDER.DESCENDING) ? $ORT.desc : $ORT.asc;
+//               else
+//                  return null;
+//            }
+//         $ORT.toggle= order => {
+//                  // Quando indicar que não há classificação, passa order=ORDER.NONE
+//                  if (!order){
+//                     if ($ORT.order == c$.ORDER.NONE || $ORT.order == c$.ORDER.DESCENDING)
+//                         order = c$.ORDER.ASCENDING;
+//                     else
+//                         order = c$.ORDER.DESCENDING;
+//                  }
+//                  $ORT.order = order;
+//                  field.Header.clas$ = c$.ORDER.CLASS(order);
+//                  return order;
+//               }
+//     };
+
+//     this.filter = function(){
+//         let criteria={};
+//         return {
+//           clear: ()=>{
+//              for(key in SELF.Items){
+//                  SELF.Items[key].filterToggle(false);
+//              }
+//           }
+//           ,toggle: (key,value) => {
+//               let field= SELF.Items[key];
+//               if (field.onFilter){ // já tem filtro, tem que remover
+//                   delete criteria[field.key];
+//               }else{
+//                   criteria[field.key]= field.value(value);
+//               }
+//               return ($.isEmptyObject(criteria))
+//                     ? null
+//                     : criteria;
+//           }
+//         };
+//     }();
+
+//     this.execute = action=>{
+//         for(let key in SELF.Items){
+//            let field = this.Items[key];
+//            action(field,key);
+//         }
+//     };
+
+//     this.show = ()=>{SELF.execute((field, key)=>{console.log(key); console.log(input);});};
+// };
+class Sort{
+    constructor(key, items){ // Sort está no Fieldset e não no field para consumir menos recurso (não precisará uma instancia por field)
+        let $ORT = this;
+        var _sort = this;
+        //let field =  null;
+        this.Items = items;
+       // $ORT.init = init;
+     //  if (key && key != $ORT.key) {
+            this.key =  key;
+            this.field = items[key];
+            this.order =  c$.ORDER.NONE;
+            let field = this.field;
+      //  }
+    }    
+    clear= ()=>{
+        for(let key in this.Items){
+            if (key != this.key)
+               this.Items[key].Header.clas$ = c$.ORDER.CLASS(c$.ORDER.NONE);
         }
     }
-    this.item = key=>{
+    asc =(currentRow, nextRow)=>{
+        let currentVal = this.field.dataType.parse(currentRow[this.key]);
+        let nextVal =  this.field.dataType.parse(nextRow[this.key]);
+        let r = 0;
+          if (currentVal < nextVal)
+              r = -1;
+          else if (currentVal > nextVal)
+              r = 1;
+          return r;
+      }
+    desc=(currentRow, nextRow)=>{
+        let currentVal =  this.field.dataType.parse(currentRow[this.key]);
+        let nextVal =  this.field.dataType.parse(nextRow[this.key]);
+        let r = 0;
+          if (currentVal > nextVal)
+             r = -1;
+          else if (currentVal < nextVal)
+             r = 1;
+          return r;
+      }
+    orderBy=(order)=> {
+       if (this.toggle(order) != c$.ORDER.NONE)
+             return (this.order == c$.ORDER.DESCENDING) ? this.desc : this.asc;
+          else
+             return null;
+       }
+    toggle (order){
+             // Quando indicar que não há classificação, passa order=ORDER.NONE
+             if (!order){
+                if (this.order == c$.ORDER.NONE || this.order == c$.ORDER.DESCENDING)
+                    order = c$.ORDER.ASCENDING;
+                else
+                    order = c$.ORDER.DESCENDING;
+             }
+             this.order = order;
+             this.field.Header.clas$ = c$.ORDER.CLASS(order);
+             return order;
+          }
+};
+class Fieldset{
+    constructor (fields) {
+        function init(){
+            for(let key in _fs.Items){
+                _fs.Items[key].id=key;
+                _fs.length++;
+            }
+        }
+        let _fs = this;
+        this.Items=fields;
+        this.length=0;
+        this.filter= function(){
+            let criteria={};
+            return {
+              clear: ()=>{
+                 for(key in _fs.Items){
+                    _fs.Items[key].filterToggle(false);
+                 }
+              }
+              ,toggle: (key,value) => {
+                  let field= _fs.Items[key];
+                  if (field.onFilter){ // já tem filtro, tem que remover
+                      delete criteria[field.key];
+                  }else{
+                      criteria[field.key]= field.value(value);
+                  }
+                  return ($.isEmptyObject(criteria))
+                        ? null
+                        : criteria;
+              }
+            };
+        }();
+        init();
+    }
+
+    item = key=>{
         try {
-            if (SELF.Items[key]==undefined)
+            if (this.Items[key]==undefined)
                 throw CONFIG.EXCEPTION.INVALID_FIELD;
             else
-                return SELF.Items[key];
+                return this.Items[key];
         } catch(exception){
                if (exception==CONFIG.EXCEPTION.INVALID_FIELD)
                    console.log(exception.text +" '"+key+"'");
                return false;
         }
     }
-    //this.get = SELF.item;
+    //this.get = this.item;
     // varre fieldset devolve um registro dos campos que estão preenchidos
     // útil para consultas
-    this.filled = action=>{
+    filled = action=>{
         let record = {};
-        for(let key in SELF.Items){
-            let value = SELF.Items[key].value();
+        for(let key in this.Items){
+            let value = this.Items[key].value();
             let use = !value.toString().isEmpty();
             if (use && action)
-                use = action(SELF.Items[key]);
+                use = action(this.Items[key]);
             if (use)
                 record[key]= value;
         }
         return record;
     };
-    this.RecordBy = keys=>{
+    RecordBy = keys=>{
         let record = {};
         const keyType = dataExt.type(keys);
         switch (keyType) {
-            case "String": record[keys]= SELF.Items[keys].value();
+            case "String": record[keys]= this.Items[keys].value();
                  break; 
             case "Array": 
-                keys.forEach(key => {record[key]= SELF.Items[key].value()})
+                keys.forEach(key => {record[key]= this.Items[key].value()})
                 break;
             default:
                 console.log(`"${keyType}" não é um tipo reconhecido em "Fieldset.RecordBy"`);
         } 
         return record;
     };   
-    this.setDefaults = provider=>{
+    setDefaults = provider=>{
         for (let key in provider){
             if (this.Items[key])
                 this.Items[key].defaultValue=provider[key];
         }
     }; 
      // varre as campos e devolve um registro com o conteúdo dos campos
-    this.sweep = action=>{
+    sweep (action){
         let record = {};
-        for(let key in SELF.Items){
-            let field = SELF.Items[key];
+        for(let key in this.Items){
+            let field = this.Items[key];
             if (field.persist)
                record[key]= field.value();
             if (action)
@@ -904,25 +1229,25 @@ j$.ui.Fieldset = function(fields) {
         }
         return record;
     };
-    this.createRecord = ()=>{
-       return SELF.sweep();
+    createRecord = ()=>{
+       return this.sweep();
     };
-    this.each = this.sweep;
-    this.reset = ()=>{
-       SELF.sweep(field=>{
+    each = this.sweep;
+    reset (){
+       this.sweep(field=>{
             field.reset();
        });
     };
-    this.bindColumns = Columns=>{
-       SELF.sweep(field=>{
+    bindColumns (Columns){
+       this.sweep(field=>{
            if (Columns[field.key]===undefined)
                field.persist=false;
        });
     };
     // recebe um registro e popula conteúdo dos campos no Fieldset
-    this.populate = (record, action)=>{
-        for(let key in SELF.Items){
-            let field = SELF.Items[key];
+    populate (record, action){
+        for(let key in this.Items){
+            let field = this.Items[key];
 
             if (field.evaluate)
                record[key] = field.evaluate(record);
@@ -939,113 +1264,31 @@ j$.ui.Fieldset = function(fields) {
         }
     };
     // atualiza no form
-    this.edit = record=>{ SELF.populate(record, field=>{field.edit()})}
+    edit(record){ this.populate(record, field=>{field.edit()})}
 
-    this.toQueryString = action=>{
-        return "?"+jQuery.param(SELF.filled(action));
+    toQueryString(action){
+        return "?"+jQuery.param(this.filled(action));
     };
 
-    this.orderBy= key =>{ // forma semantica de criar o Sort
-       if (!SELF.sort)
-          SELF.sort = new Sort(key)
-       else
-          SELF.sort.init(key)
-        return SELF.sort;
+    orderBy(key){ // forma semantica de criar o Sort
+       if (!this.sort)
+          this.sort = new Sort(key, this.Items)
+    //    else
+    //       this.sort.init(key)
+        return this.sort;
     }
 
-    function Sort(key){ // Sort está no Fieldset e não no field para consumir menos recurso (não precisará uma instancia por field)
-        let $ORT = this;
-        let field =  null;
-        $ORT.init = init;
-        init(key);
-
-        function init(key){
-            if (key && key != $ORT.key) {
-               $ORT.key =  key;
-               $ORT.field =  SELF.Items[key];
-               $ORT.order =  c$.ORDER.NONE;
-               field = $ORT.field;
-            }
-        }
-        $ORT.clear = ()=>{
-            for(let key in SELF.Items){
-                if (key != $ORT.key)
-                   SELF.Items[key].Header.clas$ = c$.ORDER.CLASS(c$.ORDER.NONE);
-            }
-        }
-        $ORT.asc=(currentRow, nextRow)=>{
-            let currentVal = field.dataType.parse(currentRow[$ORT.key]);
-            let nextVal = field.dataType.parse(nextRow[$ORT.key]);
-            let r = 0;
-              if (currentVal < nextVal)
-                  r = -1;
-              else if (currentVal > nextVal)
-                  r = 1;
-              return r;
-          }
-        $ORT.desc=(currentRow, nextRow)=>{
-            let currentVal = field.dataType.parse(currentRow[$ORT.key]);
-            let nextVal = field.dataType.parse(nextRow[$ORT.key]);
-            let r = 0;
-              if (currentVal > nextVal)
-                 r = -1;
-              else if (currentVal < nextVal)
-                 r = 1;
-              return r;
-          }
-        $ORT.orderBy= order => {
-              if ($ORT.toggle(order) != c$.ORDER.NONE)
-                 return ($ORT.order == c$.ORDER.DESCENDING) ? $ORT.desc : $ORT.asc;
-              else
-                 return null;
-           }
-        $ORT.toggle= order => {
-                 // Quando indicar que não há classificação, passa order=ORDER.NONE
-                 if (!order){
-                    if ($ORT.order == c$.ORDER.NONE || $ORT.order == c$.ORDER.DESCENDING)
-                        order = c$.ORDER.ASCENDING;
-                    else
-                        order = c$.ORDER.DESCENDING;
-                 }
-                 $ORT.order = order;
-                 field.Header.clas$ = c$.ORDER.CLASS(order);
-                 return order;
-              }
-    };
-
-    this.filter = function(){
-        let criteria={};
-        return {
-          clear: ()=>{
-             for(key in SELF.Items){
-                 SELF.Items[key].filterToggle(false);
-             }
-          }
-          ,toggle: (key,value) => {
-              let field= SELF.Items[key];
-              if (field.onFilter){ // já tem filtro, tem que remover
-                  delete criteria[field.key];
-              }else{
-                  criteria[field.key]= field.value(value);
-              }
-              return ($.isEmptyObject(criteria))
-                    ? null
-                    : criteria;
-          }
-        };
-    }();
-
-    this.execute = action=>{
-        for(let key in SELF.Items){
+    execute (action){
+        for(let key in this.Items){
            let field = this.Items[key];
            action(field,key);
         }
     };
 
-    this.show = ()=>{SELF.execute((field, key)=>{console.log(key); console.log(input);});};
+    show (){this.execute((field, key)=>{console.log(key); console.log(input);});};
 };
 
-j$.ui.Fieldset.make=function(key){ // Método estático para criar um fieldset a partir
+Fieldset.make=function(key){ // Método estático para criar um fieldset a partir
   let rcd = dataExt.format.record(key);
   let fieldset = {};
   // fieldset['id'+key.toFirstUpper()]=TYPE.INTEGER(4,{label:'Código', readOnly:true});

@@ -518,7 +518,7 @@ System.Hint = function(){
 
 
 j$.Node=function(inheritor, properties){
-    let self_node = this;
+    let _node = this;
     this.Items={};
     this.length = 0;
     this.c$ = this.Items;
@@ -538,49 +538,49 @@ j$.Node=function(inheritor, properties){
                     key=properties.caption.toKey();
 
                 if (key.isEmpty())
-                    key=j$.util.getId(self_node.Parent.key + "_" + self_node.type);
+                    key=j$.util.getId(_node.Parent.key + "_" + _node.type);
 
                 if (properties.caption==undefined)
                     properties.caption=key.toCaption();
 
                 return key;
             }
-        ,  formatId:function(){return (properties.id)?properties.id:self_node.Parent.id +'_'+self_node.key;}
+        ,  formatId:function(){return (properties.id)?properties.id:_node.Parent.id +'_'+_node.key;}
         , checkHandler: function(){
-                if (properties.onClick) {self_node.onClick =function(event){return properties.onClick(self_node, event);};}
+                if (properties.onClick) {_node.onClick =function(event){return properties.onClick(_node, event);};}
         }
         };
     }();
     this.id = function(){
         if (dataExt.isString(properties)){ // veio apenas o caption
-            Object.preset(self_node, {caption:properties, key:util.formatKey()});
+            Object.preset(_node, {caption:properties, key:util.formatKey()});
         } else {
             if (!properties){properties={}};
-            self_node.key=util.formatKey();
-            self_node.caption = properties.caption;
+            _node.key=util.formatKey();
+            _node.caption = properties.caption;
             util.checkHandler();
         }
         return util.formatId();
     }();
     function Items(key){
-        return self_node.Items[key];
+        return _node.Items[key];
     }
     this.addItem = (key, item)=>{
-        self_node.length +=1;
-        self_node.Items[key]=item;
+        _node.length +=1;
+        _node.Items[key]=item;
     };
     this.removeItem = key=>{
-        self_node.length -=1;
-        self_node.Items[key]=null;
+        _node.length -=1;
+        _node.Items[key]=null;
     };
     this.show =()=>{
-        console.log(self_node.key +"."+ self_node.caption);
-        for (let key in self_node.c$)
-            self_node.c$[key].show();
+        console.log(_node.key +"."+ _node.caption);
+        for (let key in _node.c$)
+            _node.c$[key].show();
     };
     this.first = ()=>{
-        for (let key in self_node.c$)
-            return self_node.c$[key];
+        for (let key in _node.c$)
+            return _node.c$[key];
     };
 };
 
