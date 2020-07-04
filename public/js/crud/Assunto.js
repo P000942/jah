@@ -10,11 +10,11 @@
             , afterActionInsert: function(UpdateController) {console.log('afterActionInsert:');}
             // , onError: function(ACTION) {
             //      console.log('onError Assunto:'+ACTION.MESSAGE.ERROR);
-            //      j$.ui.Alert.error(this.Interface.Designer.alert, ACTION.MESSAGE.ERROR)
+            //      j$.ui.Alert.error(ACTION.MESSAGE.ERROR, this.Interface.Designer.alert)
             // }
             // , onSuccess: function(ACTION) {
             //      console.log('onSuccess Assunto:'+ACTION.MESSAGE.SUCCESS);
-            //     // j$.ui.Alert.success(this.Interface.Designer.alert, ACTION.MESSAGE.SUCCESS)
+            //     // j$.ui.Alert.success(ACTION.MESSAGE.SUCCESS, this.Interface.Designer.alert)
             // }
             , validate: function(UpdateController) {
                  console.log('validate Assunto');

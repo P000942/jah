@@ -179,9 +179,9 @@ j$.ui.Alert= function(){
     let $alert = this;
     this.wrap = CONFIG.LAYOUT.ALERT_CONTENT;
     return {
-       show:(wrap, msg, alertClass)=>{
-           if (!wrap) wrap=$alert.wrap;
-           wrap.innerHTML='';
+       show:function(msg, alertClass, wrap=i$($alert.wrap)){
+           //wrap.innerHTML='';
+           this.hide(wrap);
            if (dataExt.isString(msg))
                j$.ui.Render.alert(wrap, msg, alertClass);
            else if (dataExt.isArray(msg) && msg.length === 1){
@@ -193,28 +193,30 @@ j$.ui.Alert= function(){
                j$.ui.Render.alert(wrap, html , alertClass);
            }
        }
-     ,   error:(wrap, msg)=>{
-                  j$.ui.Alert.show(wrap, msg, CONFIG.ALERT.ERROR.CLASS)
+     ,   error:(msg, wrap)=>{
+                  j$.ui.Alert.show(msg, CONFIG.ALERT.ERROR.CLASS, wrap)
                }
-     ,    info:(wrap, msg)=>{
-                  j$.ui.Alert.show(wrap, msg, CONFIG.ALERT.INFO.CLASS)
+     ,    info:(msg, wrap)=>{
+                  j$.ui.Alert.show(msg, CONFIG.ALERT.INFO.CLASS, wrap)
                }
-     , success:(wrap, msg)=>{
-                  j$.ui.Alert.show(wrap, msg, CONFIG.ALERT.SUCCESS.CLASS)
+     , success:(msg, wrap)=>{
+                  j$.ui.Alert.show(msg, CONFIG.ALERT.SUCCESS.CLASS, wrap)
                }
-     , hide:wrap=>{
-         if (!wrap) wrap=$alert.wrap;
-             wrap.innerHTML='';
-     }
+     , hide:(wrap=i$($alert.wrap))=>{ wrap.innerHTML=''}
    }
 }();
+//j$.ui.Alert.error("Meu texto de erro", i$("assuntoAlert")) // assuntoAlert é o padrão da tabs "servico"+"Alert"
+//j$.ui.Alert.info("Meu texto info"))                        // será exibido no padrão definido em CONFIG
+//j$.ui.Alert.success("Meu texto bem sucedido"))
+//j$.ui.Alert.show("Minha mensagem de alert", CLASS, idWrap) // CLASS: Veja em CONFIG
+//j$.ui.Alert.hide(idWrap))                                  // Para desaparecer o Alert
 
 var TYPE = function() {
     return {
         SLIDEBOX: properties=>{return new j$.ui.frame.slidebox(properties)}
    ,    FRAMEBOX: properties=>{return new j$.ui.frame.framebox(properties)}
    ,     DROPBOX: properties=>{return new j$.ui.frame.dropbox(properties)}
-   ,       DIGIT: properties=> {return new j$.ui.type.Digit(properties)}
+   ,       DIGIT: properties=>{return new j$.ui.type.Digit(properties)}
    ,     BOOLEAN: properties=>{return new j$.ui.type.Boolean(properties)}
    ,      LETTER: (size,properties)=>{return new j$.ui.type.Letter(size,properties)}
    ,   LOWERCASE: (size,properties)=>{return new j$.ui.type.LowerCase(size,properties)}

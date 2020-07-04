@@ -711,9 +711,9 @@ j$.ui.Form=function(service, modal) {
     });
     Object.preset(service.Interface,{Buttons:false});
     Object.preset(service,{
-         onSuccess: ACTION=>{j$.ui.Alert.success($i.alert, ACTION.MESSAGE.SUCCESS)}
-       ,   onError: ACTION=>{j$.ui.Alert.error($i.alert, ACTION.MESSAGE.ERROR)}
-       , onFailure: response=>{j$.ui.Alert.error($i.alert, response.msg)}
+         onSuccess:  ACTION =>{j$.ui.Alert.success(ACTION.MESSAGE.SUCCESS, $i.alert)}
+       ,   onError:  ACTION =>{j$.ui.Alert.error(ACTION.MESSAGE.ERROR, $i.alert)}
+       , onFailure: response=>{j$.ui.Alert.error(response.msg, $i.alert)}
     });
     if (!service.Interface.id)
         service.Interface.id = service.id.toFirstLower();

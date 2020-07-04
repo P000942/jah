@@ -38,7 +38,7 @@
         function addAlert(){
            //j$.ui.Alert.show(i$('wrapAlert'), '<strong>Advertência!</strong></br><lu><li>Mensagem de alerta.</li><li>Segunda Linha.</li></li><li>Terceira Linha.</li></lu>');
         //   j$.ui.Alert.show(i$('wrapAlert'), ['<strong>SUCESSO!</strong> Mensagem de alerta com sucesso!'], CONFIG.ALERT.SUCCESS.CLASS);
-           j$.ui.Alert.show(i$('wrapAlert'), ['<strong>INFORMAÇÃO!</strong> Mensagem de alerta com informação!'], CONFIG.ALERT.INFO.CLASS);
+           j$.ui.Alert.show( ['<strong>INFORMAÇÃO!</strong> Mensagem de alerta com informação!'], CONFIG.ALERT.INFO.CLASS, i$('wrapAlert'),);
            //j$.ui.Alert.show(i$('wrapAlert'), ['Mensagem de alerta','Segunda Linha','Terceira Linha'], CONFIG.ALERT.ERROR.CLASS);
         }
         var myPage = function() {

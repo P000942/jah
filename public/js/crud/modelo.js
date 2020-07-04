@@ -11,7 +11,7 @@
                  console.log('validate');
                  return true;
            }
-           , onError: function(ACTION){ j$.ui.Alert.error(this.Interface.Designer.alert, ACTION.MESSAGE.ERROR) }
+           , onError: function(ACTION){ j$.ui.Alert.error(ACTION.MESSAGE.ERROR, this.Interface.Designer.alert) }
            , onSuccess: function(ACTION) { console.log('onSuccess:'+ACTION.MESSAGE.SUCCESS);}
            , init:function(idTarget){
                if (idTarget)
