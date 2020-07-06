@@ -525,12 +525,12 @@ function superType(Type, Properties) {
 
    this.edit= value=>{
         if (value == undefined)
-            value = SELF.Record.value;
-        i$(SELF.id).content(value);
-        i$(SELF.id).className = CONFIG.INPUT.CLASS.DEFAULT; //"input_text";
+            value = this.Record.value;
+        i$(this.id).content(value);
+        i$(this.id).className = CONFIG.INPUT.CLASS.DEFAULT; //"input_text";
    };
    this.format= p_value=> {
-        return  (SELF.mask) ?SELF.mask.format(p_value) :SELF.value(p_value);
+        return  (this.mask) ?this.mask.format(p_value) :this.value(p_value);
    };
    this.identify= (wrap, id, key, design)=>{
        SELF.id =j$.util.getId(SELF.type, id);
@@ -845,9 +845,8 @@ j$.ui.type.Boolean=function(Properties){
           if (p_value != undefined)
               value=p_value;
           else{
-              if (SELF.Input){
+              if (SELF.Input)
                   value =SELF.Input.checked;
-              }
           }
           return SELF.local.text(value);
    };
@@ -857,9 +856,8 @@ j$.ui.type.Boolean=function(Properties){
           if (p_value != undefined)
               value=p_value;
           else{
-              if (SELF.Input){
+              if (SELF.Input)
                   value =SELF.Input.checked;
-              }
           }
           return SELF.local.value(value);
    }
@@ -1227,6 +1225,7 @@ class Fieldset{
         }
         return record;
     };
+    // Monta um Record com os campos que vem em Keys
     RecordBy = keys=>{
         let record = {};
         const keyType = dataExt.type(keys);
@@ -1241,7 +1240,8 @@ class Fieldset{
         } 
         return record;
     };   
-    setDefaults = provider=>{
+    // preenche os valores default para os campos
+    setDefaults = provider=>{  
         for (let key in provider){
             if (this.Items[key])
                 this.Items[key].defaultValue=provider[key];
@@ -1307,8 +1307,8 @@ class Fieldset{
     //       this.sort.init(key)
         return this.sort;
     }
-
-    execute (action){
+    //varre o Fieldset e executa uma função para cada Field (ver o método show)
+    execute (action){ 
         for(let key in this.Items){
            let field = this.Items[key];
            action(field,key);
