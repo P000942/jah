@@ -15,8 +15,8 @@ j$.ui.Render= function(){
       return {
           attributes:(attributes, exception)=>{
                 //formata outros atributos de html do formulárioa para renderizar
-                let result = ' ';
-                let ignore=att=>{
+                let result = ' ' 
+                , ignore =att=>{
                     let go=false;
                     if (['key','caption','icon'].indexOf(att)>-1){
                        go= true;
@@ -42,42 +42,44 @@ j$.ui.Render= function(){
          , wrap:(wrap, id, clas$)=>{
               let id$ = j$.util.getId(clas$, id);
               if (!i$(id$))
-                 wrap.insert("<div id='" +id$+ "' class='" +clas$+ "'></div>");
+                 wrap.insert(`<div id='${id$}' class='${clas$}'></div>`);
               return i$(id$);
           }
         , label: (wrap, label, inputId, clas$, mandatory)=>{
-             let att={id:(inputId)?inputId+ 'Label':j$.util.getId('Label')
-                   , for:(inputId)? inputId:null
-                   , clas$:(clas$)?clas$:'input_label'
-               };
-               label =(label)?label : att.id;
-             if (!i$(att.id)){
-                 let required =(mandatory) ?'<span class="required">*</span>' :'';
-                 wrap.insert("<label " +j$.ui.Render.attributes(att,'label')+ "'>" +label+required+ ":</label>");
-             }
-             return i$(att.id);
+              let att={clas$:(clas$)?clas$:'input_label'
+                       ,  id:(inputId)?inputId+ 'Label':j$.util.getId('Label')
+                       , for:(inputId)? inputId:null
+                      };
+              label =(label)?label : att.id;
+              if (!i$(att.id)){ // cria se não existir
+                 let _att = j$.ui.Render.attributes(att,'label')
+                 , required =(mandatory) ?'<span class="required">*</span>' :'';
+                 wrap.insert(`<label ${_att} >${label}${required}:</label>`);
+              }
+              return i$(att.id);
         }
         , input:(wrap, id, inputType, maxlength, attributes)=>{
               if (!i$(id)){
-                 let size =(maxlength)?" size='" +maxlength+ "'":"";
-                 let type = (inputType)?inputType:'text';
+                 let size =(maxlength)?" size='" +maxlength+ "'":""
+                 ,   type = (inputType)?inputType:'text'
+                 ,   _att = j$.ui.Render.attributes(attributes)
                  if (type==='select')
-                    wrap.insert("<"+type+ " id='" +id+ "' name='" +id+ "' " +j$.ui.Render.attributes(attributes)+ " ></" +type+ ">");
+                    wrap.insert(`<${type} id='${id}' name='${id}' ${_att} ></${type}>`);
                  else
-                    wrap.insert("<input type='" +type+ "' id='" +id+ "' name='"+id+"'" +size+ " "+j$.ui.Render.attributes(attributes)+ " >");
+                    wrap.insert(`<input type='${type}' id='${id}' name='${id}' ${size} ${_att} >`);
               }
               return i$(id);
           }
 
         , hint:(parent, id, method)=>{
-                 parent.insert({after:"<span id='" +id+ "'></span>"});
+                 parent.insert({after:`<span id='${id}'></span>`});
                  $('#'+id).mouseover(method);
                  return i$(id);
          }
          , wrapperUl:(wrap, id, wrapStyle)=>{
-            let wrapId =j$.util.getId(wrapStyle, id);
-               $(wrap).append("<div class='wrapperUl' id='" +wrapId+ "_wrap'></div>");
-               $("#"+wrapId+"_wrap").append('<ul class="' +wrapStyle+ '" id="' +wrapId+'"></ul>');
+               let wrapId =j$.util.getId(wrapStyle, id);
+               $(wrap).append(`<div class='wrapperUl' id='${wrapId}_wrap'></div>`);
+               $(`#${wrapId}_wrap`).append(`<ul class="${wrapStyle}" id="${wrapId}"></ul>`);
                return i$(wrapId);
            }
          , li:(wrap, properties)=>{
@@ -85,17 +87,17 @@ j$.ui.Render= function(){
              return i$(properties.id);
          }
          , line:(section, id, wrapStyle, title)=>{
-               let wrapId =j$.util.getId(wrapStyle, id);
-               let legend="";
+               let wrapId=j$.util.getId(wrapStyle, id)
+                 , legend="", idLegend=`${wrapId}_legend`;
                if (title!=undefined){
                   if (dataExt.isString(title))
-                     legend ="<legend class='" +wrapStyle+ "_legend' id='" +wrapId+ "_legend'>"+ title+"</legend>";
+                     legend =`<legend class='${wrapStyle}_legend' id='${idLegend}'>${title}</legend>`;
                   else
-                     legend ="<legend class='" +wrapStyle+ "_legend' id='" +wrapId+ "_legend'>"+ title.text+"</legend>";
+                     legend =`<legend class='${wrapStyle}_legend' id='${idLegend}'>${title.text}</legend>`;
                }
-               section.insert("<fieldset class='" +wrapStyle+ "' id='" +wrapId +"'>"+legend+"</fieldset>");
-               if (i$(wrapId+ "_legend")!=undefined && title.style!=undefined)
-                   i$(wrapId+ "_legend").stylize(title.style);
+               section.insert(`<fieldset class='${wrapStyle}' id='${wrapId}'>${legend}</fieldset>`);
+               if (i$(idLegend)!=undefined && title.style!=undefined)
+                   i$(idLegend).stylize(title.style);
                return i$(wrapId);
            }
          , button:(wrap, properties)=>{
@@ -117,8 +119,8 @@ j$.ui.Render= function(){
                    +'</ul></div>';
          }
          , icon:(properties)=>{
-            let iconClass;
-            let key = properties;
+            let iconClass
+              , key = properties;
              if (dataExt.isString(properties))
                 iconClass = CONFIG.icon(key);
              else if(dataExt.isObject(properties)){
@@ -127,53 +129,45 @@ j$.ui.Render= function(){
              }
              if (iconClass){
                 let color = CONFIG.color(key);
-                let txColor=(color)?' style="color:' +color+ ';" '  :'';
-                return '<i class="' +iconClass+ '"' +txColor+ '></i>';
+                let txColor=(color)?`style="color:${color};" `  :'';
+                return `<i class="${iconClass}" ${txColor}></i>`;
              }else
                 return '';
          }
          , alert:(wrap, msg, clas$)=>{
-             clas$ = (clas$)? "class='alert " +clas$+ "'": "class='alert'";
-             var html= '<div '+clas$+ '>'
-                     + '<button type="button" class="close" data-dismiss="alert">×</button>'
-                     + msg +    '</div>';
-             wrap.insert(html);
+             clas$ = (clas$)? `class='alert ${clas$}'`: "class='alert'";
+             wrap.insert(`<div ${clas$}><button type="button" class="close" data-dismiss="alert">×</button>'${msg}</div>`);
          }
       };
 }();
 
 j$.ui.type.HintIcon= function(parent, id, hint, text){
-    let SELF = this;
-    let element;
-       hint = (hint)?hint:CONFIG.ACTION.INFO.KEY;
-       Object.preset(SELF, CONFIG.hint(hint));
-       let id$ = j$.util.getId( (parent.id)?parent.id:'HintIcon', id);
-       Object.preset(this, {
-              on:msg=>{
-                  if (msg)
-                      SELF.text=msg;
-                  if (!i$(id$))
-                     element=j$.ui.Render.hint(parent, id$, SELF.show);
-                  else
-                     element=i$(id$);
-                  element.className = SELF.class;
-              }
-            ,   set:(msg)=>{SELF.text=msg; }
-            ,   get:()=>{return SELF.text;}
-            , reset:()=>{SELF.text='';}
-            ,   off:()=>{if(i$(id$)) $('#'+id$).remove(); }
-            , hide:()=>{System.Hint.hide(SELF.Element);  }
-            ,class: 'ikon-hint ' + SELF.icon
-            , text: (text && dataExt.isString(text))?text:''
-        });
-        this.show=(event, msg)=>{
-             if (msg)
-                 SELF.text=msg;
-                 System.Hint.show(SELF.text, element, event, "hint " + SELF.hint);
-             }
-        if (!SELF.text.isEmpty()){
-           SELF.on()
-        }
+    let element
+      , id$ = j$.util.getId( (parent.id)?parent.id:'HintIcon', id);
+    hint = (hint)?hint:CONFIG.ACTION.INFO.KEY;
+    Object.preset(this, CONFIG.hint(hint));
+    Object.preset(this, {
+            on:msg=>{
+                if (msg)
+                this.text=msg;
+                if (!i$(id$))
+                    element=j$.ui.Render.hint(parent, id$, this.show);
+                else
+                    element=i$(id$);
+                element.className = this.class;
+            }
+        ,   set:(msg)=>{this.text=msg}
+        ,   get:()=>{return this.text}
+        , reset:()=>{this.text=''}
+        ,   off:()=>{if(i$(id$)) $('#'+id$).remove()}
+        , hide:()=>{System.Hint.hide(this.Element)}
+        , show:(event, msg=this.text)=>{System.Hint.show(this.text, element, event, "hint " + this.hint)}
+        ,class: 'ikon-hint ' + this.icon
+        , text: (text && dataExt.isString(text))?text:''
+    });
+    if (!this.text.isEmpty()){
+        this.on()
+    }
 };
 
 j$.ui.Alert= function(){
@@ -187,8 +181,8 @@ j$.ui.Alert= function(){
            else if (dataExt.isArray(msg) && msg.length === 1){
                j$.ui.Render.alert(wrap, msg[0], alertClass);
            }else{
-            let html='<lu>'
-               msg.each(function(text){html+='<li>' +text +'</li>'});
+               let html='<lu>'
+               msg.each(function(text){html+=`<li>${text}</li>`});
                html+='</lu>'
                j$.ui.Render.alert(wrap, html , alertClass);
            }
@@ -255,27 +249,24 @@ var TYPE = function() {
 }();
 TYPE.HELPER = {
     getElementIndex:function(obj) {
-    let form = obj.form;
-	for (let i=0; i<form.elements.length; i++) {
-		if (obj.id == form.elements[i].id) {
-			return i;
-			}
-		}
-	return -1;
+        let form = obj.form;
+        for (let i=0; i<form.elements.length; i++) {
+            if (obj.id == form.elements[i].id) 
+                return i;
+        }
+        return -1;
     },
     getLabel: function (inputField){
-        let labelField = {label:'', mandatory:false};
-        let lbl="";
+        let labelField = {label:'', mandatory:false}
+          , lbl="";
         if(inputField.parentNode){
-          if(inputField.parentNode.tagName=='label'){
+          if(inputField.parentNode.tagName=='label')
             lbl=inputField.parentNode.innerHTML;
-          }
         }
         let labels=document.getElementsByTagName("label"),i;
         for( i=0; i<labels.length;i++ ){
-           if(labels[i].htmlFor==inputField.id){
+           if(labels[i].htmlFor==inputField.id)
               lbl=labels[i].innerHTML;
-           }
         }
         lbl=lbl.replace(' *', "*");
         lbl=lbl.replace('* ', "*");
@@ -291,7 +282,6 @@ TYPE.HELPER = {
 
 class Ma$k{
     constructor(mask){
-        //let SELF=this;
         Object.preset(this,{fmt:null, prompt:null, strip:null, mask:null, size:1, TCMask:null});
         if (mask){
             Object.setIfExist(this,mask,['strip','empty']);
@@ -374,6 +364,55 @@ Element.prototype.bind = function(field) {
     }
 };
 
+class Legend{
+    constructor(field){
+        this.field = field;
+        this.Resource = field.Resource;
+        this.id =`${this.field.id}_legend`;
+    }
+    prepareToRequest= value=>{
+        this.hide();
+        value = (value)?value:this.field.value();
+        return (value.isEmpty()) ?null
+                                 :Object.build(this.field.resource.id,value);
+    }
+
+    hide=() =>{if(i$(this.id)) $(`#${this.id}`).remove()}
+    show=text =>{
+        if(!i$(this.id))
+            $(this.field.inputField.parentElement).append(`<span class='${CONFIG.LEGEND.CLASS}' id='${this.id}'>${text}</span>`);
+        else
+            i$(this.id).content(text);
+    }
+    get =  response => {
+        this.hide();
+        let text='';
+        if (this.Resource){
+            let record = this.Resource.handleResponse(response);
+            if (record){
+                if (record[0][this.Resource.text]!=undefined){
+                    text = record[0][this.Resource.text];
+                    this.show(text)
+                }
+            }
+            if (text.isEmpty()){
+                this.field.Error.set(ERROR.MESSAGE.InvalidItem);
+                ERROR.show(this.field.Error.get(),this.field);
+            }else{
+                ERROR.off(this.field);
+            }
+        } else if (response && dataExt.isString(response) && !response.isEmpty())
+            this.show(response);
+    }
+    request=value =>{
+        let fields = this.prepareToRequest(value);
+        if (this.Resource && dataExt.isDefined(fields)){
+            if (this.field.type=='text')
+               this.Resource.get(fields, this); // this é o callback
+        }
+    }
+};
+
 function superType(Type, Properties) {
    let SELF=this;
    Object.preset(SELF,{align:c$.ALIGN.LEFT, mandatory:false, autotab:false, label:''
@@ -401,58 +440,7 @@ function superType(Type, Properties) {
               }
       };
    }();
-   this.Legend= function(){
-       //var element=null;
-       let id;
-       let prepareToRequest= value=>{
-           SELF.Legend.hide();
-           value = (value)?value:SELF.value();
-           return (value.isEmpty()) ?null
-                                  :Object.build(SELF.resource.id,value);
-       }
-       return {
-              init:() =>{id = SELF.id +'_legend'}
-            , hide:() =>{if(i$(id)) $('#'+id).remove()}
-            , show:text =>{
-                 if(!i$(id))
-                    $(SELF.inputField.parentElement).append("<span class='" +CONFIG.LEGEND.CLASS+ "' id='" +id+ "'>"+text+"</span>");
-                 else
-                   i$(id).content(text);
-            }
-            , set:  response => {
-                  SELF.Legend.hide();
-                  let text='';
-                  if (SELF.Resource){
-                    let record = SELF.Resource.handleResponse(response);
-                      if (record){
-                          if (record[0][SELF.Resource.text]!=undefined){
-                              text = record[0][SELF.Resource.text];
-                              SELF.Legend.show(text)
-                          }
-                      }
-                      if (text.isEmpty()){
-                         SELF.Error.set(ERROR.MESSAGE.InvalidItem);
-                         ERROR.show(SELF.Error.get(),SELF);
-                      }else{
-                         ERROR.off(SELF);
-                      }
-                  } else if (response && dataExt.isString(response) && !response.isEmpty())
-                     SELF.Legend.show(response);
-              }
-            , request: value =>{
-                   fields = prepareToRequest(value);
-                   if (SELF.Resource && dataExt.isDefined(fields)){
-                       if (SELF.type=='text')
-                           SELF.Resource.get(fields, SELF);
-                   }
-            }
-      }
-   }();
 
-   //response para o resource
-   this.get=response=>{
-       SELF.Legend.set(response);
-   };
    this.edit= value=>{
        if (value == undefined)
            value = SELF.Record.value;
@@ -489,8 +477,8 @@ function superType(Type, Properties) {
           return value.trim();
    };
    this.validate= p_value=>{
-        let value = SELF.value(p_value);
-        let valid=SELF.isValid(value);
+        let value=SELF.value(p_value)
+          , valid=SELF.isValid(value);
         if (!valid && ERROR){
             SELF.Error.set((value.isEmpty()?ERROR.MESSAGE.Mandatory:SELF.validator.error));
             ERROR.show(SELF.Error.get(),SELF);
@@ -501,8 +489,8 @@ function superType(Type, Properties) {
         return valid;
    };
    this.isValid= p_value=>{
-        let value = SELF.value(p_value);
-        let valid=true;
+        let value = SELF.value(p_value)
+          , valid=true;
         if (!value.isEmpty()){ // se tem valor, assume o memso como verdadeiro
            if (SELF.validator.handler) // se tem handle, v�lida
               valid=SELF.validator.handler(value);
@@ -525,7 +513,7 @@ function superType(Type, Properties) {
        SELF.id =inputField.id;
        if (!SELF.key)
            SELF.key =SELF.id;
-        let hint = "";
+       let hint = "";
 
        SELF.Error = new j$.ui.type.HintIcon(inputField, inputField.id+'_error', CONFIG.ACTION.ERROR.KEY);
        if (SELF.hint)
@@ -539,37 +527,31 @@ function superType(Type, Properties) {
        }
        if (!SELF.mandatory)
            SELF.mandatory = labelField.mandatory;
-
+           
+       Event.observe(inputField, 'focus', TYPE.HANDLE.focus, false);
        if (SELF.validator)
            Event.observe(inputField, 'blur',  (e)=>{TYPE.HANDLE.lostFocus(e,SELF.validate);});
        else
            Event.observe(inputField, 'blur',  TYPE.HANDLE.lostFocus);
 
        switch(SELF.type){
-        case 'text':
-           SELF.Legend.init();
-           if (SELF.autotab)
-               Event.observe(inputField, 'keyup', ()=>{TYPE.HANDLE.autotab(inputField,SELF.maxlength);});
-
-           SELF.mask.render(inputField);
-           //inputField.className = inputField.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
-
-           if (inputField.maxlength)
-              inputField.maxlength = SELF.maxlength;
-           break;
-        case 'select':
-           SELF.popule();
-           break;
-        default:
-          break
+            case 'text':
+                this.Legend = new Legend(this);
+                if (SELF.autotab)
+                    Event.observe(inputField, 'keyup', ()=>{TYPE.HANDLE.autotab(inputField,SELF.maxlength);});
+                SELF.mask.render(inputField);
+                //inputField.className = inputField.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
+                if (inputField.maxlength)
+                    inputField.maxlength = SELF.maxlength;
+                break;
+            case 'select':
+                SELF.popule();
+                break;
+            default:
+                break
        }
-
-       inputField.readOnly    = SELF.readOnly;
-       inputField.disabled    = SELF.disabled;
-       inputField.defaultValue=SELF.defaultValue;
+       Object.setIfExist(inputField, SELF,['readOnly','disabled','defaultValue'])
        inputField.className   = inputField.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
-
-       Event.observe(inputField, 'focus', TYPE.HANDLE.focus, false);
    };
 
     this.filterToggle=showFilter=>{
@@ -585,14 +567,14 @@ function superType(Type, Properties) {
    function defineProperties(Type, Properties) {
         //var properties={autotab:false, label:'', mandatory:false, locked:false, defaultValue:'', align:c$.ALIGN.LEFT, size:null, validator:null, mask:null}
         let mask = null;
-        // Primeiro verifica o que vem do no Type, que são o valores que já vem por padrão
+        // Primeiro verifica/seta o que vem do no Type, que são o valores que já vem por padrão
         if (Type){
             Object.setIfExist(SELF, Type, ['align','size','validator','mask','autotab'
                                           ,'type','label','dataType','list','attributes']);
             if (Type.mask)
                 mask=Type.mask;
         }
-        // Depois verifica o que vem em Porperties, que é o que vem do usuário;
+        // Depois verifica/seta o que vem em Porperties, que é o que vem do usuário;
         if (Properties){
             Object.setIfExist(SELF, Properties,
                              ['evaluate','autotab', 'label','mandatory', 'align', 'parentLegend'
