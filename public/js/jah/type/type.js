@@ -255,8 +255,8 @@ TYPE.HELPER = {
                 return i;
         }
         return -1;
-    },
-    getLabel: function (inputField){
+    }
+    , getLabel: function (inputField){ //Vai procurar no HTML o label que precede o input
         let labelField = {label:'', mandatory:false}
           , lbl="";
         if(inputField.parentNode){
@@ -278,7 +278,34 @@ TYPE.HELPER = {
         labelField.label = lbl.replace(/[:->]/g,"").trim();
         return labelField;
   }
+  , setLabel: function (inputField, _input){
+        if (inputField.label.isEmpty() || !inputField.mandatory){
+            let labelField = TYPE.HELPER.getLabel(_input);
+            if (inputField.label.isEmpty()){
+                inputField.label=inputField.id;
+            if (!labelField.label.isEmpty())
+                inputField.label=labelField.label;
+            }
+            if (!inputField.mandatory)
+               inputField.mandatory = labelField.mandatory;
+        }
+  }
+  , createLabel: function(inputField, wrap){
+        if (inputField.label.isEmpty()) // label é o texto que foi setado no construtor
+            inputField.label=inputField.key;
+        let wrapInput = j$.ui.Render.wrap(wrap,inputField.id+'_wrapLabel','wrap_label');
+
+        j$.ui.Render.label(wrapInput, inputField.label, inputField.id, 'input_label' ,inputField.mandatory)
+        wrapInput.stylize(inputField.design.labelStyle);
+        return {label:inputField.label, mandatory:inputField.mandatory}
+   }
 };
+// Helper={}
+// Helper.Label = function(){
+//    RETURN {
+
+//    }
+// }()
 
 class Ma$k{
     constructor(mask){
@@ -428,22 +455,22 @@ function superType(Type, Properties) {
 */
    defineProperties(Type, Properties);
 
-   this.Label= function(){
-       return {
-              create:function(wrap, id,  key, design){
-                   if (SELF.label.isEmpty())
-                       SELF.label=(key) ?key :id;
-                       let wrapInput = j$.ui.Render.wrap(wrap,id+'_wrapLabel','wrap_label');
+//    this.Label= function(){
+//        return {
+//               create:function(wrap, id,  key, design){
+//                    if (SELF.label.isEmpty())
+//                        SELF.label=(key) ?key :id;
+//                    let wrapInput = j$.ui.Render.wrap(wrap,id+'_wrapLabel','wrap_label');
 
-                   j$.ui.Render.label(wrapInput, SELF.label, id, 'input_label' ,SELF.mandatory)
-                   wrapInput.stylize(design.labelStyle);
-              }
-      };
-   }();
+//                    j$.ui.Render.label(wrapInput, SELF.label, id, 'input_label' ,SELF.mandatory)
+//                    wrapInput.stylize(design.labelStyle);
+//               }
+//       };
+//    }();
 
    this.edit= value=>{
-       if (value == undefined)
-           value = SELF.Record.value;
+        if (value == undefined)
+            value = SELF.Record.value;
         i$(SELF.id).content(value);
         i$(SELF.id).className = CONFIG.INPUT.CLASS.DEFAULT; //"input_text";
    };
@@ -455,10 +482,11 @@ function superType(Type, Properties) {
        SELF.key =(key)?key : SELF.id;
        if (!design) design={};
        SELF.design = design;
-       SELF.Label.create(wrap, SELF.id, key, SELF.design);
+      // SELF.Label.create(wrap, SELF.id, key, SELF.design);
    }
    this.create= (wrap, id, key, design) =>{
        SELF.identify(wrap, id, key, design);
+       TYPE.HELPER.createLabel(SELF, wrap)
        let wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput','wrap_input');
        j$.ui.Render.input(wrapInput, SELF.id, SELF.type, SELF.maxlength, SELF.attributes);
        wrapInput.stylize(SELF.design.inputStyle);
@@ -500,10 +528,10 @@ function superType(Type, Properties) {
    };
 
    this.reset= ()=>{
-      ERROR.off(SELF);
-           if (!SELF.defaultValue.isEmpty())
-              i$(SELF.id).value=SELF.defaultValue;
-           i$(SELF.id).className = CONFIG.INPUT.CLASS.DEFAULT;
+        ERROR.off(SELF);
+        if (!SELF.defaultValue.isEmpty())
+            i$(SELF.id).value=SELF.defaultValue;
+        i$(SELF.id).className = CONFIG.INPUT.CLASS.DEFAULT;
    };
 
    this.bind = inputField=>{
@@ -518,16 +546,9 @@ function superType(Type, Properties) {
        SELF.Error = new j$.ui.type.HintIcon(inputField, inputField.id+'_error', CONFIG.ACTION.ERROR.KEY);
        if (SELF.hint)
           SELF.Hint = new j$.ui.type.HintIcon(inputField, inputField.id+'_info', CONFIG.ACTION.INFO.KEY, SELF.hint);
+       
+       TYPE.HELPER.setLabel(SELF, inputField); // definir o label
 
-       let labelField = TYPE.HELPER.getLabel(inputField);
-       if (SELF.label.isEmpty()){
-           SELF.label=inputField.id;
-           if (!labelField.label.isEmpty())
-               SELF.label=labelField.label;
-       }
-       if (!SELF.mandatory)
-           SELF.mandatory = labelField.mandatory;
-           
        Event.observe(inputField, 'focus', TYPE.HANDLE.focus, false);
        if (SELF.validator)
            Event.observe(inputField, 'blur',  (e)=>{TYPE.HANDLE.lostFocus(e,SELF.validate);});
