@@ -277,8 +277,8 @@ TYPE.HELPER = {
         lbl=lbl.replace('<span class="required"></span>', "");
         labelField.label = lbl.replace(/[:->]/g,"").trim();
         return labelField;
-  }
-  , setLabel: function (inputField, _input){
+   }
+   , setLabel: function (inputField, _input){
         if (inputField.label.isEmpty() || !inputField.mandatory){
             let labelField = TYPE.HELPER.getLabel(_input);
             if (inputField.label.isEmpty()){
@@ -289,8 +289,8 @@ TYPE.HELPER = {
             if (!inputField.mandatory)
                inputField.mandatory = labelField.mandatory;
         }
-  }
-  , createLabel: function(inputField, wrap){
+   }
+   , createLabel: function(inputField, wrap){
         if (inputField.label.isEmpty()) // label é o texto que foi setado no construtor
             inputField.label=inputField.key;
         let wrapInput = j$.ui.Render.wrap(wrap,inputField.id+'_wrapLabel','wrap_label');
@@ -299,6 +299,74 @@ TYPE.HELPER = {
         wrapInput.stylize(inputField.design.labelStyle);
         return {label:inputField.label, mandatory:inputField.mandatory}
    }
+   , setProperties: function(inputField, Type, Properties) {
+        //var properties={autotab:false, label:'', mandatory:false, locked:false, defaultValue:'', align:c$.ALIGN.LEFT, size:null, validator:null, mask:null}
+        let mask = null;
+        // Primeiro verifica/seta o que vem do no Type, que são o valores que já vem por padrão
+        if (Type){
+            Object.setIfExist(inputField, Type, ['align','size','validator','mask','autotab'
+                                        ,'type','label','dataType','list','attributes']);
+            if (Type.mask)
+                mask=Type.mask;
+        }
+        // Depois verifica/seta o que vem em Porperties, que é o que vem do usuário;
+        if (Properties){
+            Object.setIfExist(inputField, Properties,
+                            ['evaluate','autotab', 'label','mandatory', 'align', 'parentLegend'
+                            , 'readOnly', 'disabled', 'defaultValue', 'type'
+                            , 'dataType', 'list', 'hint','attributes', 'resource']);
+            if (Properties.resource){
+                // inputField.AdapterResource = j$.Resource.ResponseHandler;  // Quando tiver RESOURCE
+                // inputField.AdapterResource(Properties, inputField);
+                inputField.Resource =  j$.Resource.create(inputField.resource, inputField);
+            }
+        }
+        inputField.mask = new Ma$k(mask);
+        if (!inputField.size)
+            inputField.size = inputField.mask.size;
+
+        inputField.maxlength = (inputField.size>inputField.mask.size) ?inputField.size :inputField.mask.size;
+    }
+    , bindField: function(inputField, _input){
+        inputField.binded=true;
+        inputField.Input=_input;
+        inputField.Input.bind(inputField);
+        inputField.id =_input.id;
+        // if (!inputField.key)
+        //     inputField.key =inputField.id;
+        let hint = "";
+ 
+        inputField.Error = new j$.ui.type.HintIcon(_input, _input.id+'_error', CONFIG.ACTION.ERROR.KEY);
+        if (inputField.hint)
+           inputField.Hint = new j$.ui.type.HintIcon(_input, _input.id+'_info', CONFIG.ACTION.INFO.KEY, inputField.hint);
+        
+        TYPE.HELPER.setLabel(inputField, _input); // definir o label
+ 
+        Event.observe(_input, 'focus', TYPE.HANDLE.focus, false);
+        if (inputField.validator)
+            Event.observe(_input, 'blur',  (e)=>{TYPE.HANDLE.lostFocus(e,inputField.validate);});
+        else
+            Event.observe(_input, 'blur',  TYPE.HANDLE.lostFocus);
+ 
+        switch(inputField.type){
+             case 'text':
+                inputField.Legend = new Legend(inputField);
+                 if (inputField.autotab)
+                     Event.observe(_input, 'keyup', ()=>{TYPE.HANDLE.autotab(_input,inputField.maxlength);});
+                 inputField.mask.render(_input);
+                 //inputField.className = inputField.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
+                 if (_input.maxlength)
+                     _input.maxlength = inputField.maxlength;
+                 break;
+             case 'select':
+                 inputField.popule();
+                 break;
+             default:
+                 break
+        }
+        Object.setIfExist(_input, inputField,['readOnly','disabled','defaultValue'])
+        _input.className   = _input.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
+    }
 };
 // Helper={}
 // Helper.Label = function(){
@@ -407,7 +475,7 @@ class Legend{
     hide=() =>{if(i$(this.id)) $(`#${this.id}`).remove()}
     show=text =>{
         if(!i$(this.id))
-            $(this.field.inputField.parentElement).append(`<span class='${CONFIG.LEGEND.CLASS}' id='${this.id}'>${text}</span>`);
+            $(this.field.Input.parentElement).append(`<span class='${CONFIG.LEGEND.CLASS}' id='${this.id}'>${text}</span>`);
         else
             i$(this.id).content(text);
     }
@@ -453,20 +521,7 @@ function superType(Type, Properties) {
 /*   this.id  - Eh o identificador no form.
    this.key - eh como estah definido no dataset (column)
 */
-   defineProperties(Type, Properties);
-
-//    this.Label= function(){
-//        return {
-//               create:function(wrap, id,  key, design){
-//                    if (SELF.label.isEmpty())
-//                        SELF.label=(key) ?key :id;
-//                    let wrapInput = j$.ui.Render.wrap(wrap,id+'_wrapLabel','wrap_label');
-
-//                    j$.ui.Render.label(wrapInput, SELF.label, id, 'input_label' ,SELF.mandatory)
-//                    wrapInput.stylize(design.labelStyle);
-//               }
-//       };
-//    }();
+   TYPE.HELPER.setProperties(SELF,Type, Properties);
 
    this.edit= value=>{
         if (value == undefined)
@@ -498,8 +553,8 @@ function superType(Type, Properties) {
           if (p_value)
               value=p_value;
           else{
-              if (SELF.inputField)
-                  value = SELF.inputField.value;
+              if (SELF.Input)
+                  value = SELF.Input.value;
           }
           if (SELF.mask){value = SELF.mask.unformat(value);}
           return value.trim();
@@ -513,7 +568,7 @@ function superType(Type, Properties) {
         }else{
             ERROR.off(SELF);
         }
-        SELF.inputField.className = (valid)?CONFIG.INPUT.CLASS.DEFAULT:CONFIG.INPUT.CLASS.ERROR;
+        SELF.Input.className = (valid)?CONFIG.INPUT.CLASS.DEFAULT:CONFIG.INPUT.CLASS.ERROR;
         return valid;
    };
    this.isValid= p_value=>{
@@ -534,45 +589,45 @@ function superType(Type, Properties) {
         i$(SELF.id).className = CONFIG.INPUT.CLASS.DEFAULT;
    };
 
-   this.bind = inputField=>{
-       SELF.binded=true;
-       SELF.inputField=inputField;
-       SELF.inputField.bind(SELF);
-       SELF.id =inputField.id;
-       if (!SELF.key)
-           SELF.key =SELF.id;
-       let hint = "";
+   this.bind = _input=>{
+       TYPE.HELPER.bindField(SELF,_input);
+    //    SELF.binded=true;
+    //    SELF.Input=_input;
+    //    SELF.Input.bind(SELF);
+    //    SELF.id =_input.id;
 
-       SELF.Error = new j$.ui.type.HintIcon(inputField, inputField.id+'_error', CONFIG.ACTION.ERROR.KEY);
-       if (SELF.hint)
-          SELF.Hint = new j$.ui.type.HintIcon(inputField, inputField.id+'_info', CONFIG.ACTION.INFO.KEY, SELF.hint);
+    //    let hint = "";
+
+    //    SELF.Error = new j$.ui.type.HintIcon(_input, _input.id+'_error', CONFIG.ACTION.ERROR.KEY);
+    //    if (SELF.hint)
+    //       SELF.Hint = new j$.ui.type.HintIcon(_input, _input.id+'_info', CONFIG.ACTION.INFO.KEY, SELF.hint);
        
-       TYPE.HELPER.setLabel(SELF, inputField); // definir o label
+    //    TYPE.HELPER.setLabel(SELF, SELF.Input); // definir o label
 
-       Event.observe(inputField, 'focus', TYPE.HANDLE.focus, false);
-       if (SELF.validator)
-           Event.observe(inputField, 'blur',  (e)=>{TYPE.HANDLE.lostFocus(e,SELF.validate);});
-       else
-           Event.observe(inputField, 'blur',  TYPE.HANDLE.lostFocus);
+    //    Event.observe(_input, 'focus', TYPE.HANDLE.focus, false);
+    //    if (SELF.validator)
+    //        Event.observe(_input, 'blur',  (e)=>{TYPE.HANDLE.lostFocus(e,SELF.validate);});
+    //    else
+    //        Event.observe(_input, 'blur',  TYPE.HANDLE.lostFocus);
 
-       switch(SELF.type){
-            case 'text':
-                this.Legend = new Legend(this);
-                if (SELF.autotab)
-                    Event.observe(inputField, 'keyup', ()=>{TYPE.HANDLE.autotab(inputField,SELF.maxlength);});
-                SELF.mask.render(inputField);
-                //inputField.className = inputField.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
-                if (inputField.maxlength)
-                    inputField.maxlength = SELF.maxlength;
-                break;
-            case 'select':
-                SELF.popule();
-                break;
-            default:
-                break
-       }
-       Object.setIfExist(inputField, SELF,['readOnly','disabled','defaultValue'])
-       inputField.className   = inputField.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
+    //    switch(SELF.type){
+    //         case 'text':
+    //             this.Legend = new Legend(this);
+    //             if (SELF.autotab)
+    //                 Event.observe(_input, 'keyup', ()=>{TYPE.HANDLE.autotab(_input,SELF.maxlength);});
+    //             SELF.mask.render(_input);
+    //             //inputField.className = inputField.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
+    //             if (_input.maxlength)
+    //                 _input.maxlength = SELF.maxlength;
+    //             break;
+    //         case 'select':
+    //             SELF.popule();
+    //             break;
+    //         default:
+    //             break
+    //    }
+    //    Object.setIfExist(_input, SELF,['readOnly','disabled','defaultValue'])
+    //    _input.className   = _input.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
    };
 
     this.filterToggle=showFilter=>{
@@ -584,34 +639,6 @@ function superType(Type, Properties) {
     // Ver DATATYPE - � fazer um parse para um valor correto.
     function parseValue(value){
         SELF.dataType.parse(value);
-    }
-   function defineProperties(Type, Properties) {
-        //var properties={autotab:false, label:'', mandatory:false, locked:false, defaultValue:'', align:c$.ALIGN.LEFT, size:null, validator:null, mask:null}
-        let mask = null;
-        // Primeiro verifica/seta o que vem do no Type, que são o valores que já vem por padrão
-        if (Type){
-            Object.setIfExist(SELF, Type, ['align','size','validator','mask','autotab'
-                                          ,'type','label','dataType','list','attributes']);
-            if (Type.mask)
-                mask=Type.mask;
-        }
-        // Depois verifica/seta o que vem em Porperties, que é o que vem do usuário;
-        if (Properties){
-            Object.setIfExist(SELF, Properties,
-                             ['evaluate','autotab', 'label','mandatory', 'align', 'parentLegend'
-                            , 'readOnly', 'disabled', 'defaultValue', 'type'
-                            , 'dataType', 'list', 'hint','attributes', 'resource']);
-            if (Properties.resource){
-                // SELF.AdapterResource = j$.Resource.ResponseHandler;  // Quando tiver RESOURCE
-                // SELF.AdapterResource(Properties, SELF);
-                 SELF.Resource =  j$.Resource.create(SELF.resource, SELF);
-            }
-        }
-        SELF.mask = new Ma$k(mask);
-        if (!SELF.size)
-            SELF.size = SELF.mask.size;
-
-        SELF.maxlength = (SELF.size>SELF.mask.size)?SELF.size:SELF.mask.size;
     }
 }
 
@@ -753,9 +780,9 @@ j$.ui.type.List=function(Properties){
           if (p_value)
               value=p_value;
           else{
-              if (SELF.inputField){
-                  var index=SELF.inputField.selectedIndex;
-                  var options= SELF.inputField.options;
+              if (SELF.Input){
+                  var index=SELF.Input.selectedIndex;
+                  var options= SELF.Input.options;
                   value=options[index].value;
               }
           }
@@ -818,8 +845,8 @@ j$.ui.type.Boolean=function(Properties){
           if (p_value != undefined)
               value=p_value;
           else{
-              if (SELF.inputField){
-                  value =SELF.inputField.checked;
+              if (SELF.Input){
+                  value =SELF.Input.checked;
               }
           }
           return SELF.local.text(value);
@@ -830,8 +857,8 @@ j$.ui.type.Boolean=function(Properties){
           if (p_value != undefined)
               value=p_value;
           else{
-              if (SELF.inputField){
-                  value =SELF.inputField.checked;
+              if (SELF.Input){
+                  value =SELF.Input.checked;
               }
           }
           return SELF.local.value(value);
