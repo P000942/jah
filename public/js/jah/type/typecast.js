@@ -6,7 +6,7 @@ This work is licensed under a Creative Commons Licence
 http://creativecommons.org/licenses/by-nd/2.5/
 */
 
-var Typecast = {
+const Typecast = {
 	InitMask : false,
 	InitSuggest : false,
 	
@@ -18,126 +18,65 @@ var Typecast = {
 	
 	Parse : function(nodes){
 		
-		for(var i=0; i<nodes.length; i++){
+		for(let i=0; i<nodes.length; i++){
 		   this.Format(nodes[i]);	
-                //var node = nodes[i];
-
-//			if(node.type=="text" && node.className && node.className.indexOf("TC") != -1){
-//				if(!node.id) Typecast.Utils.GenerateID(node);
-//				
-//				var behaviourName = (node.className.indexOf("[") != -1) ? node.className.substring(node.className.indexOf("TC")+2, node.className.indexOf("[")) : node.className.substring(node.className.indexOf("TC")+2, node.className.length);
-//				
-//				Typecast["Init" + behaviourName] = true;
-//				Typecast.Behaviours[behaviourName].InitField(node);
-//
-//				node.onfocus = Typecast.Behaviours[behaviourName].Run;
-//				node.onkeyup = Typecast.Behaviours[behaviourName].KeyUpHandler;
-//				node.onkeypress = Typecast.Behaviours[behaviourName].KeyHandler;
-//				node.onblur = Typecast.Behaviours[behaviourName].Stop;
-//				node.onmouseup = Typecast.Behaviours[behaviourName].MouseUp;
-//			}
 		}
 	}
-        , Format : function(node){
-			if(node.type=="text" && node.className && node.className.indexOf("TC") != -1){
-				if(!node.id) Typecast.Utils.GenerateID(node);
+        , Format : function(field, maskProperties){
+			if(field.type=="text" && field.className && field.className.indexOf("TC") != -1){
+				if(!field.id) Typecast.Utils.GenerateID(field);
 				
-				var behaviourName = (node.className.indexOf("[") != -1) ? node.className.substring(node.className.indexOf("TC")+2, node.className.indexOf("[")) : node.className.substring(node.className.indexOf("TC")+2, node.className.length);
-				
+				let behaviourName = (field.className.indexOf("[") != -1) ? field.className.substring(field.className.indexOf("TC")+2, field.className.indexOf("[")) : field.className.substring(field.className.indexOf("TC")+2, field.className.length);
+				let behaviour     = Typecast.Behaviours[behaviourName]
 				Typecast["Init" + behaviourName] = true;
-				Typecast.Behaviours[behaviourName].InitField(node);
+				behaviour.InitField(field);
 
-				node.onfocus = Typecast.Behaviours[behaviourName].Run;
-				node.onkeyup = Typecast.Behaviours[behaviourName].KeyUpHandler;
-				node.onkeypress = Typecast.Behaviours[behaviourName].KeyHandler;
-				node.onblur = Typecast.Behaviours[behaviourName].Stop;
-				node.onmouseup = Typecast.Behaviours[behaviourName].MouseUp;
+				field.onfocus    = behaviour.Run;
+				field.onkeyup    = behaviour.KeyUpHandler;
+				field.onkeypress = behaviour.KeyHandler;
+				field.onblur     = behaviour.Stop;
+				field.onmouseup  = behaviour.MouseUp;
+				if (!maskProperties) {
+					if (!field.alignToReposiotion)
+				       field.alignToReposiotion = c$.ALIGN.LEFT;
+				}else
+				   field.alignToReposiotion =maskProperties.align;
 			}            
         }
 	
 	, Behaviours : {
 		Mask : {
-			Init : function(){
-			},
+			Init : ()=>{},
 			
-			InitField : function(field){
-				var fieldData = [];
-                                var fld = (CONFIG.MASK.MASKS[field.id])?CONFIG.MASK.MASKS[field.id]:null;
+			InitField : field=>{
+				let fieldData = [];
+				let fld = (c$.MASK.MASKS[field.id])?c$.MASK.MASKS[field.id]:null;
 				if(!fld){
 					fieldData = field.className.substring(field.className.indexOf("[")+1, field.className.indexOf("]"))
 				}else{
-					fieldData = fld;//eval("CONFIG.MASK.MASKS." + field.id);
+					fieldData = fld;//eval("c$.MASK.MASKS." + field.id);
 				}
 				Typecast.Behaviours.Mask.ParseFieldData(field, fieldData);
                                 // By Geraldo - antes retornava direto field.DefaultText.join("")
 				field.value = (field.DefaultText.length>0)?field.DefaultText.join(""):field.DefaultText;
 			},
 			
-			Run : function(e){
-				e = (!e) ? window.event : e;
+			Run : (e=window.event)=>{
+				if (e.target.alignToReposiotion==c$.ALIGN.RIGHT)
+				   Typecast.Behaviours.Mask.CursorManager.Reposition(e.target);
 			},
 			
-			Stop : function(){
-			},
+			Stop : ()=>{},
 			
-			KeyUpHandler : function(e){
-                                e = (!e) ? window.event : e;
-                                keynum=(window.event)?parseInt(e.keyCode):e.which;
-                                //keychar = String.fromCharCode(keynum);
-                                //console.log('EVENT:'+e.type+'; which:' +e.which + '; keyCode:' + e.keyCode  + '; keynum:' + keynum+'; keyChar:'+keychar);
-                                
-				if(keynum==c$.KEY.ENTER){return
-                                }else if(keynum==c$.KEY.ESC){}
+			KeyUpHandler : function(e=window.event){
+				//e = (!e) ? window.event : e;
+				let keyNum=(window.event)?parseInt(e.keyCode):e.which
+				  , mask = Typecast.Behaviours.Mask;
+				if(keyNum==c$.KEY.ENTER){
+				   return
+                }else if(keyNum==c$.KEY.ESC){}
 				else{}
-				return false;
-			},
-			KeyHandler : function(e){
-				e = (!e) ? window.event : e;
-				var mask = Typecast.Behaviours.Mask;
-
-				mask.CursorManager.TabbedInSetPosition(this);
-
-                                keyNum=parseInt(e.keyCode)
-                                keyNum=(keyNum==0)?parseInt(e.which):keyNum;
-                                maskCurrent=mask.MaskManager.CurrentMaskCharacter(this);
-
-                                keychar = String.fromCharCode(keyNum)
-
-                                // console.log('EVENT:'+e.type+'; which:' +e.which + '; keyCode:' + e.keyCode  + '; keynum:' + keyNum+'; keyChar:'+keychar+' maskCurrent:'+maskCurrent);
-
-				if(keyNum==c$.KEY.BACKSPACE && this.AllowInsert){
-					var preBackspaceCursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0];
-					mask.CursorManager.Move(this, -1);
-					var postBackspaceCursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0];
-
-					if(preBackspaceCursorPosition != postBackspaceCursorPosition) mask.DataManager.RemoveCharacterByShiftLeft(this);
-					mask.Render(this);
-				}
-
-				if(keyNum==c$.KEY.TAB){return}
-
-				else if(keyNum==c$.KEY.END){
-					var startIdx = Typecast.Behaviours.Mask.MaskManager.FindNearestMaskCharacter(this, this.DataIndex[this.DataIndex.length-1], 1);
-					Typecast.Behaviours.Mask.CursorManager.SetPosition(this, startIdx);
-				}
-
-				else if(keyNum==c$.KEY.HOME){
-					Typecast.Behaviours.Mask.CursorManager.SetPosition(this, this.MaskIndex[0]);
-				}
-
-				else if(keyNum==c$.KEY.LEFT || keyNum==c$.KEY.UP){
-					mask.CursorManager.Move(this, -1);
-				}
-
-				else if(keyNum==c$.KEY.RIGHT  || keyNum==c$.KEY.DOWN){
-					mask.CursorManager.Move(this, 1);
-				}
-
-				else if(keyNum==c$.KEY.INS && this.AllowInsert){
-					mask.CursorManager.ToggleInsert(this);
-				}
-
-				else if(keyNum==c$.KEY.DEL){
+				if(keyNum==c$.KEY.DEL){
 					if(this.InsertActive){
 						mask.DataManager.RemoveCharacterByShiftLeft(this);
 					}else{
@@ -145,29 +84,92 @@ var Typecast = {
 					}
 					mask.Render(this);
 				}
+				if(keyNum==c$.KEY.BACKSPACE && (this.AllowInsert || this.alignToReposiotion==c$.ALIGN.RIGHT)){
+					if (this.alignToReposiotion==c$.ALIGN.RIGHT){
+						mask.DataManager.shiftRight(this);
+					}else if (this.AllowInsert){
+						let preBackspaceCursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0];
+						mask.CursorManager.Move(this, -1);
+						let postBackspaceCursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0]-1;
 
+						if(preBackspaceCursorPosition != postBackspaceCursorPosition) 
+							mask.DataManager.RemoveCharacterByShiftLeft(this,1);
+					}
+					mask.Render(this);
+						//mask.CursorManager.Move(this, 1);
+					mask.CursorManager.Reposition(this);
+				}
+				return false;
+			},
+			KeyHandler : function(e= window.event){
+				//e = (!e) ? window.event : e;
+				let mask = Typecast.Behaviours.Mask;
+
+				mask.CursorManager.TabbedInSetPosition(this);
+
+				keyNum=parseInt(e.keyCode)
+				keyNum=(keyNum==0)?parseInt(e.which):keyNum;
+				maskCurrent=mask.MaskManager.CurrentMaskCharacter(this);
+
+				keychar = String.fromCharCode(keyNum)
+
+                                // console.log('EVENT:'+e.type+'; which:' +e.which + '; keyCode:' + e.keyCode  + '; keynum:' + keyNum+'; keyChar:'+keychar+' maskCurrent:'+maskCurrent);
+
+				// if(keyNum==c$.KEY.BACKSPACE && this.AllowInsert){
+				// 	var preBackspaceCursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0];
+				// 	mask.CursorManager.Move(this, -1);
+				// 	var postBackspaceCursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0];
+
+				// 	if(preBackspaceCursorPosition != postBackspaceCursorPosition) mask.DataManager.RemoveCharacterByShiftLeft(this,1);
+				// 	mask.Render(this);
+				// 	mask.CursorManager.Move(this, 1);
+				// }
+
+				if(keyNum==c$.KEY.TAB){return}
+
+				else if(keyNum==c$.KEY.END){
+					let startIdx = Typecast.Behaviours.Mask.MaskManager.FindNearestMaskCharacter(this, this.DataIndex[this.DataIndex.length-1], 1);
+					Typecast.Behaviours.Mask.CursorManager.SetPosition(this, startIdx);
+				}else if(keyNum==c$.KEY.HOME){
+					Typecast.Behaviours.Mask.CursorManager.SetPosition(this, this.MaskIndex[0]);
+				}else if(keyNum==c$.KEY.LEFT || keyNum==c$.KEY.UP){
+					mask.CursorManager.Move(this, -1);
+				}else if(keyNum==c$.KEY.RIGHT  || keyNum==c$.KEY.DOWN){
+					mask.CursorManager.Move(this, 1);
+				}else if(keyNum==c$.KEY.INS && this.AllowInsert){
+					mask.CursorManager.ToggleInsert(this);
+				}else if(keyNum==c$.KEY.DEL){
+					if(this.InsertActive){
+						mask.DataManager.RemoveCharacterByShiftLeft(this);
+					}else{
+						mask.DataManager.RemoveCharacterByOverwrite(this);
+					}
+					mask.Render(this);
+				}
 				//Numeric Characters
 				//else if((mask.MaskManager.CurrentMaskCharacter(this) == Typecast.Config.Settings.Mask.MaskCharacters.Numeric) && (e.keyCode>=48 && e.keyCode<=57 && e.type=="keydown" || e.keyCode>=96 && e.keyCode<=105 && e.type=="keydown")){
                                 //else if((Typecast.Config.Settings.Mask.MaskCharacters.Numeric.indexOf(maskCurrent)!=-1) && (keyNum>=48 && keyNum<=57)){
-                                else if((CONFIG.MASK.MaskCharacters.Numeric.indexOf(maskCurrent)!=-1) && (keychar.isDigit()) ||
-                                        (keychar==CONFIG.MASK.DecimalCharacter) && this.value.indexOf(CONFIG.MASK.DecimalCharacter)==-1 && this.value.trim().length>0 && this.hasDecimalCharacter) {                                        
+                else if((c$.MASK.MaskCharacters.Numeric.indexOf(maskCurrent)!=-1) && (keychar.isDigit()) ||
+                        (keychar==c$.MASK.DecimalCharacter) && this.value.indexOf(c$.MASK.DecimalCharacter)==-1 && this.value.trim().length>0 && this.hasDecimalCharacter) {                                        
 					mask.DataManager.AddData(this, keychar);
 					mask.Render(this);
-					mask.CursorManager.Move(this, 1);
+					//mask.CursorManager.Move(this, 1);
+					mask.CursorManager.Reposition(this);
                                         //console.log(this.Mask)
 				}
 				//Alpha Characters 65 - 90
                                 // By Geraldo Gomes
                                 //else if((Typecast.Config.Settings.Mask.MaskCharacters.Alpha.indexOf(maskCurrent)!=-1) && (keyNum>=65 && keyNum<=90 || keyNum>=97 && keyNum<=122)){
-                                else if((CONFIG.MASK.MaskCharacters.Alpha.indexOf(maskCurrent)!=-1) && (keychar.isLetter())){
-                                        if (maskCurrent==CONFIG.MASK.LowerCaseCharacter){
-                                            keychar=keychar.toLowerCase()
-                                        }else if (maskCurrent==CONFIG.MASK.UpperCaseCharacter){
-                                            keychar=keychar.toUpperCase()
-                                        }                                       
-					mask.DataManager.AddData(this, keychar);
-					mask.Render(this);
-					mask.CursorManager.Move(this, 1);
+                else if((c$.MASK.MaskCharacters.Alpha.indexOf(maskCurrent)!=-1) && (keychar.isLetter())){
+				     if (maskCurrent==c$.MASK.LowerCaseCharacter){
+						keychar=keychar.toLowerCase()
+					 }else if (maskCurrent==c$.MASK.UpperCaseCharacter){
+						keychar=keychar.toUpperCase()
+					 }                                       
+					 mask.DataManager.AddData(this, keychar);
+					 mask.Render(this);
+					 //mask.CursorManager.Move(this, 1);
+					 mask.CursorManager.Reposition(this);
 				}
 
 				//Refresh
@@ -179,71 +181,61 @@ var Typecast = {
 				}
 				return false;
 			},
-			MouseUp : function(e){
-				e = (!e) ? window.event : e;
-				var cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0];
-				var startIdx = Typecast.Behaviours.Mask.MaskManager.FindNearestMaskCharacter(this, cursorPosition, 0);
-				Typecast.Behaviours.Mask.CursorManager.SetPosition(this, startIdx);
+			MouseUp : function(e=window.event){
+				//e = (!e) ? window.event : e;
+				if (this.alignToReposiotion==c$.ALIGN.RIGHT)
+					Typecast.Behaviours.Mask.CursorManager.Reposition(this);
+				else{
+					let cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0];
+					let startIdx = Typecast.Behaviours.Mask.MaskManager.FindNearestMaskCharacter(this, cursorPosition, 0);
+					Typecast.Behaviours.Mask.CursorManager.SetPosition(this, startIdx);
+				}	
 			},
 			
 			ParseFieldData : function(field, fieldData){
-				fieldData = fieldData.split(CONFIG.MASK.FieldDataSeparator);
+				fieldData = fieldData.split(c$.MASK.FieldDataSeparator);
 				field.Data = [];
 				field.DataIndex = [];
                                 // By geraldo - no lugar "", retornava fieldData[0].split("")
-				field.DefaultText = (fieldData[1]) ? fieldData[1].split("") : "";//fieldData[0].split(""); //if default text isn't provided use mask
-				field.Mask = this.MaskManager.ParseMask(fieldData[0],field);
-				field.MaskIndex = this.MaskManager.ParseMaskIndex(field.Mask);
+				field.DefaultText       = (fieldData[1]) ? fieldData[1].split("") : "";//fieldData[0].split(""); //if default text isn't provided use mask
+				field.Mask              = this.MaskManager.ParseMask(fieldData[0],field);
+				field.MaskIndex         = this.MaskManager.ParseMaskIndex(field.Mask);
 				field.CursorPersistance = [];
-				field.InsertActive = (this.MaskManager.IsComplexMask(field)) ? false : true;
-				field.HighlightChar = (this.MaskManager.IsComplexMask(field)) ? true : false;
-				field.AllowInsert = (this.MaskManager.IsComplexMask(field)) ? false : true;
+				let IsComplexMask = this.MaskManager.IsComplexMask(field);
+				field.InsertActive      = (IsComplexMask) ? false : true;
+				field.HighlightChar     = (IsComplexMask) ? true  : false;
+				field.AllowInsert       = (IsComplexMask) ? false : true;
 			},
 			
 			MaskManager : {
 				ParseMask : function(mask,field){                                        
-					var arr = [];
-					var maskCharacters = CONFIG.MASK.MaskCharacters;
-                                        field.hasDecimalCharacter=false;
-					for(var i=0; i<mask.length; i++){
-                                            // By Geraldo Gomes
-                                            var maskItem = mask.substring(i, i+1);
-                                            if(maskItem==CONFIG.MASK.DecimalCharacter){
-                                                            arr[i] = arr[i-1] //CONFIG.MASK.DecimalCharacter;                                                                                                                        
-                                                            field.hasDecimalCharacter=true;
-                                            }else{                                            
-                                                for(maskCharacter in maskCharacters){
-                                                        var maskChar = eval("maskCharacters." + maskCharacter);
-                                                        for(idx=0;idx<maskChar.length;idx++){
-                                                            if(maskItem == maskChar[idx]){
-                                                                    arr[i] = maskChar[idx];                                                               
-                                                            }
-                                                        }
-                                                }
-                                            }
-					}
+					let arr =[];
+					let maskCharacters = Object.values(c$.MASK.MaskCharacters).join("") // juntas as mascaras em uma string
+					mask.split("").forEach((item,idx)=>{if (maskCharacters.includes(item)) 
+						                                   arr[idx]=item;})
+					field.hasDecimalCharacter=mask.includes(c$.MASK.DecimalCharacter);
 					return arr;
 				},
 				
 				ParseMaskIndex : function(mask){
-					var arr = [];
-					for(var i=0; i<mask.length; i++){
+					let arr = [];
+					for(let i=0; i<mask.length; i++){
 						if(mask[i] != null) arr[arr.length] = i;
 					}
 					return arr;
 				},
 				
 				CurrentMaskCharacter : function(field){
-					var cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(field)[0];
+					let cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(field)[0];
 					return field.Mask[cursorPosition];
 				},
 				
 				FindNearestMaskCharacter : function(field, cursorPosition, dir){
-					var nearestMaskCharacter = (field.DataIndex.length > 0) ? cursorPosition : field.MaskIndex[0];
+					let nearestMaskCharacter = (field.DataIndex.length > 0) ? cursorPosition : field.MaskIndex[0];
 					
 					switch(dir){
 						case -1:
-							for(var i=field.DataIndex.length-1; i>-1; i--){
+							for(let i=field.DataIndex.length-1; i>-1; i--){
 								if(field.DataIndex[i] < cursorPosition){
 									nearestMaskCharacter = field.DataIndex[i];
 									break;
@@ -251,7 +243,7 @@ var Typecast = {
 							}
 						break;
 						case 0:
-							for(var i=0; i<field.DataIndex.length; i++){
+							for(let i=0; i<field.DataIndex.length; i++){
 								if(field.MaskIndex[i] >= cursorPosition){
 									nearestMaskCharacter = field.MaskIndex[i];
 									break;
@@ -261,7 +253,7 @@ var Typecast = {
 							}							
 						break;
 						case 1:
-							for(var i=0; i<field.DataIndex.length; i++){
+							for(let i=0; i<field.DataIndex.length; i++){
 								if(field.DataIndex[i] > cursorPosition){
 									nearestMaskCharacter = field.DataIndex[i];
 									break;
@@ -273,35 +265,33 @@ var Typecast = {
 					}
 					return nearestMaskCharacter
 				},
-				
-				IsComplexMask : function(field){//reports if mask contains mixed mask characters... can't perform "insert" if true
-					var isComplex = false;
-					var previousMaskChar = "";
-					for(var i=0; i<field.MaskIndex.length; i++){
-						var currentMaskChar = field.Mask[field.MaskIndex[i]];
-						if(currentMaskChar != previousMaskChar && previousMaskChar != ""){
-							isComplex = true;
-						}
-						previousMaskChar = currentMaskChar;
-					}
-					return isComplex
+				//Quando a mask contem tipos diferentes de caracteres - não deceverá permitir insert;
+				IsComplexMask : function(field){
+					let previousChar= "";
+					let isComplex = field.MaskIndex.some((cur,i)=>{
+						const currentChar = field.Mask[cur];
+						const res =  (currentChar != previousChar && previousChar != "")
+						previousChar = currentChar;
+						return 	res;
+					});
+					return isComplex;
 				}
 			},
 			
 			CursorManager : {
 				Move : function(field, dir){
-					var cursorPosition = this.GetPosition(field)[0];
-					var startIdx = Typecast.Behaviours.Mask.MaskManager.FindNearestMaskCharacter(field, cursorPosition, dir);
+					let cursorPosition = this.GetPosition(field)[0];
+					let startIdx = Typecast.Behaviours.Mask.MaskManager.FindNearestMaskCharacter(field, cursorPosition, dir);
 					this.SetPosition(field, startIdx);
 				},
 				GetPosition : function(field){
-					var arr = [0,0];
+					let arr = [0,0];
 					if(field.selectionStart && field.selectionEnd){
 						arr[0] = field.selectionStart;
 						arr[1] = field.selectionEnd;
 					}
 					else if(document.selection){
-						var range = field.createTextRange();
+						let range = field.createTextRange();
 						range.setEndPoint("EndToStart", document.selection.createRange());
 						arr[0] = range.text.length;
 						arr[1] = document.selection.createRange().text.length;
@@ -309,22 +299,23 @@ var Typecast = {
 					return arr
 				},
 				SetPosition : function(field, startIdx){
-					var endIdx = startIdx + ((field.HighlightChar) ? 1 : 0);
+					let endIdx = startIdx + ((field.HighlightChar) ? 1 : 0);
 					Typecast.Utils.PartialSelect(field, startIdx, endIdx);
 				},
-				TabbedInSetPosition : function(field){
-					var mask = Typecast.Behaviours.Mask;
+				TabbedInSetPosition : function(field){//onde será posicionado o cursor para inserir o valor
+					let mask = Typecast.Behaviours.Mask;
 					
 					if(mask.MaskManager.CurrentMaskCharacter(field) == undefined){
-						var startIdx = null;
-						if(field.DataIndex.length > 0 && field.DataIndex.length != field.MaskIndex.length){
-							startIdx = field.MaskIndex[field.DataIndex.length];
-						}
-						else if(field.DataIndex.length == field.MaskIndex.length){
-							startIdx = field.DataIndex[field.DataIndex.length-1] + 1;
-						}
-						else{
-							startIdx = field.MaskIndex[0];
+						let startIdx=0;
+						if (field.alignToReposiotion == c$.ALIGN.RIGHT){
+							startIdx =field.MaskIndex.length;
+						}else{
+							if(field.DataIndex.length > 0 && field.DataIndex.length != field.MaskIndex.length){
+								startIdx = field.MaskIndex[field.DataIndex.length];
+							}
+							else if(field.DataIndex.length == field.MaskIndex.length){
+								startIdx = field.DataIndex[field.DataIndex.length-1] + 1;
+							}
 						}
 						this.SetPosition(field, startIdx);
 					}
@@ -335,6 +326,14 @@ var Typecast = {
 				RestorePosition : function(field){
 					this.SetPosition(field, field.CursorPersistance[0]);
 				},
+				Reposition: function(field){
+					if (field.alignToReposiotion == c$.ALIGN.RIGHT){
+						let pos = (field.Mask.length);//(field.Data.join("").length +(field.hasDecimalCharacter ?1 :0))
+						this.SetPosition(field, pos);
+					}else{
+						this.Move(field, 1);
+					}
+				},
 				ToggleInsert : function(field){
 					if(field.InsertActive){
 						field.InsertActive = false;
@@ -343,61 +342,94 @@ var Typecast = {
 						field.InsertActive = true;
 						field.HighlightChar = false;
 					}
-					var startIdx = this.GetPosition(field)[0];
+					let startIdx = this.GetPosition(field)[0];
 					this.SetPosition(field, startIdx);
 				}
 			},
 			
 			DataManager : {
 				AddData : function(field, char){
-					var cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(field)[0];
-					if(field.InsertActive){
+					//(field.alignToReposiotion==c$.ALIGN.RIGHT)
+					let cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(field)[0];
+					if (field.alignToReposiotion==c$.ALIGN.RIGHT){
 						this.InsertCharacter(field, char);
 					}else{
-						this.OverwriteCharacter(field, char, cursorPosition);
+						if(field.InsertActive)
+							this.InsertCharacter(field, char);
+						else
+							this.OverwriteCharacter(field, char, cursorPosition);
 					}
 					this.UpdateDataIndex(field);
 				},
-				InsertCharacter : function(field, char){
-					var lastCharacterPosition = field.MaskIndex[field.MaskIndex.length-1];
-					var currentCharacterPosition = this.CurrentDataIndexPosition(field);
-					for(var i=lastCharacterPosition; i>=currentCharacterPosition; i--){
-						field.Data[field.MaskIndex[i+1]] = field.Data[field.MaskIndex[i]];
+				shiftLeft: (field) =>{ // move todos para esquerda uma posicao
+					if (field.Data.length>0){
+						for(let i=0;i<field.MaskIndex.length;i++){
+							field.Data[field.MaskIndex[i]] = field.Data[field.MaskIndex[i+1]];
+						}
 					}
+				},
+				shift: (field,start=0, ct=1) =>{ // move todos para direita uma posicao
+					if (field.Data.length>0){
+						for(let i=start; i<start-ct; i--){
+							field.Data[field.MaskIndex[i+1]] = field.Data[field.MaskIndex[i]];
+						}
+					}
+				},
+				shiftRight: (field,start=field.MaskIndex.length-1) =>{ // move todos para direita uma posicao
+					if (field.Data.length>0){
+						for(let i=start; i>-1; i--){
+							field.Data[field.MaskIndex[i]] = field.Data[field.MaskIndex[i-1]];
+						}
+					}
+				},
+				InsertCharacter : function(field, char){
+					let lastCharacterPosition = field.MaskIndex[field.MaskIndex.length-1];
+					let currentCharacterPosition = this.CurrentDataIndexPosition(field);
+					if (field.alignToReposiotion==c$.ALIGN.RIGHT){
+						this.shiftLeft(field);
+					}else
+					     this.shift(field,lastCharacterPosition, (lastCharacterPosition-currentCharacterPosition));
+					// for(let i=lastCharacterPosition; i>=currentCharacterPosition; i--){
+					// 	field.Data[field.MaskIndex[i+1]] = field.Data[field.MaskIndex[i]];
+					// }
 					field.Data[field.MaskIndex[currentCharacterPosition]] = char;
 				},
 				OverwriteCharacter : function(field, char, cursorPosition){
 					field.Data[cursorPosition] = char;
 				},
 				RemoveCharacterByOverwrite : function(field){
-					var currentCharacterPosition = this.CurrentDataIndexPosition(field);
+					let currentCharacterPosition = this.CurrentDataIndexPosition(field);
 					if(currentCharacterPosition != null){
 						field.Data[field.DataIndex[currentCharacterPosition]] = "";
 					}
 				},
-				RemoveCharacterByShiftLeft : function(field){
-					var lastCharacterPosition = field.DataIndex[field.DataIndex.length-1];
-					var currentCharacterPosition = this.CurrentDataIndexPosition(field);
-					var cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(field)[0];
+				RemoveCharacterByShiftLeft : function(field, pos=0){
+					let lastCharacterPosition = field.DataIndex[field.DataIndex.length-1]
+					  , currentCharacterPosition = this.CurrentDataIndexPosition(field)
+					  , cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(field)[0];
 					
-					if(currentCharacterPosition != null && lastCharacterPosition >= cursorPosition){
-						for(var i=currentCharacterPosition; i<=lastCharacterPosition; i++){
-							field.Data[field.DataIndex[i]] = field.Data[field.DataIndex[i+1]];
-						}
+					if(currentCharacterPosition != null && (lastCharacterPosition >= cursorPosition || (lastCharacterPosition ==0  && lastCharacterPosition == cursorPosition))){
+						if (lastCharacterPosition ==0)
+						    field.Data[field.DataIndex[0]] = field.Data[field.DataIndex[1]];
+						else{
+							for(let i=(currentCharacterPosition+pos); i<=lastCharacterPosition; i++){
+								field.Data[field.DataIndex[i]] = field.Data[field.DataIndex[i+1]];
+							}
+						}	
 						field.Data.length = field.Data.length-1;
 						this.UpdateDataIndex(field);
 					}
 				},
 				UpdateDataIndex : function(field){
 					field.DataIndex.length = 0;
-					for(var i=0; i<field.Data.length; i++){
+					for(let i=0; i<field.Data.length; i++){
 						if(field.Data[i] != undefined) field.DataIndex[field.DataIndex.length] = i;
 					}
 				},
 				CurrentDataIndexPosition : function(field){
-					var cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(field)[0];
-					var currentDataIndexPosition = null;
-					for(var i=0; i<field.MaskIndex.length; i++){
+					let cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(field)[0];
+					let currentDataIndexPosition = null;
+					for(let i=0; i<field.MaskIndex.length; i++){
 						if(field.MaskIndex[i] == cursorPosition){
 							currentDataIndexPosition = i;
 							break;
@@ -409,349 +441,39 @@ var Typecast = {
 			
 			Render : function(field){
 				this.CursorManager.PersistPosition(field);
-				var composite = [];
-				for(var i=0; i<field.Mask.length; i++){
-                                        // By Geraldo - Colocou o IF
-                                        if (field.DefaultText.length>0){
-                                            composite[i] = field.Mask[i];
-					    if(field.DefaultText[i]) composite[i] = field.DefaultText[i];
-                                        }
-					if(field.Data[i]) composite[i] = field.Data[i];
+				let composite = []//, idx=((field.alignToReposiotion==c$.ALIGN.RIGHT)?field.Mask.length:-1);
+				const Pos = index =>({
+					index
+					, get:()=> ++index
+					    //(field.alignToReposiotion==c$.ALIGN.RIGHT) ?--index :++index
+				})
+				const pos=Pos(-1);
+				for(let i=0; i<field.Mask.length; i++){
+					let k = pos.get();
+					if (field.DefaultText.length>0){
+						composite[i] = field.Mask[i];
+						if (field.DefaultText[i]) 
+						    composite[i] = field.DefaultText[i];
+					}
+					if (field.Data[k]) 
+					   composite[i] = field.Data[k];
 				}
 				field.value = composite.join("")
 				
 				this.CursorManager.RestorePosition(field);
 			}
 		},
-		
-//		Suggest : {
-//			FieldID : null,
-//			OutputAreaVisible : false,
-//			InputValueBackup : null,
-//			ResultSet : [],
-//			ResultSetIndex : -1,
-//			
-//			Init: function(){
-//				this.CreateOutputArea();
-//			},
-//			
-//			InitField : function(field){
-//			},
-//			
-//			Run : function(e){
-//				e = (!e) ? window.event : e;
-//				var suggest = Typecast.Behaviours.Suggest;
-//				this.autocomplete = (Typecast.Config.Settings.Suggest.BrowserAutoComplete) ? "on" : "off"; //Reference: http://web.archive.org/web/20031203134351/http://devedge.netscape.com/viewsource/2003/form-autocompletion/
-//				suggest.FieldID = this.id;
-//			},
-//			
-//			Stop : function(e){
-//				e = (!e) ? window.event : e;
-//				var suggest = Typecast.Behaviours.Suggest;
-//				
-//				suggest.HideOutputArea();
-//				suggest.InputValueBackup = null;
-//				suggest.ResultSet.length = 0;
-//				suggest.ClearOutputAreaContents();
-//			},
-//			
-//			KeyHandler : function(e){
-//				e = (!e) ? window.event : e;
-//				var suggest = Typecast.Behaviours.Suggest;
-//				
-//				//Tab
-//				if(e.keyCode==9 && e.type=="keyup"){
-//					return
-//				}
-//				
-//				//Enter
-//				else if(e.keyCode==13 && e.type=="keyup"){
-//					suggest.InputValueBackup = this.value;
-//					suggest.HideOutputArea();
-//					suggest.PartialSelect(this, this.value.length);
-//					return
-//				}
-//				
-//				//Shift
-//				else if(e.keyCode==16 && e.type=="keyup"){
-//					return false
-//				}
-//				
-//				//Esc
-//				else if(e.keyCode==27 && e.type=="keyup"){
-//					suggest.RevertInputValue(this);
-//					suggest.HideOutputArea();
-//					return
-//				}
-//				
-//				//Up
-//				else if(e.keyCode==38 && e.type=="keydown"){
-//					if(suggest.ResultSet.length==0 && this.value.length > 0){
-//						suggest.LookUp(this);
-//						suggest.Render(this);
-//						suggest.InputValueBackup = this.value;
-//					}
-//					suggest.MoveResultSetIndex(-1);
-//					suggest.SuggestInputValue(this);
-//					//return false
-//				}
-//				
-//				//Down
-//				else if(e.keyCode==40 && e.type=="keydown"){
-//					if(suggest.ResultSet.length==0 && this.value.length > 0){
-//						suggest.LookUp(this);
-//						suggest.Render(this);
-//						suggest.InputValueBackup = this.value;
-//					}
-//					suggest.MoveResultSetIndex(1);
-//					suggest.SuggestInputValue(this);
-//					//return false
-//				}
-//				
-//				//Everything else
-//				else if(e.type=="keyup" && e.keyCode!=37 && e.keyCode!=38 && e.keyCode!=39 && e.keyCode!=40){
-//					suggest.LookUp(this);
-//					suggest.Render(this);
-//					suggest.InputValueBackup = this.value;
-//					if(e.keyCode!=8){
-//						suggest.AutoComplete(this);
-//					}
-//				}
-//			},
-//			
-//			MouseUp : function(e){
-//				e = (!e) ? window.event : e;
-//				return
-//			},
-//			
-//			LookUp : function(field){
-//				field = (!field) ? document.getElementById(this.FieldID) : field;
-//				var dictionaries = Typecast.Config.Data.Suggest.Dictionaries;
-//				var dictionary = (eval("dictionaries." + field.id)) ? eval("dictionaries." + field.id) : dictionaries.Default;
-//				dictionary.sort();
-//				var query = Typecast.Utils.CaseSensitize(field.value);
-//
-//				this.ResultSet.length = 0;
-//				
-//				for(var i=0; i<dictionary.length; i++){
-//					if(Typecast.Utils.FindIn(dictionary[i], query) > -1){
-//						this.ResultSet[this.ResultSet.length] = dictionary[i];
-//					}
-//				}
-//			},
-//			
-//			Render : function(field){
-//				field = (!field) ? document.getElementById(this.FieldID) : field;
-//				if (this.ResultSet.length == 0) {
-//					this.HideOutputArea();
-//					return
-//				}
-//				
-//				var outputArea = document.getElementById(Typecast.Config.Settings.Suggest.OutputAreaID);
-//				this.ClearOutputAreaContents();
-//				
-//				var ul = document.createElement("ul");
-//					ul.id = "Suggestions";
-//
-//				for(var i=0; i<this.ResultSet.length && i<Typecast.Config.Settings.Suggest.ResultLimit; i++){
-//					var li = document.createElement("li");
-//					li.id = i;
-//					li.onmouseover = this.MouseOver;
-//					li.onmouseout = this.MouseOut;
-//					
-//					var result = this.BuildHighlightedResult(this.ResultSet[i], field.value);
-//					
-//					li.appendChild(result);
-//					ul.appendChild(li);
-//				}
-//				
-//				outputArea.appendChild(ul);
-//				this.ShowOutputArea(field);
-//			},
-//			
-//			SuggestInputValue : function(field){
-//				if(this.ResultSetIndex == -1) return
-//				field = (!field) ? document.getElementById(this.FieldID) : field;
-//				
-//				if(this.ResultSetIndex>=0){	//arrow
-//					field.value = this.ResultSet[this.ResultSetIndex];
-//				}else{ //typing
-//					field.value += this.ResultSet[this.ResultSetIndex].substring(field.value.length, this.ResultSet[this.ResultSetIndex].length);
-//				}
-//			},
-//			
-//			AutoComplete : function(field){
-//				if(!Typecast.Config.Settings.Suggest.MatchFromStart) return;
-//				field = (!field) ? document.getElementById(this.FieldID) : field;
-//				var startIdx = field.value.length;
-//				
-//				if(this.ResultSet.length > 0){
-//					field.value += this.ResultSet[0].substring(field.value.length, this.ResultSet[0].length);
-//					this.PartialSelect(field, startIdx);
-//				}
-//			},
-//			
-//			PartialSelect : function(field, startIdx){
-//				if(!Typecast.Config.Settings.Suggest.MatchFromStart) return;
-//				field = (!field) ? document.getElementById(this.FieldID) : field;
-//
-//				Typecast.Utils.PartialSelect(field, startIdx, field.value.length);
-//			},
-//			
-//			RevertInputValue : function(field){
-//				field = (!field) ? document.getElementById(this.FieldID) : field;
-//				field.value = (field.value == this.InputValueBackup) ? "" : this.InputValueBackup;
-//			},
-//			
-//			MoveResultSetIndex : function(dir){
-//				if(!this.OutputAreaVisible) return;
-//				if(this.ResultSet.length == 0) return;
-//				if(this.ResultSetIndex == -1 && dir == -1) return //Lower Bound Test
-//				if(this.ResultSetIndex == this.ResultSet.length-1 && dir == 1) return //Upper Bound Test
-//				if(this.ResultSetIndex == Typecast.Config.Settings.Suggest.ResultLimit-1 && dir == 1) return //User Defined Upper Bound Test
-//				
-//				var outputArea = document.getElementById(Typecast.Config.Settings.Suggest.OutputAreaID);
-//				
-//				if(outputArea && this.ResultSetIndex != -1) outputArea.childNodes[0].childNodes[this.ResultSetIndex].className = "";
-//				
-//				this.ResultSetIndex += dir;
-//				
-//				if(outputArea && this.ResultSetIndex == -1) this.RevertInputValue();
-//				if(outputArea && this.ResultSetIndex != -1) outputArea.childNodes[0].childNodes[this.ResultSetIndex].className = "selected";
-//			},
-//			
-//			MouseOver : function(e){
-//				e = (!e) ? window.event : e;
-//				this.className = "selected";
-//				Typecast.Behaviours.Suggest.ResultSetIndex = parseInt(this.id);
-//				Typecast.Behaviours.Suggest.SuggestInputValue();
-//			},
-//			
-//			MouseOut : function(e){
-//				e = (!e) ? window.event : e;
-//				this.className = "";
-//			},
-//			
-//			CreateOutputArea : function(){
-//				var sid = Typecast.Config.Settings.Suggest.OutputAreaID;
-//				var outputAreaExists = (document.getElementById(sid)) ? true : false;
-//				
-//				if(!outputAreaExists){
-//					var outputArea = document.createElement("div");
-//					outputArea.id = sid;
-//				}else{
-//					var outputArea = document.getElementById(sid);
-//				}
-//				outputArea.style.display = "none";
-//				outputArea.style.position = "absolute";
-//				this.OutputAreaVisible = false;
-//				document.body.appendChild(outputArea);
-//			},
-//			
-//			ShowOutputArea : function(field){
-//				field = (!field) ? document.getElementById(this.FieldID) : field;
-//				if(this.OutputAreaVisible) return
-//				if(field.value == "") return
-//				
-//				var outputArea = document.getElementById(Typecast.Config.Settings.Suggest.OutputAreaID);
-//				var xy = Typecast.Utils.GetXY(field);
-//				
-//				if(outputArea){
-//					if(Typecast.Config.Settings.Suggest.IEForceRelative && document.all) outputArea.parentNode.style.position = "relative";
-//					outputArea.style.display = "block";
-//					outputArea.style.left = xy[0] + "px";
-//					outputArea.style.top = xy[1] + field.offsetHeight + "px";
-//					outputArea.style.width = field.offsetWidth + "px";
-//				}else{
-//					Typecast.Behaviours.Suggest.LookUp(this);
-//					Typecast.Behaviours.Suggest.Render(this);
-//				}
-//				this.OutputAreaVisible = true;
-//			},
-//			
-//			HideOutputArea : function(){
-//				if(!this.OutputAreaVisible) return
-//				this.ResultSetIndex = -1;
-//				document.getElementById(Typecast.Config.Settings.Suggest.OutputAreaID).style.display = "none";
-//				this.OutputAreaVisible = false;
-//			},
-//			
-//			ClearOutputAreaContents : function(){
-//				var sid = Typecast.Config.Settings.Suggest.OutputAreaID;
-//				var outputArea = document.getElementById(sid);
-//				
-//				if(outputArea && outputArea.childNodes.length > 0) outputArea.removeChild(outputArea.childNodes[0]);
-//			},
-//			
-//			BuildHighlightedResult : function(str, fragment){
-//				var csStr = Typecast.Utils.CaseSensitize(str);
-//				var csFragment = Typecast.Utils.CaseSensitize(fragment);
-//				var span = document.createElement("span");
-//				var lhs = document.createTextNode(str.substring(0, csStr.indexOf(csFragment)));
-//				var strong = document.createElement("strong");
-//				var highlight = document.createTextNode(str.substring(csStr.indexOf(csFragment), csStr.indexOf(csFragment) + csFragment.length));
-//				var rhs = document.createTextNode(str.substring(csStr.indexOf(csFragment) + csFragment.length, csStr.length));
-//				
-//				strong.appendChild(highlight);
-//				span.appendChild(lhs);
-//				span.appendChild(strong);
-//				span.appendChild(rhs);
-//				
-//				return span
-//			}
-//		}
 	},
 	
 	Utils : {
-		FindClass : function(findClass, parentClass){
-			parentClass = (!parentClass) ? 'Typecast' : parentClass;
-			for(var i in eval(parentClass)){
-				if(i == findClass){
-					return i;
-				}else{
-					var found = Typecast.Utils.FindClass(findClass, parentClass + "." + i);
-					// if something was found send it back up the tree
-					// if the parentClass contains no dots it's the rootClass and should also be tacked on and returned
-					if(found) return (parentClass.indexOf(".") == -1) ? parentClass + "." + i + "." + found : i + "." + found;
-				}
-			}
-		},
-		
 		GenerateID : function(obj){
 			dt = new Date();
 			obj.id = "GenID" + dt.getTime();
 			return obj
 		},
-		
-		FindIn : function(str, fragment){
-			if(!fragment || fragment.length <= 0) return -1
-			var csStrIdx = this.CaseSensitize(str).indexOf(fragment);
-			var matchFromStart = Typecast.Config.Settings.Suggest.MatchFromStart;
-			
-			if(matchFromStart && csStrIdx==0 ) {return csStrIdx}
-			else if(!matchFromStart && csStrIdx!=-1) {return csStrIdx}
-			else {return -1}
-		},
-		
-		CaseSensitize : function(str){
-			var isCaseSensitive = Typecast.Config.Settings.Suggest.isCaseSensitive;
-			return (isCaseSensitive) ? str : str.toLowerCase();
-		},
-		
-		GetXY : function(obj){
-			var x=0;
-			var y=0;
-			while(obj.offsetParent){
-				x+=obj.offsetLeft;
-				y+=obj.offsetTop;
-				obj = obj.offsetParent;
-			}
-			return [x,y]
-		},
-		
 		PartialSelect : function(field, startIdx, endIdx){
 			if(field.createTextRange){
-				var fld= field.createTextRange();
+				let fld= field.createTextRange();
 				fld.moveStart("character", startIdx);
 				fld.moveEnd("character", endIdx - field.value.length);
 				fld.select();

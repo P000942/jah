@@ -377,13 +377,13 @@ TYPE.HELPER = {
 
 class Ma$k{
     constructor(mask){
-        Object.preset(this,{fmt:null, prompt:null, strip:null, mask:null, size:1, TCMask:null});
+        Object.preset(this,{fmt:null, prompt:null, strip:null, mask:null, size:1, TCMask:null, align:c$.ALIGN.LEFT});
         if (mask){
-            Object.setIfExist(this,mask,['strip','empty']);
+            Object.setIfExist(this,mask,['strip','empty','align']);
             if (mask.format){
                 this.TCMask = 'TCMask['+ mask.format +']';
                 this.fmt = mask.format;
-                let vMask = mask.format.split(CONFIG.MASK.FieldDataSeparator);
+                let vMask = mask.format.split(c$.MASK.FieldDataSeparator);
                 this.mask = vMask[0];
                 this.prompt = (vMask.length>1) ? vMask[1] : null;
                 this.size = this.mask.length;
@@ -393,7 +393,7 @@ class Ma$k{
     format (value){return (this.mask)?value.mask(this.mask) :value}
     unformat (value){
         let vl = (this.strip) ?value.stripChar(this.strip) :value.trim();
-        vl = vl.stripChar("_"); // Remover o caracter de prompt
+        vl = vl.stripChar(c$.MASK.Prompt); // Remover o caracter de prompt
         if (this.empty && vl==this.empty)
            vl =''
         return vl;
@@ -401,7 +401,7 @@ class Ma$k{
     render (inputField){
          if (this.TCMask){
              inputField.addClassName(this.TCMask);
-             Typecast.Format(inputField);
+             Typecast.Format(inputField, this);
          }
     }
 }
@@ -415,7 +415,7 @@ class Ma$k{
 //             if (mask.format){
 //                 SELF.TCMask = 'TCMask['+ mask.format +']';
 //                 SELF.format = mask.format;
-//                 var vMask = mask.format.split(CONFIG.MASK.FieldDataSeparator);
+//                 var vMask = mask.format.split(c$.MASK.FieldDataSeparator);
 //                 SELF.mask = vMask[0];
 //                 SELF.prompt = (vMask.length>1) ? vMask[1] : null;
 //                 SELF.size = SELF.mask.length;
@@ -479,6 +479,7 @@ class Legend{
         else
             i$(this.id).content(text);
     }
+    failure=error=>{console.log(error)}
     get =  response => {
         this.hide();
         let text='';
@@ -649,14 +650,16 @@ j$.ui.type.Digit=function(Properties) {
 
 j$.ui.type.Numeric=function(size,decimal, Properties){
    this.inherit = superType;
-   let mask = '#'.repeat(size);
-   let _size = size;
+   let mask = '#'.repeat(size)
+    , decimalChar=c$.MASK.DecimalCharacter
+    , _size = size;
    if (decimal){
-      mask += ','+'#'.repeat(decimal);
+      mask += decimalChar+'#'.repeat(decimal);
       //mask += '|'+'_'.repeat(size)+','+'_'.repeat(decimal);
       _size = size+decimal+1;
    }
-   this.inherit({size:_size, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isNumeric();}, error:ERROR.MESSAGE.Numeric}, mask:{format:mask}}, Properties);
+   this.inherit({size:_size, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isNumeric(decimal);}, error:ERROR.MESSAGE.Numeric}
+               , mask:{format:mask+"|"+mask.replace(/#/g,"_"), strip:decimalChar, empty:decimalChar, align:c$.ALIGN.RIGHT}}, Properties);
 }
 j$.ui.type.Integer=function(size, Properties){
    this.inherit = superType;
@@ -665,8 +668,10 @@ j$.ui.type.Integer=function(size, Properties){
 
 j$.ui.type.Money=function(size, Properties){
    this.inherit = superType;
-   var mask = '9'.repeat(size-3)+'0,'+'00';
-   this.inherit({size:size+1, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isNumeric();}, error:ERROR.MESSAGE.Money}, mask:{format:mask, empty:','}}, Properties);
+   let decimalChar=c$.MASK.DecimalCharacter;
+   let mask = '9'.repeat(size-3)+'0'+decimalChar+'00';
+   this.inherit({size:size+1, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isDecimal(2);}, error:ERROR.MESSAGE.Money}
+               , mask:{format:mask+"|"+mask.replace(/[0|9]/g,"_"), strip:decimalChar, empty:decimalChar, align:c$.ALIGN.RIGHT}}, Properties);
    this.format= value=> {return dataExt.format.money(value); };
 }
 

@@ -419,11 +419,17 @@ String.prototype.isDigit = function(){
 }
 //Test$.Digit(''); Test$.Digit('23,59'); Test$.Digit('00,00'); Test$.Digit('24');Test$.Digit('1'); Test$.Digit('A'); Test$.Digit('100000001,1'), Test$.Digit('1,A');Test$.Digit('A,1');
 
-String.prototype.isNumeric = function(){
+String.prototype.isNumeric = function(decimal=0){
     let expReg =/(\d{1,}[,]{1}\d{1,})|(^\d+$)/;
     return (!this.regexValidate(expReg))?false:true;
 }
 //Test$.Numeric('23,59'); Test$.Numeric('00,00'); Test$.Numeric('24'); Test$.Numeric('1');Test$.Numeric('12,132'); Test$.Numeric('A'); Test$.Numeric('100000001,1'), Test$.Numeric('1,A');Test$.Numeric('A,1');
+String.prototype.isDecimal = function(decimal=0){
+    let expReg =/(\d{1,}[,]{1}\d{1,})|(^\d+$)/;
+    return (!this.regexValidate(expReg))?false:true;
+}
+//Test$.Numeric('23,59'); Test$.Numeric('00,00'); Test$.Numeric('24'); Test$.Numeric('1');Test$.Numeric('12,132'); Test$.Numeric('A'); Test$.Numeric('100000001,1'), Test$.Numeric('1,A');Test$.Numeric('A,1');
+
 
 String.prototype.isInteger = function(){
     return (!this.regexValidate(/^[0-9]{1,}$/))?false:true;

@@ -10,6 +10,24 @@ const c$ = {  NOW: new Date()
            ,  KEY:{F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123
                 , TAB:9, ENTER:13, ESC:27, COMMA:44, BACKSPACE:8, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, INS:45, DEL:46, REFRESH:116}
            ,FILTER:{}
+           ,  MASK:{
+            FieldDataSeparator : "|",
+            Prompt: "_",
+            DecimalCharacter : ",",
+            MaskCharacters : {
+                    Numeric : "#90",
+                    Alpha : "@aA"
+            },
+            AllowInsert : true,
+            LowerCaseCharacter:'a',
+            UpperCaseCharacter:'A',
+            DisplayMaskCharacters : false, //Display mask characters when default text is not present
+            MASKS : {
+                    fax: "(###) ###-####,(   )    -    ",
+                    cpx: "###.###.###-##,___.___.___-__"
+            }
+
+     }
 }
 // c$.NOW = new Date();
 // c$.KEY = {F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123,
@@ -96,23 +114,24 @@ const CONFIG = {
    //                 ,  MODAL:3
    //                 }
    // }
-   , MASK:{
-                FieldDataSeparator : "|",
-                DecimalCharacter : ",",
-                MaskCharacters : {
-                        Numeric : "#90",
-                        Alpha : "@aA"
-                },
-                AllowInsert : true,
-                LowerCaseCharacter:'a',
-                UpperCaseCharacter:'A',
-                DisplayMaskCharacters : false, //Display mask characters when default text is not present
-                MASKS : {
-                        fax: "(###) ###-####,(   )    -    ",
-                        cpx: "###.###.###-##,___.___.___-__"
-                }
+//    , MASK:{
+//                 FieldDataSeparator : "|",
+//                 Prompt: "_",
+//                 DecimalCharacter : ",",
+//                 MaskCharacters : {
+//                         Numeric : "#90",
+//                         Alpha : "@aA"
+//                 },
+//                 AllowInsert : true,
+//                 LowerCaseCharacter:'a',
+//                 UpperCaseCharacter:'A',
+//                 DisplayMaskCharacters : false, //Display mask characters when default text is not present
+//                 MASKS : {
+//                         fax: "(###) ###-####,(   )    -    ",
+//                         cpx: "###.###.###-##,___.___.___-__"
+//                 }
 
-         }
+//          }
     , BOOLEAN:{'true':{value:true, text:'sim'}, 'false':{value:false, text:'Não'}}
     , LAYOUT:{CONTENT:'content', ALERT_CONTENT:'wrapAlert'}
     , ACTION:{
