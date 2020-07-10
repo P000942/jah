@@ -253,35 +253,35 @@ Date.prototype.format = function (mask, utc) {
 };
 
 var Test$ = function(){
-    return{Date:function(value){console.log("isDate('"    +value+ "'):"+ value.isDate())},
-          Digit:function(value){console.log("isDigit('"   +value+ "'):"+ value.isDigit())},
-         Letter:function(value){console.log("isLetter('"  +value+ "'):"+ value.isLetter())},
-        Integer:function(value){console.log("isInteger('" +value+ "'):"+ value.isInteger())},
-        Numeric:function(value){console.log("isNumeric('" +value+ "'):"+ value.isNumeric())},
-          Money:function(value){console.log("isMoney('"   +value+ "'):"+ value.isMoney())},
-          Email:function(value){console.log("isMail('"    +value+ "'):"+ value.isEmail())},
-           Hour:function(value){console.log("isHour('"    +value+ "'):"+ value.isHour())},
-         isName:function(value){console.log('"' +value+ '".isName() -> '+ value.isName())},
-          Phone:function(value){console.log("Phone('"     +value+ "'):"+ value.isPhone())},
-           Mask:function(value,mask){console.log("'"+value+"'.mask("+mask+"):"+ value.mask(mask))},
-  isValidInMask:function(value,mask){console.log("'"+value+"'.isValidInMask("+mask+"):"+ value.isValidInMask(mask))},
-          Empty:function(value){console.log("isEmpty('"   +value+ "'):"+ value.isEmpty())}
+    return{Date:value=>{console.log("isDate('"    +value+ "'):"+ value.isDate())},
+          Digit:value=>{console.log("isDigit('"   +value+ "'):"+ value.isDigit())},
+         Letter:value=>{console.log("isLetter('"  +value+ "'):"+ value.isLetter())},
+        Integer:value=>{console.log("isInteger('" +value+ "'):"+ value.isInteger())},
+        Numeric:value=>{console.log("isNumeric('" +value+ "'):"+ value.isNumeric())},
+          Money:value=>{console.log("isMoney('"   +value+ "'):"+ value.isMoney())},
+          Email:value=>{console.log("isMail('"    +value+ "'):"+ value.isEmail())},
+           Hour:value=>{console.log("isHour('"    +value+ "'):"+ value.isHour())},
+         isName:value=>{console.log('"' +value+ '".isName() -> '+ value.isName())},
+          Phone:value=>{console.log("Phone('"     +value+ "'):"+ value.isPhone())},
+           Mask:(value,mask)=>{console.log("'"+value+"'.mask("+mask+"):"+ value.mask(mask))},
+  isValidInMask:(value,mask)=>{console.log("'"+value+"'.isValidInMask("+mask+"):"+ value.isValidInMask(mask))},
+          Empty:value=>{console.log("isEmpty('"   +value+ "'):"+ value.isEmpty())}
     }
 }();
 
 var Testa = function(){
-    return{CPF:function(value){console.log('ehCpf('     +value+ '):'+ value.ehCpf())},
-          CNPJ:function(value){console.log('ehCnpj('    +value+ '):'+ value.ehCnpj())},
-           CCA:function(value){console.log('ehCca('     +value+ '):'+ value.ehCca())},
-           CEP:function(value){console.log('ehCep('     +value+ '):'+ value.ehCep())},
-         Placa:function(value){console.log('ehPlaca('    +value+ '):'+ value.ehPlaca())},
-          AIDF:function(value){console.log('ehAidf('    +value+ '):'+ value.ehAidf())},
-          CNAE:function(value){console.log('ehCNAE('    +value+ '):'+ value.ehCNAE())},
-      Processo:function(value){console.log('ehProcesso('+value+ '):'+ value.ehProcesso())},
-digitoModule11:function(value,dig,lim){console.log('Module11('   +value+ '):'+ value.module11(dig,lim))},
-     digitoCpf:function(value,dig,lim){console.log('digitoCpf('  +value+ '):'+ value.digitoCpf())},
-    digitoCnpj:function(value,dig,lim){console.log('digitoCnpj(' +value+ '):'+ value.digitoCnpj())},
-    digitoCca:function(value,dig,lim){console.log('digitoCca('   +value+ '):'+ value.digitoCca())}
+    return{CPF:value=>{console.log('ehCpf('     +value+ '):'+ value.ehCpf())},
+          CNPJ:value=>{console.log('ehCnpj('    +value+ '):'+ value.ehCnpj())},
+           CCA:value=>{console.log('ehCca('     +value+ '):'+ value.ehCca())},
+           CEP:value=>{console.log('ehCep('     +value+ '):'+ value.ehCep())},
+         Placa:value=>{console.log('ehPlaca('    +value+ '):'+ value.ehPlaca())},
+          AIDF:value=>{console.log('ehAidf('    +value+ '):'+ value.ehAidf())},
+          CNAE:value=>{console.log('ehCNAE('    +value+ '):'+ value.ehCNAE())},
+      Processo:value=>{console.log('ehProcesso('+value+ '):'+ value.ehProcesso())},
+digitoModule11:(value,dig,lim)=>{console.log('Module11('   +value+ '):'+ value.module11(dig,lim))},
+     digitoCpf:(value,dig,lim)=>{console.log('digitoCpf('  +value+ '):'+ value.digitoCpf())},
+    digitoCnpj:(value,dig,lim)=>{console.log('digitoCnpj(' +value+ '):'+ value.digitoCnpj())},
+     digitoCca:(value,dig,lim)=>{console.log('digitoCca('   +value+ '):'+ value.digitoCca())}
     }
 }();
 
@@ -381,8 +381,6 @@ String.prototype.isName = function(){
 //Test$.isName(" Geraldo  ");
 //Test$.isName(" Geraldo A ");
 //Test$.isName(" A Gomes ");
-
-
 
 String.prototype.isLetter = function(){
 //    return (!this.regexValidate(/^[:alpha:]/))?false:true;
