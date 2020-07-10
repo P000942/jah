@@ -755,7 +755,7 @@ j$.ui.Form=function(service, modal) {
     this.init= function(externalController) {
         j$.ui.Page.Designer.create($i); // cria os fields
         $i.Buttons.create($i.footer);   // cria os buttoes
-        Typecast.Init();                // inicializa as máscaras
+       // Typecast.Init(service.Interface);              // inicializa as máscaras (já é inicializado qdo a mask é redenrizado em cada input)
         if (service.Interface.List){
            if (service.Interface.List===true){service.Interface.List={};}
            $i.List = new j$.ui.Grid($i, $i.footer); // cria o grid

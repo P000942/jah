@@ -5,70 +5,68 @@ by Ara Pehlivanian (http://arapehlivanian.com)
 This work is licensed under a Creative Commons Licence
 http://creativecommons.org/licenses/by-nd/2.5/
 */
-
 const Typecast = {
 	InitMask : false,
 	InitSuggest : false,
 	
-	Init : function(){
-		this.Parse(document.body.getElementsByTagName("input"));
+	Init : function(formId){
+		let inputs = (formId) ?$(`#${formId}`).find("input") :$("input") ;
+		this.Parse(inputs);
 		this.Behaviours.Mask.Init();
 	//	this.Behaviours.Suggest.Init();
 	},
 	
-	Parse : function(nodes){
-		
-		for(let i=0; i<nodes.length; i++){
-		   this.Format(nodes[i]);	
+	Parse : function(inputs){
+		for(let i=0; i<inputs.length; i++){
+		   this.Format(inputs[i]);	
 		}
 	}
-        , Format : function(field, maskProperties){
-			if(field.type=="text" && field.className && field.className.indexOf("TC") != -1){
-				if(!field.id) Typecast.Utils.GenerateID(field);
-				
-				let behaviourName = (field.className.indexOf("[") != -1) ? field.className.substring(field.className.indexOf("TC")+2, field.className.indexOf("[")) : field.className.substring(field.className.indexOf("TC")+2, field.className.length);
-				let behaviour     = Typecast.Behaviours[behaviourName]
-				Typecast["Init" + behaviourName] = true;
-				behaviour.InitField(field);
+	, Format : function(field, maskProperties){
+		if(field.type=="text" && field.className && field.className.indexOf("TC") != -1 && dataExt.isDefined(field.Mask)==false){
+			if(!field.id) Typecast.Utils.GenerateID(field);
+			
+			let behaviourName = (field.className.indexOf("[") != -1) ? field.className.substring(field.className.indexOf("TC")+2, field.className.indexOf("[")) : field.className.substring(field.className.indexOf("TC")+2, field.className.length);
+			let behaviour     = Typecast.Behaviours[behaviourName]
+			Typecast["Init" + behaviourName] = true;
+			behaviour.initField(field, maskProperties);
 
-				field.onfocus    = behaviour.Run;
-				field.onkeyup    = behaviour.KeyUpHandler;
-				field.onkeypress = behaviour.KeyHandler;
-				field.onblur     = behaviour.Stop;
-				field.onmouseup  = behaviour.MouseUp;
-				if (!maskProperties) {
-					if (!field.alignToReposiotion)
-				       field.alignToReposiotion = c$.ALIGN.LEFT;
-				}else
-				   field.alignToReposiotion =maskProperties.align;
-			}            
-        }
+			field.onfocus    = behaviour.onFocusHandler;
+			field.onkeyup    = behaviour.keyUpHandler;
+			field.onkeypress = behaviour.keyPressHandler;
+			field.onblur     = behaviour.lostFocusHandler;
+			field.onmouseup  = behaviour.mouseUpHandler;
+		}            
+	}
 	
 	, Behaviours : {
 		Mask : {
 			Init : ()=>{},
 			
-			InitField : field=>{
-				let fieldData = [];
-				let fld = (c$.MASK.MASKS[field.id])?c$.MASK.MASKS[field.id]:null;
-				if(!fld){
+			initField : (field, maskProperties)=>{
+				let fieldData = []
+				//#todo: {id} não é uma boa opcao - melhor ver algo específico do html5
+				  , fld = (c$.MASK.MASKS[field.id]) ?c$.MASK.MASKS[field.id] :null;
+				if(!fld)
 					fieldData = field.className.substring(field.className.indexOf("[")+1, field.className.indexOf("]"))
-				}else{
-					fieldData = fld;//eval("c$.MASK.MASKS." + field.id);
-				}
+				else
+					fieldData = fld;
 				Typecast.Behaviours.Mask.ParseFieldData(field, fieldData);
-                                // By Geraldo - antes retornava direto field.DefaultText.join("")
-				field.value = (field.DefaultText.length>0)?field.DefaultText.join(""):field.DefaultText;
+				field.value = (field.DefaultText.length>0) ?field.DefaultText.join("") :field.DefaultText;
+				if (!maskProperties) {
+					if (!field.alignToReposiotion)
+						field.alignToReposiotion = c$.ALIGN.LEFT;
+				}else
+					field.alignToReposiotion =maskProperties.align;
 			},
 			
-			Run : (e=window.event)=>{
+			onFocusHandler : (e=window.event)=>{
 				if (e.target.alignToReposiotion==c$.ALIGN.RIGHT)
 				   Typecast.Behaviours.Mask.CursorManager.Reposition(e.target);
 			},
 			
-			Stop : ()=>{},
+			lostFocusHandler : ()=>{},
 			
-			KeyUpHandler : function(e=window.event){
+			keyUpHandler : function(e=window.event){
 				//e = (!e) ? window.event : e;
 				let keyNum=(window.event)?parseInt(e.keyCode):e.which
 				  , mask = Typecast.Behaviours.Mask;
@@ -77,11 +75,10 @@ const Typecast = {
                 }else if(keyNum==c$.KEY.ESC){}
 				else{}
 				if(keyNum==c$.KEY.DEL){
-					if(this.InsertActive){
+					if(this.InsertActive)
 						mask.DataManager.RemoveCharacterByShiftLeft(this);
-					}else{
+					else
 						mask.DataManager.RemoveCharacterByOverwrite(this);
-					}
 					mask.Render(this);
 				}
 				if(keyNum==c$.KEY.BACKSPACE && (this.AllowInsert || this.alignToReposiotion==c$.ALIGN.RIGHT)){
@@ -96,13 +93,11 @@ const Typecast = {
 							mask.DataManager.RemoveCharacterByShiftLeft(this,1);
 					}
 					mask.Render(this);
-						//mask.CursorManager.Move(this, 1);
 					mask.CursorManager.Reposition(this);
 				}
 				return false;
 			},
-			KeyHandler : function(e= window.event){
-				//e = (!e) ? window.event : e;
+			keyPressHandler : function(e= window.event){
 				let mask = Typecast.Behaviours.Mask;
 
 				mask.CursorManager.TabbedInSetPosition(this);
@@ -112,18 +107,6 @@ const Typecast = {
 				maskCurrent=mask.MaskManager.CurrentMaskCharacter(this);
 
 				keychar = String.fromCharCode(keyNum)
-
-                                // console.log('EVENT:'+e.type+'; which:' +e.which + '; keyCode:' + e.keyCode  + '; keynum:' + keyNum+'; keyChar:'+keychar+' maskCurrent:'+maskCurrent);
-
-				// if(keyNum==c$.KEY.BACKSPACE && this.AllowInsert){
-				// 	var preBackspaceCursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0];
-				// 	mask.CursorManager.Move(this, -1);
-				// 	var postBackspaceCursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0];
-
-				// 	if(preBackspaceCursorPosition != postBackspaceCursorPosition) mask.DataManager.RemoveCharacterByShiftLeft(this,1);
-				// 	mask.Render(this);
-				// 	mask.CursorManager.Move(this, 1);
-				// }
 
 				if(keyNum==c$.KEY.TAB){return}
 
@@ -136,30 +119,17 @@ const Typecast = {
 					mask.CursorManager.Move(this, -1);
 				}else if(keyNum==c$.KEY.RIGHT  || keyNum==c$.KEY.DOWN){
 					mask.CursorManager.Move(this, 1);
-				}else if(keyNum==c$.KEY.INS && this.AllowInsert){
+				}else if(keyNum==c$.KEY.INS && this.AllowInsert)
 					mask.CursorManager.ToggleInsert(this);
-				}else if(keyNum==c$.KEY.DEL){
-					if(this.InsertActive){
-						mask.DataManager.RemoveCharacterByShiftLeft(this);
-					}else{
-						mask.DataManager.RemoveCharacterByOverwrite(this);
-					}
-					mask.Render(this);
-				}
 				//Numeric Characters
-				//else if((mask.MaskManager.CurrentMaskCharacter(this) == Typecast.Config.Settings.Mask.MaskCharacters.Numeric) && (e.keyCode>=48 && e.keyCode<=57 && e.type=="keydown" || e.keyCode>=96 && e.keyCode<=105 && e.type=="keydown")){
-                                //else if((Typecast.Config.Settings.Mask.MaskCharacters.Numeric.indexOf(maskCurrent)!=-1) && (keyNum>=48 && keyNum<=57)){
                 else if((c$.MASK.MaskCharacters.Numeric.indexOf(maskCurrent)!=-1) && (keychar.isDigit()) ||
                         (keychar==c$.MASK.DecimalCharacter) && this.value.indexOf(c$.MASK.DecimalCharacter)==-1 && this.value.trim().length>0 && this.hasDecimalCharacter) {                                        
 					mask.DataManager.AddData(this, keychar);
 					mask.Render(this);
-					//mask.CursorManager.Move(this, 1);
 					mask.CursorManager.Reposition(this);
                                         //console.log(this.Mask)
 				}
 				//Alpha Characters 65 - 90
-                                // By Geraldo Gomes
-                                //else if((Typecast.Config.Settings.Mask.MaskCharacters.Alpha.indexOf(maskCurrent)!=-1) && (keyNum>=65 && keyNum<=90 || keyNum>=97 && keyNum<=122)){
                 else if((c$.MASK.MaskCharacters.Alpha.indexOf(maskCurrent)!=-1) && (keychar.isLetter())){
 				     if (maskCurrent==c$.MASK.LowerCaseCharacter){
 						keychar=keychar.toLowerCase()
@@ -168,20 +138,14 @@ const Typecast = {
 					 }                                       
 					 mask.DataManager.AddData(this, keychar);
 					 mask.Render(this);
-					 //mask.CursorManager.Move(this, 1);
 					 mask.CursorManager.Reposition(this);
 				}
-
 				//Refresh
-				else if(keyNum==c$.KEY.REFRESH){
-					return
-				}
-
-				else{
-				}
+				else if(keyNum==c$.KEY.REFRESH){ return}
+				else{}
 				return false;
 			},
-			MouseUp : function(e=window.event){
+			mouseUpHandler : function(e=window.event){
 				//e = (!e) ? window.event : e;
 				if (this.alignToReposiotion==c$.ALIGN.RIGHT)
 					Typecast.Behaviours.Mask.CursorManager.Reposition(this);
