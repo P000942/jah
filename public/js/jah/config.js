@@ -11,22 +11,36 @@ const c$ = {  NOW: new Date()
                 , TAB:9, ENTER:13, ESC:27, COMMA:44, BACKSPACE:8, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, INS:45, DEL:46, REFRESH:116}
            ,FILTER:{}
            ,  MASK:{
-            FieldDataSeparator : "|",
-            Prompt: "_",
-            DecimalCharacter : ",",
-            MaskCharacters : {
-                    Numeric : "#90",
-                    Alpha : "@aA"
-            },
-            AllowInsert : true,
-            LowerCaseCharacter:'a',
-            UpperCaseCharacter:'A',
-            DisplayMaskCharacters : false, //Display mask characters when default text is not present
-            MASKS : {
-                    fax: "(###) ###-####,(   )    -    ",
-                    cpx: "###.###.###-##,___.___.___-__"
-            }
-
+                    FieldDataSeparator : "|"
+                  , Prompt: "_"
+                  , DecimalCharacter : ","
+                  , ThousandsSeparator : "."
+                  , MaskCharacters : {
+                            Numeric : "#90"
+                           , Alpha : "@aA"
+                    }
+                  , AllowInsert : true
+                  , LowerCaseCharacter:'a'
+                  , UpperCaseCharacter:'A'
+                  , DisplayMaskCharacters : false //Display mask characters when default text is not present
+                  , MASKS : { // o Typecast identifica por uma propriedade do html #todo: Qual?
+                            fax: "(###) ###-####,(   )    -    "
+                          , cpx: "###.###.###-##,___.___.___-__"
+                    }
+                  , DATE :{
+                        "default":      "dd/mm/yyyy"
+                        , shortDate:      "d/m/yy"
+                        , mediumDate:     "mmm d, yyyy"
+                        , longDate:       "mmmm d, yyyy"
+                        , fullDate:       "dddd, mmmm d, yyyy"
+                        , shortTime:      "HH:MM"//"h:MM TT",
+                        , mediumTime:     "h:MM:ss TT"
+                        , longTime:       "h:MM:ss TT Z"
+                        , isoDate:        "yyyy-mm-dd"
+                        , isoTime:        "HH:MM:ss"
+                        , isoDateTime:    "yyyy-mm-dd'T'HH:MM:ss"
+                        , isoUtcDateTime: "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'"
+                }  
      }
 }
 // c$.NOW = new Date();
@@ -114,24 +128,6 @@ const CONFIG = {
    //                 ,  MODAL:3
    //                 }
    // }
-//    , MASK:{
-//                 FieldDataSeparator : "|",
-//                 Prompt: "_",
-//                 DecimalCharacter : ",",
-//                 MaskCharacters : {
-//                         Numeric : "#90",
-//                         Alpha : "@aA"
-//                 },
-//                 AllowInsert : true,
-//                 LowerCaseCharacter:'a',
-//                 UpperCaseCharacter:'A',
-//                 DisplayMaskCharacters : false, //Display mask characters when default text is not present
-//                 MASKS : {
-//                         fax: "(###) ###-####,(   )    -    ",
-//                         cpx: "###.###.###-##,___.___.___-__"
-//                 }
-
-//          }
     , BOOLEAN:{'true':{value:true, text:'sim'}, 'false':{value:false, text:'Não'}}
     , LAYOUT:{CONTENT:'content', ALERT_CONTENT:'wrapAlert'}
     , ACTION:{

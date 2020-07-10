@@ -94,9 +94,9 @@ String.prototype.stripChar = function (delimiters){
   r = r.replace(eval(er),'');
   return r;
 };
-//alert('04.150.945-5'.stripChar(['.','-'])); alert('04 150.945-5'.stripChar(['.','-', ' ']));
-//alert('04.150.945-5'.stripChar('.-')); alert('04 150.94 55/0001-5'.stripChar('/. -'));
-//alert('04 150.945-5'.replace(/\s|[.-]/gi, ''));
+//console.log('04.150.945-5'.stripChar(['.','-'])); console.log('04 150.945-5'.stripChar(['.','-', ' ']));
+//console.log('04.150.945-5'.stripChar('.-')); console.log('04 150.94 55/0001-5'.stripChar('/. -'));
+//console.log('04 150.945-5'.replace(/\s|[.-]/gi, ''));
 //console.log("José Geraldo Ferreira Gomes".replace(/\s|[' ']/gi, ''));
 
 String.prototype.startsWith=function(pattern) {
@@ -112,7 +112,7 @@ String.preset= function(value, vlDefault='') {
 
 //window.document.write("<span id='w_len' style='display:none;'>X</span>");
 /*Função que padroniza valor*/
-function numberFormat( number, decimals, dec_point, thousands_sep ) {
+function numberFormat( value, decimals=2, dec=c$.MASK.DecimalCharacter, sep=c$.MASK.ThousandsSeparator ) {
     // %        nota 1: Para 1000.55 retorna com precisão 1
     //                 no FF/Opera é 1,000.5, mas no IE é 1,000.6
     // *     exemplo 1: number_format(1234.56);
@@ -128,34 +128,31 @@ function numberFormat( number, decimals, dec_point, thousands_sep ) {
     // *     exemplo 6: number_format(67.311, 2);
     // *     retorno 6: '67.31'
 
-    let n = number, prec = decimals;
-    n = !isFinite(+n) ? 0 : +n;
-    prec = !isFinite(+prec) ? 0 : Math.abs(prec);
-    let sep = (typeof thousands_sep == "undefined") ? '.' : thousands_sep;
-    let dec = (typeof dec_point == "undefined") ? ',' : dec_point;
+    //let n = number //, prec = decimals;
+    value = !isFinite(+value) ? 0 : +value;
+    decimals = !isFinite(+decimals) ? 0 : Math.abs(decimals);
 
-    let s = (prec > 0) ? n.toFixed(prec) : Math.round(n).toFixed(prec);
+    let s = (decimals > 0) ? value.toFixed(decimals) : Math.round(value).toFixed(decimals);
       //fix for IE parseFloat(0.55).toFixed(0) = 0;
 
-    let abs = Math.abs(n).toFixed(prec);
+    let abs = Math.abs(value).toFixed(decimals);
     let _, i;
 
     if (abs >= 1000) {
         _ = abs.split(/\D/);
         i = _[0].length % 3 || 3;
 
-        _[0] = s.slice(0,i + (n < 0)) +
+        _[0] = s.slice(0,i + (value < 0)) +
               _[0].slice(i).replace(/(\d{3})/g, sep+'$1');
 
         s = _.join(dec);
-    } else {
+    } else 
         s = s.replace('.', dec);
-    }
 
     return s;
 }
 
-var dateFormat = function () {
+const dateFormat = function () {
 	let	token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
 		timezone = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g,
 		timezoneClip = /[^-+\dA-Z]/g,
@@ -180,7 +177,7 @@ var dateFormat = function () {
 		date = date ? new Date(date) : new Date;
 		if (isNaN(date)) throw SyntaxError("Data Inv�lida");
 
-		mask = String(dF.masks[mask] || mask || dF.masks["default"]);
+		mask = String(c$.MASK.DATE[mask] || mask || c$.MASK.DATE["default"]);
 
 		// Allow setting the utc argument via the mask
 		if (mask.slice(0, 4) == "UTC:") {
@@ -234,21 +231,9 @@ var dateFormat = function () {
 	};
 }();
 
-// Some common format strings
-dateFormat.masks = {
-	"default":      "dd/mm/yyyy",
-	shortDate:      "d/m/yy",
-	mediumDate:     "mmm d, yyyy",
-	longDate:       "mmmm d, yyyy",
-	fullDate:       "dddd, mmmm d, yyyy",
-	shortTime:      "h:MM TT",
-	mediumTime:     "h:MM:ss TT",
-	longTime:       "h:MM:ss TT Z",
-	isoDate:        "yyyy-mm-dd",
-	isoTime:        "HH:MM:ss",
-	isoDateTime:    "yyyy-mm-dd'T'HH:MM:ss",
-	isoUtcDateTime: "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'"
-};
+//c$.NOW.format("dd/mm/yyyy")
+//c$.NOW.format("HH:MM:ss")
+//c$.NOW.format(c$.MASK.DATE.default)
 
 // Internationalization strings
 dateFormat.i18n = {
@@ -552,57 +537,57 @@ String.prototype.isValidInMask = function(mask){
 //        i$('w_len').innerHTML = "X".repeat(this.length + 1);
 //        return {width:i$('w_len').getWidth(), height:i$('w_len').getHeight()};
 // }
-// //alert("123451234512".pixel(10).width);
-// //alert("123451234512".pixel(10).height);
+// //console.log("123451234512".pixel(10).width);
+// //console.log("123451234512".pixel(10).height);
 // String.prototype.point = function(fontSize){
 // 	   i$('w_len').style.fontSize=fontSize + "pt";
 //        i$('w_len').innerHTML = "X".repeat(this.length + 1);
 //        return {width:i$('w_len').getWidth(), height:i$('w_len').getHeight()};
 // }
-// //alert("123451234512".point(10).width);
-// //alert("123451234512".point(10).height);
+// //console.log("123451234512".point(10).width);
+// //console.log("123451234512".point(10).height);
 
 var dataExt = function(){
     return {
-        init:function(){return true;}
-      , type:function(obj){
-             return Object.prototype.toString.call(obj).match(/^\[object (.*)\]$/)[1];
-        }
-      ,    isArray:function(obj){ return (dataExt.type(obj)==='Array');}
-      ,   isString:function(obj){ return (dataExt.type(obj)==='String');}
-      ,    isValue:function(obj){ return (dataExt.type(obj)==='String' || dataExt.type(obj)==='Number');}
-      ,   isNumber:function(obj){ return (dataExt.type(obj)==='Number');}
-      ,   isObject:function(obj){ return (dataExt.type(obj)==='Object');}
-      ,     isCrud:function(obj){
-                return (dataExt.isDefined(obj))
-                      ?(obj.constructor.name==='Crud')
-                      :false;
-            }
-      , isFunction:function(obj){ return (dataExt.type(obj)==='Function');}
-      ,  isDefined: obj => {  return (obj==null || obj==undefined)
-                              ?false
-                              :true;
-                           }
+              init:()=>true
+      ,       type:obj=>{return Object.prototype.toString.call(obj).match(/^\[object (.*)\]$/)[1]}
+      ,    isArray:obj=>{return (dataExt.type(obj)==='Array')}
+      ,   isString:obj=>{return (dataExt.type(obj)==='String')}
+      ,    isValue:obj=>{return (dataExt.type(obj)==='String' || dataExt.type(obj)==='Number')}
+      ,   isNumber:obj=>{return (dataExt.type(obj)==='Number')}
+      ,   isObject:obj=>{return (dataExt.type(obj)==='Object')}
+      ,     isCrud:obj=>{return (dataExt.isDefined(obj)) ?(obj.constructor.name==='Crud') :false}
+      , isFunction:obj=>{return (dataExt.type(obj)==='Function')}
+      ,  isDefined:obj=>{return (obj==null || obj==undefined) ?false :true}
     };
 }();
-//if (dataExt.type('resource') == 'String')
-//alert(dataExt.type({a:'1', b:'2'}))
-//alert(dataExt.type(['1''2'))
-//alert(dataExt.type(function(){return false}))
-//console.log(dataExt.type({a:1, b:2}))
-//console.log(dataExt.type('a'))
-//console.log(dataExt.type([1, 2]))
-//console.log(dataExt.type(1))
-
+// console.log("dataExt.type('resource'): "    , dataExt.type('resource'))
+// console.log("dataExt.type(1): "             , dataExt.type(1))
+// console.log("dataExt.type({a:'1', b:'2'}): ", dataExt.type({a:'1', b:'2'}))
+// console.log("dataExt.type({a:1, b:2}): "    , dataExt.type({a:1, b:2}))
+// console.log("dataExt.type(['1','2']): "     , dataExt.type(['1','2']))
+// console.log("dataExt.type(()=>false): "     , dataExt.type(()=>false))
+// console.log("dataExt.isString('resource'): ", dataExt.isString('resource'))
+// console.log("dataExt.isNumber(1): "         , dataExt.isNumber(1))
+// console.log("dataExt.dataExt.isArray([1, 2]): ", dataExt.isArray([1, 2]))
+// console.log("dataExt.dataExt.isArray(1): "  , dataExt.isArray(1))
+// console.log("dataExt.isObject({a:'1', b:'2'}): ", dataExt.isObject({a:'1', b:'2'}))
+// console.log("dataExt.isObject({a:1, b:2}): ", dataExt.isObject({a:1, b:2}))
+// console.log("dataExt.isObject(1): "         , dataExt.isObject(1))
+// console.log("dataExt.isFunction(()=>false): ", dataExt.isFunction(()=>false))
+// console.log("dataExt.isValue(1): "          , dataExt.isValue(1)) 
+// console.log("dataExt.isValue('resource'): " , dataExt.isValue("resource"))
+// console.log("dataExt.dataExt.isValue([1,2]): ", dataExt.isValue([1,2]))
+// console.log("dataExt.isDefined('resource'): ", dataExt.isDefined('resource'))
+// console.log("dataExt.isDefined(): "         , dataExt.isDefined())
 
 dataExt.format = function(){
     return {
-        money:function(p_value){
-            let decimal =2;
-            let value = p_value.toString().replace(/[',']/gi,'.');
-           return numberFormat(value, decimal);
+        money:value=>{
+           value = value.toString().replace(",",'.');
+           return numberFormat(value, 2);
         }
-      ,record:function(name, parent){
+      ,record:(name, parent)=>{
           if (parent){
              parent.id   = 'id' +name.toFirstUpper();
              parent.text = 'tx' +name.toFirstUpper();
@@ -614,6 +599,8 @@ dataExt.format = function(){
         }
     };
 }();
+// console.log("dataExt.format.money(12): "   , dataExt.format.money(12))
+// console.log("dataExt.format.money("12,1"): "   , dataExt.format.money(12))
 
 //@note: procura por valor no objeto e retorna array com as propriedades que contem o valor
 Object.getByValue = function(object, value, attribute="value"){
