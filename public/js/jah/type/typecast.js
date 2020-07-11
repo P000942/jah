@@ -52,37 +52,42 @@ const Typecast = {
 					fieldData = fld;
 				Typecast.Behaviours.Mask.ParseFieldData(field, fieldData);
 				field.value = (field.DefaultText.length>0) ?field.DefaultText.join("") :field.DefaultText;
+				// if (!maskProperties) {
+				// 	if (!field.alignToReposiotion)
+				// 		field.alignToReposiotion = c$.ALIGN.LEFT;
+				// }else
+				// 	field.alignToReposiotion =maskProperties.align;
 				if (!maskProperties) {
-					if (!field.alignToReposiotion)
-						field.alignToReposiotion = c$.ALIGN.LEFT;
+					if (!field.isAlignRight)
+						field.isAlignRight = false;
 				}else
-					field.alignToReposiotion =maskProperties.align;
+					field.isAlignRight = (maskProperties.align==c$.ALIGN.RIGHT) ?true :false;
 			},
 			
 			onFocusHandler : (e=window.event)=>{
-				if (e.target.alignToReposiotion==c$.ALIGN.RIGHT)
+				if (e.target.isAlignRight)
 				   Typecast.Behaviours.Mask.CursorManager.Reposition(e.target);
 			},
 			
 			lostFocusHandler : ()=>{},
 			
 			keyUpHandler : function(e=window.event){
-				//e = (!e) ? window.event : e;
-				let keyNum=(window.event)?parseInt(e.keyCode):e.which
+				let key = Typecast.Utils.getKey(e)
 				  , mask = Typecast.Behaviours.Mask;
-				if(keyNum==c$.KEY.ENTER){
-				   return
-                }else if(keyNum==c$.KEY.ESC){}
-				else{}
-				if(keyNum==c$.KEY.DEL){
+				// else if(key.code==c$.KEY.ESC){}
+				// else{}
+				if (!key.isHandleKey) return;
+
+				if(key.code==c$.KEY.DEL){
 					if(this.InsertActive)
 						mask.DataManager.RemoveCharacterByShiftLeft(this);
 					else
 						mask.DataManager.RemoveCharacterByOverwrite(this);
 					mask.Render(this);
-				}
-				if(keyNum==c$.KEY.BACKSPACE && (this.AllowInsert || this.alignToReposiotion==c$.ALIGN.RIGHT)){
-					if (this.alignToReposiotion==c$.ALIGN.RIGHT){
+					if(this.isAlignRight)
+						mask.CursorManager.Reposition(this);
+				} else if (key.code==c$.KEY.BACKSPACE && (this.AllowInsert || this.isAlignRight)){
+					if (this.isAlignRight){
 						mask.DataManager.shiftRight(this);
 					}else if (this.AllowInsert){
 						let preBackspaceCursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0];
@@ -94,60 +99,60 @@ const Typecast = {
 					}
 					mask.Render(this);
 					mask.CursorManager.Reposition(this);
-				}
+				}else if(key.code==c$.KEY.END){
+					let startIdx = Typecast.Behaviours.Mask.MaskManager.FindNearestMaskCharacter(this, this.DataIndex[this.DataIndex.length-1], 1);
+					Typecast.Behaviours.Mask.CursorManager.SetPosition(this, startIdx);
+				}else if(key.code==c$.KEY.HOME){
+					Typecast.Behaviours.Mask.CursorManager.SetPosition(this, this.MaskIndex[0]);
+				}else if(key.code==c$.KEY.LEFT || (key.code==c$.KEY.UP && this.isAlignRight==false)){
+					mask.CursorManager.Move(this, -1);
+				}else if(key.code==c$.KEY.UP && this.isAlignRight){
+					mask.CursorManager.Reposition(this);
+				}else if(key.code==c$.KEY.RIGHT  || key.code==c$.KEY.DOWN){
+					mask.CursorManager.Move(this, 1);
+				}else if(key.code==c$.KEY.INS && this.AllowInsert)
+					mask.CursorManager.ToggleInsert(this);
 				return false;
 			},
 			keyPressHandler : function(e= window.event){
-				let mask = Typecast.Behaviours.Mask;
+				let key = Typecast.Utils.getKey(e);
+				if (!key.isValidChar) {return}
 
+				let mask = Typecast.Behaviours.Mask
+				  , render=false;
 				mask.CursorManager.TabbedInSetPosition(this);
+				maskCurrent=mask.MaskManager.CurrentMaskCharacter(this);				
 
-				keyNum=parseInt(e.keyCode)
-				keyNum=(keyNum==0)?parseInt(e.which):keyNum;
-				maskCurrent=mask.MaskManager.CurrentMaskCharacter(this);
-
-				keychar = String.fromCharCode(keyNum)
-
-				if(keyNum==c$.KEY.TAB){return}
-
-				else if(keyNum==c$.KEY.END){
-					let startIdx = Typecast.Behaviours.Mask.MaskManager.FindNearestMaskCharacter(this, this.DataIndex[this.DataIndex.length-1], 1);
-					Typecast.Behaviours.Mask.CursorManager.SetPosition(this, startIdx);
-				}else if(keyNum==c$.KEY.HOME){
-					Typecast.Behaviours.Mask.CursorManager.SetPosition(this, this.MaskIndex[0]);
-				}else if(keyNum==c$.KEY.LEFT || keyNum==c$.KEY.UP){
-					mask.CursorManager.Move(this, -1);
-				}else if(keyNum==c$.KEY.RIGHT  || keyNum==c$.KEY.DOWN){
-					mask.CursorManager.Move(this, 1);
-				}else if(keyNum==c$.KEY.INS && this.AllowInsert)
-					mask.CursorManager.ToggleInsert(this);
 				//Numeric Characters
-                else if((c$.MASK.MaskCharacters.Numeric.indexOf(maskCurrent)!=-1) && (keychar.isDigit()) ||
-                        (keychar==c$.MASK.DecimalCharacter) && this.value.indexOf(c$.MASK.DecimalCharacter)==-1 && this.value.trim().length>0 && this.hasDecimalCharacter) {                                        
-					mask.DataManager.AddData(this, keychar);
-					mask.Render(this);
-					mask.CursorManager.Reposition(this);
-                                        //console.log(this.Mask)
+				if ( ((c$.MASK.MaskCharacters.Numeric.includes(maskCurrent)) && key.isDigit) ||
+			 	      ((key.isDecimalCharacter) && this.value.includes(c$.MASK.DecimalCharacter)==false && this.value.trim().length>0 && this.hasDecimalCharInMask)) {                                        
+						render=true;
 				}
 				//Alpha Characters 65 - 90
-                else if((c$.MASK.MaskCharacters.Alpha.indexOf(maskCurrent)!=-1) && (keychar.isLetter())){
-				     if (maskCurrent==c$.MASK.LowerCaseCharacter){
-						keychar=keychar.toLowerCase()
-					 }else if (maskCurrent==c$.MASK.UpperCaseCharacter){
-						keychar=keychar.toUpperCase()
-					 }                                       
-					 mask.DataManager.AddData(this, keychar);
-					 mask.Render(this);
-					 mask.CursorManager.Reposition(this);
+                else if(key.isLetter){
+					if (c$.MASK.MaskCharacters.Alpha.includes(maskCurrent)){
+						if (maskCurrent==c$.MASK.LowerCaseCharacter){
+							key.char=key.char.toLowerCase()
+						}else if (maskCurrent==c$.MASK.UpperCaseCharacter){
+							key.char=key.char.toUpperCase()
+						}                                       
+						render=true;
+					} else if (this.isAlignRight)
+						mask.CursorManager.Reposition(this);
 				}
+				if (render){
+					mask.DataManager.AddData(this, key.char);
+					mask.Render(this);
+					mask.CursorManager.Reposition(this);
+				}
+				
 				//Refresh
-				else if(keyNum==c$.KEY.REFRESH){ return}
-				else{}
+				// else if(key.code==c$.KEY.REFRESH){ return}
+				// else{}
 				return false;
 			},
 			mouseUpHandler : function(e=window.event){
-				//e = (!e) ? window.event : e;
-				if (this.alignToReposiotion==c$.ALIGN.RIGHT)
+				if (this.isAlignRight)
 					Typecast.Behaviours.Mask.CursorManager.Reposition(this);
 				else{
 					let cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0];
@@ -177,7 +182,7 @@ const Typecast = {
 					let maskCharacters = Object.values(c$.MASK.MaskCharacters).join("") // juntas as mascaras em uma string
 					mask.split("").forEach((item,idx)=>{if (maskCharacters.includes(item)) 
 						                                   arr[idx]=item;})
-					field.hasDecimalCharacter=mask.includes(c$.MASK.DecimalCharacter);
+					field.hasDecimalCharInMask=mask.includes(c$.MASK.DecimalCharacter);
 					return arr;
 				},
 				
@@ -271,7 +276,7 @@ const Typecast = {
 					
 					if(mask.MaskManager.CurrentMaskCharacter(field) == undefined){
 						let startIdx=0;
-						if (field.alignToReposiotion == c$.ALIGN.RIGHT){
+						if (field.isAlignRight){
 							startIdx =field.MaskIndex.length;
 						}else{
 							if(field.DataIndex.length > 0 && field.DataIndex.length != field.MaskIndex.length){
@@ -291,8 +296,8 @@ const Typecast = {
 					this.SetPosition(field, field.CursorPersistance[0]);
 				},
 				Reposition: function(field){
-					if (field.alignToReposiotion == c$.ALIGN.RIGHT){
-						let pos = (field.Mask.length);//(field.Data.join("").length +(field.hasDecimalCharacter ?1 :0))
+					if (field.isAlignRight){
+						let pos = (field.Mask.length);//(field.Data.join("").length +(field.hasDecimalCharInMask ?1 :0))
 						this.SetPosition(field, pos);
 					}else{
 						this.Move(field, 1);
@@ -315,8 +320,11 @@ const Typecast = {
 				AddData : function(field, char){
 					//(field.alignToReposiotion==c$.ALIGN.RIGHT)
 					let cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(field)[0];
-					if (field.alignToReposiotion==c$.ALIGN.RIGHT){
-						this.InsertCharacter(field, char);
+					if (field.isAlignRight){
+						if (cursorPosition ==field.MaskIndex.length)
+						   this.InsertCharacter(field, char);
+						else
+						   this.OverwriteCharacter(field, char, cursorPosition);
 					}else{
 						if(field.InsertActive)
 							this.InsertCharacter(field, char);
@@ -346,12 +354,12 @@ const Typecast = {
 						}
 					}
 				},
-				InsertCharacter : function(field, char){
+				InsertCharacter :function(field, char){
 					let lastCharacterPosition = field.MaskIndex[field.MaskIndex.length-1];
 					let currentCharacterPosition = this.CurrentDataIndexPosition(field);
-					if (field.alignToReposiotion==c$.ALIGN.RIGHT){
+					if (field.isAlignRight)
 						this.shiftLeft(field);
-					}else
+					else
 					     this.shift(field,lastCharacterPosition, (lastCharacterPosition-currentCharacterPosition));
 					// for(let i=lastCharacterPosition; i>=currentCharacterPosition; i--){
 					// 	field.Data[field.MaskIndex[i+1]] = field.Data[field.MaskIndex[i]];
@@ -364,7 +372,10 @@ const Typecast = {
 				RemoveCharacterByOverwrite : function(field){
 					let currentCharacterPosition = this.CurrentDataIndexPosition(field);
 					if(currentCharacterPosition != null){
-						field.Data[field.DataIndex[currentCharacterPosition]] = "";
+						if (field.isAlignRight)
+						    this.shiftRight(field,currentCharacterPosition)
+						else
+						   field.Data[field.DataIndex[currentCharacterPosition]] = "";
 					}
 				},
 				RemoveCharacterByShiftLeft : function(field, pos=0){
@@ -444,6 +455,22 @@ const Typecast = {
 			}else if(field.setSelectionRange){
 				field.setSelectionRange(startIdx, endIdx);
 			}
-		}		
+		},
+		getKey: e=>{
+			let code=(window.event)?parseInt(e.keyCode):e.which
+			code=(code==0)?parseInt(e.which):code;
+			let char= String.fromCharCode(code)
+			, isDigit = false
+			, isLetter = false
+			, isDecimalCharacter = false
+			, isHandleKey = false
+			if (char.isDigit()) isDigit	=true
+			else if (char.isLetter()) isLetter=true 
+			else if ((key==c$.MASK.DecimalCharacter)) 
+			     isDecimalCharacter=true;
+			if ([c$.KEY.INS, c$.KEY.DEL, c$.KEY.BACKSPACE, c$.KEY.END, c$.KEY.HOME, c$.KEY.UP, c$.KEY.DOWN, c$.KEY.LEFT, c$.KEY.RIGHT].includes(code)) 
+				isHandleKey = true;
+			return {code, char, isDigit, isLetter, isDecimalCharacter, isHandleKey, isValidChar: (isDigit || isLetter || isDecimalCharacter)}
+		}	
 	}
 }
