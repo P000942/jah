@@ -1,36 +1,31 @@
 /*
- * To change this template, choose Tools
- * and open the template in the editor.
+ * By Geraldo Gomes
  */
 j$.ui.Menu = function(){
-    var items = {};
-    //var idMenu = 'submenu'
+    let items = {};
     return{
-       create:  idContent =>{
+       create (idContent){
              items[idContent] =new j$.ui.Menu.Navbar(idContent);//MENU.create(idContent);
              return items[idContent];
       }
-      , get:function(key){return items[key];}
+      , get:key=>{return items[key]}
       , Items:items
       , c$:items
-      , C$:function(key){return items[key];}
-     // , id:idMenu
+      , C$:key=>{return items[key]}
     };
 }();
 j$.ui.Dropdown = function(){
-    var items = {};
-    //var idMenu = 'submenu'
+    let items = {};
     return{
-       create: (idContent, caption)=>{
+      create(idContent, caption){
              items[idContent] =new j$.ui.Menu.Dropdown(idContent, caption);//MENU.create(idContent);
              return items[idContent];
       }
-      , get:key=>{return items[key];}
+      , get:key=>{return items[key]}
       , Items:items
       , c$:items
-      , C$:key=>{return items[key];}
-     // , id:idMenu
-    };
+      , C$:key=>{return items[key]}
+    }
 }();
 
 ///j$.ui.Menu.CONFIG =  {baseopacity:0, idContainerDefault:"content"};
@@ -49,8 +44,7 @@ j$.ui.Menu.Designer =function(){
               return attLink;
           };
     return{
-
-       format: properties=>{
+       format (properties){
               let attClass = '', attDropdown = '', attCarret = '', attDropdownUl ='', attLi='', attIcon='';
               let attHint = (properties.title)? 'title="' + properties.title + '"' : '';
               if (properties.active){
@@ -80,77 +74,74 @@ j$.ui.Menu.Designer =function(){
     };
 }();
 
-// definição do menu
+// definição do menu > herda de j$.node
 j$.ui.Menu.Navbar =function(idContent){
-    var self_navbar = this;
+    let _navbar = this;
     this.inherit=j$.Node;
-    this.inherit({type:'Navbar', Root:self_navbar, Parent:null},{key:idContent, id:create()});
-    this.addMenu = addMenu;
-    this.render = render;
+    this.inherit({type:'Navbar', Root:_navbar, Parent:null},{key:idContent, id:create()});
+   // this.addMenu = addMenu;
+      //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
+    this.addMenu = properties =>{
+        let menu = new j$.ui.Menu.Item(_navbar, properties);
+        _navbar.addItem(menu.key,menu);
+	    return menu;
+    }
+    this.render = ()=>{
+        for (let key in _navbar.c$)
+            _navbar.c$[key].render();
+    }
 
     function create(){
         let id = idContent+'Root';
-        // $("#"+idContent).append('<div class="navbar-inner"></div>');
-        // $("#"+idContent+" > .navbar-inner").append('<div class="container"> </div>');
-        // $("#"+idContent+" > .navbar-inner > .container").append('<ul id="' +id+'" class="nav inline"></ul>');
-        $("#"+idContent).append(`<div class="container"></div>`);
-        $("#"+idContent+" > .container").append(`<div class="navbar-collapse collapse"> </div>`);
-        $("#"+idContent+" > .container > .navbar-collapse").append('<ul id="' +id+'" class="nav navbar-nav"></ul>');
+        $(`#${idContent}`).append(`<div class="container"></div>`);
+        $(`#${idContent} > .container`).append(`<div class="navbar-collapse collapse"> </div>`);
+        $(`#${idContent} > .container > .navbar-collapse`).append(`<ul id='${id}' class="nav navbar-nav"></ul>`);
         return id;
     };
-
-    //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
-    function addMenu(properties){
-        let menu = new j$.ui.Menu.Item(self_navbar, properties);
-        self_navbar.addItem(menu.key,menu);
-	return menu;
-    }
-
-    function render(){
-        for (let key in self_navbar.c$)
-            self_navbar.c$[key].render();
-    }
 };
 
+// herda de j$.node
 j$.ui.Menu.Dropdown =function(idContent, caption){
-    var self_dropdown = this;
+    let _dropdown = this;
     let wCaption=(caption)?caption:'';
     this.inherit=j$.Node;
-    this.inherit({type:'Dropdown', Root:self_dropdown, Parent:null},{key:idContent, id:create(), caption:wCaption});
-    this.addMenu = addMenu;
-    this.render = render;
+    this.inherit({type:'Dropdown', Root:_dropdown, Parent:null},{key:idContent, id:create(), caption:wCaption});
+    //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
+    this.addMenu = properties=>{
+        let menu = new j$.ui.Menu.Item(_dropdown, properties);
+        _dropdown.addItem(menu.key,menu);
+      	return menu;
+    }
+    this.render = ()=>{
+        for (let key in _dropdown.c$)
+            _dropdown.c$[key].render();
+    }
 
     function create(){
         let id = idContent+'Root';
-        $("#"+idContent).append('<ul id="' +id+'" class="dropdown inline"></ul>');
+        $(`#${idContent}`).append(`<ul id='${id}' class="dropdown inline"></ul>`);
         return id;
-    };
-
-    //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
-    function addMenu(properties){
-        let menu = new j$.ui.Menu.Item(self_dropdown, properties);
-        self_dropdown.addItem(menu.key,menu);
-      	return menu;
     }
+}
 
-    function render(){
-        for (let key in self_dropdown.c$)
-            self_dropdown.c$[key].render();
-    }
-};
-
+// herda de j$.node
 j$.ui.Menu.Base=function(inheritor, properties){
-    var self_base = this;
+    let _base = this;
     this.inherit=j$.Node;
     this.inherit(inheritor, properties);
-    this.render = render;
-    var util = function(){
+    this.render = ()=>{
+        $('#'+_base.Parent.id).append(j$.ui.Menu.Designer.format(_base));
+        if (_base.onClick)
+           $("#"+_base.id).click(_base.onClick);
+        _base.submenu.render();
+  }
+    let util = function(){
         return{
              formatLink: ()=>{
                 let url=false;
                 if (properties.url){
                     url = properties.url;
-                     self_base.idContainer=null;
+                     _base.idContainer=null;
                 }
                 else if (properties.partial)
                     url= properties.partial;
@@ -158,21 +149,21 @@ j$.ui.Menu.Base=function(inheritor, properties){
                 return url;
            }
            , checkActive: ()=>{
-                 return (properties.active !=undefined && !self_base.Root.active && self_base.type=='Menu')?properties.active:false;
+                 return (properties.active !=undefined && !_base.Root.active && _base.type=='Menu')?properties.active:false;
            }
         };
     }();
 
-    var initialized = function(){
+    let initialized = function(){
               if (dataExt.isString(properties)){ // veio apenas o caption
-                 Object.preset(self_base, {idContainer:CONFIG.LAYOUT.CONTENT});
+                 Object.preset(_base, {idContainer:CONFIG.LAYOUT.CONTENT});
               } else {
                   if (!properties){properties={}};
-                  self_base.idContainer = (properties.idContainer)?properties.idContainer:CONFIG.LAYOUT.CONTENT;
-                  Object.setIfExist(self_base, properties, ['icon','title','byPass','modal']);
-                  self_base.url=util.formatLink();
-                  //self_base.byPass=> para não formatar o evento padrão que chama o url. É útil para qdo o o próprio cliente vai realizar uma ação após a escolha da opção
-                  self_base.active=util.checkActive();
+                  _base.idContainer = (properties.idContainer)?properties.idContainer:CONFIG.LAYOUT.CONTENT;
+                  Object.setIfExist(_base, properties, ['icon','title','byPass','modal']);
+                  _base.url=util.formatLink();
+                  //_base.byPass=> para não formatar o evento padrão que chama o url. É útil para qdo o o próprio cliente vai realizar uma ação após a escolha da opção
+                  _base.active=util.checkActive();
               }
               return true;
     }();
@@ -180,45 +171,45 @@ j$.ui.Menu.Base=function(inheritor, properties){
     this.submenu = function(){
        return{
           add:properties=>{
-              let submenu = new j$.ui.Menu.Subitem(self_base, properties);
-              self_base.addItem(submenu.key, submenu);
+              let submenu = new j$.ui.Menu.Subitem(_base, properties);
+              _base.addItem(submenu.key, submenu);
               return submenu;
            }
          , render:menu=>{
-             for (let key in self_base.c$){
-                 $('#'+self_base.id).append(self_base.c$[key].render());
+             for (let key in _base.c$){
+                 $('#'+_base.id).append(_base.c$[key].render());
              }
          }
        };
     }();
-    this.add=self_base.submenu.add;
+    this.add=_base.submenu.add;
     this.divider = function(){
           let ct = 0;
           return{
               add:()=>{
                   ct +=1;
-                  self_base.addItem('divider'+ct,divider);
+                  _base.addItem('divider'+ct,divider);
                   return divider;
               }
           };
     }();
 
-    var divider=function(){
+    let divider=function(){
           let format=function(){return '<li class="divider"></li>';};
           return {
               render:()=>{
-                  $('#'+self_base.id).append(format());
+                  $('#'+_base.id).append(format());
               }
           };
     }();
 
     function render(){
-          $('#'+self_base.Parent.id).append(j$.ui.Menu.Designer.format(self_base));
-          if (self_base.onClick)
-             $("#"+self_base.id).click(self_base.onClick);
-          self_base.submenu.render();
+          $('#'+_base.Parent.id).append(j$.ui.Menu.Designer.format(_base));
+          if (_base.onClick)
+             $("#"+_base.id).click(_base.onClick);
+          _base.submenu.render();
     };
-};
+}; //j$.ui.Menu.Base
 
 //properties={key:'', caption:'', url:'', partial:'', title:'', idContainer:'', byBass:false, onClick:function(){}}
 j$.ui.Menu.Item =function (parent, properties){

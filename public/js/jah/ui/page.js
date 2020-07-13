@@ -32,7 +32,7 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
 
     Object.preset(self_grid,{table:null, Designer:designer() });
 
-    var initialized=function(){
+    const initialized=function(){
         Object.preset(page.service.Interface,{List:{}});
         if (page.actionController)
            self_grid.actionController = page.actionController;
@@ -185,12 +185,12 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
            }
       };
     }();
-};
+}; //j$.ui.Grid
 
 j$.ui.Buttons=function(actionController, buttons, presetFunction){
     let self_button=this;
     let wrapButtons;
-    let wrap;
+    let _wrap;
     Object.preset(self_button,{Items:getItems()});
     presetFunction =(presetFunction)?presetFunction:()=>{};
     // Obter o grupos de buttons
@@ -219,16 +219,16 @@ j$.ui.Buttons=function(actionController, buttons, presetFunction){
        }
     }
 
-    this.create=Wrap=>{
-        wrap = Wrap;
-        wrapButtons=j$.ui.Render.wrap(wrap, wrap.id+ '_button', 'wrap_command');
+    this.create=wrap=>{
+        _wrap = wrap;
+        wrapButtons=j$.ui.Render.wrap(_wrap, _wrap.id+ '_button', 'wrap_command');
         for (let key in self_button.Items){
             self_button.add(key,self_button.Items[key]);
         };
     };
 
     this.add=(key, button)=>{
-         preset(key.toLowerCase(),button, wrap);
+         preset(key.toLowerCase(),button, _wrap);
          button['element'] = j$.ui.Render.button(wrapButtons, button);
          if (actionController && dataExt.isObject(actionController) && actionController[button.key])
              $(button['element']).click(actionController[button.key]);
@@ -243,14 +243,14 @@ j$.ui.Buttons=function(actionController, buttons, presetFunction){
         };
         return html;
     };
-};
+}; // j$.ui.Buttons
 
 // Cria o navegar para fazer paginação
 // pager (): é o que controla data, faz o calculos de pagina e devolve os registro para exibir na página
 // j$.ui.Pager: É o componente que cria os elementos visuais de html para navegação e recebe a ações para o controller
 j$.ui.Pager=function(parent, pager , actionController){
     let self_pager=this;
-    let wrap;
+    let _wrap;
 
     Object.preset(self_pager,{clas$:CONFIG.PAGER.CLASS, pager:pager});
     function parse(values){
@@ -278,12 +278,12 @@ j$.ui.Pager=function(parent, pager , actionController){
         if (!actionController)
             actionController = parent.id.toCapitalize().trim()+ ".actionController.List.Pager";
         if (i$(parent.id+ '_pager'))
-            wrap = i$(parent.id+ '_pager');
+            _wrap = i$(parent.id+ '_pager');
         else
-            wrap=j$.ui.Render.wrapperUl(Wrap, parent.id+ '_pager', self_pager.clas$);
+            _wrap=j$.ui.Render.wrapperUl(Wrap, parent.id+ '_pager', self_pager.clas$);
         self_pager.clear();
     };
-    this.clear=()=>{if (wrap) wrap.innerHTML='';};
+    this.clear=()=>{if (_wrap) _wrap.innerHTML='';};
 
     this.add= (values, clas$)=>{
          clas$ = (clas$)?' class="' +clas$+ '"':'';
@@ -291,7 +291,7 @@ j$.ui.Pager=function(parent, pager , actionController){
          let value = (properties.value.isNumeric())?properties.value:'';
          Object.preset(properties, {
                onclick:'javascript:'+actionController+'.' +properties.method+ '('+value+')'});
-         wrap.insert('<li' +clas$+ '><a' +j$.ui.Render.attributes(properties,'value')+ '>'+properties.caption+'</a></li>');
+         _wrap.insert('<li' +clas$+ '><a' +j$.ui.Render.attributes(properties,'value')+ '>'+properties.caption+'</a></li>');
     };
     this.createNavigator=wrap=>{
         self_pager.create(wrap);
@@ -324,7 +324,7 @@ j$.ui.Pager=function(parent, pager , actionController){
           // , Control:pager.Con
         };
     };
-};
+};// j$.ui.Pager
 
 //@note: Factory - para criar os servicos
 j$.service = function(){
@@ -462,7 +462,7 @@ j$.service = function(){
     , createChild: function(key, parent, service){
         return new Child(key, parent, service);
     }
-    , create:function(key, service){
+    , create:(key, service)=>{
           if (!key)
               throw new TypeError(CONFIG.EXCEPTION.SERVICE_NULL.text);
           if (service.constructor.name=="Object"){ //para o servicos que sao criados manualmente
@@ -473,10 +473,10 @@ j$.service = function(){
           return items[key];
      }
      , make:function(key, adapter){
-          var service = items[key];
-          if (service)
-             service = items[key];
-          else{
+          let service = items[key];
+          if (!service){
+        //      service = items[key];
+        //   else{
              if (adapter.crud)
                 service = this.createCrud(key,adapter);
              else
@@ -495,12 +495,12 @@ j$.service = function(){
           }
       }()
    }
-}()
+}() //j$.service
 j$.$S = j$.service.c$;
 
 j$.ui.Page = function(){
    let items = {};
-   var modal =function(wrap,form, fixed){
+   const modal =function(wrap,form, fixed){
        let SELF = this;
        //this.show = show;
        this.display=show;
@@ -513,7 +513,7 @@ j$.ui.Page = function(){
        this.hide=function(){
            $("#"+SELF.form.id+"Modal").modal('hide'); // exibe o modal
        }
-       var create=function(){
+       const create=function(){
           SELF.clear();
           let txFixed=(fixed)?'':"<button type='button' class='close'  data-dismiss='modal'>&times;</button>";
           $(wrap).append("<div id='" +form.id+ "Modal' class='modal fade' role='dialog'>"
@@ -533,22 +533,22 @@ j$.ui.Page = function(){
                         +   "</div>"
                         + "</div>");
           $('#'+form.id).append("<div id='" +form.id+ "Alert'></div>");
-          SELF.body = i$(form.id+ "Body");
-          SELF.form = i$(form.id);
+          SELF.body     =i$(form.id+ "Body");
+          SELF.form     =i$(form.id);
           SELF.fieldset =i$(form.id);
-          SELF.caption = i$(form.id+"Caption");
-          SELF.header =i$(form.id+"Header");
-          SELF.footer =i$(form.id+"Footer");
-          SELF.alert = i$(form.id+"Alert")
+          SELF.caption  =i$(form.id+"Caption");
+          SELF.header   =i$(form.id+"Header");
+          SELF.footer   =i$(form.id+"Footer");
+          SELF.alert    =i$(form.id+"Alert")
        }();
    }
-   var form =function(wrap,form){
+   const form =function(wrap,form){
        let _form = this;
        this.display=show;
        function show(){ _form.form.show()}
        this.clear=()=>{ wrap.innerHTML=""}
        this.hide=()=>{_form.form.hide()}
-       var create=function(){
+       const create=function(){
           _form.clear();
           $(wrap).append("<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>");
           $('#'+form.id).append("<fieldset class='crud' id='" +form.id+ "Fieldset'><legend id='" +form.id+ "Header' class='crud'>" +form.title+ "</legend></fieldset>");
@@ -563,6 +563,7 @@ j$.ui.Page = function(){
           _form.alert    =i$(form.id+"Alert")
        }();
    }
+
    return {
        create: function(service, modal){
            items[service.id] = new j$.ui.Form(service, modal);
@@ -602,7 +603,7 @@ j$.ui.Page = function(){
                 }
           };
           return{
-              create:function(page){
+              create:page=>{
                  if (page.service.Interface.design){ // Serah feito segundo o design
                      j$.ui.Page.Designer.design(page, page.service.Interface.design, page.fieldset);
                  }else{            // Serah tudo no modo standard
@@ -692,7 +693,7 @@ j$.ui.Page = function(){
           };
        }()
    };
-}();
+}(); //j$.service
 j$.$P = j$.ui.Page.c$;
 
 j$.ui.Form=function(service, modal) {
@@ -731,12 +732,6 @@ j$.ui.Form=function(service, modal) {
         if ($i.List)
            $i.List.index= c$.RC.NONE;
     }
-    // function initBindFields(){
-    //     let BindFields = null;
-    //     if ($i.Parent && $i.Child)
-    //         parms = $i.Parent.service.Fieldset.RecordBy($i.Child.bindBy);
-    //     return BindFields;
-    // }
     if (!service.Interface.Buttons)
         service.Interface.Buttons = DEFAULT_BUTTON_PRESET();
 
@@ -803,15 +798,15 @@ j$.Observer=function(Parent){
        $i.Items[key]=null;
     };
     $i.notify =notification =>{
-       for (var key in $i.c$)
+       for (let key in $i.c$)
            $i.c$[key].notify(notification);
     };
-    $i.first =function (){
-       for (var key in $i.c$)
+    $i.first =()=>{
+       for (let key in $i.c$)
            return $i.c$[key];
     };
     $i.sweep = (action, param)=>{
-        for(var key in $i.c$){
+        for(let key in $i.c$){
            action($i.c$[key], param);
         }
     };
@@ -938,26 +933,3 @@ j$.ui.adapterFactory = function(adapter){
    }
    this.load();
 };
-
-class Area {
-    constructor(altura, largura) {
-    //   i$ = this;
-      this.altura = altura;
-      this.largura = largura;
-     // 
-    }
-    get calc(){ // Getterprop privada
-        this.log(); 
-        return i$.altura * i$.largura;
-    }
-
-    log () { // método privado
-        return 'Funcionou!';
-    }
-    aux =()=> {console.log('Funcionou aux!');}
-    
-    static init = () => {
-        aux();
-    }
-}
-//r = new Area(20,25);

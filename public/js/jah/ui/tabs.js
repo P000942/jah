@@ -31,7 +31,7 @@ j$.ui.Tabs.Root =function(idTab, idContent){
     this.inherit({type:'Tabroot', Root:_root, Parent:null}, {key:idTab, id:idContent});   
     Object.preset(_root, {add:add, getItem: _root.C$, open:open, toggle:toggle, activate:activate, close:close}); 
 
-    var initialized=function(){
+    const initialized=function(){
         if (!idContent){       
            throw  EXCEPTION.format(EXCEPTION.ITEM.INVALID_ELEMENT, "Impossível montar um objeto tabs sem indicar o 'ID' do elemento html onde será montado");
         }else{
