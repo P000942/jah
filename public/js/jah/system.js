@@ -113,7 +113,7 @@ const j$={ui:{},sys:System,sample:{}};
 //@note: util apenas em dsv para ver os objetos/colecoes e seus respectivos shortcut - que estão instanciados
 //j$.$V() ou j$.$V("$R")
 j$.$V= key =>{
-   let shortCut = {"$C":"Controller:","$P":"Page:","$R":"Resource:","$S":"Service:"};
+   let shortCut = {"$C":"Controller:","$P":"Page:","$R":"Resource:","$S":"Service:", "$T":"Tabs:"};
    for (id in shortCut){
       if (j$[id]){
          if (key){
@@ -328,7 +328,7 @@ j$.Dashboard = function(){
 
 j$.Dashboard.Tabs=function(){
     let tabs;
-    let idContent='tabs';
+    let idContent='root';
     let ftmKey = (service) =>{ return "tab_"+service.Parent.key+'_'+service.key}
     return{
         create: ()=>{ tabs = j$.ui.Tabs.create(j$.Dashboard.Tabs.idContent,j$.Dashboard.idContent) }

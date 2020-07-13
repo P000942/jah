@@ -2,24 +2,26 @@
  * To change this template, choose Tools 
  * and open the template in the editor.
  */
-//j$.ui.Tabs = function() {
-//    return {
-//	init:function(){return true}
-//    }
-//}();
+
 j$.ui.Tabs = function(){
-    let tabs = {};
+    let tabs = {}, _root=null;
     return{        
          get:key=>{return tabs[key];}
       , open:(root,key)=>{tabs[root].open(key);}  
       , create: (idTabs, idContent)=>{
              tabs[idTabs] = new j$.ui.Tabs.Root(idTabs, idContent);
+             if (!j$.ui.Tabs.root){
+                j$.ui.Tabs.root = tabs[idTabs]
+                j$.$T = j$.ui.Tabs.root.c$;
+             }
              return tabs[idTabs];
       }
       , items:tabs
       , c$:tabs
+      , root: _root
     };   
 }(); 
+//j$.$T = j$.ui.Tabs.c$.root.c$;
 
 j$.ui.Tabs.Root =function(idTab, idContent){ 
     let _root = this;    
