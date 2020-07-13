@@ -16,12 +16,12 @@ const Typecast = {
 	//	this.Behaviours.Suggest.Init();
 	},
 	
-	Parse : function(inputs){
+	Parse : function(inputs){ // ler e inicializar todos os inputs ou todos dentro de um elemento
 		for(let i=0; i<inputs.length; i++){
 		   this.Format(inputs[i]);	
 		}
 	}
-	, Format : function(field, maskProperties){
+	, Format : function(field, maskProperties){ //inicializa as máscaras dos elemntos
 		if(field.type=="text" && field.className && field.className.indexOf("TC") != -1 && dataExt.isDefined(field.Mask)==false){
 			if(!field.id) Typecast.Utils.GenerateID(field);
 			
@@ -42,7 +42,7 @@ const Typecast = {
 		Mask : {
 			Init : ()=>{},
 			
-			initField : (field, maskProperties)=>{
+			initField : (field, maskProperties)=>{ //inicializa as máscaras
 				let fieldData = []
 				//#todo: {id} não é uma boa opcao - melhor ver algo específico do html5
 				  , fld = (c$.MASK.MASKS[field.id]) ?c$.MASK.MASKS[field.id] :null;
@@ -52,11 +52,6 @@ const Typecast = {
 					fieldData = fld;
 				Typecast.Behaviours.Mask.ParseFieldData(field, fieldData);
 				field.value = (field.DefaultText.length>0) ?field.DefaultText.join("") :field.DefaultText;
-				// if (!maskProperties) {
-				// 	if (!field.alignToReposiotion)
-				// 		field.alignToReposiotion = c$.ALIGN.LEFT;
-				// }else
-				// 	field.alignToReposiotion =maskProperties.align;
 				if (!maskProperties) {
 					if (!field.isAlignRight)
 						field.isAlignRight = false;
@@ -161,19 +156,19 @@ const Typecast = {
 				}	
 			},
 			
-			ParseFieldData : function(field, fieldData){
+			ParseFieldData : function(field, fieldData){ //inicializa os valores de dados
 				fieldData = fieldData.split(c$.MASK.FieldDataSeparator);
-				field.Data = [];
-				field.DataIndex = [];
-                                // By geraldo - no lugar "", retornava fieldData[0].split("")
-				field.DefaultText       = (fieldData[1]) ? fieldData[1].split("") : "";//fieldData[0].split(""); //if default text isn't provided use mask
-				field.Mask              = this.MaskManager.ParseMask(fieldData[0],field);
-				field.MaskIndex         = this.MaskManager.ParseMaskIndex(field.Mask);
 				field.CursorPersistance = [];
-				let IsComplexMask = this.MaskManager.IsComplexMask(field);
-				field.InsertActive      = (IsComplexMask) ? false : true;
-				field.HighlightChar     = (IsComplexMask) ? true  : false;
-				field.AllowInsert       = (IsComplexMask) ? false : true;
+				field.Data          = [];
+				field.DataIndex     = [];
+				field.DefaultText   = (fieldData[1]) ? fieldData[1].split("") : "";//if default text isn't provided use mask
+				field.Mask          = this.MaskManager.ParseMask(fieldData[0],field);
+				field.MaskIndex     = this.MaskManager.ParseMaskIndex(field.Mask);
+				
+				let IsComplexMask   = this.MaskManager.IsComplexMask(field);
+				field.InsertActive  = (IsComplexMask) ? false : true;
+				field.HighlightChar = (IsComplexMask) ? true  : false;
+				field.AllowInsert   = (IsComplexMask) ? false : true;
 			},
 			
 			MaskManager : {
