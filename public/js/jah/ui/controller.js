@@ -44,7 +44,7 @@ function ActionController(ResponseController){
   let _me = this;
   let Resource = ResponseController.Resource;
 
-  Object.preset(_me, {remove:remove, save:update, get:get, filter:filter, sort:sort, search:search});
+  Object.preset(_me, {remove, save:update, get, filter, sort, search});
   Object.setIfExist(_me, ResponseController,['edit','insert','back','print','List','child', 'refresh']);
 
   function filter(event, key, value){
@@ -136,7 +136,7 @@ function ResponseController($service){
             return values;
         }(_me.service.page.Buttons.Items);
 
-        Object.preset(_me,{edit:edit, insert:insert, back:back, sort:sort, print:print, UpdateController:null, child:child, filter:filter});
+        Object.preset(_me,{edit, insert, back, sort, print, UpdateController:null, child, filter});
         Object.setIfExist(_me,_me.service.page,'List');
 
         init();
@@ -264,7 +264,7 @@ function UpdateController(service){
     , Interface = service.Interface;
 
   const initialized=function(){
-      Object.preset(_me, {remove:remove, update:update, edit:edit, insert:insert, validate:validate, record:createRecord, refresh:refresh, reset:reset, form:i$(service.Interface.id)});
+      Object.preset(_me, {remove, update, edit, insert, validate, record:createRecord, refresh, reset, form:i$(service.Interface.id)});
       if (!Resource.Dataset.empty){
          service.Fieldset.bindColumns(Resource.Dataset.Columns);
       }
