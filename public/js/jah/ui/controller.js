@@ -265,9 +265,8 @@ function UpdateController(service){
 
   const initialized=function(){
       Object.preset(_me, {remove, update, edit, insert, validate, record:createRecord, refresh, reset, form:i$(service.Interface.id)});
-      if (!Resource.Dataset.empty){
+      if (!Resource.Dataset.empty)
          service.Fieldset.bindColumns(Resource.Dataset.Columns);
-      }
       return true;
   }();
 

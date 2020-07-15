@@ -244,7 +244,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
             return Dataset;
         }
 
-        function recharge(response){
+        function recharge(response){ // recarrega Dataset apos um get
            return createDataset({source:j$.Resource.DefaultHandler.handler(response)})
         }
     } // Resource
@@ -379,7 +379,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
        }();
 
        function refresh(){
-           if (_ds.DataSource){
+           if (_ds.DataSource && _ds.DataSource.length>0){
               _ds.Columns = _ds.DataSource[0];
               _ds.position = ROW.FIRST;
               _ds.count = _ds.DataSource.length;
@@ -782,7 +782,7 @@ j$.Resource.Store= function(){
    }
 
    function getResourceInContext(urlContext, resourceName){
-        for (let urlContext in store){
+        for (leturlContext in store){
             for (let key in store[urlContext]){
                 if (key==resourceName){
                     return store[urlContext][key];
@@ -795,9 +795,10 @@ j$.Resource.Store= function(){
 
 Task = j$.Resource.create("tasks");
 Papel = j$.Resource.create("papel");
-Documento = j$.Resource.create("http://10.70.4.100:8080/documento");
-
 Papel.Requester.get();
+// Mensagem = j$.Resource.create("mensagem");
+// Mensagem.Requester.get();
+Documento = j$.Resource.create("http://10.70.4.100:8080/documento");
 
 j$.Resource.Store.add(
                     {"tabela":[

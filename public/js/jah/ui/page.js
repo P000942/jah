@@ -768,7 +768,7 @@ j$.ui.Form=function(service, modal) {
            service.onOpen();
         if (service.autoRequest){
            let parms = null;
-           if (service.Child)
+           if (service.Child) // quando é Child formata os campos de vinculo
               parms = service.Child.bindFields;
            service.autoRequest(parms);
         }   
