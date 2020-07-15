@@ -55,7 +55,7 @@
                        idAssunto:TYPE.INTEGER(4,{label:'Código', readOnly:true})
              //,idCategoriaAssunto:TYPE.LIST({label:'Categoria', mandatory:true, list:{'1':'Sistema', '2':'Projeto', '3':'Manutencao'}})
              ,idCategoriaAssunto:TYPE.LIST({label:'Categoria', mandatory:true, resource:{name:'categoriaAssunto'}})
-             ,          txTitulo:TYPE.CHAR(40,{label:'Assunto', mandatory:true})
+             ,          txTitulo:TYPE.CHAR(40,{label:'Assunto', mandatory:true, placeholder:"Informe o título"})
              ,           csAtivo:TYPE.BOOLEAN({label:'Ativo', list:{'true':{value:true, text:'Ativo'}, 'false': {value:false, text:'Cancelado'}}
                                               , evaluate:function(record){ return (record.idCategoriaAssunto==1)?true:false}
                                              })

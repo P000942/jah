@@ -175,7 +175,7 @@ const dateFormat = function () {
 
 		// Passing date through Date applies Date.parse, if necessary
 		date = date ? new Date(date) : new Date;
-		if (isNaN(date)) throw SyntaxError("Data Inv�lida");
+		if (isNaN(date)) throw SyntaxError("Data Invalida");
 
 		mask = String(c$.MASK.DATE[mask] || mask || c$.MASK.DATE["default"]);
 
@@ -432,6 +432,18 @@ String.prototype.isDate = function(){
 }
 //Test$.Date('29/02/2011'); Test$.Date('28/02/2011'); Test$.Date('29/02/2008');Test$.Date('31/04/2011'); Test$.Date('31/05/2011'); Test$.Date('31/08/2008');
 
+String.prototype.isDateTime = function(){
+    return true;
+}
+
+String.prototype.isColor = function(){
+    return true;
+}
+
+String.prototype.isRange = function(){
+    return true;
+}
+
 String.prototype.isHour = function(){
     let expReg =/^([0-1][0-9]|[2][0-3]):[0-5][0-9]$/;
     return (!this.regexValidate(expReg))?false:true;
@@ -629,9 +641,8 @@ Object.getByValue = function(object, value, attribute="value"){
 // é uma forma de garantir que certa propriedade estará presente no objeto
 Object.preset = (receiver, propertie, defaultvalue)=>{
     if (dataExt.isObject(propertie)){ // copia propriedades do objeto
-       for (var key in propertie){
+       for (let key in propertie)
            Object.preset(receiver, key, propertie[key]);
-       }
     }else{
         if (dataExt.isDefined(receiver[propertie]) == false){ // cria caso não exista
             receiver[propertie] = defaultvalue;
@@ -650,10 +661,10 @@ Object.preset = (receiver, propertie, defaultvalue)=>{
 //@note: Junta o objeto provider ao objeto receiver
 Object.join = function(receiver,provider, properties){
     if (properties) { // Um Join apenas com algumas propriedades
-       for(var i=0; i<properties.length; i++)
+       for(let i=0; i<properties.length; i++)
           Object.preset(receiver, properties[i], provider[properties[i]]);
     } else {          // Um Join com todas as propriedades
-       for (var key in provider)
+       for (let key in provider)
            Object.preset(receiver, key, provider[key]);
     }
     return receiver;
@@ -667,12 +678,12 @@ Object.join = function(receiver,provider, properties){
 Object.merge = function(server,provider, properties){
     let receiver={};
     if (properties) { // Um Merge apenas com algumas propriedades
-       for(var i=0; i<properties.length; i++){
+       for(let i=0; i<properties.length; i++){
           Object.preset(receiver, properties[i], server[properties[i]]);
           Object.preset(receiver, properties[i], provider[properties[i]]);
        }
     } else {         // Um Merge com todas as propriedades
-       for (var key in server) // copia todas as propriedades do SERVER para o RECEIVER
+       for (let key in server) // copia todas as propriedades do SERVER para o RECEIVER
            receiver[key]= server[key];
        Object.join(receiver,provider);
     }
@@ -685,7 +696,6 @@ Object.merge = function(server,provider, properties){
 
 //@note: SE EXISTIR NO PROVIDER,sobrescreve ou adiciona atributos definidos em Properties no RECEIVER
 Object.setIfExist = function(receiver, provider, properties){
-    
     if (dataExt.isArray(properties)){
        for (let idx=0; properties.length>idx;idx++)
            Object.setIfExist(receiver, provider, properties[idx]);
@@ -700,6 +710,19 @@ Object.setIfExist = function(receiver, provider, properties){
 //Object.setIfExist(aux,{c:4,d:'abc'},'c')
 //Object.setIfExist(aux,{c:4,d:'abc'},['c','d','g'])
 //Object.setIfExist(aux,{c:4,d:'abc'},'z')
+
+Object.presetValues = (receiver, provider)=>{
+    //SE EXISTIR NO RECEIVER, sobrescreve atributos definidos  PROVIDER
+    for (let key in provider){
+        if (receiver[key])
+           receiver[key]=provider[key];
+    }
+    return receiver;
+};
+//var aux = {a:1,b:2}
+// console.log(Object.presetValues(aux,{a:5,x:20}))
+// console.log(Object.presetValues(aux,{b:15,x:20}))
+
 
 //@note:
 Object.mixin=function(receiver, provider, methods){
@@ -780,17 +803,7 @@ Object.build = (key, value)=>{
 // console.log(Object.build("A",4))
 // ->Object {A: 4}
 
-Object.presetValues = (receiver, provider)=>{
-    //SE EXISTIR NO PROVIDER,sobrescreve ou adiciona atributos definidos em Properties no RECEIVER
-    for (let key in provider){
-        if (receiver[key])
-           receiver[key]=provider[key];
-    }
-    return receiver;
-};
-//var aux = {a:1,b:2}
-// console.log(Object.presetValues(aux,{a:5,x:20}))
-// console.log(Object.presetValues(aux,{b:15,x:20}))
+
 
 Function.prototype.inheritsFrom = function(parentClassOrObject){
   	if ( parentClassOrObject.constructor == Function ) 	{

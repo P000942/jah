@@ -66,7 +66,7 @@ j$.ui.Render= function(){
                  if (type==='select')
                     wrap.insert(`<${type} id='${id}' name='${id}' ${_att} ></${type}>`);
                  else
-                    wrap.insert(`<input type='${type}' id='${id}' name='${id}' ${size} ${_att} >`);
+                    wrap.insert(`<input type='${type}' id='${id}' name='${id}' ${size} ${_att} />`);
               }
               return i$(id);
           }
@@ -226,6 +226,10 @@ var TYPE = function() {
    ,       MONEY: (size,properties)=>{return new j$.ui.type.Money(size,properties)}
    ,       EMAIL: (size,properties)=>{return new j$.ui.type.Email(size,properties)}
    ,        DATE: properties=>{return new j$.ui.type.Date(properties)}
+   ,       DATE5: properties=>{return new j$.ui.type.Date5(properties)}
+   ,    DATETIME: properties=>{return new j$.ui.type.DateTime(properties)}
+   ,       COLOR: properties=>{return new j$.ui.type.Color(properties)}
+   ,       RANGE: (size,properties)=>{return new j$.ui.type.Range(size,properties)}
    ,        HOUR: (size,properties)=>{return new j$.ui.type.Hour(size,properties)}
    ,       PHONE: (size,properties)=>{return new j$.ui.type.Phone(size,properties)}
    ,         CPF: properties=>{return new j$.ui.type.Cpf(properties)}
@@ -315,6 +319,7 @@ TYPE.HELPER = {
                             ['evaluate','autotab', 'label','mandatory', 'align', 'parentLegend'
                             , 'readOnly', 'disabled', 'defaultValue', 'type'
                             , 'dataType', 'list', 'hint','attributes', 'resource']);
+            Object.setIfExist(inputField.attributes, Properties,['min', 'max', 'step', 'pattern', 'placeholder']);                            
             if (Properties.resource){
                 // inputField.AdapterResource = j$.Resource.ResponseHandler;  // Quando tiver RESOURCE
                 // inputField.AdapterResource(Properties, inputField);
@@ -354,10 +359,12 @@ TYPE.HELPER = {
                  if (inputField.autotab)
                      Event.observe(_input, 'keyup', ()=>{TYPE.HANDLE.autotab(_input,inputField.maxlength);});
                  inputField.mask.render(_input);
-                 //inputField.className = inputField.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
                  if (_input.maxlength)
                      _input.maxlength = inputField.maxlength;
                  break;
+             case 'range':
+                    inputField.Legend = new Legend(inputField);
+                     break;
              case 'select':
                  inputField.popule();
                  break;
@@ -475,7 +482,7 @@ class Legend{
     hide=() =>{if(i$(this.id)) $(`#${this.id}`).remove()}
     show=text =>{
         if(!i$(this.id))
-            $(this.field.Input.parentElement).append(`<span class='${CONFIG.LEGEND.CLASS}' id='${this.id}'>${text}</span>`);
+            $(this.field.Input.parentElement.parentElement).append(`<span class='${CONFIG.LEGEND.CLASS}' id='${this.id}'>${text}</span>`);
         else
             i$(this.id).content(text);
     }
@@ -518,7 +525,7 @@ function superType(Type, Properties) {
                      , inputField:false, dataType:DATATYPE.NUMBER, size:null
                      , maxlength:0, validator:null, mask:null
                      , Header:{clas$:null, id:null}
-                     , Report:{}, Record:{value:'', formattedValue:''}, attributes:null});
+                     , Report:{}, Record:{value:'', formattedValue:''}, attributes:{}});
 /*   this.id  - Eh o identificador no form.
    this.key - eh como estah definido no dataset (column)
 */
@@ -544,11 +551,13 @@ function superType(Type, Properties) {
        SELF.identify(wrap, id, key, design);
        TYPE.HELPER.createLabel(SELF, wrap)
        let wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput','wrap_input');
-       j$.ui.Render.input(wrapInput, SELF.id, SELF.type, SELF.maxlength, SELF.attributes);
+       let input     = j$.ui.Render.input(wrapInput, SELF.id, SELF.type, SELF.maxlength, SELF.attributes);
        wrapInput.stylize(SELF.design.inputStyle);
-       SELF.bind(i$(SELF.id));
+       if (SELF.onChangeHandle)
+          input.onchange = SELF.onChangeHandle;
+       SELF.bind(input) //(i$(SELF.id));
    };
-   this.text =p_value=>{return SELF.value(p_value);}; // Se tem um texto associado ou uma lista (pode ser usado para um AJAX)
+   this.text  =p_value=>{return SELF.value(p_value);}; // Se tem um texto associado ou uma lista (pode ser usado para um AJAX)
    this.value =p_value=>{ // Retorna o valor sem m�scara (caso haja)
           let value;
           if (p_value)
@@ -663,7 +672,7 @@ j$.ui.type.Numeric=function(size,decimal, Properties){
 }
 j$.ui.type.Integer=function(size, Properties){
    this.inherit = superType;
-   this.inherit({size:size, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isInteger();}, error:ERROR.MESSAGE.Integer}, mask:{format:'#'.repeat(size)}}, Properties);
+   this.inherit({size, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isInteger();}, error:ERROR.MESSAGE.Integer}, mask:{format:'#'.repeat(size)}}, Properties);
 }
 
 j$.ui.type.Money=function(size, Properties){
@@ -707,6 +716,61 @@ j$.ui.type.Date=function(Properties){
    this.inherit({size:10, dataType:DATATYPE.DATE, validator:{handler:value=>{return value.isDate();}, error:ERROR.MESSAGE.Date}, mask:{format:'00/00/0000|__/__/____', strip:'_', empty:'//'}}, Properties);
 }
 
+j$.ui.type.Date5=function(Properties){
+    if (!Properties)
+        Properties={}
+    Properties.type="date"; // para garantir que será usado o tipo date do html5
+    this.inherit = superType;
+    this.inherit({size:10, dataType:DATATYPE.DATE, validator:{handler:value=>{return value.isDate();}
+                , error:ERROR.MESSAGE.Date}}, Properties);
+    this.value = p_value=>{
+        let value;
+        if (p_value)
+            value=p_value;
+        else{
+            if (this.Input){
+                try{ // invert do padrao yyyy-mm-dd para ddmmyyyy
+                   value = this.Input.value.split("-").reverse().join("")
+                } catch (e)  {
+                   console.error("erro ao fazer parse do valor de type=date", e.message);
+                }
+            }
+        }
+        return value.trim();
+    };
+ }
+ j$.ui.type.DateTime=function(Properties){
+    if (!Properties)
+        Properties={}
+    Properties.type="datetime-local"; // para garantir que será usado o tipo date do html5
+    this.inherit = superType;
+    this.inherit({size:10, dataType:DATATYPE.DATE, validator:{handler:value=>{return value.isDateTime();}
+                , error:ERROR.MESSAGE.Date}}, Properties);
+    this.value = p_value=>{
+        let value;
+        if (p_value)
+            value=p_value;
+        else{
+            if (this.Input){
+                try{
+                   value = this.Input.value.stripChar("-T:");
+                } catch (e)  {
+                   console.error("erro ao fazer parse do valor de type=datetime-local", e.message);
+                }
+            }
+        }
+        return value.trim();
+    };
+ }
+ j$.ui.type.Color=function(Properties){
+    if (!Properties)
+        Properties={}
+    Properties.type="color"; // para garantir que será usado o tipo date do html5
+    this.inherit = superType;
+    this.inherit({size:10, dataType:DATATYPE.DATE
+           , validator:{handler:value=>{return value.isColor();} , error:ERROR.MESSAGE.Date}}, Properties);
+}
+
 j$.ui.type.Hour=function(Properties){
    this.inherit = superType;
    this.inherit({size:4, validator:{handler:value=>{return value.isHour();}, error:ERROR.MESSAGE.Hour}, mask:{format:'00:00|__:__',empty:':'}}, Properties);
@@ -717,6 +781,19 @@ j$.ui.type.Phone=function(Properties){
    this.inherit({size:11, validator:{handler:value=>{withoutMask=true;return value.isPhone(withoutMask);}, error:ERROR.MESSAGE.Phone}, mask:{format:'(000)0000-0000|(___)____-____', strip:'()-'}}, Properties);
 }
 
+j$.ui.type.Range=function(size, Properties){
+    let _me = this;
+    if (!Properties)
+        Properties={}
+    Object.preset(Properties, {min:1, max:9, step:1});    
+    Properties.type="range"; // para garantir que será usado o tipo date do html5
+    this.inherit = superType;
+    this.inherit({size, dataType:DATATYPE.DATE
+           , validator:{handler:value=>{return value.isRange();} , error:ERROR.MESSAGE.Date}}, Properties);
+    this.onChangeHandle=function(e){
+        _me.Legend.show(_me.value());
+    } 
+}
 
 j$.ui.type.Password=function(size, Properties){
    this.inherit = superType;
