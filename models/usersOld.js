@@ -23,5 +23,6 @@ module.exports = (sequelize, DataType) => {
                   Users.hasMany(models.Tasks);
                } } }
    );
+   Users.isCrud = true;
    return Users;
 };

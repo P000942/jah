@@ -6,6 +6,6 @@ module.exports = (sequelize, DataType) => {
                 , txPapel:{type:DataType.STRING, allowNull:false, unique:true, validate:{notEmpty:true}}
                 }
        );
-       Papel.isCrud = true;
+   Papel.isCrud = true;
   return Papel;
 };

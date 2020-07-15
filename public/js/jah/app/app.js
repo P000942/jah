@@ -21,10 +21,10 @@ var adapter={
           ,     Pessoa:{caption:'Pessoa'   ,  query:true, title:'Exemplo de consulta'}
           ,     Basico:{caption:'Básico'   ,  query:true, title:'Consulta Básica', resource:'pessoa'}
           ,     Tarefa:{caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa'}
-          ,   Mensagem:{caption:'Mensagem' ,  query:true, title:'Mensagem'       , resource:'mensagem', modal:true}
+          ,   Mensagem:{caption:'Mensagem' ,   crud:true, title:'Mensagem' }//      , resource:'mensagem', modal:true}
         }
    , design:{ // Para montar os menus e sebmenus
-             Tabelas:{caption:'Tabelas', items:['Papel','Usuario','Documento']}
+             Tabelas:{caption:'Tabelas', items:['Papel','Usuario','Documento','Mensagem']}
          ,    Outros:['Assunto', 'SituacaoAtividade','Partial'] // key e caption serão igual a "Outros"
          ,  Consulta:['Pessoa','Basico']
        }

@@ -37,10 +37,10 @@
                                         , idTarefa:TYPE.INTEGER(4,{label:'Código', readOnly:true})
                                         , txTarefa:TYPE.CHAR(30,{label:'Tarefa', mandatory:true})
                                         }
+                        }
+                      //, Mensagem:{caption:'Ver Mensagem'}
                     }
-                      , Mensagem:{caption:'Ver Mensagem'}
-                    }
-        });
+        }); 
     with(j$.service.c$){
         Assunto.Interface = {
            container:CONFIG.LAYOUT.CONTENT
