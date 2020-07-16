@@ -1,7 +1,7 @@
 /*
- * To change this template, choose Tools 
- * and open the template in the editor.
+   By Geraldo Gomes
  */
+
 j$.ui.type={};
 j$.ui.createFieldset = (fields)=>{return new Fieldset(fields)}
 var DATATYPE = {NUMBER:{parse:value=>{return parseFloat(value);}},
@@ -1255,6 +1255,7 @@ class Fieldset{
         }
         let _fs = this;
         this.Items=fields;
+        this.c$=fields;
         this.length=0;
         this.filter= function(){
             let criteria={};
@@ -1292,6 +1293,7 @@ class Fieldset{
                return false;
         }
     }
+    C$ = this.item;
     //this.get = this.item;
     // varre fieldset devolve um registro dos campos que estão preenchidos
     // útil para consultas

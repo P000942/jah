@@ -723,6 +723,14 @@ Object.presetValues = (receiver, provider)=>{
 // console.log(Object.presetValues(aux,{a:5,x:20}))
 // console.log(Object.presetValues(aux,{b:15,x:20}))
 
+Object.show = source=>{
+    for (let key in source){
+        //let _t = source[key].constructor.name[0].toLowerCase();
+        console.log(`${key}:`,source[key]);
+    }
+};
+// let aux = {text:"texto", nro: 1, ar:[1,2], obj:{nm:1, nr:2}, fn:()=>"2", dt:c$.NOW, fnc: function(){}}
+// Object.show(aux)
 
 //@note:
 Object.mixin=function(receiver, provider, methods){

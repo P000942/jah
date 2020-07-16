@@ -449,10 +449,10 @@ j$.service = function(){
     };  
 
    return {
-       get:key=>{return items[key];}
+       get:key=>{return items[key]}
      , Items:items
      , c$:items
-     , C$:key=>{return items[key];}
+     , C$:key=>{return items[key]}
      , createCrud: function(key, service){
            return this.create(key, new Crud(j$.service.adapter.get(key), service));
        }
@@ -500,7 +500,7 @@ j$.$S = j$.service.c$;
 
 j$.ui.Page = function(){
    let items = {};
-   const modal =function(wrap,form, fixed){
+   const Modal =function(wrap,form, fixed){
        let SELF = this;
        //this.show = show;
        this.display=show;
@@ -542,7 +542,7 @@ j$.ui.Page = function(){
           SELF.alert    =i$(form.id+"Alert")
        }();
    }
-   const form =function(wrap,form){
+   const Form =function(wrap,form){
        let _form = this;
        this.display=show;
        function show(){ _form.form.show()}
@@ -688,8 +688,8 @@ j$.ui.Page = function(){
             , dropbox:(page, section, fieldset, design)=>{
                  return TYPE.DROPBOX({container:section, id:design.id, legend:design.title}).target;
               }
-            , form:form
-            , modal:modal
+            , form:Form
+            , modal:Modal
           };
        }()
    };
@@ -772,6 +772,8 @@ j$.ui.Form=function(service, modal) {
               parms = service.Child.bindFields;
            service.autoRequest(parms);
         }   
+        $i.c$ = service.Fieldset.c$;
+        $i.C$ = service.Fieldset.C$;
     };
 };
 
