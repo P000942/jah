@@ -967,5 +967,5 @@ j$.Resource.Store.add({
 //     return r;
 // };
 // j$.$R.assunto.orderBy(sortDemo,"idCategoriaAssunto")
-// j$.$R.assunto.orderBy(j$.$S.Assunto.Fieldset.Items.idCategoriaAssunto.sortOrder(),"idCategoriaAssunto")
+// j$.$R.assunto.orderBy(j$.$S.Assunto.Fieldset.c$.idCategoriaAssunto.sortOrder(),"idCategoriaAssunto")
 //j$.$R.assunto.put(13,{idAssunto: "13", idCategoriaAssunto: "1", txTitulo: "TesteW"})

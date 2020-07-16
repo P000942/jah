@@ -246,8 +246,8 @@ function Columns(page, Fieldset){
        //var cols = new Hash();
        var leftPos = 0;
        var idx = 0;
-       for(key in Fieldset.Items){
-          var field = Fieldset.Items[key];
+       for(key in Fieldset.c$){
+          var field = Fieldset.c$[key];
           field.type = 'column';
           field.Report = {identicalSupress:true, size:0,
 	                bold:false, hide:false,  style:null,
@@ -260,7 +260,7 @@ function Columns(page, Fieldset){
           if (idx == 1)
              field.Report.first=true;
 
-          if (idx == Fieldset.Items.length)
+          if (idx == Fieldset.c$.length)
              field.Report.last=true;
 
           var colSize = calculeSize(field.size, page.Detail.Font.size);

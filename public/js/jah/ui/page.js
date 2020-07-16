@@ -111,8 +111,8 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
          , header:()=>{
              let header = self_grid.table.createTHead();
              let headerDetail = header.insertRow(0);
-                for(let key in page.service.Fieldset.Items){
-                    let df = page.service.Fieldset.Items[key];
+                for(let key in page.service.Fieldset.c$){
+                    let df = page.service.Fieldset.c$[key];
                     if (df.persist){
                         let idListHeader = self_grid.table.id+"_header."+key;
                         let label = document.createElement("th");
@@ -401,7 +401,7 @@ j$.service = function(){
             this.Parent = parent; // Página que está criando os filhos
            // let initialized = function(){
                 let idService  = parent.service.id;
-                let txGetValue = `j$.$S.${idService}.Fieldset.Items.${parent.service.resource.id}.value()`;
+                let txGetValue = `j$.$S.${idService}.Fieldset.c$.${parent.service.resource.id}.value()`;
                 this.id = idService +''+key.toFirstUpper();
                 Object.preset(this,j$.service.adapter.get(key)) // Vai copiar todas as propriedades do adapter.services que não exite no service
                 this.onclick = this.Parent.actionController+'.child("'+key+'",' + txGetValue+ ')';
@@ -440,10 +440,10 @@ j$.service = function(){
         }  
         //@note: exibe a descrição do serviço pai
         showLegends(BindFields){
-            for (let key in this.service.Fieldset.Items){   
-                let field = this.service.Fieldset.Items[key];
+            for (let key in this.service.Fieldset.c$){   
+                let field = this.service.Fieldset.c$[key];
                 if (field.parentLegend)
-                    field.Legend.show(this.Parent.service.Fieldset.Items[field.parentLegend].value());
+                    field.Legend.show(this.Parent.service.Fieldset.c$[field.parentLegend].value());
             };
         }      
     };  
@@ -576,10 +576,10 @@ j$.ui.Page = function(){
      , createAdapter: adapter=>{j$.ui.Adapter = new j$.ui.adapterFactory(adapter); return j$.ui.Adapter;}
      , Designer:function(){
           let addField=(form, section, fieldset, design, key)=>{
-              if (fieldset.item(key)){
+              if (fieldset.C$(key)){
                  let id =   form.id +'_'+key;
                  let wrap = j$.ui.Render.wrap(section, id+'_'+ design.clas$.column, design.clas$.column);
-                 fieldset.item(key).create(wrap, id, key, design);
+                 fieldset.C$(key).create(wrap, id, key, design);
                  wrap.stylize(design.columnStyle);
               }
           };
@@ -644,7 +644,7 @@ j$.ui.Page = function(){
             }
             , standard:(page, section, fieldset)=>{
                   if (fieldset){
-                     for (let key in fieldset.Items){
+                     for (let key in fieldset.c$){
                         let design={labelStyle:{width:'140px'}, clas$:{row:'wrap_classic_section',column:'wrap_classic_field'}};
                         addField(page.form, section, fieldset, design, key);
                      }

@@ -160,7 +160,7 @@ function ResponseController($service){
       _me.service.Fieldset.filter.clear();
       if (criteria){
          for (let key in criteria){
-            let field = _me.service.Fieldset.Items[key];
+            let field = _me.service.Fieldset.c$[key];
             field.filterToggle(true); // exibir icone
          }
       }
@@ -318,8 +318,8 @@ function UpdateController(service){
   function validate(newRecord){
         let record = this.record()
           , error  =false;
-        for(let key in service.Fieldset.Items){
-           let field = service.Fieldset.Items[key];
+        for(let key in service.Fieldset.c$){
+           let field = service.Fieldset.c$[key];
            if (field.validate){
               if (!field.validate())
                   error=true;
