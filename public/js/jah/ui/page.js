@@ -188,10 +188,11 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
 }; //j$.ui.Grid
 
 j$.ui.Buttons=function(actionController, buttons, presetFunction){
-    let self_button=this;
+    let _btn=this;
     let wrapButtons;
     let _wrap;
-    Object.preset(self_button,{Items:getItems()});
+    Object.preset(_btn,{Items:getItems()});
+    this.c$ = this.Items;
     presetFunction =(presetFunction)?presetFunction:()=>{};
     // Obter o grupos de buttons
     function getItems(){
@@ -200,11 +201,12 @@ j$.ui.Buttons=function(actionController, buttons, presetFunction){
     };
     // Colocar os valores default
     function preset(key,button, parent){
+        let value = (button.VALUE) ?button.VALUE :key.toLowerCase().toFirstUpper();
         if (parent && parent.id)
             Object.preset(button, {id: parent.id +'_'+ key});
-        Object.preset(button,{key:key, value:button.VALUE, clas$:CONFIG.BUTTON.CLASS.DEFAULT});
-        if (actionController && dataExt.isString(actionController))
-           button.onclick = actionController+'.' +key+'(this);';
+        Object.preset(button,{key:key, value, clas$:CONFIG.BUTTON.CLASS.DEFAULT});
+        if (!button.onclick && actionController && dataExt.isString(actionController))
+           button.onclick = actionController+'.' +key.toLowerCase()+'(this);';
         return button;
     };
 
@@ -212,9 +214,12 @@ j$.ui.Buttons=function(actionController, buttons, presetFunction){
        if (button.submenu){
           let root  = $("#"+button.id+" > ul")[0].id; // obtendo o root para os elementos
           for (let key in button.submenu.c$){
-             let subitem = Object.merge({},button.submenu.c$[key]);
-             subitem.id = button.id + subitem.key;
-             j$.ui.Render.li(i$(root),subitem);
+              let subitem = Object.merge({},button.submenu.c$[key],["key","caption", "onclick"]);
+              preset(key,subitem, _wrap);
+              subitem.caption = (subitem.caption) ?subitem.caption 
+                                                  :subitem.value;
+              subitem.id = button.id + subitem.key;
+              subitem.element = j$.ui.Render.li(i$(root),subitem);
           }
        }
     }
@@ -222,22 +227,22 @@ j$.ui.Buttons=function(actionController, buttons, presetFunction){
     this.create=wrap=>{
         _wrap = wrap;
         wrapButtons=j$.ui.Render.wrap(_wrap, _wrap.id+ '_button', 'wrap_command');
-        for (let key in self_button.Items){
-            self_button.add(key,self_button.Items[key]);
+        for (let key in _btn.Items){
+            _btn.add(key,_btn.Items[key]);
         };
     };
 
     this.add=(key, button)=>{
-         preset(key.toLowerCase(),button, _wrap);
-         button['element'] = j$.ui.Render.button(wrapButtons, button);
+         preset(key,button, _wrap);
+         button.element = j$.ui.Render.button(wrapButtons, button);
          if (actionController && dataExt.isObject(actionController) && actionController[button.key])
-             $(button['element']).click(actionController[button.key]);
+             $(button.element).click(actionController[button.key]);
          submenu(button);
     };
     this.format=parent=>{
         let html='';
-        for (let key in self_button.Items){
-            let button=self_button.Items[key];
+        for (let key in _btn.Items){
+            let button=_btn.Items[key];
             preset(key.toLowerCase(),button, parent);
             html+=j$.ui.Render.formatButton(button);
         };
@@ -249,10 +254,10 @@ j$.ui.Buttons=function(actionController, buttons, presetFunction){
 // pager (): é o que controla data, faz o calculos de pagina e devolve os registro para exibir na página
 // j$.ui.Pager: É o componente que cria os elementos visuais de html para navegação e recebe a ações para o controller
 j$.ui.Pager=function(parent, pager , actionController){
-    let self_pager=this;
+    let _pager=this;
     let _wrap;
 
-    Object.preset(self_pager,{clas$:CONFIG.PAGER.CLASS, pager:pager});
+    Object.preset(_pager,{clas$:CONFIG.PAGER.CLASS, pager:pager});
     function parse(values){
         let properties = values;
          if (dataExt.isString(properties))
@@ -280,8 +285,8 @@ j$.ui.Pager=function(parent, pager , actionController){
         if (i$(parent.id+ '_pager'))
             _wrap = i$(parent.id+ '_pager');
         else
-            _wrap=j$.ui.Render.wrapperUl(Wrap, parent.id+ '_pager', self_pager.clas$);
-        self_pager.clear();
+            _wrap=j$.ui.Render.wrapperUl(Wrap, parent.id+ '_pager', _pager.clas$);
+        _pager.clear();
     };
     this.clear=()=>{if (_wrap) _wrap.innerHTML='';};
 
@@ -294,15 +299,15 @@ j$.ui.Pager=function(parent, pager , actionController){
          _wrap.insert('<li' +clas$+ '><a' +j$.ui.Render.attributes(properties,'value')+ '>'+properties.caption+'</a></li>');
     };
     this.createNavigator=wrap=>{
-        self_pager.create(wrap);
-        self_pager.add("first",(pager.Control.first===pager.Control.number)?'disabled':'');
-        self_pager.add("back",(pager.Control.first===pager.Control.number)?'disabled':'');
+        _pager.create(wrap);
+        _pager.add("first",(pager.Control.first===pager.Control.number)?'disabled':'');
+        _pager.add("back",(pager.Control.first===pager.Control.number)?'disabled':'');
         let pagerPosition=pager.positions();
         for (let row=pagerPosition.first; row<=pagerPosition.last; row++){
-            self_pager.add(row.toString(),(row===pager.Control.number)?'active':'');
+            _pager.add(row.toString(),(row===pager.Control.number)?'active':'');
         }
-        self_pager.add("next",(pager.Control.last===pager.Control.number)?'disabled':'');
-        self_pager.add("last",(pager.Control.last===pager.Control.number)?'disabled':'');
+        _pager.add("next",(pager.Control.last===pager.Control.number)?'disabled':'');
+        _pager.add("last",(pager.Control.last===pager.Control.number)?'disabled':'');
     };
     this.Controller=function(callbackPopulate){
         let nbr =  c$.RC.NONE;
@@ -749,7 +754,7 @@ j$.ui.Form=function(service, modal) {
     $i.Buttons = new j$.ui.Buttons($i.actionController, service.Interface.Buttons, DEFAULT_BUTTON_PRESET);
     this.init= function(externalController) {
         j$.ui.Page.Designer.create($i); // cria os fields
-        $i.Buttons.create($i.footer);   // cria os buttoes
+        $i.Buttons.create($i.footer);   // cria os buttoes html
        // Typecast.Init(service.Interface);              // inicializa as máscaras (já é inicializado qdo a mask é redenrizado em cada input)
         if (service.Interface.List){
            if (service.Interface.List===true){service.Interface.List={};}
