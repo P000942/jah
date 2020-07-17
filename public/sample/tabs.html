@@ -46,13 +46,13 @@
 </html>
 <script type="text/javascript">
 $(document).ready(function(){
-    var partialUrl = CONFIG.SERVER.CONTEXT + 'partial.html'
-    var tabs = j$.ui.Tabs.create('tabs','content');
+    const partialUrl = CONFIG.SERVER.CONTEXT + 'partial.html'
+    const tabs = j$.ui.Tabs.create('tabs','content');
 
-    var menu = j$.ui.Menu.create("menubar");
-    var tabPartial={key:"tab_Partial", caption:'Partial', url:partialUrl, title:'Title Partial Tab'};
+    const menu = j$.ui.Menu.create("menubar");
+    const tabPartial={key:"tab_Partial", caption:'Partial', url:partialUrl, title:'Title Partial Tab'};
     menu.addMenu({caption:"Home", active:true});
-    var menu_link = menu.addMenu("Tabs");
+    const menu_link = menu.addMenu("Tabs");
              menu_link.add({caption:'Link',  url:partialUrl});
              menu_link.divider.add();
              menu_link.add({caption:'Menu Partial', byPass:true, url:partialUrl,
@@ -98,14 +98,14 @@ $(document).ready(function(){
              });
     };
     // Cria a tab FIXA - 'Home'
-    var criarHome= function (){
+    const criarHome= function (){
          j$.ui.Tabs.c$.tabs.open({key:"Home", caption:"Home", fixed:true, url: partialUrl});
     }();
-    var delagateTab= function (idContent){
+    const delagateTab= function (idContent){
         j$.ui.Open.partial('http://localhost:8383/jah/partial.html',idContent);
     };
 
-    var sbmenu=j$.ui.Tabs.c$.tabs.add({key:"tab_submenu", caption:'submenu', url:partialUrl, title:'Title Submenu Tab'});
+    const sbmenu=j$.ui.Tabs.c$.tabs.add({key:"tab_submenu", caption:'submenu', url:partialUrl, title:'Title Submenu Tab'});
     sbmenu.Menu.add("Álbun",["Album 1","Album 2", "Album 3"]);
     sbmenu.Menu.render();
 });

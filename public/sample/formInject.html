@@ -22,11 +22,11 @@
     <script src="../js/jah/type/type.js"></script>
     <script type="text/javascript">
         function addField(){
-             var cpf=TYPE.CPF({label:'CPF NOVO'});
+             const cpf=TYPE.CPF({label:'CPF NOVO'});
              cpf.create(i$('novo_campo'), 'newCFP','newCFP');
         }
         function addInForm(){
-             var cpf=TYPE.CNPJ({label:'CNPJ NOVO'});
+             const cpf=TYPE.CNPJ({label:'CNPJ NOVO'});
              cpf.create(i$('myForm'), 'newCNPJ','newCNPJ');
         }
         function addHintIcon(){
@@ -41,14 +41,14 @@
            j$.ui.Alert.show( ['<strong>INFORMAÇÃO!</strong> Mensagem de alerta com informação!'], CONFIG.ALERT.INFO.CLASS, i$('wrapAlert'),);
            //j$.ui.Alert.show(i$('wrapAlert'), ['Mensagem de alerta','Segunda Linha','Terceira Linha'], CONFIG.ALERT.ERROR.CLASS);
         }
-        var myPage = function() {
+        const myPage = function() {
             // variável private
-            var numerico=TYPE.NUMERIC(4);
+            const numerico=TYPE.NUMERIC(4);
 
 
             // método private
             // para exibir as mensagens de erro
-            var show = function() {
+            const show = function() {
                 alert(numerico.format('55'));
                 numerico.inputField.value='11';
                 alert(numerico.format());
@@ -103,14 +103,14 @@
             <div id='content'>
 
             <form id='myForm'>
-                <fieldset class="crud">
-                    <legend>TESTE
-                        <a class="btn btn-small" id="btn1" onclick="myPage.init();">Injetar</a>
-                        <a class="btn btn-small"  onclick="addField();">Novo campo</a>
-                        <a class="btn btn-small"  onclick="addInForm();">No Form</a>
-                        <a class="btn btn-small"  onclick="addHintIcon();">Hint Icon</a>
-                        <a class="btn btn-small"  onclick="addLabel();">Label</a>
-                        <a class="btn btn-small"  onclick="addAlert();">Alert</a>
+                <fieldset class="crud" >
+                    <legend style="height:45px; padding-top: 5px; padding-right: 30px;">TESTE
+                        <a class="btn btn-default" id="btn1" onclick="myPage.init();">Injetar</a>
+                        <a class="btn btn-default"  onclick="addField();">Novo campo</a>
+                        <a class="btn btn-default"  onclick="addInForm();">No Form</a>
+                        <a class="btn btn-default"  onclick="addHintIcon();">Hint Icon</a>
+                        <a class="btn btn-default"  onclick="addLabel();">Label</a>
+                        <a class="btn btn-default"  onclick="addAlert();">Alert</a>
                     </legend>
                     <div id='wrapAlert'></div>
                     <div class="wrap_field_br" id='novo_campo'></div>
