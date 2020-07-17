@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <!-- <meta name="viewport" content="width=device-width"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
 
     <!-- <link rel="stylesheet" href="../css/bootstrap.css"> -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -30,52 +31,59 @@
     <script src="../js/jah/ui/page.js"></script>
 
 <script type="text/javascript">
-    //  google.setOnLoadCallback(function() {
-    //      //ERROR.init({callback:function(msg,oType){alert(oType.label+': '+msg);}});
-    //      ERROR.init({callback:function(msg,field){ERROR.on(msg, field);}});
-    //      myPage.init();
-    //  });
-
      $(document).ready(function(){
        //ERROR.init({callback:function(msg,oType){alert(oType.label+': '+msg);}});
        ERROR.init({callback:function(msg,field){ERROR.on(msg, field);}});
-       myPage.init();
+    //   myPage.init();
      });
     //ERROR.init({callback:function(msg,oType){alert(oType.label+': '+msg);}});
-
-    var actionController =function (){
+    const init =()=>{
+        $("#content").removeClass("lookThis");
+        myPage.init();
+    }
+    const actionController =function (){
         return{
-            edit:function(){alert('edite');},
-          insert:function(){alert('criar');},
-            back:function(){alert('voltar');},
-          remove:function(){alert('remover');},
-          update:function(){alert('alterar');},
-            sort:function(){alert('sort');},
-           print:function(){alert('print');},
-          filter:function(){alert('filtrar');},
-             get:function(){alert('consultar');},
-       pesquisar:function(){alert('pesquisar');},
-            novo:function(){alert('novo');}
+            edit:()=>{alert('edite')},
+          insert:()=>{alert('criar')},
+            back:()=>{alert('voltar')},
+          remove:()=>{alert('remover')},
+          update:()=>{alert('alterar')},
+            sort:()=>{alert('sort')},
+           print:()=>{alert('print')},
+          filter:()=>{alert('filtrar')},
+             get:()=>{alert('consultar')},
+       pesquisar:()=>{alert('pesquisar')},
+            novo:()=>{alert('novo')},
+            save:(e)=>{alert(e.text)},
+            teste:(e)=>{alert(e.text)},
+            simples:(e)=>{alert(e.text)},
+            pornome:(e)=>{alert(e.text)},
+            porcpf:(e)=>{alert(e.text)},
         };
     }();
 
     j$.service.create("myPage",
          {
             init:function(idTarget){
-                 var page = j$.ui.Page.create(myPage);
+                 let page = j$.ui.Page.create(myPage);
+                 const {BUTTONS} = CONFIG.CRUD
                  // Modificando os presets dos botões de comando
-                 CONFIG.CRUD.BUTTONS.INSERT.value='Novo'; //Muda o título
-                 CONFIG.CRUD.BUTTONS.BACK={value:'back',  clas$:'btn btn-default', onclick:'javascript:actionController.back()'}; //Sobreposição tudo
-                 CONFIG.CRUD.BUTTONS.SAVE.onclick='alert("save");'; //Sobreposição só o método
-                 CONFIG.CRUD.BUTTONS.TESTE={value:'Teste', clas$:'btn btn-default', icon:'icon-phone',  onclick:'alert("teste");'}; // Incluir novo botão no preset comando
-                 page.Buttons.Items={TESTE:CONFIG.CRUD.BUTTONS.TESTE
-                                   ,  BACK:CONFIG.CRUD.BUTTONS.BACK
-                                   ,  SAVE:CONFIG.CRUD.BUTTONS.SAVE
-                                   , IMPRIMIR:CONFIG.CRUD.BUTTONS.PRINT
-                                   , novo:{value:'novo', clas$:'btn',  onclick:'actionController.novo()'}
+                 BUTTONS.INSERT.value='Novo'; //Muda o título - Mas muda global
+                 BUTTONS.BACK={value:'back',  clas$:'btn btn-default'}; //Sobreposição tudo
+                 BUTTONS.TESTE={value:'Teste', clas$:'btn btn-default', icon:'icon-phone'}; // Incluir novo botão no preset comando
+                 page.Buttons.Items={TESTE:BUTTONS.TESTE
+                                   ,  BACK:BUTTONS.BACK
+                                   ,  SAVE:BUTTONS.SAVE
+                                   , IMPRIMIR:BUTTONS.PRINT //dará erro pq não tem o "imprimir"no controller
+                                   , novo:{value:'novo', clas$:'btn'} // Inclui apenas para essa página 
+                                   , SIMPLES:{}
                                };
                  // Cria um item novo direto nos commans da página
-                 page.Buttons.Items.pesquisar={clas$:'btn'}; //todas as outras propridades serão criados de acordo com a convenção
+                 page.Buttons.Items.pesquisar={value:"Pesquisar", clas$:'btn btn-default'}; //todas as outras propridades serão criados de acordo com a convenção
+                 let {pesquisar} = page.Buttons.Items;
+                 pesquisar.submenu ={c$:{porNome:{caption:"Por nome"}
+                                         ,porCpf:{caption:"Por cpf"}
+                                      }}
                  ///CONFIG.GRID.BUTTONS.edit.value='Editar'
                  //page.List.Detail.Link.Items.edit.value='Editar [RN-05]'; //Muda título do botão do link linhas de detalhe
                  //var externalController=true
@@ -95,7 +103,7 @@
       Integer:TYPE.INTEGER(1,{type:"range", max:9, min:1, step:2}),
                      Digito:TYPE.DIGIT({label:'Dígito', resource:{name:'estadoCivil', local:true, id:"idEstadoCivil"}, hint:'informe o código aparece a legenda.'}),
                   ufLegenda:TYPE.UPPERCASE(2,{label:'UF com Legenda', resource:{name:'uf', local:true, id:'sgUf', text:'txEstado'}}),
-                   Numerico:TYPE.NUMERIC(4,2,{label:'Numérico', mandatory:true}),
+                    Numerico:TYPE.NUMERIC(4,2,{label:'Numérico', mandatory:true}),
                    Dinheiro:TYPE.MONEY(10),
                       Range:TYPE.RANGE(1,{max:9, min:1, step:2}),
                       Letra:TYPE.LETTER(4),
@@ -107,7 +115,7 @@
                        Hora:TYPE.HOUR({type:"time"}),
                         Cor:TYPE.COLOR(),
                       Email:TYPE.EMAIL(50),
-                       Text:TYPE.CHAR(25),
+                        Text:TYPE.CHAR(25),
                        Nome:TYPE.NAME(40),
                    Telefone:TYPE.PHONE(),
                         CPF:TYPE.CPF(),
@@ -132,7 +140,7 @@
            </div>
            <nav class="navbar navbar-default" id="menubar">
                <a class="btn" href='javascript:alert("teste")'><i class="icon-print"></i>Teste</a>
-               <a class="btn" href="#" onclick="alert('teste')"><i class="icon-align-left"></i></a>
+               <a class="btn" href="#" onclick="init()"><i class="icon-edit"></i>Execute</a>
                <button type="button" class="close" data-dismiss="alert">×</button>
            </nav>
         </header>
@@ -140,7 +148,7 @@
         <nav id="nav-left"><div  id="sidebar"></div></nav>
 
         <section id="content_section">
-            <div id='content'>
+            <div id='content' class="lookThis">
             </div>
         </section>
 

@@ -1,5 +1,3 @@
-
-
 j$.service.createCrud("Papel"
            ,{fieldset:
            	   {idPapel:TYPE.INTEGER(4,{label:'Código', readOnly:true})
