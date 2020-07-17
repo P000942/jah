@@ -31,25 +31,25 @@
          ERROR.init({callback:function(msg,field){ERROR.on(msg, field);}});
          myPage.init();
      });
-    var actionController =function (){
+    const actionController =function (){
         return{
-            edit:function(){alert('edite');},
-          insert:function(){alert('criar');},
-            back:function(){alert('voltar');},
-          remove:function(){alert('remover');},
-          update:function(){alert('alterar');},
-            sort:function(){alert('sort');},
-           print:function(){alert('print');},
-          filter:function(){alert('filtrar');},
-             get:function(){alert('consultar');},
-       pesquisar:function(){alert('pesquisar');},
-            novo:function(){alert('novo');}
+            edit:()=>{alert('edite')},
+          insert:()=>{alert('criar')},
+            back:()=>{alert('voltar')},
+          remove:()=>{alert('remover')},
+          update:()=>{alert('alterar')},
+            sort:()=>{alert('sort')},
+           print:()=>{alert('print')},
+          filter:()=>{alert('filtrar')},
+             get:()=>{alert('consultar')},
+       pesquisar:()=>{alert('pesquisar')},
+            save:e=>{alert(e.text)}
         };
     }();
    j$.service.create("myPage",
          {
             init:function(idTarget){
-                 var page = j$.ui.Page.create(myPage);
+                 const page = j$.ui.Page.create(myPage);
                  page.init(actionController);   // actionController: Objeto para receber as ações quando clicar nos botões
             }
             , autoRequest:false
@@ -59,7 +59,7 @@
     myPage.Interface = {
        container:CONFIG.LAYOUT.CONTENT
           ,   id:myPage.id.toLowerCase()
-          ,    title:'Manter papéis'
+          ,    title:'Exemplo Designer'
           , design:[
                 {type:'classic'
                      , fields:['Digito','ufLegenda'], labelStyle:{width:'140px'}}
@@ -131,7 +131,9 @@
 
         <nav id="nav-left"><div  id="sidebar"></div></nav>
 
-        <section id="content_section"><div id='content'></div></section>
+        <section id="content_section">
+            <div id='content'></div>
+        </section>
 
         <aside id="nav-right"></aside>
 
