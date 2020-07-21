@@ -828,10 +828,13 @@ j$.ui.type.Cep=function(Properties){
 j$.ui.type.Mask=function(mask, Properties){
     let strip=mask.replace(/\w|[@]|[#]/g,""); // Pega somente caracteres especiais;
     let prompt='|'+mask.replace(/\w|[@]|[#]/g,"_"); //Montar prompt para entrada de dados;
-    let dataType = (mask.replace(/\d|[#]/g,"").length>0)? DATATYPE.CHAR : DATATYPE.NUMBER;
+    let dataType = (mask.replace(c$.MASK.DecimalCharacter,"").replace(/\d|[#]/g,"").length>0)? DATATYPE.CHAR : DATATYPE.NUMBER;
     let validator = {handler:value=>{return value.isValidInMask(mask);},error: "campo preenchido com formato inválido"};
+    if (!Properties.align)
+        Properties.align = (dataType==DATATYPE.CHAR) ?c$.ALIGN.LEFT : c$.ALIGN.RIGHT;
     this.inherit = superType;
     this.inherit({validator:validator, dataType:dataType, mask:{format:mask+prompt, strip:strip}}, Properties);
+    
 }
 
 j$.ui.type.List=function(Properties){
@@ -849,6 +852,7 @@ j$.ui.type.List=function(Properties){
                 }
             }
         }
+        SELF.size = maxlen(list);
    }
    this.text = function(p_value){
         let value=SELF.value(p_value);
@@ -856,7 +860,7 @@ j$.ui.type.List=function(Properties){
         return item;
    };
    this.format = this.text;
-   this.size = maxlen(list);
+   
    this.value = p_value=>{
         let value='';
           if (p_value)
