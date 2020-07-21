@@ -91,7 +91,7 @@ div.debug {
 
 /*==================== Mensagens ========================*/
 
-.msg {
+/* .msg {
 	text-align:left;
 	font-weight:bold;
 	font-size:12px;
@@ -99,9 +99,9 @@ div.debug {
 	padding-top:3px;
 	width:70%;
 	margin: 0 auto; margin-top:5px;
-}
+} */
 
-.ok {
+/* .ok {
 	color:rgb(18,118,106);
 	background:url(../img/alerts/ok.gif) no-repeat left;
 	border-top:16px solid rgb(0,60,0);
@@ -126,4 +126,4 @@ div.debug {
 	border-left:1px solid rgb(118,90,90);
 	border-right:1px solid rgb(118,90,90);
 	border-bottom:4px solid rgb(118,90,90);
-}
+} */
