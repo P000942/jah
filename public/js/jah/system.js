@@ -150,7 +150,7 @@ if (System.api.jquery){
         }
     }
     Element.prototype.insert = function(content) {
-        var id = "#" + this.id;
+        let id = "#" + this.id;
         if (dataExt.isString(content)){
             $(id).append(content);
         }else{
@@ -185,7 +185,7 @@ if (System.api.jquery){
             $("#" + this.id).toggle();
     }
     Event.observe = function(node, event, callback) {
-        var element = null;
+        let element = null;
         if (dataExt.isString(node))
             element = $("#" + node);
         else
@@ -196,7 +196,7 @@ if (System.api.jquery){
 
     window['Ajax']={
         Request:function(url, properties){
-            var options={url:url};
+            let options={url:url};
             if (properties.parameters)
                 options.data = properties.parameters;
             if (properties.method)
@@ -235,10 +235,25 @@ if (System.api.jquery){
        }
      };
 }
-
+/* pega o valor de um elemento */
+Element.prototype.get= function(){
+    let value = '';
+    switch(dataExt.type(this)){
+        case 'HTMLSelectElement':
+            if (this.selectedIndex > -1)
+                value = this.options[this.selectedIndex];
+            break;
+        case 'HTMLInputElement':
+            value = this.value;
+            break;
+        default:
+            value= this.textContent;
+    }
+    return value;
+}
 Element.prototype.content= function(value){
     if (value == undefined){
-      var value = '';
+      let value = '';
       switch(dataExt.type(this)){
         case 'HTMLSelectElement':
           value = this.selectedIndex;
@@ -267,6 +282,22 @@ Element.prototype.content= function(value){
         default:
           this.textContent=value;
       }
+    }
+}
+
+Element.prototype.reset= function(){
+    switch(dataExt.type(this)){
+        case 'HTMLSelectElement':
+            this.selectedIndex=-1;
+            break;
+        case 'HTMLInputElement':
+            if (this.type == "radio" || this.type == "checkbox")
+                this.checked = false;
+            if (this.type == "text" || this.type == "hidden")
+                this.value = "";
+            break;
+        default:
+            this.textContent="";
     }
 }
 
