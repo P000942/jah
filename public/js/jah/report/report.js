@@ -1,8 +1,8 @@
 /*====================Constantes==================*/
-var Report = {};
+const Report = {};
 Report.Util = function(){
     return {
-        init:function(){
+        init(){
 //                        //----- EstÃ¡ obtendo o parametro 'columns'
 //                        urlColsDef = System.parameters('columns');
 //                        //----- EstÃ¡ obtendo o parametro 'ds'
@@ -11,46 +11,39 @@ Report.Util = function(){
             urlDS = System.parameters('ds');
             if (urlDS)
                System.request(urlDS, imprime);
-        },
-        convertMMtoPT:function (vl){
-           var vl_pol = vl / 25.4 //Convert para polegadas
-           var vl_pt = vl_pol * 72;
+        }
+        , convertMMtoPT(vl){
+           let vl_pol = vl / 25.4 //Convert para polegadas
+             , vl_pt = vl_pol * 72;
            return Math.round( vl_pt * Math.pow( 10 , 2 ) ) / Math.pow( 10 , 2 );
-        },
-        convertPTtoMM: function (vl){
-           var vl_pol = vl / 72 //Convert para polegadas
-           var vl_mm = vl_pol * 25.4;
+        }
+        , convertPTtoMM(vl){
+           let vl_pol = vl / 72 //Convert para polegadas
+             , vl_mm = vl_pol * 25.4;
            return Math.round( vl_mm * Math.pow( 10 , 2 ) ) / Math.pow( 10 , 2 );
-        },
-
-        convertPXtoMM:function (vl){
-           var vl_pol = vl / 94.5 //Convert para polegadas
-           var vl_mm = vl_pol * 25.4;
+        }
+        ,convertPXtoMM(vl){
+           let vl_pol = vl / 94.5 //Convert para polegadas
+             , vl_mm = vl_pol * 25.4;
            return Math.round( vl_mm * Math.pow( 10 , 2 ) ) / Math.pow( 10 , 2 );
         }
     }
 }();
-var MASK =  {DATE: 'dd/mm/yyyy',
-             HOUR:'hh:mm:ss',
-           NUMBER:{decimal:2, thousandSeparator:'.', decimalSeparator:','}};
 
-var COLOR = {ON:'#F8F8FF', OFF:'#FFFFFF'};
-
+const COLOR = {ON:'#F8F8FF', OFF:'#FFFFFF'}
 // Medidas em milimetro 'mm'
-var PAPER = {A4:{PORTRAIT:{height:'287', width:'202'}, LANDSCAPE:{height:'194', width:'289'}},
+   , PAPER = {A4:{PORTRAIT:{height:'287', width:'202'}, LANDSCAPE:{height:'194', width:'289'}},
          LETTER:{PORTRAIT:{height:'269', width:'208'}, LANDSCAPE:{height:'206', width:'271'}},
           LEGAL:{PORTRAIT:{height:'345', width:'208'}, LANDSCAPE:{height:'206', width:'347'}}
-            };
-
-
-var DEFAULT = {DETAIL:{COLUMN:{FONT:{size:10, bold:false}}},
+            }
+, DEFAULT = {DETAIL:{COLUMN:{FONT:{size:10, bold:false}}},
                HEADER:{COLUMN:{FONT:{size:10, bold:true }}},
-               PAGE:{PAPER:PAPER.A4.PORTRAIT},
-               MASK:MASK};
+               PAGE:{PAPER:PAPER.A4.PORTRAIT}
+               };
 /*==================================================*/
 
-var ReportFactory = function(){
-    var reports = [];
+const ReportFactory = function(){
+    let reports = [];
     return{
         create:function(page, Fieldset, dataset, id_div){
             reports.push(new j$.Report(page, Fieldset, dataset, id_div, reports.length));
@@ -69,7 +62,7 @@ var ReportFactory = function(){
 
 
 j$.Report = function(page, Fieldset, dataset, id_div, idx){
-   var $report = this;
+   const $report = this;
 
    this.ops= function(a){alert(a);}
    this.newPage= function() {
@@ -80,17 +73,19 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
             // Adiciona a pÃ¡gina ao hash de pÃ¡ginas
             $report.pages[$report.Page.id] ={page:$report.Page};
             //$report.pages.set($report.Page.id,{page:$report.Page});
-            with ($report){
+            let {Page, Header, Footer, HeaderDetail, Detail} =  $report;
+           // with ($report){
                 // Inserir a div da pÃ¡gina no html
                 let html = `<div class='page' id='${page.id}'></div>`;//std_page.evaluate(Page);
                 $report.body.insert(html);
                 // Define o tamanho da página
                 let p_style =
-                          {height: Page.Style.height  + 'mm', width: Page.Style.width  + 'mm',
-                        marginTop: Page.Style.marginTop + 'mm',
+                          {height: Page.Style.height       + 'mm', 
+                            width: Page.Style.width        + 'mm',
+                        marginTop: Page.Style.marginTop    + 'mm',
                      marginBottom: Page.Style.marginBottom + 'mm',
-                       marginLeft: Page.Style.marginLeft + 'mm',
-                   marginBotRight: Page.Style.marginRight + 'mm'};
+                       marginLeft: Page.Style.marginLeft   + 'mm',
+                   marginBotRight: Page.Style.marginRight  + 'mm'};
                 i$(Page.id).stylize(p_style);
                 // Imprime Cabeçalho
                 if (Page.Header)
@@ -102,30 +97,31 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
                 // imprime o roda-peh
                 if (Page.Footer)
                     Footer.write(Page);
-            }
+            //}
         }
         // Renderiza todas as páginas
   this.start= function(){
-           with ($report.Page){
+           let {Pager} = $report.Page;
+           //with ($report.Page){
                 while(Pager.next()){
                     $report.newPage();
                 }
-           }
-        }
+          // }
+         }
   this.sort=function(colName){
             $report.Columns.sortNone(colName);
-            var field = $report.Columns.Items[colName];
+            let field = $report.Columns.c$[colName];
             $report.Dataset.orderBy(field.sortOrder());
             $report.clear();
             $report.Page.Pager.restart($report.Dataset);
             $report.start();
         }
   this.filter=function(event, colName, value){
-             var field = $report.Columns.Items[colName];
+             let field = $report.Columns.c$[colName];
              switch(event.button) {
                case c$.MOUSE.BUTTON.CENTER:
                   $report.Columns.filterNone(colName);
-                  $report.Dataset.filter($report.Columns.Items[colName], field.value(value));
+                  $report.Dataset.filter($report.Columns.c$[colName], field.value(value));
                   $report.clear();
                   $report.Page.Pager.restart($report.Dataset);
                   $report.start()
@@ -142,7 +138,7 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
             return obj.height + obj.marginTop + obj.marginBottom;
         }
 
-  var initialized = function(){
+  const initialized = function(){
         $report.id = "body";
         if (id_div)
             $report.id = id_div;
@@ -150,16 +146,16 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
         $report.body = i$($report.id);
         $report.clear();
 
-        var std_Header = {Style:{height:12.4, marginTop: 0, marginBottom:4},
+        let std_Header = {Style:{height:12.4, marginTop: 0, marginBottom:4},
                             Font:DEFAULT.HEADER.COLUMN.FONT,
                              Title:{line1:"", line2:"",line3:""}};
-        var std_Detail = {Style:{height:0, marginTop: 0.5, marginBottom:0.5},
+        let std_Detail = {Style:{height:0, marginTop: 0.5, marginBottom:0.5},
                             Header:{Font:DEFAULT.HEADER.COLUMN.FONT},
                               Font:DEFAULT.DETAIL.COLUMN.FONT};
-        var std_Footer = {Style:{height:3.45, marginTop: 0, marginBottom:0},
-                             note: '', date: c$.NOW.format(DEFAULT.MASK.DATE),
-                             hour: c$.NOW.format(DEFAULT.MASK.HOUR)};
-        var std_Page   = {Style:{height:0, width:0, marginTop: 0, marginBottom:0.5, marginLeft:1, MarginRight:1}
+        let std_Footer = {Style:{height:3.45, marginTop: 0, marginBottom:0},
+                             note: '', date: c$.NOW.format(c$.MASK.DATE.default),
+                             hour: c$.NOW.format(c$.MASK.DATE.isoTime)};
+        let std_Page   = {Style:{height:0, width:0, marginTop: 0, marginBottom:0.5, marginLeft:1, MarginRight:1}
                           ,  id:'', Paper: DEFAULT.PAGE.PAPER, RowsPerPage:0};
         //self = $report;
         $report.idx = idx;
@@ -186,15 +182,15 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
         //                      marginTop: 0, marginBottom:4.0}};
         $report.Page.HeaderDetail ={Style:{height:$report.Page.Detail.Header.Font.size +3, marginTop: 0, marginBottom:1.4}};
         // Define colunas do relatório
-        $report.Columns = Columns($report.Page, Fieldset);
-
-        with($report.Page){
+        $report.Columns = Report.Columns($report.Page, Fieldset);
+        let {Style, Paper, Control, Header, Footer, Detail, HeaderDetail} = $report.Page;
+        //with($report.Page){
             // Define o tamanho da página (exluindo tb as margens
             Style.height = parseInt(Paper.height) - (Style.marginTop + Style.marginBottom);
             Style.width = parseInt(Paper.width);
 
             // Calculo o espaço para as linhas de detalhe - tamanhos de cabeçalho, margens, etc...
-            detailSpace =($report.sumHeight(Detail.Style)
+            let detailSpace =  ($report.sumHeight(Detail.Style)
                         + (($report.Page.Header == null) ? 0 : $report.sumHeight(Header.Style))
                         + (($report.Page.Footer == null) ? 0 : $report.sumHeight(Footer.Style))
                         + $report.sumHeight(HeaderDetail.Style))//+ convertPTtoMM($report.Page.HeaderDetail.Style.height))
@@ -217,21 +213,21 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
 
             //$report.calcDataPage();
 
-        }
+       // }
         //console.log($report.Page.Control);
         $report.Page.Pager = $report.Dataset.createPager($report.Page.Control);//($report.Dataset,$report.Page.Control);
         //$report.Pager.show();
 
-        $report.Header = ($report.Page.Header == null) ? null : new Header();
-        $report.Footer = ($report.Page.Footer == null) ? null : new Footer();
-        $report.HeaderDetail = new HeaderDetail($report.Columns, $report);
-        $report.Detail = new Detail($report.Columns, $report);
+        $report.Header = ($report.Page.Header == null) ? null : new Report.Header();
+        $report.Footer = ($report.Page.Footer == null) ? null : new Report.Footer();
+        $report.HeaderDetail = new Report.HeaderDetail($report.Columns, $report);
+        $report.Detail = new Report.Detail($report.Columns, $report);
     }();
 };
 
 //são as colunas do relatório
-function Columns(page, Fieldset){
-    var totalWidth = 0;
+Report.Columns =function (page, Fieldset){
+    let totalWidth = 0;
     me = this;
     this.Fieldset = Fieldset;
     prepare(page, Fieldset);
@@ -244,27 +240,28 @@ function Columns(page, Fieldset){
     function prepare(page, Fieldset){
        //Para definir as colunas segundo os padroes, caso nao sejam informados
        //var cols = new Hash();
-       var leftPos = 0;
-       var idx = 0;
+       let leftPos = 0;
+       let idx = 0;
        for(key in Fieldset.c$){
-          var field = Fieldset.c$[key];
+          let field = Fieldset.c$[key];
+          if (!field.key) {field.key=key}
+          if (!field.id) {field.id=key}
           field.type = 'column';
           field.Report = {identicalSupress:true, size:0,
-	                bold:false, hide:false,  style:null,
+	                     bold:false, hide:false, style:null,
                         leftPos:0, first:false, last:false
                         };
-          if (field.label.length == 0)
+          if (field.label.length == 0) 
               field.label = this.id;
-          //var column = new Column(fld)
           idx++;
-          if (idx == 1)
+          if (idx == 1) 
              field.Report.first=true;
 
           if (idx == Fieldset.c$.length)
              field.Report.last=true;
 
-          var colSize = calculeSize(field.size, page.Detail.Font.size);
-          var labelSize = calculeSize(field.label.length, page.Detail.Header.Font.size);
+          let colSize = calculeSize(field.size, page.Detail.Font.size)
+            , labelSize = calculeSize(field.label.length, page.Detail.Header.Font.size);
 
           field.Report.size = colSize;
           if (field.Report.size < labelSize) // Caso seja menor que o label, o tamanho serÃ¡ o do label
@@ -299,13 +296,14 @@ function Columns(page, Fieldset){
    return Fieldset;
 }
 
-function HeaderDetail(columns, report){
+Report.HeaderDetail =function (columns, report){
    let $this=this;
-   let initialize=function(){
+   const initialize=function(){
         $this.id = "";
         $this.sortFunction = "ReportFactory.reports(" + report.idx + ").sort";
         $this.Page = null;
         $this.Columns = columns;//.Array;
+        return true;
         //$this.height = 0;
     }();
     this.write= page => {
@@ -325,8 +323,8 @@ function HeaderDetail(columns, report){
         $this.writeColumns();
     };
     this.writeColumns= () => {
-        for (key in $this.Columns.Items)
-            $this.writeColumn(this.Columns.Items[key])
+        for (key in $this.Columns.c$)
+            $this.writeColumn(this.Columns.c$[key])
     };
     this.writeColumn=function(column) {
         if (!column.persist) return false;
@@ -354,8 +352,8 @@ function HeaderDetail(columns, report){
     }
 };
 
-var Detail = function(Columns, report){
-    var SELF = this;
+Report.Detail = function(Columns, report){
+    let SELF = this;
     this.id = "";
     this.Page = null;
     this.rpt = "ReportFactory.reports(" + report.idx + ")";
@@ -369,25 +367,25 @@ var Detail = function(Columns, report){
         this.id = "detail-" + Page.id;
         this.Page = Page;
         let html = `<div class='detail' id='detail-${Page.id}'></div>`;
-        // var std = new Template("<div class='detail' id='detail-#{id}'></div>");
-        // var html = std.evaluate(Page);
+        // let std = new Template("<div class='detail' id='detail-#{id}'></div>");
+        // let html = std.evaluate(Page);
         i$(Page.id).insert(html);
         // Para definir o tamanho para as linhas de detalhe
         // Depende da propriedade de Page.Detail.height
-        var p_style = {height: Page.Detail.Style.height  + 'mm',
+        let p_style = {height: Page.Detail.Style.height  + 'mm',
                     marginTop: Page.Detail.Style.marginTop + 'mm',
                  marginBottom: Page.Detail.Style.marginBottom + 'mm'};
         i$(this.id).stylize(p_style);
         this.writeLines();
     }
     this.writeLines= function() {
-        var off = true;
+        let off = true;
         SELF.Page.Pager.sweep(function(row, record){
-            var id = SELF.id + "L" + (row+1);
-            var html = 	"<div class='detail-column-wrap' id='" + id + "'><ul></ul></div>"
+             let id = SELF.id + "L" + (row+1);
+             let html = 	"<div class='detail-column-wrap' id='" + id + "'><ul></ul></div>"
 
-	     i$(SELF.id).insert(html);
-             var p_style = {height: SELF.Page.Control.height+2  + 'pt',
+	         i$(SELF.id).insert(html);
+             let p_style = {height: SELF.Page.Control.height+2  + 'pt',
                             lineHeight: SELF.Page.Control.height+2  + 'pt',
                             backgroundColor:(off)?COLOR.OFF:COLOR.ON};
              i$(id).stylize(p_style);
@@ -404,7 +402,7 @@ var Detail = function(Columns, report){
     this.writeColumn= function(column, line, id_line) {
         id = column.id + "-" + id_line;
 
-        var html = '<li onclick="DetailMouseUp(event,\''  +column.key+ '\',\'' + column.Record.value + '\','
+        let html = '<li onclick="DetailMouseUp(event,\''  +column.key+ '\',\'' + column.Record.value + '\','
                  + line + ',' + this.report.idx + ')" id="' +id+ '">'
                  + '<a id="vl-' + id + '">' +column.Record.formattedValue+ '</a>'
                  + '</li>';
@@ -412,12 +410,11 @@ var Detail = function(Columns, report){
       	//i$(id_line).insert(html);
         $('#'+id_line+' > ul').append(html);
 
-        var p_left =  column.Report.leftPos + "mm";
-        var p_width = column.Report.size + "mm";
-
-        var p_borderRight = (column.Report.last)?'0':'1px solid transparent';
-        var p_fontSize = this.Page.Detail.Font.size + 'pt';
-        var p_style = {width: p_width, left: p_left, textAlign: column.align,
+        let p_left =  column.Report.leftPos + "mm"
+          , p_width = column.Report.size + "mm"
+          , p_borderRight = (column.Report.last)?'0':'1px solid transparent'
+          , p_fontSize = this.Page.Detail.Font.size + 'pt'
+          , p_style = {width: p_width, left: p_left, textAlign: column.align,
                        fontSize:p_fontSize,
                        lineHeight: SELF.Page.Control.height+2  + 'pt',
                        borderRight:p_borderRight
@@ -428,7 +425,7 @@ var Detail = function(Columns, report){
     }
 };
 
-function Header(){
+Report.Header = function (){
     let $this=this;
     let initialized= function(){
         $this.id = "";
@@ -457,7 +454,7 @@ function Header(){
         // Depende da propriedade de Page.Header.width
        i$(idHeaderTitle).stylize({width: this.titleWidth + 'mm'});
         // Definir altura do cabecalho
-       var p_style = {height: page.Header.Style.height + 'mm',
+       let p_style = {height: page.Header.Style.height + 'mm',
                     marginTop: page.Header.Style.marginTop + 'mm',
                  marginBottom: page.Header.Style.marginBottom + 'mm'};
        i$($this.id).stylize(p_style);
@@ -467,8 +464,8 @@ function Header(){
     // secretaria, setor, etc
     // Essa funcÃ§Ã£o adequa esses nomes, transformando o objeto de tÃ­tulo em um array com os valores
     this.prepareTitle= title =>{
-        var titles = [];//$H(title).values();
-        for (var key in title)
+        let titles = [];//$H(title).values();
+        for (let key in title)
             titles.push(title[key]);
         if (titles.length < 3)
             titles.length = 3
@@ -476,7 +473,7 @@ function Header(){
     }
 };
 
-function Footer(){
+Report.Footer = function (){
   let $this=this;
   let initialize=function(){
         this.id = "";
@@ -497,7 +494,7 @@ function Footer(){
 	    //var html = std.evaluate(page);
     	i$(page.id).insert(html);
 
-      var p_style = {height: page.Footer.Style.height + 'mm',
+      let p_style = {height: page.Footer.Style.height + 'mm',
                     marginTop: page.Footer.Style.marginTop + 'mm',
                  marginBottom: page.Footer.Style.marginBottom + 'mm'};
       i$(this.id).stylize(p_style);
@@ -506,6 +503,6 @@ function Footer(){
 
 //------------Littener
 function DetailMouseUp(event, colName, colValue, line, reportIdx){
-    var rpt = ReportFactory.reports(reportIdx);
+    let rpt = ReportFactory.reports(reportIdx);
     rpt.filter(event, colName, colValue);
 }
