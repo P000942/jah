@@ -5,7 +5,7 @@
 j$.ui.Tabs = function(){
     let tabs = {}, _root=null;
     return{        
-         get:key=>{return tabs[key];}
+         C$:key=>{return tabs[key];}
       , open:(root,key)=>{tabs[root].open(key);}  
       , create: (idTabs, idContent)=>{
              tabs[idTabs] = new j$.ui.Tabs.Root(idTabs, idContent);
@@ -15,7 +15,7 @@ j$.ui.Tabs = function(){
              }
              return tabs[idTabs];
       }
-      , items:tabs
+      //, items:tabs
       , c$:tabs
       , root: _root
     };   
@@ -23,9 +23,9 @@ j$.ui.Tabs = function(){
 //j$.$T = j$.ui.Tabs.c$.root.c$;
 
 j$.ui.Tabs.Root =function(idTab, idContent){ 
-    let _root = this;    
-    let active_tab=null;
-    let idWrap = "wrap_"+idTab;    
+    let _root = this   
+      , active_tab=null
+      , idWrap = "wrap_"+idTab   
     this.inherit=j$.Node;
     this.inherit({type:'Tabroot', Root:_root, Parent:null}, {key:idTab, id:idContent});   
     Object.preset(_root, {add:add, getItem: _root.C$, open:open, toggle:toggle, activate:activate, close:close}); 
@@ -37,6 +37,7 @@ j$.ui.Tabs.Root =function(idTab, idContent){
            i$(idContent).insert({top: "<div id='"+idWrap+"' class='tabs_wrap' />"}); //wrap geral do tab
            i$(idWrap).insert({top: "<div id='" +idTab+ "' class='tabs' />"});        //wrap das tab-link
         }
+        return true;
     }();
     function add(oTab){            
         let tab = new Tab(_root, oTab);   
@@ -88,9 +89,9 @@ j$.ui.Tabs.Root =function(idTab, idContent){
     function Tab(_parent, tab){   
          let _tab = this;  
          Object.preset(_tab,{append:addContent, update:updContent,clear:clearContent, showURL:showURL, render:render
-                               , show:show, load:load, hide:hide, activate:activate, close:close, deactivate:deactivate 
-                               , fixed:false, loaded:false, active:false, parent: _parent
-                               , caption:tab.caption, id:tab.key, key:tab.key, idContent:tab.key+"_Content" 
+                           , show:show, load:load, hide:hide, activate:activate, close:close, deactivate:deactivate 
+                           , fixed:false, loaded:false, active:false, parent: _parent
+                           , caption:tab.caption, id:tab.key, key:tab.key, idContent:tab.key+"_Content" 
                       });		  
          this.title = title=>{ 
               return false;
@@ -128,9 +129,9 @@ j$.ui.Tabs.Root =function(idTab, idContent){
                               }); // cria o container da tab               
          };          
          this.Header = function(){
-             let element = i$(_tab.id + "_header");
-             let titleElement = i$(_tab.id + "_header_title");
-             let create=function(){                     
+             let element = i$(_tab.id + "_header")
+               , titleElement = i$(_tab.id + "_header_title")
+             const create=function(){                     
                      if (tab.title == undefined)
                          element.hide();
                      else
@@ -146,12 +147,12 @@ j$.ui.Tabs.Root =function(idTab, idContent){
          //_tab.Header.create();
          this.Menu = function(){            
              let menubar;
-             let create=function(){                     
+             const create=function(){                     
                  menubar=j$.ui.Dropdown.create(_tab.Header.menu.id);
              }();             
              return{
                  add:(menu, Items)=>{                     
-                     var menuBase = menubar.addMenu(menu);
+                     let menuBase = menubar.addMenu(menu);
                      if (Items){
                          for (let idx=0; idx<Items.length;  idx++){
                             let item = Items[idx];    

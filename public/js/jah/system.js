@@ -565,7 +565,8 @@ j$.Node=function(inheritor, properties){
                 else if (properties.key)
                     key= properties.key;
                 else if (properties.caption)
-                    key = _node.Parent.key + "_" + properties.caption.toKey();
+                    key = properties.caption.toKey();
+                  //  key = _node.Parent.key + "_" + properties.caption.toKey();
 
                 if (key.isEmpty())
                     key=j$.util.getId(_node.Parent.key + "_" + _node.type);

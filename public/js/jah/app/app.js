@@ -13,7 +13,7 @@ const urlPartial   = CONFIG.SERVER.CONTEXT+ 'sample/partial.html';
 const urlPartial_1 = CONFIG.SERVER.CONTEXT+ 'sample/partial_1.html';
 const adapter={
     services:{
-                 Papel:{caption:'Papel'    ,   crud:true, title:'Cadastro de Papel'} //,  onClick:openPapel}
+                 Papel:{caption:'Papel'    ,   crud:true, title:'Cadastro de Papel', onClick:openPapel}
           ,    Usuario:{caption:'Usuário'  ,   crud:true, title:'Cadastro de Usuário'}
           ,  Documento:{caption:'Documento',   crud:true, title:'Cadastro de Documento'}
           ,    Assunto:{caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto', modal:true}
@@ -40,7 +40,7 @@ $(document).ready(function(){
 ;});
 
 //ERROR.init({callback:function(msg,field){alert(field.label+': '+msg);}});
-ERROR.init({callback:function(msg,field){ERROR.on(msg, field);}});
+ERROR.init({callback:(msg,field)=>{ERROR.on(msg, field);}});
 
 j$.ui.Page.Helper = function(){
      const criarMenu = function(){
@@ -59,9 +59,11 @@ j$.ui.Page.Helper = function(){
              //menu_view.add({caption:'Partial',   partial:urlPartial  , title:'Serah insedrido na tba'});
              menu_view.add({caption:'Partial 2', partial:urlPartial_1, title:'Serah insedrido na tba'});
              menu_view.add({caption:'Assunto',       title:'Assunto - exemplo colocar um  form na tab',
-                  onClick:function(menu, event){
+                  onClick:(menu, event)=>{
                       j$.Dashboard.Tabs.open({key:menu.key, caption:menu.caption
-                          , onLoad: function(tab){Assunto.init(tab.idContent);}});
+                          , onLoad: tab=>{
+                               Assunto.init(tab.idContent)}
+                              });
                   }
               });
              menu_view.add({caption:'Partial', byPass:true,      partial:urlPartial
