@@ -47,7 +47,7 @@
               , id:'assunto'
               , title:'Assunto'
               , List:{maxline:4, maxpage:4}
-              //, Buttons:CONFIG.CRUD.preset()
+              //, Buttons:CONFIG.CRUD.preset() // Obter o preset dos butoes
               //, Buttons:CONFIG.CRUD.BUTTONS // Pode ser feito das duas formas
         };
 

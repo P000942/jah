@@ -24,7 +24,7 @@
            container:CONFIG.LAYOUT.CONTENT
            ,      id:Tabela.id.toLowerCase()
            ,   title:'Exemplo de Tabela'
-           ,    List:{limit:5, maxpage:5, Buttons:CONFIG.CRUD.GRID.BUTTONS}
+           ,    List:{limit:5, maxpage:5, Buttons:CONFIG.CRUD.GRID.preset()}
            , Buttons:CONFIG.CRUD.preset()
         };
 

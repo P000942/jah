@@ -396,7 +396,7 @@ j$.service = function(){
         constructor(adpater, service){
             super(adpater, service);
             this.Interface.Buttons = CONFIG.QUERY.preset();
-            this.Interface.List.Buttons =CONFIG.QUERY.GRID.BUTTONS;
+            this.Interface.List.Buttons =CONFIG.QUERY.GRID.preset();
         }
    }
 

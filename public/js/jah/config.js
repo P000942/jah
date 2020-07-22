@@ -277,8 +277,10 @@ CONFIG.QUERY.preset=(keys, actionController)=>{
 // Copia o preset dos buttons do GRID de um CRUD
 CONFIG.CRUD.GRID.preset=(keys, actionController)=>{
     return CONFIG.preset(CONFIG.CRUD.GRID.BUTTONS, keys, actionController);
-};
-
+}
+CONFIG.QUERY.GRID.preset=(keys, actionController)=>{
+    return CONFIG.preset(CONFIG.QUERY.GRID.BUTTONS, keys, actionController);
+}
 CONFIG.SYNONYM={
              new:['new', 'insert', 'novo', 'inserir', 'incluir']
       ,   remove:['remove','delete','del','excluir','trash']
