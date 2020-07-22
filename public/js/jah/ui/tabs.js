@@ -1,6 +1,5 @@
 /* 
- * To change this template, choose Tools 
- * and open the template in the editor.
+ by Geraldo Gomes
  */
 
 j$.ui.Tabs = function(){
@@ -101,12 +100,13 @@ j$.ui.Tabs.Root =function(idTab, idContent){
                  return _tab.Header.title.innerHTML;
          };                  
          
-         var initialized=function(){
+         const initialized=function(){
               Object.setIfExist(_tab, tab, ['onLoad','onActivate','onDeactivate', 'onClose', 'fixed','url']);
               if (!_tab.onLoad && _tab.url){
                   _tab.onLoad=function(tab){tab.showURL();};
               }
-              createBase();              
+              createBase();   
+              return true;           
          }();
          
          function createBase(){

@@ -1,7 +1,7 @@
 /*
  * By Geraldo Gomes
  */
-j$.ui.Menu = function(){
+j$.ui.Menu = function(){ // factory
     let items = {};
     return{
        create (idContent){
@@ -9,12 +9,12 @@ j$.ui.Menu = function(){
              return items[idContent];
       }
       , get:key=>{return items[key]}
-      , Items:items
+     // , Items:items
       , c$:items
       , C$:key=>{return items[key]}
     };
 }();
-j$.ui.Dropdown = function(){
+j$.ui.Dropdown = function(){ // factory
     let items = {};
     return{
       create(idContent, caption){
@@ -22,7 +22,7 @@ j$.ui.Dropdown = function(){
              return items[idContent];
       }
       , get:key=>{return items[key]}
-      , Items:items
+     // , Items:items
       , c$:items
       , C$:key=>{return items[key]}
     }
@@ -42,7 +42,8 @@ j$.ui.Menu.Designer =function(){
               }
               attLink += "'";
               return attLink;
-          };
+    };
+
     return{
        format (properties){
               let attClass = '', attDropdown = '', attCarret = '', attDropdownUl ='', attLi='', attIcon='';
@@ -51,9 +52,9 @@ j$.ui.Menu.Designer =function(){
                   attClass='class="active"';
                   properties.Root.active=true;
               }
-              if (properties.icon){
+              if (properties.icon)
                   attIcon='<i class="'+properties.icon+'"></i>';
-              }
+            
               if (properties.length>0){
                  attCarret = '<b class="caret"></b>'; 
                  attClass  = 'class="dropdown"';
@@ -63,9 +64,8 @@ j$.ui.Menu.Designer =function(){
                     attClass  ='class="dropdown-submenu"';
                     attCarret ='';
                  }
-              } else {
-                attLi='id="'+properties.id+'"';
-              }
+              } else 
+                attLi='id="'+properties.id+'"';              
 
               return '<li ' +attLi        + ' ' +attClass+ ' ' +attHint+ '>'
                     +'<a '  +attDropdown  + ' ' +formatLink(properties)+'>'+attIcon+properties.caption+attCarret
@@ -79,8 +79,7 @@ j$.ui.Menu.Navbar =function(idContent){
     let _navbar = this;
     this.inherit=j$.Node;
     this.inherit({type:'Navbar', Root:_navbar, Parent:null},{key:idContent, id:create()});
-   // this.addMenu = addMenu;
-      //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
+    //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
     this.addMenu = properties =>{
         let menu = new j$.ui.Menu.Item(_navbar, properties);
         _navbar.addItem(menu.key,menu);
@@ -102,8 +101,8 @@ j$.ui.Menu.Navbar =function(idContent){
 
 // herda de j$.node
 j$.ui.Menu.Dropdown =function(idContent, caption){
-    let _dropdown = this;
-    let wCaption=(caption)?caption:'';
+    let _dropdown = this
+      , wCaption=(caption)?caption:'';
     this.inherit=j$.Node;
     this.inherit({type:'Dropdown', Root:_dropdown, Parent:null},{key:idContent, id:create(), caption:wCaption});
     //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
@@ -134,7 +133,7 @@ j$.ui.Menu.Base=function(inheritor, properties){
         if (_base.onClick)
            $("#"+_base.id).click(_base.onClick);
         _base.submenu.render();
-  }
+    }
     let util = function(){
         return{
              formatLink: ()=>{
@@ -171,14 +170,14 @@ j$.ui.Menu.Base=function(inheritor, properties){
     this.submenu = function(){
        return{
           add:properties=>{
+              j$.Dashboard.bindItem(properties); // fazer a ligacao com o caminho de abertudo do item (tab, url)
               let submenu = new j$.ui.Menu.Subitem(_base, properties);
               _base.addItem(submenu.key, submenu);
               return submenu;
            }
          , render:menu=>{
-             for (let key in _base.c$){
+             for (let key in _base.c$)
                  $('#'+_base.id).append(_base.c$[key].render());
-             }
          }
        };
     }();

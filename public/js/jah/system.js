@@ -1,6 +1,5 @@
 /*
- * To change this template, choose Tools 
- * and open the template in the editor.
+ by Geraldo Gomes
  */
 function i$(id) {
     return document.getElementById(id);
@@ -317,8 +316,8 @@ String.prototype.point = function(fontSize){
 //alert("123451234512".point(10).height);
 
 j$.Dashboard = function(){
-    let idContent=CONFIG.LAYOUT.CONTENT;
-    let idToolbar='toolbar';
+    let idContent=CONFIG.LAYOUT.CONTENT
+      , idToolbar='toolbar';
 
     return{
         init: properties=>{
@@ -329,38 +328,38 @@ j$.Dashboard = function(){
             j$.Dashboard.Menubar.bindToTabs(properties.services, properties.design);
             j$.Dashboard.Sidebar.bindToTabs(properties.services, properties.design);
         }
-    , bindItem: item =>{
-        if (!item.url && !item.onCLick){
-            if (item.partial)
-                item.onClick=j$.Dashboard.Tabs.openPartial;
-            else if (item.modal){
-                item.onClick=function(menu){
-                    j$.service.c$[menu.key].init(null, menu.modal);
-                }
-            } else
-                item.onClick=j$.Dashboard.Tabs.delegateTo;
-            item.byPass =true;
+        , bindItem: item =>{
+            if (!item.url && !item.onCLick){
+                if (item.partial)
+                    item.onClick=j$.Dashboard.Tabs.openPartial;
+                else if (item.modal){
+                    item.onClick=function(menu){
+                        j$.service.c$[menu.key].init(null, menu.modal);
+                    }
+                } else
+                    item.onClick=j$.Dashboard.Tabs.delegateTo;
+                item.byPass =true;
+            }
         }
-    }
-    , openItem: (item, record) => {
-        if (!item.url && !item.onCLick){
-            if (item.partial)
-                j$.Dashboard.Tabs.openPartial(item, null, record); //#Todo: passar o record
-            else if (item.modal){
-                j$.service.c$[item.key].init(null, item.modal, record);
-            } else
-                j$.Dashboard.Tabs.delegateTo(item, null, record); //#Todo: passar o record
-        }
+        , openItem: (item, record) => {
+            if (!item.url && !item.onCLick){
+                if (item.partial)
+                    j$.Dashboard.Tabs.openPartial(item, null, record); //#Todo: passar o record
+                else if (item.modal){
+                    j$.service.c$[item.key].init(null, item.modal, record);
+                } else
+                    j$.Dashboard.Tabs.delegateTo(item, null, record); //#Todo: passar o record
+            }
     }
     , idContent:idContent
     , idToolbar:idToolbar
-    };
+    }
 }();
 
 j$.Dashboard.Tabs=function(){
-    let tabs;
-    let idContent='root';
-    let ftmKey = (service) =>{ return "tab_"+service.Parent.key+'_'+service.key}
+    let tabs
+      , idContent='root'
+      , ftmKey = (service) =>{ return "tab_"+service.Parent.key+'_'+service.key}
     return{
         create: ()=>{ tabs = j$.ui.Tabs.create(j$.Dashboard.Tabs.idContent,j$.Dashboard.idContent) }
         , open: properties =>{
@@ -378,7 +377,7 @@ j$.Dashboard.Tabs=function(){
                 j$.Dashboard.Tabs.open({key:ftmKey(service)
                     ,caption:service.caption
                     , onLoad:function(tab){
-                            tab.showURL(service.url);
+                            tab.showURL(service.url, tab.httpComplete); // httpComplete - callback quando acionado apos a carga
                             }
                 });
         }
@@ -392,21 +391,20 @@ j$.Dashboard.Menubar=function(){
     let idContent='menubar';
     return{
         //menu={key:'', caption:'', url:'', hint:'', items:[]}
-        bindItems: function(menu, Items){
+        bindItems: function(menu, Services){
             let menuBase = menubar.addMenu(menu);
             for (let idx=0; idx<menu.items.length;  idx++){
-                let item = Items[menu.items[idx]];
-                j$.Dashboard.bindItem(item);
+                let item = Services[menu.items[idx]];
                 menuBase.add(item);
             }
         }
-    ,  bindToTabs: function(Items, design){
+    ,  bindToTabs: function(Services, design){
                 for (let key in design){
                     let menu = design[key];
                     if (dataExt.isArray(menu))
                         menu = {items:design[key]};
                     Object.preset(menu, {key:key, caption:key});
-                    j$.Dashboard.Menubar.bindItems(menu, Items);
+                    j$.Dashboard.Menubar.bindItems(menu, Services);
                 }
         }
     , create: function(){
@@ -435,36 +433,38 @@ j$.Dashboard.Sidebar=function(){
     let items={};
     return{
         //menu={key:'', caption:'', url:'', hint:'', items:[]}
-        bindItems: function(menu, Items){
+        bindItems: function(menu, Services){
             //var menuBase = menubar.addMenu(menu);
             for (let idx=0; idx<menu.items.length;  idx++){
-                let item = Items[menu.items[idx]];
+                let item = Services[menu.items[idx]];
                 if (item.partial && !item.url)
                     item.url = item.partial;
                 item.Parent=menu;
-                if (!menu.Items){menu.Items={};}
-                menu.Items[item.key]=item;
+                if (!menu.c$)
+                    menu.c$={};
 
-                j$.Dashboard.Sidebar.Items[menu.key]=menu;
+                menu.c$[item.key]=item;
+
+                j$.Dashboard.Sidebar.c$[menu.key]=menu;
 
                 let onClick ="href='javascript:"
-                +"j$.Dashboard.Sidebar.Items."+menu.key+".Items."+item.key+".open(\""+menu.key+"\",\""+item.key +"\")' ";
+                            +"j$.Dashboard.Sidebar.c$."+menu.key+".c$."+item.key+".open(\""+menu.key+"\",\""+item.key +"\")' ";
                 let clas$ =" class='sidebar_link' ";
                 menu.dropbox.target.insert('<div class="wrap_sidebar_link"><a '+ onClick + clas$ + '>' +item.caption+ '</a></div>');
 
                 if (item.partial)
                     item.open=function(menu_key, item_key){
-                        let menu_item=j$.Dashboard.Sidebar.Items[menu_key].Items[item_key];
+                        let menu_item=j$.Dashboard.Sidebar.c$[menu_key].c$[item_key];
                         j$.Dashboard.Tabs.openPartial(menu_item);
                     };
                 else
                     item.open=function(menu_key, item_key){
-                        let menu_item=j$.Dashboard.Sidebar.Items[menu_key].Items[item_key];
+                        let menu_item=j$.Dashboard.Sidebar.c$[menu_key].c$[item_key];
                         j$.Dashboard.Tabs.delegateTo(menu_item);
                     };
             }
         }
-    ,  bindToTabs: function(Items, design){
+    ,  bindToTabs: function(Services, design){
                 for (let key in design){
                     let menu = design[key];
                     if (dataExt.isArray(menu))
@@ -472,14 +472,16 @@ j$.Dashboard.Sidebar=function(){
                     Object.preset(menu, {key:key, caption:key});
                     menu.dropbox= TYPE.DROPBOX({container:i$(j$.Dashboard.Sidebar.idContent), id:"sidebar_"+key, legend:menu.caption, hide:true
                                                 });
-                j$.Dashboard.Sidebar.bindItems(menu, Items);
+                j$.Dashboard.Sidebar.bindItems(menu, Services);
                 }
         }
     , create: function(){
         return true;
     }
     , idContent:idContent
-    , Items:items
+    //, Items:items
+    , c$:items
+    , C$(ke){return items[key]}
     };
 }();
 
@@ -487,16 +489,16 @@ j$.ui.Open = function(){
     return{
         url: (url, idContent)=>{
             if (idContent)
-            j$.ui.Open.partial(url, CONFIG.LAYOUT.CONTENT);
+                j$.ui.Open.partial(url, idContent);
             else
-            window.location = url;
+                window.location = url;
         },
         partial:(url, idContent, complete)=>{
             if (!idContent)
                 idContent = CONFIG.LAYOUT.CONTENT;
-            let pars = '';
+             //let pars = '';
             if (!url.isEmpty()) {
-                let myAjax = new Ajax.Updater( idContent, url, {method: 'get', parameters: pars, onComplete:complete});
+                let myAjax = new Ajax.Updater( idContent, url, {method: 'get', parameters: '', onComplete:complete});
             }
         }
     };
@@ -550,13 +552,10 @@ System.Hint = function(){
 
 j$.Node=function(inheritor, properties){
     let _node = this;
-    this.Items={};
     this.length = 0;
-    this.c$ = this.Items;
-    this.C$ = Items;
-    this.type = inheritor.type;
-    this.Root = inheritor.Root;
-    this.Parent = inheritor.Parent;
+    this.c$ = {};
+    this.C$ = getItem;
+    Object.preset(_node, inheritor,["type","Root","Parent"])
     let util = function(){
         return{
             formatKey:function(){
@@ -566,7 +565,7 @@ j$.Node=function(inheritor, properties){
                 else if (properties.key)
                     key= properties.key;
                 else if (properties.caption)
-                    key=properties.caption.toKey();
+                    key = _node.Parent.key + "_" + properties.caption.toKey();
 
                 if (key.isEmpty())
                     key=j$.util.getId(_node.Parent.key + "_" + _node.type);
@@ -593,16 +592,16 @@ j$.Node=function(inheritor, properties){
         }
         return util.formatId();
     }();
-    function Items(key){
-        return _node.Items[key];
+    function getItem(key){
+        return _node.c$[key];
     }
     this.addItem = (key, item)=>{
         _node.length +=1;
-        _node.Items[key]=item;
+        _node.c$[key]=item;
     };
     this.removeItem = key=>{
         _node.length -=1;
-        _node.Items[key]=null;
+        _node.c$[key]=null;
     };
     this.show =()=>{
         console.log(_node.key +"."+ _node.caption);
