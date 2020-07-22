@@ -13,7 +13,7 @@ const urlPartial   = CONFIG.SERVER.CONTEXT+ 'sample/partial.html';
 const urlPartial_1 = CONFIG.SERVER.CONTEXT+ 'sample/partial_1.html';
 const adapter={
     services:{
-                 Papel:{caption:'Papel'    ,   crud:true, title:'Cadastro de Papel',  onClick:openPapel}
+                 Papel:{caption:'Papel'    ,   crud:true, title:'Cadastro de Papel'} //,  onClick:openPapel}
           ,    Usuario:{caption:'Usuário'  ,   crud:true, title:'Cadastro de Usuário'}
           ,  Documento:{caption:'Documento',   crud:true, title:'Cadastro de Documento'}
           ,    Assunto:{caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto', modal:true}
@@ -56,7 +56,7 @@ j$.ui.Page.Helper = function(){
              menu_view.add({caption:'Link 2'    , url:urlPartial_1, title:'Vai abri uma página web com a URL'});
 
              menu_view = j$.Dashboard.Menubar.addMenu({caption:'Partial'});
-             menu_view.add({caption:'Partial',   partial:urlPartial  , title:'Serah insedrido na tba'});
+             //menu_view.add({caption:'Partial',   partial:urlPartial  , title:'Serah insedrido na tba'});
              menu_view.add({caption:'Partial 2', partial:urlPartial_1, title:'Serah insedrido na tba'});
              menu_view.add({caption:'Assunto',       title:'Assunto - exemplo colocar um  form na tab',
                   onClick:function(menu, event){
@@ -64,9 +64,9 @@ j$.ui.Page.Helper = function(){
                           , onLoad: function(tab){Assunto.init(tab.idContent);}});
                   }
               });
-            //  menu_view.add({caption:'Partial', byPass:true,      partial:urlPartial
-            //     , onClick:j$.Dashboard.Tabs.openPartial
-            //  });
+             menu_view.add({caption:'Partial', byPass:true,      partial:urlPartial
+                , onClick:j$.Dashboard.Tabs.openPartial
+             });
 
              menu_view.add({key:'Tabela', caption:'Tabela', icon:'icon-pencil', title:'Tabela de Exemplo'
                 , onClick:j$.Dashboard.Tabs.delegateTo

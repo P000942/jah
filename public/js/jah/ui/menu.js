@@ -8,8 +8,6 @@ j$.ui.Menu = function(){ // factory
              items[idContent] =new j$.ui.Menu.Navbar(idContent);//MENU.create(idContent);
              return items[idContent];
       }
-      , get:key=>{return items[key]}
-     // , Items:items
       , c$:items
       , C$:key=>{return items[key]}
     };
@@ -21,8 +19,6 @@ j$.ui.Dropdown = function(){ // factory
              items[idContent] =new j$.ui.Menu.Dropdown(idContent, caption);//MENU.create(idContent);
              return items[idContent];
       }
-      , get:key=>{return items[key]}
-     // , Items:items
       , c$:items
       , C$:key=>{return items[key]}
     }

@@ -344,7 +344,7 @@ j$.service = function(){
                 , Buttons:CONFIG.CRUD.preset()
                 ,    List:{limit:CONFIG.GRID.MAXLINE
                         , maxpage:CONFIG.GRID.MAXPAGE
-                        , Buttons:CONFIG.CRUD.GRID.BUTTONS
+                        , Buttons:CONFIG.CRUD.GRID.preset()
                     }
             };
             // DEFINIR O RESOURCE
