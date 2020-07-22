@@ -198,9 +198,9 @@ const CONFIG = {
 
 //@note: Retorna o objeto com o status http
 CONFIG.HTTP.STATUS.get = status =>{
-          var res = Object.getByValue(CONFIG.HTTP.STATUS, status,'VALUE');
+          let res = Object.getByValue(CONFIG.HTTP.STATUS, status,'VALUE');
           if (res){
-             var key=res[0];
+             let key=res[0];
                 return CONFIG.HTTP.STATUS[key]
           }
           CONFIG.HTTP.STATUS.UNKNOWN.VALUE = status;
@@ -238,14 +238,14 @@ CONFIG.QUERY.GRID.BUTTONS={
 //CONFIG.preset(CONFIG.CRUD.GRID.BUTTONS, null, actionController);
 //QUESTION: Será que o ideal não fazer 'mixin' ou 'inheritsFrom'?
 CONFIG.preset=(PRESET, keys, actionController)=>{
-    var values={};
+    let values={};
     if (dataExt.isString(keys))
        values[keys.toUpperCase()]=set(keys);
     else if (dataExt.isArray(keys)){
-       for(var i=0; i<keys.length;i++)
+       for(let i=0; i<keys.length;i++)
            values[keys[i].toUpperCase()]=set(keys[i]);
     }else{
-        for (var key in PRESET) // Carrega tds as actions do preset
+        for (let key in PRESET) // Carrega tds as actions do preset
             values[key]=set(key);
     }
 
@@ -254,8 +254,8 @@ CONFIG.preset=(PRESET, keys, actionController)=>{
     function set(key){
         key = key.toUpperCase();
         if (PRESET[key]){
-            var properties=PRESET[key];
-            var property={};
+            let properties=PRESET[key];
+            let property={};
             Object.preset(property,properties);
             if (actionController)
                 Object.preset(property,{onclick:'javascript:'+actionController+'.' +key.toLowerCase()+'(this);'});
@@ -307,7 +307,7 @@ CONFIG.SYNONYM={
 };
 
 CONFIG.synonym= value=>{
-    for (var key in CONFIG.SYNONYM){
+    for (let key in CONFIG.SYNONYM){
         if (CONFIG.SYNONYM[key].has(value.toLowerCase()))
             return key;
     }
@@ -315,24 +315,24 @@ CONFIG.synonym= value=>{
 
 CONFIG.icon=(vl_key, source)=>{
     source=(source)?source.toUpperCase():'ACTION';
-    var key =CONFIG.synonym(vl_key); // Obtém a chave correta considerando os sinônimos
+    let key =CONFIG.synonym(vl_key); // Obtém a chave correta considerando os sinônimos
     return (key)?CONFIG[source][key.toUpperCase()].ICON:null;    // Retorna o icone
 };
 CONFIG.color=(vl_key, source)=>{
     source=(source)?source.toUpperCase():'ACTION';
-    var key =CONFIG.synonym(vl_key);
+    let key =CONFIG.synonym(vl_key);
     return (key)?CONFIG[source][key.toUpperCase()].COLOR:null;    // Retorna o icone
 };
 //
 CONFIG.class=(vl_key, source)=>{
     source=(source)?source.toUpperCase():'ACTION';
-    var key =CONFIG.synonym(vl_key); // Obtém a chave correta considerando os sinônimos
+    let key =CONFIG.synonym(vl_key); // Obtém a chave correta considerando os sinônimos
     return (key)?CONFIG[source][key.toUpperCase()].CLASS:null;
 };
 
 CONFIG.action= vl_key =>{
-    var key =CONFIG.synonym(vl_key); // Obtém a chave correta considerando os sinônimos
-    var action={}
+    let key =CONFIG.synonym(vl_key) // Obtém a chave correta considerando os sinônimos
+     , action={}
     if (key)
         Object.preset(action, CONFIG.ACTION[key.toUpperCase()])
 
