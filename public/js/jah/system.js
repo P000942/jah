@@ -596,10 +596,12 @@ j$.Node=function(inheritor, properties){
     function getItem(key){
         return _node.c$[key];
     }
-    this.addItem = (key, item)=>{
+    addItem=(key, item)=>{
         _node.length +=1;
         _node.c$[key]=item;
     };
+    // this.add = addItem;
+    this.put = addItem;
     this.remove = key=>{
         _node.length -=1;
         _node.c$[key]=null;

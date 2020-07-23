@@ -41,7 +41,7 @@ j$.ui.Tabs.Root =function(idTab, idContent){
     }();
     function add(oTab){            
         let tab = new Tab(_root, oTab);   
-        _root.addItem(tab.key,tab);
+        _root.put(tab.key,tab);
 	    return tab;
     }  
     function open(oTab){

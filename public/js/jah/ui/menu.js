@@ -78,7 +78,7 @@ j$.ui.Menu.Navbar =function(idContent){
     //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
     this.addMenu = properties =>{
         let menu = new j$.ui.Menu.Item(_navbar, properties);
-        _navbar.addItem(menu.key,menu);
+        _navbar.put(menu.key,menu);
 	    return menu;
     }
     this.render = ()=>{
@@ -104,7 +104,7 @@ j$.ui.Menu.Dropdown =function(idContent, caption){
     //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
     this.addMenu = properties=>{
         let menu = new j$.ui.Menu.Item(_dropdown, properties);
-        _dropdown.addItem(menu.key,menu);
+        _dropdown.put(menu.key,menu);
       	return menu;
     }
     this.render = ()=>{
@@ -164,26 +164,45 @@ j$.ui.Menu.Base=function(inheritor, properties){
     }();
 
     this.submenu = function(){
-       return{
-          add:properties=>{
-              j$.Dashboard.bindItem(properties); // fazer a ligacao com o caminho de abertudo do item (tab, url)
-              let submenu = new j$.ui.Menu.Subitem(_base, properties);
-              _base.addItem(submenu.key, submenu);
-              return submenu;
-           }
-         , render:menu=>{
-             for (let key in _base.c$)
-                 $('#'+_base.id).append(_base.c$[key].render());
-         }
+        return{
+            add:items=>{
+                if (dataExt.isObject(items) || (dataExt.isString(items) && !items.isEmpty())){
+                    if (items.items)
+                       return _base.submenu.addMenu(items)   //adiciona o menu
+                                           .add(items.items);//adiciona o submenu
+                    else
+                       return _base.submenu.addMenu(items);                  
+                }else if (dataExt.isArray(items)){
+                    _items=[]
+                    for (let idx=0; idx<items.length;idx++)
+                    //items.forEach((item,idx)=>{
+                        _items[idx]=_base.submenu.add(items[idx]); 
+                    //})
+                    return _items;
+                }else 
+                    return _base.divider.add(items);         
+            }
+            , addMenu(items){
+                if (dataExt.isObject(items))
+                    j$.Dashboard.bindItem(items); // fazer a ligacao com o caminho de abertudo do item (tab, url)
+                let lastItem = new j$.ui.Menu.Subitem(_base, items);
+                _base.put(lastItem.key, lastItem);
+                return lastItem;
+            }  
+            , render:menu=>{
+                for (let key in _base.c$)
+                    $('#'+_base.id).append(_base.c$[key].render());
+            }
        };
     }();
     this.add=_base.submenu.add;
+    this.addMenu=_base.submenu.addMenu;
     this.divider = function(){
           let ct = 0;
           return{
               add:()=>{
                   ct +=1;
-                  _base.addItem('divider'+ct,divider);
+                  _base.put('divider'+ct,divider);
                   return divider;
               }
           };

@@ -45,20 +45,23 @@ ERROR.init({callback:(msg,field)=>{ERROR.on(msg, field);}});
 j$.ui.Page.Helper = function(){
      const criarMenu = function(){
              let _path = CONFIG.SERVER.CONTEXT
-               , menu_view = j$.Dashboard.Menubar.addMenu({caption:'Forms'});
-             menu_view.add({caption:'Form basic' , url:_path+ 'sample/formBasic.html' , title:'Form com campos formatados e controller'});
-             menu_view.add({caption:'Form Inject', url:_path+ 'sample/formInject.html', title:'Maninuplar informações do form'});
-             menu_view.add({caption:'Form Design', url:_path+ 'sample/formDesign.html', title:'Sobre como estilizar uma página'});
-             menu_view.add({caption:'Relatório'  , url:_path+ 'sample/reportTest.html', title:'Exemplo de relatório'});
+               , {Menubar} = j$.Dashboard
+               , _menu = Menubar.addMenu({caption:'Forms'});
 
-             menu_view = j$.Dashboard.Menubar.addMenu({caption:'Link Externo'});
-             menu_view.add({caption:'Link 1 '   , url:urlPartial  , title:'Vai abri uma página web com a URL'});
-             menu_view.add({caption:'Link 2'    , url:urlPartial_1, title:'Vai abri uma página web com a URL'});
+             _menu.add([{caption:'Form basic' , url:_path+ 'sample/formBasic.html' , title:'Form com campos formatados e controller'}
+                       ,{caption:'Form Inject', url:_path+ 'sample/formInject.html', title:'Maninuplar informações do form'}
+                       ,{caption:'Form Design', url:_path+ 'sample/formDesign.html', title:'Sobre como estilizar uma página'}
+                       , // se um item do array sem nada ou uma string, null - vai inserir uma linha
+                       ,{caption:'Relatório'  , url:_path+ 'sample/reportTest.html', title:'Exemplo de relatório'}]);
 
-             menu_view = j$.Dashboard.Menubar.addMenu({caption:'Partial'});
-             //menu_view.add({caption:'Partial',   partial:urlPartial  , title:'Serah insedrido na tba'});
-             menu_view.add({caption:'Partial 2', partial:urlPartial_1, title:'Serah insedrido na tba'});
-             menu_view.add({caption:'Assunto',       title:'Assunto - exemplo colocar um  form na tab',
+             Menubar.addMenu({caption:'Link Externo'})
+                                 .add([{caption:'Link 1 '   , url:urlPartial  , title:'Vai abri uma página web com a URL'}
+                                      ,{caption:'Link 2'    , url:urlPartial_1, title:'Vai abri uma página web com a URL'}]);
+
+             _menu = j$.Dashboard.Menubar.addMenu({caption:'Partial'});
+             //_menu.add({caption:'Partial',   partial:urlPartial  , title:'Serah insedrido na tba'});
+             _menu.add({caption:'Partial 2', partial:urlPartial_1, title:'Serah insedrido na tba'});
+             _menu.add({caption:'Assunto',       title:'Assunto - exemplo colocar um  form na tab',
                   onClick:(menu, event)=>{
                       j$.Dashboard.Tabs.open({key:menu.key, caption:menu.caption
                           , onLoad: tab=>{
@@ -66,15 +69,15 @@ j$.ui.Page.Helper = function(){
                               });
                   }
               });
-             menu_view.add({caption:'Partial', byPass:true,      partial:urlPartial
-                , onClick:j$.Dashboard.Tabs.openPartial
+             _menu.add({caption:'Partial', byPass:true,      partial:urlPartial
+                    , onClick:j$.Dashboard.Tabs.openPartial
+             });
+             _menu.add(); // vai adicionar uma linha
+             _menu.add({key:'Tabela', caption:'Tabela', icon:'icon-pencil', title:'Tabela de Exemplo'
+                    , onClick:j$.Dashboard.Tabs.delegateTo
              });
 
-             menu_view.add({key:'Tabela', caption:'Tabela', icon:'icon-pencil', title:'Tabela de Exemplo'
-                , onClick:j$.Dashboard.Tabs.delegateTo
-             });
-
-//             menu_view.add({key:'SituacaoAtividade', caption:'Situação',       title:'Cadastro de Situa��es da Atividade',
+//             _menu.add({key:'SituacaoAtividade', caption:'Situação',       title:'Cadastro de Situa��es da Atividade',
 //                 onActivate:function(menu){openItem(menu);}
 //             });
              j$.Dashboard.Menubar.render();
