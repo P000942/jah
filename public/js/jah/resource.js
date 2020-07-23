@@ -489,7 +489,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
 
         function find(validator){//encontrar um registro específico
             let record = null;
-            for (var row=ROW.FIRST; row<=ROW.LAST; row++){
+            for (let row=ROW.FIRST; row<=ROW.LAST; row++){
                 record = _ds.DataSource[row];
                 if (validator){
                     if (validator(row, record)){

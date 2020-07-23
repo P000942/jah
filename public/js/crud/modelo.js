@@ -7,7 +7,7 @@
                  return false; //não vai excluir
            }
            , afterActionInsert: function(UpdateController) {console.log('afterActionInsert:');}
-           , validate: function(UpdateController) {
+           , validate: function(UpdateController, record, isNew) {
                  console.log('validate');
                  return true;
            }

@@ -16,7 +16,7 @@
             //      console.log('onSuccess Assunto:'+ACTION.MESSAGE.SUCCESS);
             //     // j$.ui.Alert.success(ACTION.MESSAGE.SUCCESS, this.Interface.Designer.alert)
             // }
-            , validate: function(UpdateController) {
+            , validate: function(UpdateController, record, isNew) {
                  console.log('validate Assunto');
                  return true;
             }
