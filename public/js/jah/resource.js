@@ -358,7 +358,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
 
     function Dataset(DataSource, Resource){
        const _ds = this
-           , ROW = {FIRST:0, LAST:0}
+           , ROW = {FIRST:0, LAST:0, maxId:-1}
        let originalSource = null;
 
        const initialized= function init(){
@@ -402,6 +402,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
         }
 
         function insert(record){
+           record = fmtId(record);
            const proceed = !(Resource.unique && _ds.exists(record));
            if (proceed){
               _ds.DataSource.push(record);
@@ -486,6 +487,14 @@ j$.Resource = function(){ // Factory: Criar os recursos
                     action(row, record);
             }
         };
+        this.forEach=function(action){ // varre todo o arquivo sem guardar as posicoes, por isso, nao chama o metodo get()
+            let record = null;
+            for (let row=ROW.FIRST; row<=ROW.LAST; row++){
+                record = _ds.DataSource[row];
+                if (action)
+                    action(record, row);
+            }
+        };
 
         function find(validator){//encontrar um registro específico
             let record = null;
@@ -517,6 +526,18 @@ j$.Resource = function(){ // Factory: Criar os recursos
                    return row;
             }
             return  c$.RCNOT_FOUND;
+        }
+        function fmtId(record){
+            let maxId = -99999999
+              , key = Resource.id;
+            if (Resource.local && record[key].isEmpty){
+                _ds.forEach(rc=>{
+                    if (rc[key].isNumeric() && Number.parseInt(rc[key]) > maxId)
+                       maxId=rc[key];
+                })
+                record[key] = (++maxId).toString();
+            }    
+            return record;
         }
     } //Dataset
 
