@@ -196,8 +196,8 @@ function ResponseController($service){
         EDITED    =true;
         NEW_RECORD=true;
         _me.UpdateController.reset();
-        if (_me.service.afterActionInsert)
-            _me.service.afterActionInsert(_me.UpdateController);
+        if (_me.service.afterInsert)
+            _me.service.afterInsert(_me.UpdateController);
   }
 
   function hide(buttons){
@@ -326,7 +326,7 @@ function UpdateController(service){
            }
         }
         if (service.validate && !error)
-            error=!service.validate(_me);
+            error=!service.validate(_me, record, newRecord);
 
         if (error && service.onError)
               service.onError( (newRecord) ?CONFIG.ACTION.NEW :CONFIG.ACTION.SAVE);

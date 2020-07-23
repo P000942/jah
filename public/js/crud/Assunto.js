@@ -7,7 +7,7 @@
                    j$.$R.assunto.Requester.get();
                  }
             , beforeDelete: function(UpdateController) {console.log('beforeDelete: Não vai prosseguir'); return true;}
-            , afterActionInsert: function(UpdateController) {console.log('afterActionInsert:');}
+            , afterInsert: function(UpdateController) {console.log('afterInsert:');}
             // , onError: function(ACTION) {
             //      console.log('onError Assunto:'+ACTION.MESSAGE.ERROR);
             //      j$.ui.Alert.error(ACTION.MESSAGE.ERROR, this.Interface.Designer.alert)

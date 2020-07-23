@@ -350,7 +350,7 @@ j$.service = function(){
             // DEFINIR O RESOURCE
             Object.setIfExist($i, adpater, ['resource']); // Primeiro procurar obter do serviço
             Object.setIfExist($i, service, ['resource','init','child','autoRequest','bindBy'
-                                         , 'initialize','onOpen','afterActionInsert'
+                                         , 'initialize','onOpen','afterActionInsert', "beforeDelete"
                                          , 'onSuccess','onError','validate']); // Em seguida das propriedades informadas (este prevalece)
             if (service.Interface)
                Object.setIfExist($i.Interface,service.Interface,['id','design','container','Buttons','List']);
