@@ -381,7 +381,7 @@ j$.Dashboard.Tabs=function(){
                             }
                 });
         }
-        , getTab: (menu_key, item_key) =>{ return tabs.getItem("tab_"+menu_key+'_'+item_key) }
+        , getTab: (menu_key, item_key) =>{ return tabs.C$("tab_"+menu_key+'_'+item_key) }
         , idContent:idContent
     };
 }();
@@ -600,7 +600,7 @@ j$.Node=function(inheritor, properties){
         _node.length +=1;
         _node.c$[key]=item;
     };
-    this.removeItem = key=>{
+    this.remove = key=>{
         _node.length -=1;
         _node.c$[key]=null;
     };

@@ -74,7 +74,7 @@ j$.ui.Page.Helper = function(){
                 , onClick:j$.Dashboard.Tabs.delegateTo
              });
 
-//             menu_view.addItem({key:'SituacaoAtividade', caption:'Situação',       title:'Cadastro de Situa��es da Atividade',
+//             menu_view.add({key:'SituacaoAtividade', caption:'Situação',       title:'Cadastro de Situa��es da Atividade',
 //                 onActivate:function(menu){openItem(menu);}
 //             });
              j$.Dashboard.Menubar.render();

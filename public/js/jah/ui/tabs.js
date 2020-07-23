@@ -45,7 +45,7 @@ j$.ui.Tabs.Root =function(idTab, idContent){
 	    return tab;
     }  
     function open(oTab){
-        let tab= _root.getItem(oTab.key);
+        let tab= _root.C$(oTab.key);
         if (!tab)
            tab=_root.add(oTab);   	
         _root.activate(tab.key);
@@ -64,7 +64,7 @@ j$.ui.Tabs.Root =function(idTab, idContent){
    
     // Coloca a tab indica(key) como ativa
     function activate(key){	
-        let tab=_root.getItem(key);	       
+        let tab=_root.C$(key);	       
         if (active_tab)  // Verifica se há uma TAB ativa e desativa a mesma
             active_tab.deactivate();
         active_tab=tab;	
@@ -74,13 +74,13 @@ j$.ui.Tabs.Root =function(idTab, idContent){
 
     // fecha a tab indica(key) 
     function close(key){	
-        let tab=_root.getItem(key);
+        let tab=_root.C$(key);
     	if (active_tab){             
             if (active_tab.key==key)
                 active_tab=null;
         }
         tab.close();
-        _root.removeItem(key);        
+        _root.remove(key);        
         if (_root.length>0) {
             _root.activate(_root.first().key);
         };
