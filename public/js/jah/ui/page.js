@@ -160,7 +160,7 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
                    self_grid.Designer.addButtons();
                    if (!populating){ //*quando for um registro inserido pelo usuário, recalcula as páginas e posiciona na ultima
                        pager.restart();
-                        self_grid.Pager.last();
+                       // self_grid.Pager.last(); // Removido em 23/07/202 ele tirava o registro que estava editado  (é para ficar em obsevacao)
                    }
             }
           ,clear:()=>{
@@ -350,7 +350,7 @@ j$.service = function(){
             // DEFINIR O RESOURCE
             Object.setIfExist($i, adpater, ['resource']); // Primeiro procurar obter do serviço
             Object.setIfExist($i, service, ['resource','init','child','autoRequest','bindBy'
-                                         , 'initialize','onOpen','afterActionInsert', "beforeDelete"
+                                         , 'initialize','onOpen','afterInsert', "beforeDelete"
                                          , 'onSuccess','onError','validate']); // Em seguida das propriedades informadas (este prevalece)
             if (service.Interface)
                Object.setIfExist($i.Interface,service.Interface,['id','design','container','Buttons','List']);

@@ -568,6 +568,7 @@ var dataExt = function(){
       ,   isObject:obj=>{return (dataExt.type(obj)==='Object')}
       ,     isCrud:obj=>{return (dataExt.isDefined(obj)) ?(obj.constructor.name==='Crud') :false}
       , isFunction:obj=>{return (dataExt.type(obj)==='Function')}
+      ,isUndefined:obj=>{return !dataExt.isDefined(obj)}
       ,  isDefined:obj=>{return (obj==null || obj==undefined) ?false :true}
     };
 }();

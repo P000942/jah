@@ -279,8 +279,9 @@ function UpdateController(service){
         _me.reset();
   }
 
-  function edit(recordRow){
-        let record = Resource.Dataset.get(recordRow);
+  function edit(recordRow, record){
+        if (!record)
+           record = Resource.Dataset.get(recordRow);
         service.Fieldset.edit(record);
         if (service.page.child)
            service.page.child.notify({action:CONFIG.ACTION.EDIT, record:record});
@@ -297,7 +298,7 @@ function UpdateController(service){
   }
 
   function insert(record, recordRow){
-     _me.edit(recordRow);
+     _me.edit(recordRow, record);
      if (service.page.List)
          service.page.List.Detail.add(record);
      if (service.onSuccess)
