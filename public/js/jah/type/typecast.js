@@ -245,8 +245,12 @@ const Typecast = {
 			CursorManager : {
 				Move : function(field, dir){
 					let cursorPosition = this.GetPosition(field)[0];
-					let startIdx = Typecast.Behaviours.Mask.MaskManager.FindNearestMaskCharacter(field, cursorPosition, dir);
-					this.SetPosition(field, startIdx);
+					if (!field.isAlignRight || (field.isAlignRight && field.Data.length>0)){
+						let startIdx = Typecast.Behaviours.Mask.MaskManager.FindNearestMaskCharacter(field, cursorPosition, dir);
+						this.SetPosition(field, startIdx);
+					}else{
+						this.SetPosition(field, cursorPosition);
+					}
 				},
 				GetPosition : function(field){
 					let arr = [0,0];
