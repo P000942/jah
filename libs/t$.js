@@ -1,5 +1,5 @@
 import Sequelize from "sequelize";
-import dataExt  from '../public/js/jah/type/dataExt'
+import dataExt  from '../public/js/jah/api/dataExt'
 //export default    {NAME: "tarefa" , USER: ""   };
 var t$ = function() {
    return {
