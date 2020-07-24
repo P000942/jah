@@ -777,8 +777,10 @@ j$.ui.Form=function(service, modal) {
               parms = service.Child.bindFields;
            service.autoRequest(parms);
         }   
-        $i.c$ = service.Fieldset.c$;
-        $i.C$ = service.Fieldset.C$;
+        if (service.Fieldset) {
+            $i.c$ = service.Fieldset.c$;
+            $i.C$ = service.Fieldset.C$;
+        }    
     };
 };
 

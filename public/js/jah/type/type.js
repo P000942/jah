@@ -863,16 +863,16 @@ j$.ui.type.List=function(Properties){
    
    this.value = p_value=>{
         let value='';
-          if (p_value)
-              value=p_value;
-          else{
-              if (SELF.Input){
-                  var index=SELF.Input.selectedIndex;
-                  var options= SELF.Input.options;
-                  value=options[index].value;
-              }
-          }
-          return value.trim();
+        if (p_value)
+            value=p_value;
+        else{
+            if (SELF.Input){
+                let index=SELF.Input.selectedIndex;
+                let options= SELF.Input.options;
+                value=options[index].value;
+            }
+        }
+        return value.trim();
    };
 
    this.exists = value=>{ return (list[value])?true:false};
@@ -1345,7 +1345,7 @@ TYPE.HANDLE = {
        if (validate)
            valid=validate(value);
        inputField.className = (valid)?CONFIG.INPUT.CLASS.DEFAULT:CONFIG.INPUT.CLASS.ERROR;
-       if (inputField.field.Resource)
+       if (inputField.field.Resource && inputField.field.Legend)
            inputField.field.Legend.request();
     }
   , autotab:(obj,len)=>{

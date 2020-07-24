@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-var SEFAZ ={Report:{}}
+const SEFAZ ={Report:{}}
 SEFAZ.Report.Page={
       Header:{Title: {secretaria:"SECRETARIA DE ESTADO DA FAZENDA",
 		                        setor:"Departamento de Tecnologia da Informação",
@@ -17,8 +17,8 @@ SEFAZ.Report.Page={
 };
 
 SEFAZ.Report.init = function(){
-    var helper = ReportFactory.restore();
+    let helper = ReportFactory.restore();
     SEFAZ.Report.Page.Header.Title.Titulo = helper.caption;
-    var report =  ReportFactory.create(SEFAZ.Report.Page, helper.Fieldset, helper.Dataset);
+    let report =  ReportFactory.create(SEFAZ.Report.Page, helper.Fieldset, helper.Dataset);
     report.start();
 }
