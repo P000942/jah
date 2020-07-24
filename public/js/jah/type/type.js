@@ -136,7 +136,7 @@ j$.ui.Render= function(){
          }
          , alert:(wrap, msg, clas$)=>{
              clas$ = (clas$)? `class='alert ${clas$}'`: "class='alert'";
-             wrap.insert(`<div ${clas$}><button type="button" class="close" data-dismiss="alert">×</button>'${msg}</div>`);
+             wrap.insert(`<div ${clas$}><button type="button" class="close" data-dismiss="alert">×</button>${msg}</div>`);
          }
       };
 }();

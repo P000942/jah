@@ -38,7 +38,7 @@
                                         , txTarefa:TYPE.CHAR(30,{label:'Tarefa', mandatory:true})
                                         }
                         }
-                      //, Mensagem:{caption:'Ver Mensagem'}
+                      , Mensagem:{caption:'Ver Mensagem'}
                     }
         }); 
     with(j$.service.c$){

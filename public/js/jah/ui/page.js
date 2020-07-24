@@ -506,20 +506,20 @@ j$.$S = j$.service.c$;
 j$.ui.Page = function(){
    let items = {};
    const Modal =function(wrap,form, fixed){
-       let SELF = this;
+       let _modal = this;
        //this.show = show;
        this.display=show;
        function show(){
-           $("#"+SELF.form.id+"Modal").modal('show'); // exibe o modal
+           $("#"+_modal.form.id+"Modal").modal('show'); // exibe o modal
        }
        this.clear=function(){
            if (i$(form.id+ "Modal")) {$("#"+form.id+ "Modal").remove();}
        }
        this.hide=function(){
-           $("#"+SELF.form.id+"Modal").modal('hide'); // exibe o modal
+           $("#"+_modal.form.id+"Modal").modal('hide'); // exibe o modal
        }
        const create=function(){
-          SELF.clear();
+          _modal.clear();
           let txFixed=(fixed)?'':"<button type='button' class='close'  data-dismiss='modal'>&times;</button>";
           $(wrap).append("<div id='" +form.id+ "Modal' class='modal fade' role='dialog'>"
                         +  "<div class='modal-dialog'>"
@@ -538,13 +538,13 @@ j$.ui.Page = function(){
                         +   "</div>"
                         + "</div>");
           $('#'+form.id).append("<div id='" +form.id+ "Alert'></div>");
-          SELF.body     =i$(form.id+ "Body");
-          SELF.form     =i$(form.id);
-          SELF.fieldset =i$(form.id);
-          SELF.caption  =i$(form.id+"Caption");
-          SELF.header   =i$(form.id+"Header");
-          SELF.footer   =i$(form.id+"Footer");
-          SELF.alert    =i$(form.id+"Alert")
+          _modal.body     =i$(form.id+ "Body");
+          _modal.form     =i$(form.id);
+          _modal.fieldset =i$(form.id);
+          _modal.caption  =i$(form.id+"Caption");
+          _modal.header   =i$(form.id+"Header");
+          _modal.footer   =i$(form.id+"Footer");
+          _modal.alert    =i$(form.id+"Alert");
        }();
    }
    const Form =function(wrap,form){
@@ -559,13 +559,13 @@ j$.ui.Page = function(){
           $('#'+form.id).append("<fieldset class='crud' id='" +form.id+ "Fieldset'><legend id='" +form.id+ "Header' class='crud'>" +form.title+ "</legend></fieldset>");
           $('#'+form.id+' > fieldset').append("<div id='" +form.id+ "Alert'></div>");
           $('#'+form.id).append("<div id='" +form.id+ "Footer'></div>");
-          _form.body     = i$(form.id);
+          _form.body     =i$(form.id);
           _form.form     =i$(form.id);
           _form.fieldset =i$(form.id+"Fieldset");
           _form.caption  =i$(form.id+"Header");
           _form.header   =i$(form.id+"Header");
           _form.footer   =i$(form.id+'Footer');
-          _form.alert    =i$(form.id+"Alert")
+          _form.alert    =i$(form.id+"Alert");
        }();
    }
 
@@ -717,21 +717,37 @@ j$.ui.Form=function(service, modal) {
     });
     Object.preset(service.Interface,{Buttons:false});
     Object.preset(service,{
-         onSuccess:  ACTION =>{j$.ui.Alert.success(ACTION.MESSAGE.SUCCESS, $i.alert)}
-       ,   onError:  ACTION =>{j$.ui.Alert.error(ACTION.MESSAGE.ERROR, $i.alert)}
-       , onFailure: response=>{j$.ui.Alert.error(response.msg, $i.alert)}
+         onSuccess:  ACTION =>{j$.ui.Alert.success(ACTION.MESSAGE.SUCCESS, $i.Alert.id)}
+       ,   onError:  ACTION =>{j$.ui.Alert.error(ACTION.MESSAGE.ERROR, $i.Alert.id)}
+       , onFailure: response=>{j$.ui.Alert.error(response.msg, $i.Alert.id)}
     });
     if (!service.Interface.id)
         service.Interface.id = service.id.toFirstLower();
     // se for modal, herda de um template próprio para modal
-    this.inherit = (modal) ?j$.ui.Page.Designer.modal :j$.ui.Page.Designer.form
+    this.inherit = (modal) ?j$.ui.Page.Designer.modal 
+                           :j$.ui.Page.Designer.form
     $i.inherit($i.container, service.Interface);
-    $i.hideAlert=()=>{
-       if ($i.alert)
-           j$.ui.Alert.hide($i.alert);
-    }
+
+    $i.Alert = function(alert){
+        return{
+            show (msg,_class=CONFIG.ALERT.INFO.CLASS, inFocus){
+                if (msg){
+                   inFocus = (inFocus) ?`<strong>${inFocus}</strong> ` : "";
+                   if (alert) 
+                      j$.ui.Alert.show( [`${inFocus}${msg}`], _class, alert);
+                }else
+                     $i.Alert.hide();
+            }
+            , hide(){
+                if (alert)
+                   j$.ui.Alert.hide(alert);
+            }
+            ,id:alert
+        } 
+    }($i.alert);
+
     $i.reset = ()=>{
-        $i.hideAlert();
+        $i.Alert.hide();
         $i.form.reset(); // inputs do form
         $i.service.Fieldset.reset(); // atributo dos fields (class, valor default, etc)
         if ($i.List)

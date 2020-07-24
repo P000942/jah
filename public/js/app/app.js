@@ -23,9 +23,15 @@ const adapter={
           ,     Basico:{caption:'Básico'   ,  query:true, title:'Consulta Básica', resource:'pessoa'}
           ,     Tarefa:{caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa'}
           ,   Mensagem:{caption:'Mensagem' ,   crud:true, title:'Mensagem' }//      , resource:'mensagem', modal:true}
+       //   ,         Uf:{caption:'UF'       ,   crud:true, title:'Unidades da federacao', resource:'uf'}
         }
    , design:{ // Para montar os menus e sebmenus
-             Tabelas:{caption:'Tabelas', items:['Papel','Usuario','Documento','Mensagem']}
+             Tabelas:{caption:'Tabelas', items:['Papel'
+                                               ,'Usuario'
+                                               ,'Documento'
+                                               ,'Mensagem'
+                                               //,'Uf'
+                                               ]}
          ,    Outros:['Assunto', 'SituacaoAtividade','Partial'] // key e caption serão igual a "Outros"
          ,  Consulta:['Pessoa','Basico']
        }
@@ -125,3 +131,12 @@ $(document).ready(function(){
         });
   //j$.Message.hide();
 ;});
+
+
+// j$.service.createCrud("Uf"
+//            ,{fieldset:{idUf:TYPE.INTEGER(4,{label:'Código', readOnly:true})
+//                       ,sgUf:TYPE.UPPERCASE(2,{label:'UF', mandatory:true})
+//                       ,txEstado:TYPE.CHAR(40,{label:'Estado', mandatory:true})
+//                       }
+//             }
+//        );

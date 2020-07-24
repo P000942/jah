@@ -38,19 +38,20 @@
                 urlPartial : CONFIG.SERVER.CONTEXT + 'sample/partial.html'
                 , actionController:function (){
                         return{
-                            edit(e){alert(`    edite: ${e.text}`)}
-                        ,    insert(e){alert(`    criar: ${e.text}`)}
-                        ,      back(e){alert(`   voltar: ${e.text}`)}
-                        ,    remove(e){alert(`  remover: ${e.text}`)}
-                        ,      save(e){alert(`  alterar: ${e.text}`)}
-                        ,      sort(e){alert(`     sort: ${e.text}`)}
-                        ,     print(e){alert(`    print: ${e.text}`)}
-                        ,    filter(e){alert(`  filtrar: ${e.text}`)}
-                        ,       get(e){alert(`consultar: ${e.text}`)}
-                        , pesquisar(e){alert(`pesquisar: ${e.text}`)}
-                        ,      novo(e){alert(`     novo: ${e.text}`)}
+                               edit(e){ws.alert(`    edite: ${e.text}`)}
+                        ,    insert(e){ws.alert(`    criar: ${e.text}`)}
+                        ,      back(e){ws.alert(`   voltar: ${e.text}`)}
+                        ,    remove(e){ws.alert(`  remover: ${e.text}`)}
+                        ,      save(e){ws.alert(`  alterar: ${e.text}`)}
+                        ,      sort(e){ws.alert(`     sort: ${e.text}`)}
+                        ,     print(e){ws.alert(`    print: ${e.text}`)}
+                        ,    filter(e){ws.alert(`  filtrar: ${e.text}`)}
+                        ,       get(e){ws.alert(`consultar: ${e.text}`)}
+                        , pesquisar(e){ws.alert(`pesquisar: ${e.text}`)}
+                        ,      novo(e){ws.alert(`     novo: ${e.text}`)}
                         };
                 }()
+                , alert(msg){myPage.page.Alert.show(msg)}
             }
 
     j$.service.create("myPage",
