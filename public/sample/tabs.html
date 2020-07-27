@@ -47,54 +47,47 @@
 <script type="text/javascript">
 $(document).ready(function(){
     const urlPartial = CONFIG.SERVER.CONTEXT + 'sample/partial.html'
-    const tabs = j$.ui.Tabs.create('tabs','content');
+        , urlPartial2 = CONFIG.SERVER.CONTEXT + 'sample/partial_1.html'
+        , tabs = j$.ui.Tabs.create('tabs','content') // cria o tab no container "content" 
+                                                     // 'tabs' é a chave de referencia a essa tab > j$.ui.Tabs.c$.tabs
+                                                     // sendo a primeira tab, tb pode ser j$.ui.Tabs.root
+        , tabPartial={key:"tab_Partial", caption:'Partial', url:urlPartial, title:'Title Partial Tab'}
+        , menu = j$.ui.Menu.create("menubar")        // cria o menu no container "menubar" 
 
-    const menu = j$.ui.Menu.create("menubar");
-    const tabPartial={key:"tab_Partial", caption:'Partial', url:urlPartial, title:'Title Partial Tab'};
     menu.addMenu({caption:"Home", active:true});
-    const menu_link = menu.addMenu("Tabs");
-             menu_link.add({caption:'Link',  url:urlPartial});
-             menu_link.divider.add();
-             menu_link.add({caption:'Menu Partial', byPass:true, url:urlPartial,
-                 onClick:function(menu, event){
-                      tabs.open(
-                             {key:"tab_"+menu.id,
-                          caption:menu.caption,
-                           onLoad:function(tab){
-                               tab.showURL(menu.url);
-                           }
-                      });
+    menu.addMenu("Tabs")
+        .add([{caption:'Link Externo',  url:urlPartial}
+              ,  // sep
+              ,{caption:'Menu Partial', byPass:true, url:urlPartial,
+                 onClick(opt_sel, event){
+                     tabs.open(
+                            {key:"tab_"+opt_sel.id
+                        , caption:opt_sel.caption
+                        ,  onLoad(tab){tab.showURL(opt_sel.url)}
+                     });
                  }
-             });
-             menu_link.add({caption:'Delegar abertura', byPass:true, url:urlPartial,
-                 onClick:function(menu, event){
-                      tabs.open(
-                             {key:"tab_"+menu.id,
-                          caption:menu.caption,
-                           onLoad:function(tab){
-                              delagateTab(tab.idContent);
-                           }
-                      });
+              }
+             ,{caption:'Delegar abertura', byPass:true, url:urlPartial2,
+                 onClick(opt_sel, event){
+                    tabs.open({key:"tab_"+opt_sel.id
+                         , caption:opt_sel.caption
+                         ,  onLoad(tab){delagateTab(tab.idContent)}
+                    });
                  }
-             });
-             menu_link.add({caption:'Menu Partial Simples', byPass:true, url:urlPartial,
-                 onClick:function(menu, event){
-                      tabs.open({key:'tab_'+menu.key, caption:menu.caption, url:menu.url});
-                 }
-             });
-             menu_link.add({caption:'Partial'
-                , onClick:function(menu, event){
-                      tabs.open(tabPartial);
-                 }
-             });
-             menu_link.add({caption:'Eventos', onClick:criarTab});
+              }
+            ,{caption:'Menu Partial Simples', byPass:true, url:urlPartial,
+                onClick(opt_sel, event){tabs.open({key:'tab_'+opt_sel.key, caption:opt_sel.caption, url:opt_sel.url})}
+             }
+            ,{caption:'Partial', onClick(opt_sel, event){tabs.open(tabPartial_1)}}
+            ,{caption:'Eventos', onClick:criarTab}
+        ]);
     menu.render();
     function criarTab(menu, event){
          tabs.open({key:"tab_eventos", caption:"Evento"
-           , onLoad      :function(tab){tab.showURL(urlPartial);}
-           , onActivate  :function(tab){console.log("onActivate."+tab.key);}
-           , onDeactivate:function(tab){console.log("onDeactivate."+tab.key);}
-           , onClose:function(tab){console.log("onClose."+tab.key);}
+           ,       onLoad(tab){tab.showURL(urlPartial)}
+           ,   onActivate(tab){console.log("onActivate."+tab.key)}
+           , onDeactivate(tab){console.log("onDeactivate."+tab.key)}
+           ,      onClose(tab){console.log("onClose."+tab.key)}
              });
     };
     // Cria a tab FIXA - 'Home'

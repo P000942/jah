@@ -136,7 +136,7 @@ j$.ui.Tabs.Root =function(idTab, idContent){
                          element.hide();
                      else
                          titleElement.innerHTML=tab.title;
-                     element.hide();  
+                     //element.hide();  
              }();                 
              return{
                  title:titleElement                
