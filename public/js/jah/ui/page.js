@@ -650,7 +650,7 @@ j$.ui.Page = function(){
             , standard:(page, section, fieldset)=>{
                   if (fieldset){
                      for (let key in fieldset.c$){
-                        let design={labelStyle:{width:'140px'}, clas$:{row:'wrap_classic_section',column:'wrap_classic_field'}};
+                        let design={labelStyle:{width:'150px'}, clas$:{row:'wrap_classic_section',column:'wrap_classic_field'}};
                         addField(page.form, section, fieldset, design, key);
                      }
                   }
