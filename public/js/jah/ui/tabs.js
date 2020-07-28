@@ -132,11 +132,11 @@ j$.ui.Tabs.Root =function(idTab, idContent){
              let element = i$(_tab.id + "_header")
                , titleElement = i$(_tab.id + "_header_title")
              const create=function(){                     
-                     if (tab.title == undefined)
-                         element.hide();
+                     if (tab.title && !tab.title.isEmpty())
+                        titleElement.innerHTML=tab.title; 
                      else
-                         titleElement.innerHTML=tab.title;
-                     //element.hide();  
+                        element.hide();
+                  //   element.hide();  
              }();                 
              return{
                  title:titleElement                
