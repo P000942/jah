@@ -62,35 +62,35 @@
           </ul>
       </div>
       <div class="dropdown">
-          <a class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+          <button class="btn btn-default dropdown-toggle"  id="menu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Tutorials
-          <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">HTML</a></li>
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">CSS</a></li>
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">JavaScript</a></li>
-            <li role="presentation" class="divider"></li>
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
-          </ul>
+          <!-- <span class="caret"></span> -->
+          </button>
+          <div  class="dropdown-menu" role="menu" aria-labelledby="menu1">
+            <button class="dropdown-item" type="button">HTML</button>
+            <button class="dropdown-item" type="button">CSS</button>
+            <button class="dropdown-item" type="button">JavaScript</button>
+            <div role="presentation" class="dropdown-divider"></div>
+            <button class="dropdown-item" type="button">About Us</button>
+          </div >
       </div>
       <form>
-          <div class="input-group">
+          <div class="input-group mb-3">
               <label id="email" type="text" class="form-control" >jgeraldo@sefaz.am.gov.br</label>
-                  <div class="dropdown input-group-addon">
-                    <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown">
-                        <i class="glyphicon glyphicon-user"></i>
-                        <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-                        <li><a tabindex="-1" href="#"><i class="icon-cogs" style="color: #F89406"></i>Configurar</a></li>
-                        <li><a tabindex="-1" href="#"><i class="icon-user" style="color: #999999"></i>Perfil</a></li>
-                        <li class="divider"></li>
-                        <li><a tabindex="-1" href="#"><i class="icon-off" style="color: #BD362F"></i>Sair</a></li>
-                    </ul>
-                  </div>
+              <div class="dropdown input-group-addon">
+                <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown">
+                    <i class="glyphicon glyphicon-user"></i>
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                    <li><a tabindex="-1" href="#"><i class="icon-cogs" style="color: #F89406"></i>Configurar</a></li>
+                    <li><a tabindex="-1" href="#"><i class="icon-user" style="color: #999999"></i>Perfil</a></li>
+                    <li class="divider"></li>
+                    <li><a tabindex="-1" href="#"><i class="icon-off" style="color: #BD362F"></i>Sair</a></li>
+                </ul>
+              </div>
           </div>
-          <div class="input-group">
+          <div class="input-group mb-3">
               <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
               <input id="password" type="password" class="form-control" name="password" placeholder="Password">
           </div>
