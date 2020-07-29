@@ -271,10 +271,14 @@ table.list tbody tr:hover { background-color:rgb(180,220,180); }
 table td {padding:0px;}
 table p {margin:0;}
 
-/*table.list th > div{ }*/
-table.list th > div.wrapperUl{
-    padding: 0; margin: 0; height: 2.8em; line-height: 2.8em; text-align: right;
+table.list th > .wrapperUl{
+    display: flex;
+    padding: 0; margin: 0; height: 2.8em; line-height: 2.8em;
 }
+table.list th > nav > .pagination.pagination-sm{
+    margin-bottom: 1px;
+}
+
 .modal-header{background-color: var(--bg-color-fildset);;}
 /* Só serve para chamar atenção */
 .lookThis{background-color: darkred;

@@ -75,11 +75,12 @@ j$.ui.Render= function(){
                  parent.insert({after:`<span id='${id}'></span>`});
                  $('#'+id).mouseover(method);
                  return i$(id);
-         }
+         }      
          , wrapperUl:(wrap, id, wrapStyle)=>{
-               let wrapId =j$.util.getId(wrapStyle, id);
-               $(wrap).append(`<div class='wrapperUl' id='${wrapId}_wrap'></div>`);
-               $(`#${wrapId}_wrap`).append(`<ul class="${wrapStyle}" id="${wrapId}"></ul>`);
+               let wrapId =j$.util.getId(wrapStyle, id)
+                 , wrapNavId = `${wrapId}_wrap`;
+               $(wrap).append(`<nav class='wrapperUl d-flex flex-row-reverse' id='${wrapNavId}'></nav>`);
+               $(`#${wrapNavId}`).append(`<ul class="${wrapStyle}" id="${wrapId}"></ul>`);
                return i$(wrapId);
            }
          , li:(wrap, properties)=>{

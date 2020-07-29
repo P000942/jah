@@ -290,24 +290,24 @@ j$.ui.Pager=function(parent, pager , actionController){
     };
     this.clear=()=>{if (_wrap) _wrap.innerHTML='';};
 
-    this.add= (values, clas$)=>{
-         clas$ = (clas$)?' class="' +clas$+ '"':'';
+    this.add= (values, active='')=>{        
+         let clas$ = ` class="page-item ${active}"`;
          let properties = parse(values);
          let value = (properties.value.isNumeric())?properties.value:'';
          Object.preset(properties, {
                onclick:'javascript:'+actionController+'.' +properties.method+ '('+value+')'});
-         _wrap.insert('<li' +clas$+ '><a' +j$.ui.Render.attributes(properties,'value')+ '>'+properties.caption+'</a></li>');
+         _wrap.insert('<li' +clas$+ '><a class="page-link" ' +j$.ui.Render.attributes(properties,'value')+ '>'+properties.caption+'</a></li>');
     };
     this.createNavigator=wrap=>{
         _pager.create(wrap);
         _pager.add("first",(pager.Control.first===pager.Control.number)?'disabled':'');
-        _pager.add("back",(pager.Control.first===pager.Control.number)?'disabled':'');
+        _pager.add("back" ,(pager.Control.first===pager.Control.number)?'disabled':'');
         let pagerPosition=pager.positions();
         for (let row=pagerPosition.first; row<=pagerPosition.last; row++){
             _pager.add(row.toString(),(row===pager.Control.number)?'active':'');
         }
-        _pager.add("next",(pager.Control.last===pager.Control.number)?'disabled':'');
-        _pager.add("last",(pager.Control.last===pager.Control.number)?'disabled':'');
+        _pager.add("next" ,(pager.Control.last===pager.Control.number)?'disabled':'');
+        _pager.add("last" ,(pager.Control.last===pager.Control.number)?'disabled':'');
     };
     this.Controller=function(callbackPopulate){
         let nbr =  c$.RC.NONE;
