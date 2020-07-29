@@ -11,7 +11,7 @@ j$.Resource.Store.add(
                             {"idTabela":"1","txTabela":"Descrição tabela 1"}
                            ,{"idTabela":"2","txTabela":"Descrição tabela 2"}
                     ]});
-Uf = j$.Resource.create({name:'estadoCivil'
+j$.Resource.create({name:'estadoCivil'
                     ,source:[
                         {"idEstadoCivil":"1","txEstadoCivil":"Solteiro"}
                         ,{"idEstadoCivil":"2","txEstadoCivil":"Casado"}

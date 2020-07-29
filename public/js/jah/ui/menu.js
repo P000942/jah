@@ -42,7 +42,7 @@ j$.ui.Menu.Designer =function(){
 
     return{
        format (properties){
-              let attClass = '', attDropdown = '', attCarret = '', attDropdownUl ='', attLi='', attIcon='';
+              let attClass = '', attDropdown = '', attCarret = '', attDropdownUl ='', attIcon=''; 
               let attHint = (properties.title)? 'title="' + properties.title + '"' : '';
               if (properties.active){
                   attClass='class="active"';
@@ -53,19 +53,21 @@ j$.ui.Menu.Designer =function(){
             
               if (properties.length>0){
                  attCarret = '<b class="caret"></b>'; 
-                 attClass  = 'class="dropdown"';
-                 attDropdown = 'class="dropdown-toggle" data-toggle="dropdown"';
-                 attDropdownUl = '<ul id="'+properties.id+'"  class="dropdown-menu"></ul>';  
-                 if (properties.type=='Submenu') {
+                 attClass  = 'class="nav-item dropdown"';
+                 attDropdown = 'class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"';
+                 attDropdownUl = '<div id="'+properties.id+'"  class="dropdown-menu" aria-labelledby="navbarDropdown"></div>';  
+                 if (properties.type=='Submenu') { //#todo
                     attClass  ='class="dropdown-submenu"';
                     attCarret ='';
                  }
-              } else 
-                attLi='id="'+properties.id+'"';              
-
-              return '<li ' +attLi        + ' ' +attClass+ ' ' +attHint+ '>'
-                    +'<a '  +attDropdown  + ' ' +formatLink(properties)+'>'+attIcon+properties.caption+attCarret
-                    +'</a>' +attDropdownUl+ '</li>';
+                 return '<li '  +attClass+ ' ' +attHint+ '>'
+                       +'<a '  +attDropdown  + ' ' +formatLink(properties)+'>'+attIcon+properties.caption+attCarret
+                       +'</a>' +attDropdownUl+ '</li>';
+              } else{ // os item do menu entram aqui        
+                 return `<a id="${properties.id}" class="dropdown-item" ${attHint} ${formatLink(properties)}>`
+                            +attIcon+properties.caption
+                      + '</a>';
+              }                
        }
     };
 }();
@@ -88,9 +90,10 @@ j$.ui.Menu.Navbar =function(idContent){
 
     function create(){
         let id = idContent+'Root';
-        $(`#${idContent}`).append(`<div class="container"></div>`);
+        $(`#${idContent}`).append(`<div class="container"></div>`);                
         $(`#${idContent} > .container`).append(`<div class="navbar-collapse collapse"> </div>`);
-        $(`#${idContent} > .container > .navbar-collapse`).append(`<ul id='${id}' class="nav navbar-nav"></ul>`);
+        $(`#${idContent} > .container > .navbar-collapse`).append(`<ul id='${id}' class='navbar-nav mr-auto'></ul>`);
+        // $(`#${idContent} > .container > .navbar-collapse`).append(`<ul id='${id}' class="nav navbar-nav"></ul>`);
         return id;
     };
 };
@@ -209,7 +212,7 @@ j$.ui.Menu.Base=function(inheritor, properties){
     }();
 
     let divider=function(){
-          let format=function(){return '<li class="divider"></li>';};
+          let format=function(){return '<div class="dropdown-divider"></div>';};
           return {
               render:()=>{
                   $('#'+_base.id).append(format());
