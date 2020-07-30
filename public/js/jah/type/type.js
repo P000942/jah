@@ -45,10 +45,10 @@ j$.ui.Render= function(){
                  wrap.insert(`<div id='${id$}' class='${clas$}'></div>`);
               return i$(id$);
           }
-        , label: (wrap, label, inputId, clas$, mandatory)=>{
-              let att={clas$:(clas$)?clas$:'input_label'
-                       ,  id:(inputId)?inputId+ 'Label':j$.util.getId('Label')
-                       , for:(inputId)? inputId:null
+        , label: (wrap, label, inputId, clas$="col-sm-2 col-form-label col-form-label-sm", mandatory)=>{
+              let att={clas$
+                       ,  id:(inputId) ?inputId+ '_label' :j$.util.getId('Label')
+                       , for:(inputId) ?inputId :null
                       };
               label =(label)?label : att.id;
               if (!i$(att.id)){ // cria se não existir
@@ -59,6 +59,8 @@ j$.ui.Render= function(){
               return i$(att.id);
         }
         , input:(wrap, id, inputType, maxlength, attributes)=>{
+            //   if (attributes && !attributes.clas$)
+            //      attributes.clas$ = "form-control";
               if (!i$(id)){
                  let size =(maxlength)?" size='" +maxlength+ "'":""
                  ,   type = (inputType)?inputType:'text'
@@ -295,17 +297,16 @@ TYPE.HELPER = {
                inputField.mandatory = labelField.mandatory;
         }
    }
-   , createLabel: function(inputField, wrap){
+   , createLabel: function(inputField, wrap, clas$){
         if (inputField.label.isEmpty()) // label é o texto que foi setado no construtor
             inputField.label=inputField.key;
-        let wrapInput = j$.ui.Render.wrap(wrap,inputField.id+'_wrapLabel','wrap_label');
 
-        j$.ui.Render.label(wrapInput, inputField.label, inputField.id, 'input_label' ,inputField.mandatory)
-        wrapInput.stylize(inputField.design.labelStyle);
+        let lbl = j$.ui.Render.label(wrap, inputField.label, inputField.id, clas$ ,inputField.mandatory)
+        lbl.stylize(inputField.design.labelStyle);
         return {label:inputField.label, mandatory:inputField.mandatory}
    }
    , setProperties: function(inputField, Type, Properties) {
-        //var properties={autotab:false, label:'', mandatory:false, locked:false, defaultValue:'', align:c$.ALIGN.LEFT, size:null, validator:null, mask:null}
+        //properties={autotab:false, label:'', mandatory:false, locked:false, defaultValue:'', align:c$.ALIGN.LEFT, size:null, validator:null, mask:null}
         let mask = null;
         // Primeiro verifica/seta o que vem do no Type, que são o valores que já vem por padrão
         if (Type){
@@ -338,6 +339,7 @@ TYPE.HELPER = {
         inputField.Input=_input;
         inputField.Input.bind(inputField);
         inputField.id =_input.id;
+        inputField.classDefault = CONFIG.INPUT.CLASS.DEFAULT;
         // if (!inputField.key)
         //     inputField.key =inputField.id;
         let hint = "";
@@ -369,11 +371,14 @@ TYPE.HELPER = {
              case 'select':
                  inputField.popule();
                  break;
+             case 'checkbox':
+                 inputField.classDefault = CONFIG.CHECK.CLASS.DEFAULT;
+                 break;                 
              default:
                  break
         }
         Object.setIfExist(_input, inputField,['readOnly','disabled','defaultValue'])
-        _input.className   = _input.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
+        _input.className   = _input.className + " " + inputField.classDefault;
     }
 };
 // Helper={}
@@ -536,7 +541,7 @@ function superType(Type, Properties) {
         if (value == undefined)
             value = this.Record.value;
         i$(this.id).content(value);
-        i$(this.id).className = CONFIG.INPUT.CLASS.DEFAULT; //"input_text";
+        i$(this.id).className = SELF.classDefault //CONFIG.INPUT.CLASS.DEFAULT; //"input_text";
    };
    this.format= p_value=> {
         return  (this.mask) ?this.mask.format(p_value) :this.value(p_value);
@@ -551,7 +556,7 @@ function superType(Type, Properties) {
    this.create= (wrap, id, key, design) =>{
        SELF.identify(wrap, id, key, design);
        TYPE.HELPER.createLabel(SELF, wrap)
-       let wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput','wrap_input');
+       let wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput',design.clas$.field);
        let input     = j$.ui.Render.input(wrapInput, SELF.id, SELF.type, SELF.maxlength, SELF.attributes);
        wrapInput.stylize(SELF.design.inputStyle);
        if (SELF.onChangeHandle)
@@ -579,7 +584,8 @@ function superType(Type, Properties) {
         }else{
             ERROR.off(SELF);
         }
-        SELF.Input.className = (valid)?CONFIG.INPUT.CLASS.DEFAULT:CONFIG.INPUT.CLASS.ERROR;
+        SELF.Input.className = (valid) ?SELF.classDefault  //CONFIG.INPUT.CLASS.DEFAULT
+                                       :CONFIG.INPUT.CLASS.ERROR;
         return valid;
    };
    this.isValid= p_value=>{
@@ -597,7 +603,7 @@ function superType(Type, Properties) {
         ERROR.off(SELF);
         if (!SELF.defaultValue.isEmpty())
             i$(SELF.id).value=SELF.defaultValue;
-        i$(SELF.id).className = CONFIG.INPUT.CLASS.DEFAULT;
+        i$(SELF.id).className = SELF.classDefault; //CONFIG.INPUT.CLASS.DEFAULT;
    };
 
    this.bind = _input=>{
@@ -1340,12 +1346,14 @@ TYPE.HANDLE = {
         System.Hint.show(field.Error.get(),obj,event,"hint hint-error");
     }
   , lostFocus: (e, validate)=>{
-       let inputField = Event.element(e);
-       let valid=true;
-       let value = (inputField.field!=undefined)?inputField.field.value():inputField.value;
+       let inputField = Event.element(e)
+         , valid=true
+         , value = (inputField.field!=undefined) ?inputField.field.value() 
+                                                 :inputField.value;
        if (validate)
            valid=validate(value);
-       inputField.className = (valid)?CONFIG.INPUT.CLASS.DEFAULT:CONFIG.INPUT.CLASS.ERROR;
+       inputField.className = (valid) ?inputField.field.classDefault
+                                      :CONFIG.INPUT.CLASS.ERROR;
        if (inputField.field.Resource && inputField.field.Legend)
            inputField.field.Legend.request();
     }

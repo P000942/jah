@@ -187,7 +187,8 @@ const CONFIG = {
       ,    INFO:{CLASS:'alert-info'}
     }
     , LEGEND:{CLASS:'text-legend'}
-    ,  INPUT:{CLASS:{DEFAULT:'input_text', ERROR:'input_error',FOCUS:'input_focus'}}
+    ,  INPUT:{CLASS:{DEFAULT:'form-control form-control-sm', ERROR:'form-control form-control-sm input_error',FOCUS:'input_focus'}}
+    ,  CHECK:{CLASS:{DEFAULT:'form-check-input', ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
     , BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
     ,  PAGER:{CLASS:'pagination pagination-sm'}
 };

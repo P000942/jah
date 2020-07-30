@@ -583,7 +583,7 @@ j$.ui.Page = function(){
           let addField=(form, section, fieldset, design, key)=>{
               if (fieldset.C$(key)){
                  let id =   form.id +'_'+key;
-                 let wrap = j$.ui.Render.wrap(section, id+'_'+ design.clas$.column, design.clas$.column);
+                 let wrap = j$.ui.Render.wrap(section, id+'_wrap', design.clas$.column);
                  fieldset.C$(key).create(wrap, id, key, design);
                  wrap.stylize(design.columnStyle);
               }
@@ -650,13 +650,14 @@ j$.ui.Page = function(){
             , standard:(page, section, fieldset)=>{
                   if (fieldset){
                      for (let key in fieldset.c$){
-                        let design={labelStyle:{width:'150px'}, clas$:{row:'wrap_classic_section',column:'wrap_classic_field'}};
+                        let design={labelStyle:{textAlign:'right'}, clas$:{row:'wrap_classic_section',column:'form-group row', field:"col-auto"}};
+                        //let design={labelStyle:{width:'150px'}, clas$:{row:'wrap_classic_section',column:'form-group row'}};
                         addField(page.form, section, fieldset, design, key);
                      }
                   }
               }
             ,   classic:(page, section, fieldset, design)=>{
-                    design.clas$={row:'wrap_classic_section',column:'wrap_classic_field'};
+                    design.clas$={row:'wrap_classic_section',column:'wrap_classic_field', field:"col-sm-10"};
                     let wrapRow = addRow(page, section, fieldset, design.fields, design);
                     wrapRow.stylize(design.style);
                     return wrapRow;

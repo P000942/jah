@@ -4,10 +4,10 @@
     --border-color-fildset: rgb(120,150,120);
   }
 .input_text, .input_focus, .input_error {
-      line-height: 20px;
+     line-height: 20px;
       border-radius: 4px;
       border: 1px solid #cccccc;
-      padding: 1px 1px 1px 3px;
+      /* padding: 1px 1px 1px 3px; */
 }
 .input_focus{background-color:#FFFFE0; background-color: rgba(255, 255, 224, 0.4);}
 .input_error{background-color:#FFF0F5;
@@ -43,7 +43,7 @@
 /* -- estilo para as legendas (labels) --*/
 
 .input_label, .input_column_label{
-        height:14px; position:relative;
+        height:20px; position:relative;
         margin-right:2px; margin-bottom:3px; font-size: 1.0em;
         text-align: left;
 }
