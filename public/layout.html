@@ -46,28 +46,31 @@ and open the template in the editor.
               <div class="top-left" ></div>
               <div class="top-center">
                  <form>
-                    <div class="input-group">
+                    <div class="input-group mb-3">
                        <input id="email" type="text" class="form-control" name="Pesquisar" placeholder="Pesquisar">
-                       <a class="input-group-addon"><i class="glyphicon glyphicon-search"></i></a>
+                       <div class="input-group-append">
+                          <span class="input-group-text"><i class="icon-search"></i></span>              
+                      </div> 
                     </div>
                  </form>
               </div>
               <div class="top-right" >
                   <form>
-                     <div class="input-group">
-                           <div class="dropdown input-group-addon">
-                              <a class="dropdown-toggle" data-toggle="dropdown" style="text-decoration: none;">
-                                 <i class="glyphicon glyphicon-user"></i>
-                                 <b class="caret"></b>
+                     <div class="input-group mb-3">
+                        <div class="input-group-prepend" style="height: 38px;"><span class="input-group-text" style="padding: 0px;">
+                           <div class="dropdown">
+                              <a class="btn dropdown-toggle" href="javascript:" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="icon-user"></i><b class="caret"></b>
                               </a>
-                              <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-                                 <li><a tabindex="-1" href="#"><i class="icon-cogs" style="color: #F89406"></i>Configurar</a></li>
-                                 <li><a tabindex="-1" href="#"><i class="icon-user" style="color: #999999"></i>Perfil</a></li>
-                                 <li class="divider"></li>
-                                 <li><a tabindex="-1" href="#"><i class="icon-off" style="color: #BD362F"></i>Sair</a></li>
-                              </ul>
+                              <div class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                                <a class="dropdown-item btn-default" href="#"><i class="icon-cogs" style="color: #F89406"></i>Configurar</a>
+                                <a class="dropdown-item btn-default" href="#"><i class="icon-user" style="color: #999999"></i>Perfil</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item btn-default" href="#"><i class="icon-off" style="color: #BD362F"></i>Sair</a>
                               </div>
-                              <label id="email" type="text" class="form-control" >jgeraldo@sefaz.am.gov.br</label>
+                          </div>
+                        </span></div>   
+                        <label id="email" type="text" class="form-control" >jgeraldo@sefaz.am.gov.br</label>
                      </div>
                 </form>
               </div>
