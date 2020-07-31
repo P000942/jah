@@ -465,11 +465,13 @@ class Ma$k{
 //TYPE.TEST.assert(TYPE.LIST({list:{'M':'Masculino', 'F':'Feminino'}}),'M');
 
 j$.Feedback =function (){
-    let _msg=null;
+    let _msg=null
+      , _markIfValid = true;
     function fmtId(id){
            return `${id}_feedback` 
     }
     function hide(field){
+        _msg=null;
         if (field){
            let id = fmtId(field.id);
            if (i$(id)) 
@@ -478,6 +480,7 @@ j$.Feedback =function (){
     }
     function show(field,msg,clas$=CONFIG.FEEDBACK.CLASS.INVALID){
         let id = fmtId(field.id); 
+        _msg=msg;
         if (!i$(id))
            $(field.Input.parentElement).append(`<div  class='${clas$}' id='${id}'>${msg}</div >`);
         else
@@ -489,10 +492,22 @@ j$.Feedback =function (){
         ,show
         , on:show
         ,off:hide
-        ,valid  (field, msg){show(field,msg, CONFIG.FEEDBACK.CLASS.VALID)} 
-        ,invalid(field, msg){show(field,msg, CONFIG.FEEDBACK.CLASS.INVALID)} 
+        ,valid  (field, msg){
+                     let isValidClass = (_markIfValid) 
+                                      ? CONFIG.INPUT.CLASS.VALID
+                                      : field.classDefault
+                     show(field,msg, CONFIG.FEEDBACK.CLASS.VALID)                     
+                     field.Input.className = (field.value().isEmpty()) 
+                                           ? field.classDefault
+                                           : isValidClass;  
+                } 
+        ,invalid(field, msg){
+                     show(field,msg, CONFIG.FEEDBACK.CLASS.INVALID)
+                     field.Input.className = CONFIG.INPUT.CLASS.INVALID;
+                } 
         ,set(msg){_msg=msg}
-        ,get(){return _msg}             
+        ,get(){return _msg}
+        ,noMarkIfValid(mark=false){_markIfValid=mark}
     }   
 }();
 
@@ -537,10 +552,10 @@ class Legend{
                 }
             }
             if (text.isEmpty()){
-                this.field.Error.set(ERROR.MESSAGE.InvalidItem);
+                //this.field.Error.set(ERROR.MESSAGE.InvalidItem);
                 ERROR.passForward.invalid(this.field, ERROR.MESSAGE.InvalidItem);
             }else{
-                ERROR.passForward.hide(this.field);
+                ERROR.passForward.valid(this.field,"");
             }
         } else if (response && dataExt.isString(response) && !response.isEmpty())
             this.show(response);
@@ -611,13 +626,13 @@ function superType(Type, Properties) {
         let value=SELF.value(p_value)
           , valid=SELF.isValid(value);
         if (!valid && ERROR){
-            SELF.Error.set(SELF.validator.error);
+            //SELF.Error.set(SELF.validator.error);
             ERROR.passForward.invalid(SELF, SELF.validator.error);
-            SELF.Input.className = CONFIG.INPUT.CLASS.INVALID;
+            //SELF.Input.className = CONFIG.INPUT.CLASS.INVALID;
         }else{
-            ERROR.passForward.hide(SELF,"");
-            SELF.Input.className = (SELF.value(p_value).isEmpty()) ? SELF.classDefault
-                                                                   : CONFIG.INPUT.CLASS.VALID;       
+            ERROR.passForward.valid(SELF,"");
+            // SELF.Input.className = (SELF.value(p_value).isEmpty()) ? SELF.classDefault
+            //                                                        : CONFIG.INPUT.CLASS.VALID;       
         }        
         return valid;
    };

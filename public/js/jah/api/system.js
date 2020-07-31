@@ -28,14 +28,15 @@ const ERROR = function() {
         }        
     }    
     return {  //Retorna a chamado do erro para o proprio campo de onde veio a chamado - vai seguir o comportamento padrao
-	        init: objectHandle=>{handle=objectHandle} // para definir um callback externo que trata as msgs
+	        init:errorHandle=>{handle=errorHandle} // para definir um callback externo que trata as msgs
         ,  valid:(field,msg)       =>{field.Error.valid(field, msg)}
         ,invalid:(field,msg)       =>{field.Error.invalid(field, msg)}        
         ,   show:(field,msg,clas$) =>{field.Error.show(field, msg, clas$)}
         ,     on:(field,msg,clas$) =>{field.Error.show(field, msg, clas$)} // sinonimo de show        
         ,    off:(field)           =>{field.Error.hide(field)} // sinonimo de hide
         ,   hide:(field)           =>{field.Error.hide(field)}
-        ,MESSAGE:CONFIG.ERROR.MESSAGE
+        ,noMarkIfValid(mark)         {j$.Feedback.noMarkIfValid(mark)}
+        ,MESSAGE:CONFIG.ERROR.MESSAGE    
         , passForward:{ // => O componetes do framework fazem essa chamada
                     // => Se tem um handle externo, serah passado adiante
                     // => Se nao tem um handle externo, executa os metodos do proprio error
