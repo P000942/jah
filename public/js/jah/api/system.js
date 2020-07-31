@@ -44,8 +44,8 @@ const ERROR = function() {
             ,invalid:(field,msg)      =>{forward('invalid'  , field, msg)}
             ,   show:(field,msg,clas$)=>{forward('show'   , field, msg, clas$)}
             ,     on:(field,msg,clas$)=>{forward('show'   , field, msg, clas$)} // sinonimo de show
-            ,    off:(field)           =>{forward('hide'  , field)} // sinonimo de hide
-            ,   hide:(field)           =>{forward('hide'  , field)}
+            ,    off:(field)          =>{forward('hide'  , field)} // sinonimo de hide
+            ,   hide:(field)          =>{forward('hide'  , field)}
         }       
     };
 }();
@@ -112,7 +112,7 @@ const System = function(){
                 c$.MOUSE.BUTTON.CENTER = 4;
             }
 
-            System.Hint.init();
+           // System.Hint.init();
             /* pegar os parametros passados na URL */
             var parms=location.search.replace(/\x3F/,"").replace(/\x2B/g," ").split("&");
             if (parms!=""){
@@ -410,7 +410,7 @@ j$.Dashboard.Menubar=function(){
     let menubar;
     let idContent='menubar';
     return{
-        //menu={key:'', caption:'', url:'', hint:'', items:[]}
+        //menu={key:'', caption:'', url:'', title:'', items:[]}
         bindItems: function(menu, Services){
             let menuBase = menubar.addMenu(menu);
             for (let idx=0; idx<menu.items.length;  idx++){
@@ -523,7 +523,7 @@ j$.ui.Open = function(){
         }
     };
 }();
-
+/* 
 System.Hint = function(){
     let idHint="hintbox";
     return{
@@ -568,7 +568,7 @@ System.Hint = function(){
         }
     };
 }();
-
+ */
 
 j$.Node=function(inheritor, properties){
     let _node = this;

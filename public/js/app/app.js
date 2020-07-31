@@ -51,7 +51,7 @@ $(document).ready(function(){
 ERROR.init({   show(field, msg,clas$){ERROR.invalid(field, msg)} //qualquer msg
            ,invalid(field, msg)      {ERROR.invalid(field, msg)} //quando deu erro
            ,  valid(field, msg)      {ERROR.valid  (field, msg)} //quando ok
-           ,   hide(field)           {ERROR.hide   (field)} //para remover o erro
+           ,   hide(field)           {ERROR.hide   (field)} //para remover o erro           
            });
 
 j$.ui.Page.Helper = function(){
