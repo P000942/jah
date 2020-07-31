@@ -156,8 +156,8 @@ const CONFIG = {
        ,   SORT:{KEY:'sort',   VALUE:'Ordenar'  , ICON:''}
        ,     OK:{KEY:'ok',     VALUE:'OK'       , ICON:'icon-ok-circle'        , COLOR:'#51A351'}
        , CANCEL:{KEY:'cancel', VALUE:'Cancelar' , ICON:'icon-circle-arrow-left', COLOR:'#BD362F'}
-       ,  ERROR:{KEY:'error',  VALUE:'Erro'     , ICON:'ikon-error'}
-       ,   INFO:{KEY:'info',   VALUE:'Nota'     , ICON:'ikon-info' }
+       ,  ERROR:{KEY:'error',  VALUE:'Erro'     , ICON:'icon-info-sign'}
+       ,   INFO:{KEY:'info',   VALUE:'Nota'     , ICON:'icon-info-sign' }
        ,   HELP:{KEY:'help',   VALUE:'Ajuda'    , ICON:'icon-question-sign'  , COLOR:'#51A351'}
        ,    YES:{KEY:'yes',    VALUE:'Sim'      , ICON:'icon-check'     , COLOR:'#51A351'}
        ,     NO:{KEY:'no',     VALUE:'Não'      , ICON:'icon-arrow-left', COLOR:'#BD362F'}
@@ -178,8 +178,8 @@ const CONFIG = {
           , CONTEXT: 'js/query/'
             }
     , HINT:{
-          ERROR:{CLASS:'hint-error'} //'hint-error'
-         , INFO:{CLASS:'hint-info'}
+          ERROR:{CLASS:'icon-info-sign', COLOR:"red"} //'hint-error'
+         , INFO:{CLASS:'icon-info-sign', COLOR:"green"}
     }
     , ALERT:{
           ERROR:{CLASS:'alert-danger'}

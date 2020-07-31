@@ -74,7 +74,7 @@ j$.ui.Render= function(){
           }
 
         , hint:(parent, id, method)=>{
-                 parent.insert({after:`<span id='${id}'></span>`});
+                 parent.insert({after:`<i id='${id}'></i>`});
                  $('#'+id).mouseover(method);
                  return i$(id);
          }      
@@ -152,7 +152,7 @@ j$.ui.type.HintIcon= function(parent, id, hint, text){
     Object.preset(this, {
             on:msg=>{
                 if (msg)
-                this.text=msg;
+                   this.text=msg;
                 if (!i$(id$))
                     element=j$.ui.Render.hint(parent, id$, this.show);
                 else
@@ -165,7 +165,7 @@ j$.ui.type.HintIcon= function(parent, id, hint, text){
         ,   off:()=>{if(i$(id$)) $('#'+id$).remove()}
         , hide:()=>{System.Hint.hide(this.Element)}
         , show:(event, msg=this.text)=>{System.Hint.show(this.text, element, event, "hint " + this.hint)}
-        ,class: 'ikon-hint ' + this.icon
+        , class: this.icon // 'ikon-hint ' + this.icon
         , text: (text && dataExt.isString(text))?text:''
     });
     if (!this.text.isEmpty()){
