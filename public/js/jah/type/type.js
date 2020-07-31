@@ -489,8 +489,8 @@ j$.Feedback =function (){
         ,show
         , on:show
         ,off:hide
-        ,valid  (msg, field){show(field,msg, CONFIG.FEEDBACK.CLASS.VALID)} 
-        ,invalid(msg, field){show(field,msg, CONFIG.FEEDBACK.CLASS.INVALID)} 
+        ,valid  (field, msg){show(field,msg, CONFIG.FEEDBACK.CLASS.VALID)} 
+        ,invalid(field, msg){show(field,msg, CONFIG.FEEDBACK.CLASS.INVALID)} 
         ,set(msg){_msg=msg}
         ,get(){return _msg}             
     }   
@@ -538,9 +538,9 @@ class Legend{
             }
             if (text.isEmpty()){
                 this.field.Error.set(ERROR.MESSAGE.InvalidItem);
-                ERROR.show(ERROR.MESSAGE.InvalidItem,this.field);
+                ERROR.passForward.invalid(this.field, ERROR.MESSAGE.InvalidItem);
             }else{
-                ERROR.off(this.field);
+                ERROR.passForward.hide(this.field);
             }
         } else if (response && dataExt.isString(response) && !response.isEmpty())
             this.show(response);
@@ -612,12 +612,13 @@ function superType(Type, Properties) {
           , valid=SELF.isValid(value);
         if (!valid && ERROR){
             SELF.Error.set(SELF.validator.error);
-            ERROR.show(SELF.validator.error,SELF);
+            ERROR.passForward.invalid(SELF, SELF.validator.error);
+            SELF.Input.className = CONFIG.INPUT.CLASS.INVALID;
         }else{
-            ERROR.off(SELF);
-        }
-        SELF.Input.className = (valid) ?SELF.classDefault  //CONFIG.INPUT.CLASS.DEFAULT
-                                       :CONFIG.INPUT.CLASS.ERROR;
+            ERROR.passForward.hide(SELF,"");
+            SELF.Input.className = (SELF.value(p_value).isEmpty()) ? SELF.classDefault
+                                                                   : CONFIG.INPUT.CLASS.VALID;       
+        }        
         return valid;
    };
    this.isValid= p_value=>{
@@ -634,7 +635,7 @@ function superType(Type, Properties) {
    };
 
    this.reset= ()=>{
-        ERROR.off(SELF);
+        ERROR.passForward.hide(SELF);
         if (!SELF.defaultValue.isEmpty())
             i$(SELF.id).value=SELF.defaultValue;
         i$(SELF.id).className = SELF.classDefault; //CONFIG.INPUT.CLASS.DEFAULT;
@@ -1350,8 +1351,8 @@ TYPE.HANDLE = {
                                                  :inputField.value;
        if (validate)
            valid=validate(value);
-       inputField.className = (valid) ?inputField.field.classDefault
-                                      :CONFIG.INPUT.CLASS.ERROR;
+    //    inputField.className = (valid) ?inputField.field.classDefault
+    //                                   :CONFIG.INPUT.CLASS.INVALID;
        if (inputField.field.Resource && inputField.field.Legend)
            inputField.field.Legend.request();
     }

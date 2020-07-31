@@ -48,9 +48,10 @@ $(document).ready(function(){
 // => Essa é uma forma de você definir como quer mostrar os erros
 // basta comentar para manter o padrão
 //ERROR.init({callback:function(msg,field){alert(field.label+': '+msg);}});
-ERROR.init({   show(msg,field,clas$){ERROR.invalid(msg, field)} //qualquer msg
-          //  ,invalid(msg,field)      {ERROR.invalid(msg, field)} //quando deu erro
-          //  ,  valid(msg,field)      {ERROR.valid  (msg, field)} //quando ok
+ERROR.init({   show(field, msg,clas$){ERROR.invalid(field, msg)} //qualquer msg
+           ,invalid(field, msg)      {ERROR.invalid(field, msg)} //quando deu erro
+           ,  valid(field, msg)      {ERROR.valid  (field, msg)} //quando ok
+           ,   hide(field)           {ERROR.hide   (field)} //para remover o erro
            });
 
 j$.ui.Page.Helper = function(){

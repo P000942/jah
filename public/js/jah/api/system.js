@@ -17,20 +17,35 @@ const ERROR = function() {
         })
         return message;
     }
-    return {
+    function forward(method, field, msg,clas$){
+        if (field){
+            if (method!="hide")
+               msg=subscribe(msg,field);
+            if (handle)
+                handle[method](field, msg,clas$);
+            else
+                ERROR[method](field, msg,clas$);
+        }        
+    }    
+    return {  //Retorna a chamado do erro para o proprio campo de onde veio a chamado - vai seguir o comportamento padrao
 	        init: objectHandle=>{handle=objectHandle} // para definir um callback externo que trata as msgs
-        ,   show: (message,field,clas$) => {
-                message=subscribe(message,field);
-                if (handle)
-                    handle.show(message,field,clas$);
-                else
-                    ERROR.on(message, field,clas$);
-            }
-        ,  valid:(msg, field)      =>{field.Error.valid(msg, field)}
-        ,invalid:(msg, field)      =>{field.Error.invalid(msg, field)}
-        ,     on:(msg, field,clas$)=>{field.Error.on(msg,field,clas$)}
-        ,    off:(field)           =>{field.Error.off(field)}
+        ,  valid:(field,msg)       =>{field.Error.valid(field, msg)}
+        ,invalid:(field,msg)       =>{field.Error.invalid(field, msg)}        
+        ,   show:(field,msg,clas$) =>{field.Error.show(field, msg, clas$)}
+        ,     on:(field,msg,clas$) =>{field.Error.show(field, msg, clas$)} // sinonimo de show        
+        ,    off:(field)           =>{field.Error.hide(field)} // sinonimo de hide
+        ,   hide:(field)           =>{field.Error.hide(field)}
         ,MESSAGE:CONFIG.ERROR.MESSAGE
+        , passForward:{ // => O componetes do framework fazem essa chamada
+                    // => Se tem um handle externo, serah passado adiante
+                    // => Se nao tem um handle externo, executa os metodos do proprio error
+               valid:(field,msg)      =>{forward('valid', field, msg)}
+            ,invalid:(field,msg)      =>{forward('invalid'  , field, msg)}
+            ,   show:(field,msg,clas$)=>{forward('show'   , field, msg, clas$)}
+            ,     on:(field,msg,clas$)=>{forward('show'   , field, msg, clas$)} // sinonimo de show
+            ,    off:(field)           =>{forward('hide'  , field)} // sinonimo de hide
+            ,   hide:(field)           =>{forward('hide'  , field)}
+        }       
     };
 }();
 

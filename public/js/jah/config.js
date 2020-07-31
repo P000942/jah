@@ -188,7 +188,11 @@ const CONFIG = {
     }
     ,  LEGEND:{CLASS:'text-legend'}
     ,FEEDBACK:{CLASS:{VALID:'valid-feedback', INVALID:'invalid-feedback'}}
-    ,   INPUT:{CLASS:{DEFAULT:'form-control form-control-sm', ERROR:'form-control form-control-sm is-invalid',FOCUS:'input_focus'}}
+    ,   INPUT:{CLASS:{DEFAULT:'form-control form-control-sm',FOCUS:'input_focus'
+                    , INVALID:'form-control form-control-sm is-invalid'
+                    ,   VALID:'form-control form-control-sm is-valid'
+                    }
+              }
     ,   CHECK:{CLASS:{DEFAULT:'form-check-input', ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
     ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
