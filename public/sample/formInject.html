@@ -29,9 +29,6 @@
              const cpf=TYPE.CNPJ({label:'CNPJ NOVO'});
              cpf.create(i$('myForm'), 'newCNPJ','newCNPJ');
         }
-        function addHintIcon(){
-           new j$.ui.type.HintIcon(i$('nome'), 'nome_info', CONFIG.ACTION.INFO.KEY, "Informe os nome iniciando com MAISCULAS e se separados por espaço");
-        }
         function addLabel(){
            j$.ui.Render.label(i$('wrapNome'), 'Nome' ,i$('nome').id);
         }
@@ -108,7 +105,6 @@
                         <a class="btn btn-default" id="btn1" onclick="myPage.init();">Injetar</a>
                         <a class="btn btn-default"  onclick="addField();">Novo campo</a>
                         <a class="btn btn-default"  onclick="addInForm();">No Form</a>
-                        <a class="btn btn-default"  onclick="addHintIcon();">Hint Icon</a>
                         <a class="btn btn-default"  onclick="addLabel();">Label</a>
                         <a class="btn btn-default"  onclick="addAlert();">Alert</a>
                     </legend>
@@ -117,7 +113,7 @@
                     <div class="wrap_field_br" id='novo_campo'></div>
 
                     <div class="wrap_field_br"><label for="letra"    >Letra:    </label>
-                        <input type="text" id="letra"     /><a href="#" onMouseover="System.Hint.show('Please choose a username. Should consist of alphanumeric characters only.', this, event);">[?]</a>
+                        <input type="text" id="letra"     /> 
                     </div>
                     <input id="startdate" name="startdate" min="2012-01-01" max="2050-01-01" type="date">
                     <div class="wrap_field_br"><label  for="maiuscula">maiúscula:</label><input type="text" id="maiuscula" /></div>

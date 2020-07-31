@@ -3,6 +3,16 @@
     --bg-color-legend: rgba(246,255,250,0.01);
     --border-color-fildset: rgb(120,150,120);
   }
+
+.list-ikon {
+    background-position: right center;    
+    background-repeat: no-repeat;
+    padding: 0;
+ }
+ .ikon-filter   { background-image: url(../../images/icon/filter.gif); }
+ .ikon-sort-asc { background-image: url(../../images/icon/sort-asc.png); }
+ .ikon-sort-desc{background-image: url(../../images/icon/sort-desc.png); } 
+  
 .input_text, .input_focus, .input_error {
      line-height: 20px;
       border-radius: 4px;

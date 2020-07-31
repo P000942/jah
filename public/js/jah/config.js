@@ -132,8 +132,8 @@ const CONFIG = {
     , LAYOUT:{CONTENT:'content', ALERT_CONTENT:'wrapAlert'}
     , ACTION:{
            BACK:{KEY:'back',   VALUE:'Voltar'   , ICON:'icon-circle-arrow-left' , COLOR:'#51A351'}
-       , SEARCH:{KEY:'search', VALUE:'Pesquisar', ICON:'icon-search'    , COLOR:'#51A351'}
-       ,    NEW:{KEY:'new',    VALUE:'Incluir'  , ICON:'icon-plus-sign' , COLOR:'#51A351'
+       , SEARCH:{KEY:'search', VALUE:'Pesquisar', ICON:'icon-search'            , COLOR:'#51A351'}
+       ,    NEW:{KEY:'new',    VALUE:'Incluir'  , ICON:'icon-plus-sign'         , COLOR:'#51A351'
                 , MESSAGE:{
                   SUCCESS:'Inclusão realizada com sucesso.'
                   , ERROR:'<strong>ERRO NA INCLUSÃO!</strong>Verifique os erros assinalados e faça as correções'}
@@ -156,9 +156,9 @@ const CONFIG = {
        ,   SORT:{KEY:'sort',   VALUE:'Ordenar'  , ICON:''}
        ,     OK:{KEY:'ok',     VALUE:'OK'       , ICON:'icon-ok-circle'        , COLOR:'#51A351'}
        , CANCEL:{KEY:'cancel', VALUE:'Cancelar' , ICON:'icon-circle-arrow-left', COLOR:'#BD362F'}
-       ,  ERROR:{KEY:'error',  VALUE:'Erro'     , ICON:'icon-info-sign'}
-       ,   INFO:{KEY:'info',   VALUE:'Nota'     , ICON:'icon-info-sign' }
-       ,   HELP:{KEY:'help',   VALUE:'Ajuda'    , ICON:'icon-question-sign'  , COLOR:'#51A351'}
+       ,  ERROR:{KEY:'error',  VALUE:'Erro'     , ICON:'icon-info-sign'        , COLOR:'#BD362F'}
+       ,   INFO:{KEY:'info',   VALUE:'Nota'     , ICON:'icon-info-sign'        , COLOR:'#51A351'}
+       ,   HELP:{KEY:'help',   VALUE:'Ajuda'    , ICON:'icon-question-sign'    , COLOR:'#51A351'}
        ,    YES:{KEY:'yes',    VALUE:'Sim'      , ICON:'icon-check'     , COLOR:'#51A351'}
        ,     NO:{KEY:'no',     VALUE:'Não'      , ICON:'icon-arrow-left', COLOR:'#BD362F'}
        ,  INIT:{KEY:'init',    VALUE:'Iniciar'  , ICON:''}
@@ -177,10 +177,10 @@ const CONFIG = {
           , GRID:{BUTTONS:{}}
           , CONTEXT: 'js/query/'
             }
-    , HINT:{
-          ERROR:{CLASS:'icon-info-sign', COLOR:"red"} //'hint-error'
-         , INFO:{CLASS:'icon-info-sign', COLOR:"green"}
-    }
+    // , HINT:{
+    //       ERROR:{CLASS:'icon-info-sign', COLOR:"red"} //'hint-error'
+    //      , INFO:{CLASS:'icon-info-sign', COLOR:"green"}
+    // }
     , ALERT:{
           ERROR:{CLASS:'alert-danger'}
       , SUCCESS:{CLASS:'alert-success'}
@@ -344,10 +344,9 @@ CONFIG.action= vl_key =>{
 
     return (key)?action:null;
 };
-//CONFIG.action(CONFIG.ACTION.SAVE.KEY);
-CONFIG.hint= vl_key =>{
-    return {icon:CONFIG.icon(vl_key), hint:CONFIG.class(vl_key,'hint')}
-};
-//CONFIG.hint(CONFIG.ACTION.INFO.KEY);
-//CONFIG.hint(CONFIG.ACTION.ERROR.KEY);
+
+// CONFIG.hint= vl_key =>{
+//     return {icon:CONFIG.icon(vl_key), hint:CONFIG.class(vl_key,'hint')}
+// };
+
 

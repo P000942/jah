@@ -34,7 +34,7 @@
 
         Tabela.Fieldset= j$.ui.createFieldset({
                                  idTabela:TYPE.INTEGER(4,{label:'Código', readOnly:true, resource:{name:'categoriaAssunto', local:true}})
-                                ,txTabela:TYPE.CHAR(30,{label:'Tabela', mandatory:true, hint:'Informe a descrição para o campo.'})
+                                ,txTabela:TYPE.CHAR(30,{label:'Tabela', mandatory:true, title:'Informe a descrição para o campo.'})
                                });
 
         Tabela.resource = {

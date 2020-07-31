@@ -73,11 +73,11 @@ j$.ui.Render= function(){
               return i$(id);
           }
 
-        , hint:(parent, id, method)=>{
-                 parent.insert({after:`<i id='${id}'></i>`});
-                 $('#'+id).mouseover(method);
-                 return i$(id);
-         }      
+        // , hint:(parent, id, method)=>{
+        //          parent.insert({after:`<i id='${id}'></i>`});
+        //          $('#'+id).mouseover(method);
+        //          return i$(id);
+        //  }      
          , wrapperUl:(wrap, id, wrapStyle)=>{
                let wrapId =j$.util.getId(wrapStyle, id)
                  , wrapNavId = `${wrapId}_wrap`;
@@ -144,7 +144,7 @@ j$.ui.Render= function(){
       };
 }();
 
-j$.ui.type.HintIcon= function(parent, id, hint, text){
+/* j$.ui.type.HintIcon= function(parent, id, hint, text){
     let element
       , id$ = j$.util.getId( (parent.id)?parent.id:'HintIcon', id);
     hint = (hint)?hint:CONFIG.ACTION.INFO.KEY;
@@ -171,7 +171,7 @@ j$.ui.type.HintIcon= function(parent, id, hint, text){
     if (!this.text.isEmpty()){
         this.on()
     }
-};
+}; */
 
 j$.ui.Alert= function(){
     let $alert = this;
@@ -310,8 +310,9 @@ TYPE.HELPER = {
         let mask = null;
         // Primeiro verifica/seta o que vem do no Type, que são o valores que já vem por padrão
         if (Type){
-            Object.setIfExist(inputField, Type, ['align','size','validator','mask','autotab'
-                                        ,'type','label','dataType','list','attributes']);
+            Object.setIfExist(inputField, Type
+                            , ['align','size','validator','mask','autotab', 'title'
+                              ,'type','label','dataType','list','attributes']);
             if (Type.mask)
                 mask=Type.mask;
         }
@@ -320,7 +321,7 @@ TYPE.HELPER = {
             Object.setIfExist(inputField, Properties,
                             ['evaluate','autotab', 'label','mandatory', 'align', 'parentLegend'
                             , 'readOnly', 'disabled', 'defaultValue', 'type'
-                            , 'dataType', 'list', 'hint','attributes', 'resource']);
+                            , 'dataType', 'list','attributes', 'resource']);
             Object.setIfExist(inputField.attributes, Properties,['min', 'max', 'step', 'pattern', 'placeholder']);                            
             if (Properties.resource){
                 // inputField.AdapterResource = j$.Resource.ResponseHandler;  // Quando tiver RESOURCE
@@ -345,8 +346,8 @@ TYPE.HELPER = {
         let hint = "";
  
         inputField.Error = j$.Feedback; //new j$.ui.type.HintIcon(_input, _input.id+'_error', CONFIG.ACTION.ERROR.KEY);
-        if (inputField.hint)
-           inputField.Hint = new j$.ui.type.HintIcon(_input, _input.id+'_info', CONFIG.ACTION.INFO.KEY, inputField.hint);
+        // if (inputField.hint)
+        //    inputField.Hint = new j$.ui.type.HintIcon(_input, _input.id+'_info', CONFIG.ACTION.INFO.KEY, inputField.hint);
         
         TYPE.HELPER.setLabel(inputField, _input); // definir o label
  
@@ -572,7 +573,7 @@ class Legend{
 function superType(Type, Properties) {
    let SELF=this;
    Object.preset(SELF,{align:c$.ALIGN.LEFT, mandatory:false, autotab:false, label:''
-                     , hint:null, persist:true, defaultValue:'', type:'text'
+                     , persist:true, defaultValue:'', type:'text'
                      , id:'', key:null, list:null, readOnly:false
                      , binded:false, order:c$.ORDER.NONE, disabled:false, onFilter:false
                      , inputField:false, dataType:DATATYPE.NUMBER, size:null
@@ -580,7 +581,7 @@ function superType(Type, Properties) {
                      , Header:{clas$:null, id:null}
                      , Report:{}, Record:{value:'', formattedValue:''}, attributes:{}});
 /*   this.id  - Eh o identificador no form.
-   this.key - eh como estah definido no dataset (column)
+     this.key - eh como estah definido no dataset (column)
 */
    TYPE.HELPER.setProperties(SELF,Type, Properties);
 
@@ -1350,10 +1351,10 @@ TYPE.HANDLE = {
     focus: e=>{
         this.className = CONFIG.INPUT.CLASS.FOCUS;
     }
-  , info: (obj,event, id)=>{
-        let field = i$(id).field;
-        System.Hint.show(field.hint,obj,event,"hint hint-info");
-    }
+//   , info: (obj,event, id)=>{
+//         let field = i$(id).field;
+//         System.Hint.show(field.hint,obj,event,"hint hint-info");
+//     }
   , error: (obj,event, id)=>{
         let field = i$(id).field;
         //System.Hint.show(field.Error.get(),obj,event,"hint hint-error");

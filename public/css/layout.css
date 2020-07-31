@@ -7,8 +7,8 @@
         Purpose of the stylesheet follows.
        @import url('ui/menu.css') screen;
 */
-@import url('ui/icon.css') screen;
-@import url('ui/message.css') screen;
+/* @import url('ui/icon.css') screen; */
+/* @import url('ui/message.css') screen; */
 @import url('ui/tabs.css') screen;
 @import url('ui/page.css') screen;
 /* Clear Floated Elements */
