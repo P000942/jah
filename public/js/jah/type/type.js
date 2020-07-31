@@ -344,7 +344,7 @@ TYPE.HELPER = {
         //     inputField.key =inputField.id;
         let hint = "";
  
-        inputField.Error = new j$.ui.type.HintIcon(_input, _input.id+'_error', CONFIG.ACTION.ERROR.KEY);
+        inputField.Error = j$.Feedback; //new j$.ui.type.HintIcon(_input, _input.id+'_error', CONFIG.ACTION.ERROR.KEY);
         if (inputField.hint)
            inputField.Hint = new j$.ui.type.HintIcon(_input, _input.id+'_info', CONFIG.ACTION.INFO.KEY, inputField.hint);
         
@@ -464,6 +464,38 @@ class Ma$k{
 //TYPE.TEST.assert(TYPE.BOOLEAN({list:{'true':{value:1, text:'Ativo'}, 'false': {value:9, text:'Cancelado'}}}),1);
 //TYPE.TEST.assert(TYPE.LIST({list:{'M':'Masculino', 'F':'Feminino'}}),'M');
 
+j$.Feedback =function (){
+    let _msg=null;
+    function fmtId(id){
+           return `${id}_feedback` 
+    }
+    function hide(field){
+        if (field){
+           let id = fmtId(field.id);
+           if (i$(id)) 
+              i$(id).hide();
+        }    
+    }
+    function show(field,msg,clas$=CONFIG.FEEDBACK.CLASS.INVALID){
+        let id = fmtId(field.id); 
+        if (!i$(id))
+           $(field.Input.parentElement).append(`<div  class='${clas$}' id='${id}'>${msg}</div >`);
+        else
+           i$(id).content(msg);
+        i$(id).show();
+    }
+    return {
+         hide
+        ,show
+        , on:show
+        ,off:hide
+        ,valid  (msg, field){show(field,msg, CONFIG.FEEDBACK.CLASS.VALID)} 
+        ,invalid(msg, field){show(field,msg, CONFIG.FEEDBACK.CLASS.INVALID)} 
+        ,set(msg){_msg=msg}
+        ,get(){return _msg}             
+    }   
+}();
+
 
 Element.prototype.bind = function(field) {
     this.field =field;
@@ -488,7 +520,7 @@ class Legend{
     hide=() =>{if(i$(this.id)) $(`#${this.id}`).remove()}
     show=text =>{
         if(!i$(this.id))
-            $(this.field.Input.parentElement.parentElement).append(`<span class='${CONFIG.LEGEND.CLASS}' id='${this.id}'>${text}</span>`);
+            $(this.field.Input.parentElement).append(`<span class='${CONFIG.LEGEND.CLASS}' id='${this.id}'>${text}</span>`);
         else
             i$(this.id).content(text);
     }
@@ -506,7 +538,7 @@ class Legend{
             }
             if (text.isEmpty()){
                 this.field.Error.set(ERROR.MESSAGE.InvalidItem);
-                ERROR.show(this.field.Error.get(),this.field);
+                ERROR.show(ERROR.MESSAGE.InvalidItem,this.field);
             }else{
                 ERROR.off(this.field);
             }
@@ -579,8 +611,8 @@ function superType(Type, Properties) {
         let value=SELF.value(p_value)
           , valid=SELF.isValid(value);
         if (!valid && ERROR){
-            SELF.Error.set((value.isEmpty()?ERROR.MESSAGE.Mandatory:SELF.validator.error));
-            ERROR.show(SELF.Error.get(),SELF);
+            SELF.Error.set(SELF.validator.error);
+            ERROR.show(SELF.validator.error,SELF);
         }else{
             ERROR.off(SELF);
         }
@@ -594,8 +626,10 @@ function superType(Type, Properties) {
         if (!value.isEmpty()){ // se tem valor, assume o memso como verdadeiro
            if (SELF.validator.handler) // se tem handle, v�lida
               valid=SELF.validator.handler(value);
-        }else
-            valid=SELF.mandatory?false:true;
+        }else if (SELF.mandatory){
+            valid=false;
+            SELF.validator.error = ERROR.MESSAGE.Mandatory;
+        }    
         return valid;
    };
 
@@ -608,43 +642,6 @@ function superType(Type, Properties) {
 
    this.bind = _input=>{
        TYPE.HELPER.bindField(SELF,_input);
-    //    SELF.binded=true;
-    //    SELF.Input=_input;
-    //    SELF.Input.bind(SELF);
-    //    SELF.id =_input.id;
-
-    //    let hint = "";
-
-    //    SELF.Error = new j$.ui.type.HintIcon(_input, _input.id+'_error', CONFIG.ACTION.ERROR.KEY);
-    //    if (SELF.hint)
-    //       SELF.Hint = new j$.ui.type.HintIcon(_input, _input.id+'_info', CONFIG.ACTION.INFO.KEY, SELF.hint);
-       
-    //    TYPE.HELPER.setLabel(SELF, SELF.Input); // definir o label
-
-    //    Event.observe(_input, 'focus', TYPE.HANDLE.focus, false);
-    //    if (SELF.validator)
-    //        Event.observe(_input, 'blur',  (e)=>{TYPE.HANDLE.lostFocus(e,SELF.validate);});
-    //    else
-    //        Event.observe(_input, 'blur',  TYPE.HANDLE.lostFocus);
-
-    //    switch(SELF.type){
-    //         case 'text':
-    //             this.Legend = new Legend(this);
-    //             if (SELF.autotab)
-    //                 Event.observe(_input, 'keyup', ()=>{TYPE.HANDLE.autotab(_input,SELF.maxlength);});
-    //             SELF.mask.render(_input);
-    //             //inputField.className = inputField.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
-    //             if (_input.maxlength)
-    //                 _input.maxlength = SELF.maxlength;
-    //             break;
-    //         case 'select':
-    //             SELF.popule();
-    //             break;
-    //         default:
-    //             break
-    //    }
-    //    Object.setIfExist(_input, SELF,['readOnly','disabled','defaultValue'])
-    //    _input.className   = _input.className + " " + CONFIG.INPUT.CLASS.DEFAULT;
    };
 
     this.filterToggle=showFilter=>{
@@ -1343,7 +1340,8 @@ TYPE.HANDLE = {
     }
   , error: (obj,event, id)=>{
         let field = i$(id).field;
-        System.Hint.show(field.Error.get(),obj,event,"hint hint-error");
+        //System.Hint.show(field.Error.get(),obj,event,"hint hint-error");
+        j$.Feedback.invalid(field,field.Error.get());
     }
   , lostFocus: (e, validate)=>{
        let inputField = Event.element(e)

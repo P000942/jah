@@ -45,8 +45,13 @@ $(document).ready(function(){
     j$.ui.Page.Helper.init();
 ;});
 
+// => Essa é uma forma de você definir como quer mostrar os erros
+// basta comentar para manter o padrão
 //ERROR.init({callback:function(msg,field){alert(field.label+': '+msg);}});
-ERROR.init({callback:(msg,field)=>{ERROR.on(msg, field);}});
+ERROR.init({   show(msg,field,clas$){ERROR.invalid(msg, field)} //qualquer msg
+          //  ,invalid(msg,field)      {ERROR.invalid(msg, field)} //quando deu erro
+          //  ,  valid(msg,field)      {ERROR.valid  (msg, field)} //quando ok
+           });
 
 j$.ui.Page.Helper = function(){
      const criarMenu = function(){

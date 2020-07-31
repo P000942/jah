@@ -75,7 +75,7 @@ c$.FILTER.CLASS =  filter =>{
 const CONFIG = {
     ERROR:{
            MESSAGE:{
-                 Mandatory: "Campo de preenchimento obrigatório"
+                 Mandatory: "'@{label}:' Campo de preenchimento obrigatório"
             ,        Digit: "Entre somente com número"
             ,      Numeric: "Entre somente com números"
             ,        Money: "Entre somente com valores numéricos"
@@ -96,7 +96,7 @@ const CONFIG = {
             ,        Placa: "Placa inválida"
             ,  InvalidItem: "'@label' inválido."
                }
-          , SUBSCRIBE:['label','key']  // Será substituído na mensagem
+          , SUBSCRIBE:['label','key','caption']  // Será substituído na mensagem
       }
 
      ,HTTP:{
@@ -178,7 +178,7 @@ const CONFIG = {
           , CONTEXT: 'js/query/'
             }
     , HINT:{
-          ERROR:{CLASS:'hint-error'}
+          ERROR:{CLASS:'hint-error'} //'hint-error'
          , INFO:{CLASS:'hint-info'}
     }
     , ALERT:{
@@ -186,11 +186,12 @@ const CONFIG = {
       , SUCCESS:{CLASS:'alert-success'}
       ,    INFO:{CLASS:'alert-info'}
     }
-    , LEGEND:{CLASS:'text-legend'}
-    ,  INPUT:{CLASS:{DEFAULT:'form-control form-control-sm', ERROR:'form-control form-control-sm input_error',FOCUS:'input_focus'}}
-    ,  CHECK:{CLASS:{DEFAULT:'form-check-input', ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
-    , BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
-    ,  PAGER:{CLASS:'pagination pagination-sm'}
+    ,  LEGEND:{CLASS:'text-legend'}
+    ,FEEDBACK:{CLASS:{VALID:'valid-feedback', INVALID:'invalid-feedback'}}
+    ,   INPUT:{CLASS:{DEFAULT:'form-control form-control-sm', ERROR:'form-control form-control-sm is-invalid',FOCUS:'input_focus'}}
+    ,   CHECK:{CLASS:{DEFAULT:'form-check-input', ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
+    ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
+    ,   PAGER:{CLASS:'pagination pagination-sm'}
 };
 //
 //CONFIG.ICON ={new:'icon-o-plus' , search:'icon-search',   edit:'icon-edit'  , save:'icon-o-check'

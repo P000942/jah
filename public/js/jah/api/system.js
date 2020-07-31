@@ -9,24 +9,28 @@ const NO_IE=document.getElementById&&!document.all;
 const ERROR = function() {
     let handle =null;
     function subscribe(message, field){
-        for (var i=0; i < CONFIG.ERROR.SUBSCRIBE.length; i++){
-            if (field[CONFIG.ERROR.SUBSCRIBE[i]])
-               message = message.replace("@"+CONFIG.ERROR.SUBSCRIBE[i],field[CONFIG.ERROR.SUBSCRIBE[i]]);
-        }
+        CONFIG.ERROR.SUBSCRIBE.forEach(key=>{
+            if (field[key])
+               message = message.replace(`@{${key}}`, field[key]);
+            else   
+               message = message.replace(`@{${key}}`, '');
+        })
         return message;
     }
     return {
-	init: objectHandle=>{handle=objectHandle;},
-        show: (message,field) => {
-            message=subscribe(message,field);
-            if (handle)
-               handle.callback(message,field);
-            else
-               ERROR.on(message, field);
-        },
-        on: (msg, field)=>{field.Error.on(msg)},
-        off: field=>{field.Error.off()},
-        MESSAGE:CONFIG.ERROR.MESSAGE
+	        init: objectHandle=>{handle=objectHandle} // para definir um callback externo que trata as msgs
+        ,   show: (message,field,clas$) => {
+                message=subscribe(message,field);
+                if (handle)
+                    handle.show(message,field,clas$);
+                else
+                    ERROR.on(message, field,clas$);
+            }
+        ,  valid:(msg, field)      =>{field.Error.valid(msg, field)}
+        ,invalid:(msg, field)      =>{field.Error.invalid(msg, field)}
+        ,     on:(msg, field,clas$)=>{field.Error.on(msg,field,clas$)}
+        ,    off:(field)           =>{field.Error.off(field)}
+        ,MESSAGE:CONFIG.ERROR.MESSAGE
     };
 }();
 
