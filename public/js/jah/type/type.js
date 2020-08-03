@@ -71,13 +71,7 @@ j$.ui.Render= function(){
                     wrap.insert(`<input type='${type}' id='${id}' name='${id}' ${size} ${_att} />`);
               }
               return i$(id);
-          }
-
-        // , hint:(parent, id, method)=>{
-        //          parent.insert({after:`<i id='${id}'></i>`});
-        //          $('#'+id).mouseover(method);
-        //          return i$(id);
-        //  }      
+          }  
          , wrapperUl:(wrap, id, wrapStyle)=>{
                let wrapId =j$.util.getId(wrapStyle, id)
                  , wrapNavId = `${wrapId}_wrap`;
@@ -144,34 +138,6 @@ j$.ui.Render= function(){
       };
 }();
 
-/* j$.ui.type.HintIcon= function(parent, id, hint, text){
-    let element
-      , id$ = j$.util.getId( (parent.id)?parent.id:'HintIcon', id);
-    hint = (hint)?hint:CONFIG.ACTION.INFO.KEY;
-    Object.preset(this, CONFIG.hint(hint));
-    Object.preset(this, {
-            on:msg=>{
-                if (msg)
-                   this.text=msg;
-                if (!i$(id$))
-                    element=j$.ui.Render.hint(parent, id$, this.show);
-                else
-                    element=i$(id$);
-                element.className = this.class;
-            }
-        ,   set:(msg)=>{this.text=msg}
-        ,   get:()=>{return this.text}
-        , reset:()=>{this.text=''}
-        ,   off:()=>{if(i$(id$)) $('#'+id$).remove()}
-        , hide:()=>{System.Hint.hide(this.Element)}
-        , show:(event, msg=this.text)=>{System.Hint.show(this.text, element, event, "hint " + this.hint)}
-        , class: this.icon // 'ikon-hint ' + this.icon
-        , text: (text && dataExt.isString(text))?text:''
-    });
-    if (!this.text.isEmpty()){
-        this.on()
-    }
-}; */
 
 j$.ui.Alert= function(){
     let $alert = this;
@@ -468,25 +434,24 @@ class Ma$k{
 j$.Feedback =function (){
     let _msg=null
       , _markIfValid = true;
-    function fmtId(id){
-           return `${id}_feedback` 
+    function fmtId(field, msg=""){ 
+        let fb = i$(`${field.id}_legend`);
+        _msg=msg;
+        if (!fb){
+           $(field.Input.parentElement).append(`<div id='${field.id}_legend'></div >`);
+           fb = i$(`${field.id}_legend`);
+        }  
+        fb.content(msg);   
+        return fb;
     }
     function hide(field){
-        _msg=null;
-        if (field){
-           let id = fmtId(field.id);
-           if (i$(id)) 
-              i$(id).hide();
-        }    
+        if (field)
+           fmtId(field).hide();    
     }
     function show(field,msg,clas$=CONFIG.FEEDBACK.CLASS.INVALID){
-        let id = fmtId(field.id); 
-        _msg=msg;
-        if (!i$(id))
-           $(field.Input.parentElement).append(`<div  class='${clas$}' id='${id}'>${msg}</div >`);
-        else
-           i$(id).content(msg);
-        i$(id).show();
+        let fb = fmtId(field,msg); 
+        fb.className = clas$  
+        fb.show();
     }
     return {
          hide
@@ -512,35 +477,21 @@ j$.Feedback =function (){
     }   
 }();
 
-
-Element.prototype.bind = function(field) {
-    this.field =field;
-    if (!field.binded){
-        field.bind(this);
-    }
-};
-
 class Legend{
     constructor(field){
         this.field = field;
         this.Resource = field.Resource;
-        this.id =`${this.field.id}_legend`;
     }
     prepareToRequest= value=>{
-        this.hide();
         value = (value)?value:this.field.value();
         return (value.isEmpty()) ?null
                                  :Object.build(this.field.resource.id,value);
     }
 
-    hide=() =>{if(i$(this.id)) $(`#${this.id}`).remove()}
-    show=text =>{
-        if(!i$(this.id))
-            $(this.field.Input.parentElement).append(`<span class='${CONFIG.LEGEND.CLASS}' id='${this.id}'>${text}</span>`);
-        else
-            i$(this.id).content(text);
-    }
-    failure=error=>{console.log(error)}
+    hide=()      =>{j$.Feedback.hide(this.field)}
+    show=text    =>{j$.Feedback.show(this.field, text,CONFIG.FEEDBACK.CLASS.LEGEND)}
+    failure=error=>{j$.Feedback.invalid(this.field, error)}
+
     get =  response => {
         this.hide();
         let text='';
@@ -552,12 +503,8 @@ class Legend{
                     this.show(text)
                 }
             }
-            if (text.isEmpty()){
-                //this.field.Error.set(ERROR.MESSAGE.InvalidItem);
+            if (text.isEmpty())
                 ERROR.passForward.invalid(this.field, ERROR.MESSAGE.InvalidItem);
-            }else{
-                ERROR.passForward.valid(this.field,"");
-            }
         } else if (response && dataExt.isString(response) && !response.isEmpty())
             this.show(response);
     }
@@ -565,8 +512,15 @@ class Legend{
         let fields = this.prepareToRequest(value);
         if (this.Resource && dataExt.isDefined(fields)){
             if (this.field.type=='text')
-               this.Resource.get(fields, this); // this é o callback
+               this.Resource.get(fields, this); // 'this' é o 'callback'
         }
+    }
+};
+
+Element.prototype.bind = function(field) {
+    this.field =field;
+    if (!field.binded){
+        field.bind(this);
     }
 };
 
@@ -626,17 +580,12 @@ function superType(Type, Properties) {
    this.validate= p_value=>{
         let value=SELF.value(p_value)
           , valid=SELF.isValid(value);
-        if (!valid && ERROR){
-            //SELF.Error.set(SELF.validator.error);
+        if (!valid && ERROR)
             ERROR.passForward.invalid(SELF, SELF.validator.error);
-            //SELF.Input.className = CONFIG.INPUT.CLASS.INVALID;
-        }else{
-            ERROR.passForward.valid(SELF,"");
-            // SELF.Input.className = (SELF.value(p_value).isEmpty()) ? SELF.classDefault
-            //                                                        : CONFIG.INPUT.CLASS.VALID;       
-        }        
+        else
+            ERROR.passForward.valid(SELF,"");         
         return valid;
-   };
+   }
    this.isValid= p_value=>{
         let value = SELF.value(p_value)
           , valid=true;
@@ -657,20 +606,16 @@ function superType(Type, Properties) {
         i$(SELF.id).className = SELF.classDefault; //CONFIG.INPUT.CLASS.DEFAULT;
    };
 
-   this.bind = _input=>{
-       TYPE.HELPER.bindField(SELF,_input);
-   };
+   this.bind = _input=>{TYPE.HELPER.bindField(SELF,_input)}
 
-    this.filterToggle=showFilter=>{
+   this.filterToggle=showFilter=>{
         SELF.onFilter = (dataExt.isDefined(showFilter))
                     ?showFilter
                     :!SELF.onFilter
         SELF.Header.clas$ = c$.FILTER.CLASS(SELF.onFilter);
     };
     // Ver DATATYPE - � fazer um parse para um valor correto.
-    function parseValue(value){
-        SELF.dataType.parse(value);
-    }
+    function parseValue(value){SELF.dataType.parse(value)}
 }
 
 j$.ui.type.Digit=function(Properties) {

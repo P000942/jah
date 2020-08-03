@@ -53,7 +53,7 @@ const ERROR = function() {
 const EXCEPTION = function() {
     let handle =null;
     let formatMessage=(exception, text)=>{
-        var message=exception.id +":"+ exception.text;
+        let message=exception.id +":"+ exception.text;
         if (text != undefined)
            message += "\n"+ text;
     };
@@ -82,8 +82,8 @@ const System = function(){
     let result = null;
     let _QueryString={};
     let importJS= file =>{
-        var headTag = document.getElementsByTagName('head')[0];
-        var script  = document.createElement("script");
+        let headTag = document.getElementsByTagName('head')[0];
+        let script  = document.createElement("script");
         script.type ="text/javascript";
         script.src = file;
         headTag.appendChild(script);
@@ -91,8 +91,8 @@ const System = function(){
     let importCSS =  (file, media) =>{
        if (media == undefined)
            media = "screen";
-        var headTag = document.getElementsByTagName('head')[0];
-        var script  = document.createElement("link");
+        let headTag = document.getElementsByTagName('head')[0];
+        let script  = document.createElement("link");
         script.type ="text/css";
         script.src = file;
         script.media =media;
@@ -114,7 +114,7 @@ const System = function(){
 
            // System.Hint.init();
             /* pegar os parametros passados na URL */
-            var parms=location.search.replace(/\x3F/,"").replace(/\x2B/g," ").split("&");
+            let parms=location.search.replace(/\x3F/,"").replace(/\x2B/g," ").split("&");
             if (parms!=""){
                 for(i=0;i<parms.length;i++){
                     nvar=parms[i].split("=");
@@ -159,7 +159,7 @@ if (System.api.jquery){
                else                             //senao, pode ser o nome de uma class
                    this.style.cssText = properties;
             }else{
-                for (var att in properties){
+                for (let att in properties){
                     if (att.trim().toLowerCase() == 'clas$')
                         this.className = properties[att];
                     else
@@ -523,52 +523,6 @@ j$.ui.Open = function(){
         }
     };
 }();
-/* 
-System.Hint = function(){
-    let idHint="hintbox";
-    return{
-        init:()=>{
-            // cria o container para montar o elemento hint
-            if (i$(idHint)==undefined){
-                let divblock=document.createElement("div");
-                divblock.setAttribute("id", idHint);
-                document.body.appendChild(divblock);
-            }
-        },
-        show:(hintText, obj, e, clas$, tipwidth)=>{
-            if ((System.Browser.msie||NO_IE) && i$(idHint)){
-                let hintBox=i$(idHint);
-                hintBox.style.height='';
-                hintBox.innerHTML=hintText;
-                if (clas$==undefined)
-                    clas$='hint-info';
-                hintBox.className = 'hint ' + clas$;
-
-                hintBox.style.left=hintBox.style.top=-500 ;
-                if (tipwidth!=""){
-                    hintBox.widthobj=hintBox.style;
-                    hintBox.widthobj.width=tipwidth;
-                }
-                hintBox.x=System.Browser.getPosOffSet(obj, "left");
-                hintBox.y=System.Browser.getPosOffSet(obj, "top");
-                obj.onmouseout=System.Hint.hide;
-                if (hintBox.offsetHeight<34)
-                    hintBox.style.height='34px';
-                hintBox.style.left=(hintBox.x - System.Browser.clearEdge(obj, "rightedge", hintBox)+obj.offsetWidth +5) + "px";
-                hintBox.style.top =(hintBox.y - System.Browser.clearEdge(obj, "bottomedge", hintBox)) +"px";
-                hintBox.style.visibility="visible";
-                if ((hintBox.offsetHeight - obj.offsetHeight)>0)
-                hintBox.style.top = ((hintBox.y - System.Browser.clearEdge(obj, "bottomedge", hintBox))
-                                    -  ((hintBox.offsetHeight - obj.offsetHeight)/2)-2) + 'px';
-            }
-        },
-        hide: e =>{
-            i$(idHint).style.visibility="hidden";
-            i$(idHint).style.left="-500px";
-        }
-    };
-}();
- */
 
 j$.Node=function(inheritor, properties){
     let _node = this;
@@ -646,7 +600,7 @@ System.Action = ()=>{
     };
     this.execute = o =>{
         let result = false;
-        for (var i=0; i < this.actions.length; i++){
+        for (let i=0; i < this.actions.length; i++){
             result=self.actions[i](o);
         }
         return result;

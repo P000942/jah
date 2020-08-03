@@ -1,6 +1,5 @@
 /*
- * To change this template, choose Tools 
- * and open the template in the editor.
+ by Geraldo Gomes
  */
 const c$ = {  NOW: new Date()
            ,   RC:{NOT_FOUND:-1, NONE:-1}
@@ -43,14 +42,6 @@ const c$ = {  NOW: new Date()
                 }  
      }
 }
-// c$.NOW = new Date();
-// c$.KEY = {F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123,
-//        ENTER:13, ESC:27, COMMA:44, BACKSPACE:8, TAB:9, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, INS:45, DEL:46, REFRESH:116};
-// c$.ALIGN = {LEFT:'left', CENTER:'center', RIGHT:'right', JUSTIFY:'justify'};
-
-// c$.MOUSE = {BUTTON:{LEFT:0,CENTER:1,RIGHT:2}};
-
-// c$.ORDER = {ASCENDING:'ASC', DESCENDING:'DESC', NONE:'NONE'};
 
 c$.ORDER.CLASS =  order =>{
     let _class = "";
@@ -67,7 +58,7 @@ c$.ORDER.CLASS =  order =>{
     }
     return _class;
 };
-// c$.FILTER ={};
+
 c$.FILTER.CLASS =  filter =>{
     return (filter)?'list-ikon ikon-filter':null;
 };
@@ -177,17 +168,12 @@ const CONFIG = {
           , GRID:{BUTTONS:{}}
           , CONTEXT: 'js/query/'
             }
-    // , HINT:{
-    //       ERROR:{CLASS:'icon-info-sign', COLOR:"red"} //'hint-error'
-    //      , INFO:{CLASS:'icon-info-sign', COLOR:"green"}
-    // }
     , ALERT:{
           ERROR:{CLASS:'alert-danger'}
       , SUCCESS:{CLASS:'alert-success'}
       ,    INFO:{CLASS:'alert-info'}
     }
-    ,  LEGEND:{CLASS:'text-legend'}
-    ,FEEDBACK:{CLASS:{VALID:'valid-feedback', INVALID:'invalid-feedback'}}
+    ,FEEDBACK:{CLASS:{VALID:'valid-feedback', INVALID:'invalid-feedback', LEGEND:''}}
     ,   INPUT:{CLASS:{DEFAULT:'form-control form-control-sm',FOCUS:'input_focus'
                     , INVALID:'form-control form-control-sm is-invalid'
                     ,   VALID:'form-control form-control-sm is-valid'
@@ -344,9 +330,5 @@ CONFIG.action= vl_key =>{
 
     return (key)?action:null;
 };
-
-// CONFIG.hint= vl_key =>{
-//     return {icon:CONFIG.icon(vl_key), hint:CONFIG.class(vl_key,'hint')}
-// };
 
 
