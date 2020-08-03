@@ -25,7 +25,8 @@ const adapter={
           ,   Mensagem:{caption:'Mensagem' ,   crud:true, title:'Mensagem' }//      , resource:'mensagem', modal:true}
        //   ,         Uf:{caption:'UF'       ,   crud:true, title:'Unidades da federacao', resource:'uf'}
         }
-   , design:{ // Para montar os menus e sebmenus
+   , designer: { 
+       options:{ // Para montar os menus e sebmenus
              Tabelas:{caption:'Tabelas', items:['Papel'
                                                ,'Usuario'
                                                ,'Documento'
@@ -35,6 +36,8 @@ const adapter={
          ,    Outros:['Assunto', 'SituacaoAtividade','Partial'] // key e caption serão igual a "Outros"
          ,  Consulta:['Pessoa','Basico']
        }
+       ,factory: "Menubar" // "Menubar"  ou "Sidebar"    
+    }   
 };
 System.using("js/crud/modelo.js"); // Didatico para ver como carregar um arquivo javascript ou css
 
@@ -42,7 +45,7 @@ j$.ui.Page.createAdapter(adapter);
 
 $(document).ready(function(){
     j$.Dashboard.init(j$.ui.Adapter);
-    j$.ui.Page.Helper.init();
+    j$.ui.Page.Helper.init(j$.Dashboard.Factory);
 ;});
 
 // => Essa é uma forma de você definir como quer mostrar os erros
@@ -54,11 +57,11 @@ ERROR.init({   show(field, msg,clas$){ERROR.invalid(field, msg)} //qualquer msg
            ,   hide(field)           {ERROR.hide   (field)} //para remover o erro           
            });
 
-j$.ui.Page.Helper = function(){
-     const criarMenu = function(){
+j$.ui.Page.Helper = function(Factory){
+     const criarMenu = function(Factory){
              let _path = CONFIG.SERVER.CONTEXT
-               , {Menubar} = j$.Dashboard
-               , _menu = Menubar.addMenu({caption:'Forms'});
+               //, Factory = Factory
+               , _menu = Factory.addMenu({caption:'Forms'});
 
              _menu.add([{caption:'Form basic' , url:_path+ 'sample/formBasic.html' , title:'Form com campos formatados e controller'}
                        ,{caption:'Form Inject', url:_path+ 'sample/formInject.html', title:'Maninuplar informações do form'}
@@ -66,11 +69,11 @@ j$.ui.Page.Helper = function(){
                        , // se um item do array sem nada ou uma string, null - vai inserir uma linha
                        ,{caption:'Relatório'  , url:_path+ 'sample/reportTest.html', title:'Exemplo de relatório'}]);
 
-             Menubar.addMenu({caption:'Link Externo'})
+             Factory.addMenu({caption:'Link Externo'})
                                  .add([{caption:'Link 1 '   , url:urlPartial  , title:'Vai abri uma página web com a URL'}
                                       ,{caption:'Link 2'    , url:urlPartial_1, title:'Vai abri uma página web com a URL'}]);
 
-             _menu = j$.Dashboard.Menubar.addMenu({caption:'Partial'});
+             _menu = j$.Dashboard.Factory.addMenu({caption:'Partial'});
              //_menu.add({caption:'Partial',   partial:urlPartial  , title:'Serah insedrido na tba'});
              _menu.add({caption:'Partial 2', partial:urlPartial_1, title:'Serah insedrido na tba'});
              _menu.add({caption:'Assunto',       title:'Assunto - exemplo colocar um  form na tab',
@@ -92,7 +95,7 @@ j$.ui.Page.Helper = function(){
 //             _menu.add({key:'SituacaoAtividade', caption:'Situação',       title:'Cadastro de Situa��es da Atividade',
 //                 onActivate:function(menu){openItem(menu);}
 //             });
-             j$.Dashboard.Menubar.render();
+             j$.Dashboard.Factory.render();
     };
 
     const criarTab= function (){
@@ -110,8 +113,8 @@ j$.ui.Page.Helper = function(){
          //tabs.open({key:"tab_papel", caption:"Papel", onLoad: function(tab){ Papel.init("tab_Papel");}});
     };
     return{
-        init:function(){
-            criarMenu();
+        init:function(Factory){
+            criarMenu(Factory);
             criarTab();
         }
     };

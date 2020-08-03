@@ -342,11 +342,16 @@ j$.Dashboard = function(){
     return{
         init: properties=>{
             //menubar = j$.ui.Menu.create("menubar");
-            j$.Dashboard.Menubar.create();
+            j$.Dashboard.Factory = (properties.designer && properties.designer.factory) 
+                                 ?j$.Dashboard[properties.designer.factory] 
+                                 :j$.Dashboard.Menubar
+            j$.Dashboard.Factory.create();
+            //j$.Dashboard.Menubar.create();
             j$.Dashboard.Tabs.create();
-            j$.Dashboard.Sidebar.create();
-            j$.Dashboard.Menubar.bindToTabs(properties.services, properties.design);
-            j$.Dashboard.Sidebar.bindToTabs(properties.services, properties.design);
+            // j$.Dashboard.Sidebar.create();
+            // j$.Dashboard.Menubar.bindToTabs(properties.services, properties.design);
+            // j$.Dashboard.Sidebar.bindToTabs(properties.services, properties.design);
+            j$.Dashboard.Factory.bindToTabs(properties.services, properties.designer.options);
         }
         , bindItem: item =>{
             if (!item.url && !item.onCLick){
@@ -411,14 +416,14 @@ j$.Dashboard.Menubar=function(){
     let idContent='menubar';
     return{
         //menu={key:'', caption:'', url:'', title:'', items:[]}
-        bindItems: function(menu, Services){
+      bindItems: function(menu, Services){
             let menuBase = menubar.addMenu(menu);
             for (let idx=0; idx<menu.items.length;  idx++){
                 let item = Services[menu.items[idx]];
                 menuBase.add(item);
             }
-        }
-    ,  bindToTabs: function(Services, design){
+       }
+    , bindToTabs: function(Services, design){
                 for (let key in design){
                     let menu = design[key];
                     if (dataExt.isArray(menu))
@@ -427,24 +432,12 @@ j$.Dashboard.Menubar=function(){
                     j$.Dashboard.Menubar.bindItems(menu, Services);
                 }
         }
-    , create: function(){
-        menubar = j$.ui.Menu.create(j$.Dashboard.Menubar.idContent);
-    }
-
-    , addMenu:function(menu){
-        return menubar.addMenu(menu);
-    }
-    , getMenu:function(menu_key){
-        return menubar.getMenu(menu_key);
-    }
-//       , getSubmenu:function(menu_key, item_key){
-//          return menubar.getMenuItem(item_key, menu_key);
-//       }
-    , render:function(menu){
-        menubar.render();
-    }
+    , create: function(){   menubar = j$.ui.Menu.create(j$.Dashboard.Menubar.idContent)}
+    , addMenu:function(menu){return menubar.addMenu(menu)}
+    , getMenu:function(menu_key){ return menubar.getMenu(menu_key)}
+    , render:function(menu){ menubar.render()}
     , idContent:idContent
-    };
+    }
 }();
 
 j$.Dashboard.Sidebar=function(){
@@ -485,25 +478,22 @@ j$.Dashboard.Sidebar=function(){
             }
         }
     ,  bindToTabs: function(Services, design){
-                for (let key in design){
-                    let menu = design[key];
-                    if (dataExt.isArray(menu))
-                        menu = {items:design[key]};
-                    Object.preset(menu, {key:key, caption:key});
-                    menu.dropbox= TYPE.DROPBOX({container:i$(j$.Dashboard.Sidebar.idContent), id:"sidebar_"+key, legend:menu.caption, hide:true
-                                                });
-                j$.Dashboard.Sidebar.bindItems(menu, Services);
-                }
-        }
-    , create: function(){
-        return true;
+         for (let key in design){
+            let menu = design[key];
+            if (dataExt.isArray(menu))
+                menu = {items:design[key]};
+            Object.preset(menu, {key:key, caption:key});
+            menu.dropbox= TYPE.DROPBOX({container:i$(j$.Dashboard.Sidebar.idContent), id:"sidebar_"+key
+                                        , legend:menu.caption, hide:true});
+            j$.Dashboard.Sidebar.bindItems(menu, Services);
+         }
     }
+    , create: function(){ return true}
     , idContent:idContent
-    //, Items:items
     , c$:items
     , C$(ke){return items[key]}
-    };
-}();
+    }
+}()
 
 j$.ui.Open = function(){
     return{

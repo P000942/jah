@@ -64,7 +64,8 @@ c$.FILTER.CLASS =  filter =>{
 };
 
 const CONFIG = {
-    ERROR:{
+       MENU: "Menubar" // ou "Sidebar"
+    , ERROR:{
            MESSAGE:{
                  Mandatory: "'@{label}:' Campo de preenchimento obrigatório"
             ,        Digit: "Entre somente com número"

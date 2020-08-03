@@ -937,8 +937,9 @@ j$.Alert = new j$.ui.Modal("Alert",{
 
 j$.ui.adapterFactory = function(adapter){
    let $this=this;
-   this.services=adapter.services;
-   this.design=adapter.design;
+   Object.preset(this, adapter);
+//    this.services=adapter.services;
+//    this.design=adapter.design;
    this.load = ()=>{ // Fazer carga dos JS
        for (let key in adapter.services){
            let item = adapter.services[key];
