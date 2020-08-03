@@ -160,7 +160,7 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
                    self_grid.Designer.addButtons();
                    if (!populating){ //*quando for um registro inserido pelo usuário, recalcula as páginas e posiciona na ultima
                        pager.restart();
-                       // self_grid.Pager.last(); // Removido em 23/07/202 ele tirava o registro que estava editado  (é para ficar em obsevacao)
+                       self_grid.Pager.last(); // Para posicionar na página onde foi inserido o novo registro
                    }
             }
           ,clear:()=>{
