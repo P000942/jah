@@ -337,20 +337,15 @@ String.prototype.point = function(fontSize){
 
 j$.Dashboard = function(){
     let idContent=CONFIG.LAYOUT.CONTENT
-      , idToolbar='toolbar';
+     // , idToolbar='toolbar';
 
     return{
         init: properties=>{
-            //menubar = j$.ui.Menu.create("menubar");
             j$.Dashboard.Factory = (properties.designer && properties.designer.factory) 
                                  ?j$.Dashboard[properties.designer.factory] 
                                  :j$.Dashboard.Menubar
             j$.Dashboard.Factory.create();
-            //j$.Dashboard.Menubar.create();
             j$.Dashboard.Tabs.create();
-            // j$.Dashboard.Sidebar.create();
-            // j$.Dashboard.Menubar.bindToTabs(properties.services, properties.design);
-            // j$.Dashboard.Sidebar.bindToTabs(properties.services, properties.design);
             j$.Dashboard.Factory.bindToTabs(properties.services, properties.designer.options);
         }
         , bindItem: item =>{
@@ -377,19 +372,17 @@ j$.Dashboard = function(){
             }
     }
     , idContent:idContent
-    , idToolbar:idToolbar
+   // , idToolbar:idToolbar
     }
 }();
 
 j$.Dashboard.Tabs=function(){
     let tabs
       , idContent='root'
-      , ftmKey = (service) =>{ return "tab_"+service.Parent.key+'_'+service.key}
+      , ftmKey = (service) =>{return "tab_"+service.Parent.key+'_'+service.key}
     return{
         create: ()=>{ tabs = j$.ui.Tabs.create(j$.Dashboard.Tabs.idContent,j$.Dashboard.idContent) }
-        , open: properties =>{
-            return tabs.open(properties);
-        }
+        , open: properties =>{return tabs.open(properties)}
         , delegateTo: (service, event, record)=>{
                 j$.Dashboard.Tabs.open({key:ftmKey(service)
                     , caption:service.caption, title: service.title
@@ -412,8 +405,8 @@ j$.Dashboard.Tabs=function(){
 }();
 
 j$.Dashboard.Menubar=function(){
-    let menubar;
-    let idContent='menubar';
+    let menubar, _c$ = CONFIG[CONFIG.MENU.PARSER.toUpperCase()];
+    let idContent=_c$.CONTENT;
     return{
         //menu={key:'', caption:'', url:'', title:'', items:[]}
       bindItems: function(menu, Services){
@@ -441,57 +434,90 @@ j$.Dashboard.Menubar=function(){
 }();
 
 j$.Dashboard.Sidebar=function(){
-    let menubar;
-    let idContent='sidebar';
-    let items={};
+    let menubar, items={}, idContent=CONFIG.SIDEBAR.CONTENT; 
+    function render(item){ // vai para o contexto de menu no addMenu
+        let menu  = this
+          , onClick ="href='javascript:"
+                    +"j$.Dashboard.Sidebar.c$."+menu.key+".c$."+item.key+".open(\""+menu.key+"\",\""+item.key +"\")' "
+          , clas$ =` class='${CONFIG.SIDEBAR.CLASS.LINK}' `;
+        
+        let _base =  menu.dropbox.target.insert(`<div class="${CONFIG.SIDEBAR.CLASS.WRAP}">`
+                                   + `<a ${onClick} ${clas$}> ${item.caption} </a></div>`); 
+        if (item.onClick)
+           $(_base).click(item.onClick);                                             
+        return _base;
+    }      
+    function create(item){ // vai para o contexto de menu no addMenu
+        let menu  = this;
+        item.Parent=menu;
+        menu.c$[item.key]=item;
+        if (item.partial && !item.url)
+            item.url = item.partial;  
+        if (item.partial)
+            item.open=function(keyMenu, keyItem){
+                let option=j$.Dashboard.Sidebar.c$[keyMenu].c$[keyItem];
+                j$.Dashboard.Tabs.openPartial(option);
+            };
+        else
+            item.open=function(keyMenu, keyItem){
+                let option=j$.Dashboard.Sidebar.c$[keyMenu].c$[keyItem];
+                j$.Dashboard.Tabs.delegateTo(option);
+            };             
+        menu.render(item);  
+        return item;   
+    }    
+    function add(items){    
+        if (dataExt.isObject(items) || (dataExt.isString(items) && !items.isEmpty())){
+            if (items.items)
+               return j$.Dashboard.Sidebar.addMenu(items)   //adiciona o menu
+                                          .add(items.items);//adiciona o submenu
+            else
+               return this.create(items);                  
+        }else if (dataExt.isArray(items)){
+            _items=[]
+            for (let idx=0; idx<items.length;idx++)
+            //items.forEach((item,idx)=>{
+                _items[idx]=this.add(items[idx]); 
+            //})
+            return _items;
+        } //else 
+        //     return _base.divider.add(items);          
+    }
     return{
         //menu={key:'', caption:'', url:'', hint:'', items:[]}
         bindItems: function(menu, Services){
             //var menuBase = menubar.addMenu(menu);
-            for (let idx=0; idx<menu.items.length;  idx++){
-                let item = Services[menu.items[idx]];
-                if (item.partial && !item.url)
-                    item.url = item.partial;
-                item.Parent=menu;
-                if (!menu.c$)
-                    menu.c$={};
-
-                menu.c$[item.key]=item;
-
-                j$.Dashboard.Sidebar.c$[menu.key]=menu;
-
-                let onClick ="href='javascript:"
-                            +"j$.Dashboard.Sidebar.c$."+menu.key+".c$."+item.key+".open(\""+menu.key+"\",\""+item.key +"\")' ";
-                let clas$ =" class='sidebar_link' ";
-                menu.dropbox.target.insert('<div class="wrap_sidebar_link"><a '+ onClick + clas$ + '>' +item.caption+ '</a></div>');
-
-                if (item.partial)
-                    item.open=function(menu_key, item_key){
-                        let menu_item=j$.Dashboard.Sidebar.c$[menu_key].c$[item_key];
-                        j$.Dashboard.Tabs.openPartial(menu_item);
-                    };
-                else
-                    item.open=function(menu_key, item_key){
-                        let menu_item=j$.Dashboard.Sidebar.c$[menu_key].c$[item_key];
-                        j$.Dashboard.Tabs.delegateTo(menu_item);
-                    };
-            }
+            menu.items.forEach(option=>{    
+                menu.create(Services[option]);                               
+            })
         }
-    ,  bindToTabs: function(Services, design){
-         for (let key in design){
-            let menu = design[key];
+    ,  bindToTabs: function(Services, options){
+         for (let key in options){
+            let menu = options[key];
             if (dataExt.isArray(menu))
-                menu = {items:design[key]};
-            Object.preset(menu, {key:key, caption:key});
-            menu.dropbox= TYPE.DROPBOX({container:i$(j$.Dashboard.Sidebar.idContent), id:"sidebar_"+key
-                                        , legend:menu.caption, hide:true});
+                menu = {items:options[key]};
+            Object.preset(menu, {key, id:`${idContent}_${key}`});
+            j$.Dashboard.Sidebar.addMenu(menu);
             j$.Dashboard.Sidebar.bindItems(menu, Services);
          }
     }
-    , create: function(){ return true}
+    , create(){return true}
+    , addMenu(menu){
+         Object.identify(menu);                   // garantir 'key' e 'id'
+         Object.label(menu,['caption', 'label']); // garantir o caption 
+         menu.dropbox  = TYPE.DROPBOX(menu);
+         if (!menu.c$)
+            menu.c$={};         
+         j$.Dashboard.Sidebar.c$[menu.key]=menu;
+         menu.add = add;       
+         menu.render = render;  
+         menu.create = create;
+         return menu;
+    }
     , idContent:idContent
     , c$:items
-    , C$(ke){return items[key]}
+    , C$(key){return items[key]}
+    , render(){return true}
     }
 }()
 

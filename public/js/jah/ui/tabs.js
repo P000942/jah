@@ -148,7 +148,7 @@ j$.ui.Tabs.Root =function(idTab, idContent){
          this.Menu = function(){            
              let menubar;
              const create=function(){                     
-                 menubar=j$.ui.Dropdown.create(_tab.Header.menu.id);
+                 menubar=j$.ui.Menu.create(_tab.Header.menu.id);
              }();             
              return{
                  add:(menu, Items)=>{                     

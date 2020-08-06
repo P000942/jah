@@ -18,7 +18,6 @@ and open the template in the editor.
     <link rel="stylesheet" href="css/font-awesome.css">
 
     <!-- <link rel="stylesheet" href="css/bootstrap-responsive.min.css"> -->
-    <!-- <link rel="stylesheet" href="css/main.css"> -->
     <link type="text/css" rel="stylesheet" href="css/layout.css" />
 
     <script src="js/vendor/jquery-3.5.1.js"></script>
@@ -40,57 +39,38 @@ and open the template in the editor.
     <script type="text/javascript" src="js/app/app.js"></script>
 </head>
 <body>
-    <div id="page" class='page'>
-        <header>
-           <div class="header-top">
-              <div class="top-left" ></div>
-              <div class="top-center">
-                 <form>
-                    <div class="input-group mb-3">
-                       <input id="email" type="text" class="form-control" name="Pesquisar" placeholder="Pesquisar">
-                       <div class="input-group-append">
-                          <span class="input-group-text"><i class="icon-search"></i></span>              
-                      </div> 
-                    </div>
-                 </form>
-              </div>
-              <div class="top-right" >
-                  <form>
-                     <div class="input-group mb-3">
-                        <div class="input-group-prepend" style="height: 38px;"><span class="input-group-text" style="padding: 0px;">
-                           <div class="dropdown">
-                              <a class="btn dropdown-toggle" href="javascript:" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="icon-user"></i><b class="caret"></b>
-                              </a>
-                              <div class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-                                <a class="dropdown-item btn-default" href="#"><i class="icon-cogs" style="color: #F89406"></i>Configurar</a>
-                                <a class="dropdown-item btn-default" href="#"><i class="icon-user" style="color: #999999"></i>Perfil</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item btn-default" href="#"><i class="icon-off" style="color: #BD362F"></i>Sair</a>
-                              </div>
-                          </div>
-                        </span></div>   
-                        <label id="email" type="text" class="form-control" >jgeraldo@sefaz.am.gov.br</label>
-                     </div>
-                </form>
-              </div>
-           </div>
-           <nav class="navbar navbar-expand-lg navbar-light bg-light" id="menubar"></nav>
+        <header class="navbar navbar-expand navbar-light bg-light sticky-top flex-md-nowrap p-0 shadow">
+              <div class="top-left navbar-brand col-md-2 col-lg-2"></div>
+              <!-- <div class="col-md-6"> -->
+                <input class="form-control form-control-dark w-100 col-md-6" type="text" placeholder="Pesquisar" aria-label="Search">
+              <!-- </div> -->
+              <div class="navbar-collapse collapse" >
+                <ul class="navbar-nav ml-auto">                                                            
+                    <li class="nav-item dropdown">        
+                          <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-toggle="dropdown" aria-expanded="false">
+                            <span class="text-dark">jgeraldo@sefaz.am.gov.br</span>
+                          </a>                       
+                         <div class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu">
+                            <a class="dropdown-item btn-default" href="#"><i class="icon-cogs" style="color: #F89406"></i>Configurar</a>
+                            <a class="dropdown-item btn-default" href="#"><i class="icon-user" style="color: #999999"></i>Perfil</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item btn-default" href="#"><i class="icon-off" style="color: #BD362F"></i>Sair</a>
+                          </div>           
+                    </li>
+                </ul>
+            </div>                       
         </header>
-        <div id='wrapAlert'></div>
-        <nav id="nav-left"><div  id="sidebar"></div></nav>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light" id="menubar"></nav>
 
-        <section id="content_section">
-           <div id='content'></div>
+        <div id='wrapAlert'></div>        
+
+        <section id="content_section" class="container-fluid">
+            <div class="row no-gutters">
+                <!-- <nav id="sidebar" class="col-md-2 col-lg-2 d-md-block bg-light sidebar collapse nav-side-menu"></nav> -->
+                <!-- <div id='content' class="col-md-10 ml-sm-auto col-lg-10 px-md-4" role="main"></div> -->
+                <nav id="sidebar" class="col-md-2 col-lg-2 d-md-block nav-side-menu"></nav>
+                <div id='content' class="col-md-10 ml-sm-auto col-lg-10 px-md-4" role="main"></div>                
+            </div>
         </section>
-
-        <aside id="nav-right"></aside>
-
-        <footer class="navbar-fixed-bottom">
-            <div class="footer" id="Sefaz">© 2013 - Secretaria de Estado da Fazenda</div>
-        </footer>
-
-    </div>
-
 </body>
 </html>

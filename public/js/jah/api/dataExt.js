@@ -812,6 +812,61 @@ Object.build = (key, value)=>{
 // console.log(Object.build("A",4))
 // ->Object {A: 4}
 
+// retorna a primeira proprieda que encontrar no objeto que estah no array 'keys'
+Object.synonym = function(source, keys){
+   let key = keys.find(key => {return (source[key])});
+   return (key) ?source[key] :null;
+}
+//Object.synonym({id:1, key:"a"}, ["key","id"])
+//Object.synonym({id:1, key:"a"}, ["id", "key"]) 
+
+// retorna true proprieda se encontrar uma das propriedades no objeto 
+Object.exists = function(source, keys){
+    let key = keys.find(key => {return (source[key])});
+    return (key) ?true :false;
+ }
+//Object.exists({title:"titulo", key:"a"},["id","key"])
+
+Object.identify = (receicer, keys=['key','id'], labels=["label", "caption"])=>{
+   function search(key, values){
+        let vl = Object.synonym(receicer,values);
+        if (vl) // para evitar um null
+           receicer[key] = vl.toString().stripChar(" "); 
+   }   
+   function each(values) {
+        keys.forEach(key=>{
+            if (!receicer[key])
+               search(key, values)       
+        })
+        return Object.exists(receicer,keys);
+   }
+   if (!each(keys))
+      each(labels)
+   return receicer;
+}
+//Object.identify({label:"a b"})
+//Object.identify({id:"1"})
+//Object.identify({id:1, key:"a"})
+
+// label serah o default e que deve ser garantido
+// se tem caption nao tem label, serah criado label=caption
+Object.label = (receicer, labels=["label", "caption"], keys=['key','id'])=>{
+    let key = labels[0];
+    function search(values){
+       let vl = Object.synonym(receicer,values);
+       if (vl) // para evitar um null
+          receicer[key] = vl;
+       return vl   
+    }
+    if (!receicer[key]){
+       if (!search(labels))          
+          search(keys)       
+    }
+    return receicer;
+}
+//Object.label({caption:"titulo"})
+//Object.label({label:"titulo"})
+//Object.label({title:"titulo"},["label","title"])
 
 
 Function.prototype.inheritsFrom = function(parentClassOrObject){

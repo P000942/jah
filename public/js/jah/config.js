@@ -64,8 +64,7 @@ c$.FILTER.CLASS =  filter =>{
 };
 
 const CONFIG = {
-       MENU: "Menubar" // ou "Sidebar"
-    , ERROR:{
+    ERROR:{
            MESSAGE:{
                  Mandatory: "'@{label}:' Campo de preenchimento obrigatório"
             ,        Digit: "Entre somente com número"
@@ -183,6 +182,11 @@ const CONFIG = {
     ,   CHECK:{CLASS:{DEFAULT:'form-check-input', ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
     ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
+    ,    MENU:{PARSER:"sidebar"}
+    , SIDEBAR:{CLASS:{WRAP:"wrap_sidebar_link", LINK:"sidebar_link"}
+           , CONTENT:"sidebar"}
+    , MENUBAR:{CLASS:{DROPDOWN:"nav-item dropdown", OPTION:"sidebar_link"}
+           , CONTENT:"menubar"}           
 };
 //
 //CONFIG.ICON ={new:'icon-o-plus' , search:'icon-search',   edit:'icon-edit'  , save:'icon-o-check'

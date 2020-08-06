@@ -9,40 +9,39 @@ j$.ui.Menu = function(){ // factory
              return items[idContent];
       }
       , c$:items
-      , C$:key=>{return items[key]}
+      , C$:key=>{return items[key]}      
     };
 }();
-j$.ui.Dropdown = function(){ // factory
-    let items = {};
-    return{
-      create(idContent, caption){
-             items[idContent] =new j$.ui.Menu.Dropdown(idContent, caption);//MENU.create(idContent);
-             return items[idContent];
-      }
-      , c$:items
-      , C$:key=>{return items[key]}
-    }
-}();
+// j$.ui.Dropdown = function(){ // factory
+//     let items = {};
+//     return{
+//       create(idContent, caption){
+//              items[idContent] =new j$.ui.Menu.Dropdown(idContent, caption);//MENU.create(idContent);
+//              return items[idContent];
+//       }
+//       , c$:items
+//       , C$:key=>{return items[key]}
+//     }
+// }();
 
 ///j$.ui.Menu.CONFIG =  {baseopacity:0, idContainerDefault:"content"};
 
+j$.ui.Menu.formatLink = properties =>{
+    let attLink = '';
+    if (properties.url && !properties.byPass){
+        attLink +=  'href=\'javascript:j$.ui.Open.url("'+ properties.url + '"';
+        if (properties.idContainer) // Container é usado para quando for partial
+            attLink += ',"'+ properties.idContainer + '"' ;
+        attLink +=');';
+    }
+    attLink += "'";
+    return attLink;
+}
 
-j$.ui.Menu.Designer =function(){
-    let formatLink = properties =>{
-              let attLink = 'href=\'javascript:';
-              if (properties.url && !properties.byPass){
-                 attLink +=  'j$.ui.Open.url("'+ properties.url + '"';
-                 if (properties.idContainer) // Container é usado para quando for partial
-                     attLink += ',"'+ properties.idContainer + '"' ;
-                 attLink +=');';
-              }
-              attLink += "'";
-              return attLink;
-    };
-
+j$.ui.Menu.menubar =function(){
     return{
        format (properties){
-              let attClass = '', attDropdown = '', attCarret = '', attDropdownUl ='', attIcon=''; 
+              let attClass = '', attDropdown = '', attDropdownUl ='', attIcon='';  
               let attHint = (properties.title)? 'title="' + properties.title + '"' : '';
               if (properties.active){
                   attClass='class="active"';
@@ -52,25 +51,71 @@ j$.ui.Menu.Designer =function(){
                   attIcon='<i class="'+properties.icon+'"></i>';
             
               if (properties.length>0){
-                 attCarret = '<b class="caret"></b>'; 
                  attClass  = 'class="nav-item dropdown"';
-                 attDropdown = 'class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"';
+                 attDropdown = 'class="nav-link dropdown-toggle" data-toggle="dropdown" '
+                             + 'role="button" aria-haspopup="true" aria-expanded="false"';
                  attDropdownUl = '<div id="'+properties.id+'"  class="dropdown-menu" aria-labelledby="navbarDropdown"></div>';  
-                 if (properties.type=='Submenu') { //#todo
+                 if (properties.type=='Submenu') { 
                     attClass  ='class="dropdown-submenu"';
-                    attCarret ='';
                  }
                  return '<li '  +attClass+ ' ' +attHint+ '>'
-                       +'<a '  +attDropdown  + ' ' +formatLink(properties)+'>'+attIcon+properties.caption+attCarret
+                       +'<a '  +attDropdown  + ' ' +j$.ui.Menu.formatLink(properties)+'>'+attIcon+properties.caption //+attCarret
                        +'</a>' +attDropdownUl+ '</li>';
               } else{ // os item do menu entram aqui        
-                 return `<a id="${properties.id}" class="dropdown-item" ${attHint} ${formatLink(properties)}>`
+                 return `<a id="${properties.id}" class="dropdown-item" ${attHint} ${j$.ui.Menu.formatLink(properties)}>`
                             +attIcon+properties.caption
                       + '</a>';
               }                
        }
-    };
+    , createContainer(idContent){
+         let id = idContent+'Root';
+         $(`#${idContent}`).append(`<div class="container"></div>`);                
+         $(`#${idContent} > .container`).append(`<div class="navbar-collapse collapse"> </div>`);
+         $(`#${idContent} > .container > .navbar-collapse`).append(`<ul id='${id}' class='navbar-nav mr-auto'></ul>`);
+         return id;
+      }         
+    }
 }();
+
+j$.ui.Menu.sidebar =function(){
+    return{
+       format (properties){
+              let attIcon=''  , attClass = 'collapsed'
+                , attHint = (properties.title)? 'title="' + properties.title + '"' : '';
+              if (properties.active){
+                  attClass += ' active';
+                  properties.Root.active=true;
+              }
+              if (properties.icon)
+                  attIcon='<i class="'+properties.icon+'"></i>';
+            
+              if (properties.length>0){ //menu      
+                 return `<li data-toggle="collapse" class="${attClass}" data-target="#${properties.id}" ${attHint}>`
+                       +'<a ' +j$.ui.Menu.formatLink(properties)+'>'
+                       +    attIcon+properties.caption
+                       +    '<span class="arrow"></span>'
+                       +'</a></li>'
+                       +`<ul id="${properties.id}"  class="sub-menu collapse"></ul>`;
+              } else{ // as opcoes do menu entram aqui        
+                 return `<li><a id="${properties.id}" ${attHint} ${j$.ui.Menu.formatLink(properties)}>`
+                            +attIcon+properties.caption
+                      + '</a></li>';
+              }                
+       }
+     , createContainer(idContent){
+         let id = idContent+'Root';
+         $(`#${idContent}`).append(`<div class="brand">Sistema
+                                    <i class="icon-reorder icon-large toggle-btn" data-toggle="collapse" data-target="#${id}"></i>
+                                  </div>`);  
+         $(`#${idContent}`).append(`<div class="menu-list"></div>`);                                              
+         $(`#${idContent} > .menu-list`).append(`<ul id='${id}' class="menu-content collapse out">`);        
+         return id;
+       }  
+    } 
+}();
+
+j$.ui.Menu.Designer =j$.ui.Menu[CONFIG.MENU.PARSER]; 
+_C$ = CONFIG[CONFIG.MENU.PARSER.toUpperCase()];
 
 // definição do menu > herda de j$.node
 j$.ui.Menu.Navbar =function(idContent){
@@ -89,12 +134,7 @@ j$.ui.Menu.Navbar =function(idContent){
     }
 
     function create(){
-        let id = idContent+'Root';
-        $(`#${idContent}`).append(`<div class="container"></div>`);                
-        $(`#${idContent} > .container`).append(`<div class="navbar-collapse collapse"> </div>`);
-        $(`#${idContent} > .container > .navbar-collapse`).append(`<ul id='${id}' class='navbar-nav mr-auto'></ul>`);
-        // $(`#${idContent} > .container > .navbar-collapse`).append(`<ul id='${id}' class="nav navbar-nav"></ul>`);
-        return id;
+        return j$.ui.Menu.Designer.createContainer(idContent);
     };
 };
 
@@ -143,7 +183,7 @@ j$.ui.Menu.Base=function(inheritor, properties){
                 }
                 else if (properties.partial)
                     url= properties.partial;
-                // Se tem um LINK e tem container irá se comportar como partial
+                // Se tem um LINK e tem container serah injetado neste como partial
                 return url;
            }
            , checkActive: ()=>{

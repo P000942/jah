@@ -1228,7 +1228,7 @@ j$.ui.frame=function(){
    }
    function dropbox(properties){
         let self = this;
-        Object.preset(properties, {container:i$('content'), style:'wrap_dropbox'});
+        Object.preset(properties, {container:i$(CONFIG.SIDEBAR.CONTENT), style:'wrap_dropbox', hide:true});
         properties.id =j$.util.getId(properties.style, properties.id);
         Object.preset(self, properties);
         let create=function(){
@@ -1236,7 +1236,7 @@ j$.ui.frame=function(){
             self.container.insert("<div id='" +idFieldset+ "'>"
                         +"<div class='wrap_dropbox_legend' id='" +self.id+ "_dropbox_legend'>"
                         +"<span title='Esconder' onclick='j$.ui.frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
-                        + self.legend+"</div>"
+                        + self.caption+"</div>"
                         + "<div class='wrap_target_dropbox' id='" +self.id+ "'></div>"
                         +"</div>");
             self.source = i$(idFieldset);
