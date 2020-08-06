@@ -73,7 +73,7 @@ j$.ui.Menu.menubar =function(){
     , createContainer(idContent){
          let id = idContent+'Root';
          $(`#${idContent}`).append(`<div class="container"></div>`);                
-         $(`#${idContent} > .container`).append(`<div class="navbar-collapse collapse"> </div>`);
+         $(`#${idContent} > .container`).append(`<div class="navbar-collapse"> </div>`);
          $(`#${idContent} > .container > .navbar-collapse`).append(`<ul id='${id}' class='navbar-nav mr-auto'></ul>`);
          return id;
       }         
