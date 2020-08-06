@@ -2,11 +2,14 @@
  * By Geraldo Gomes
  */
 j$.ui.Menu = function(){ // factory
-    let items = {};
+    let items = {}
+      , _parser = CONFIG.MENU.PARSER
+      , _option = CONFIG.MENU.OPTIONS[_parser.toUpperCase()];
+
     return{
        create (idContent){
-             items[idContent] =new j$.ui.Menu.Navbar(idContent);//MENU.create(idContent);
-             return items[idContent];
+           items[idContent] =new j$.ui.Menu.Navbar(idContent);
+           return items[idContent];
       }
       , c$:items
       , C$:key=>{return items[key]}      
@@ -115,7 +118,7 @@ j$.ui.Menu.sidebar =function(){
 }();
 
 j$.ui.Menu.Designer =j$.ui.Menu[CONFIG.MENU.PARSER]; 
-_C$ = CONFIG[CONFIG.MENU.PARSER.toUpperCase()];
+// _C$ = CONFIG.MENU.OPTIONS[CONFIG.MENU.PARSER.toUpperCase()];
 
 // definição do menu > herda de j$.node
 j$.ui.Menu.Navbar =function(idContent){

@@ -111,7 +111,6 @@ const CONFIG = {
               ,     SERVICE_NULL:{id:'SERVICE_NULL'        , text:"Serviço não informado(key)."}
                }
    , RESOURCE:{CONTEXT:'http://localhost:3000/'}
-    //, RESOURCE:{CONTEXT:'http://localhost/jah/resources/'}
    ,   SERVER:{CONTEXT:'http://localhost:3000/'}
    // , ADAPTER:{TYPE:{DEFAULT:0
    //                     LINK:1
@@ -182,17 +181,16 @@ const CONFIG = {
     ,   CHECK:{CLASS:{DEFAULT:'form-check-input', ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
     ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
-    ,    MENU:{PARSER:"sidebar"}
-    , SIDEBAR:{CLASS:{WRAP:"wrap_sidebar_link", LINK:"sidebar_link"}
-           , CONTENT:"sidebar"}
-    , MENUBAR:{CLASS:{DROPDOWN:"nav-item dropdown", OPTION:"sidebar_link"}
-           , CONTENT:"menubar"}           
+    ,    MENU:{PARSER:"menubar"
+            , OPTIONS:{SIDEBAR:{CLASS:{CONTENT:"col-md-10 ml-sm-auto col-lg-10 px-md-4"
+                                        , MENU:"col-md-2 col-lg-2 d-md-block nav-side-menu"}
+                            , CONTENT:"sidebar"}
+                     , MENUBAR:{CLASS:{CONTENT:"col-md-12 ml-sm-auto col-lg-12 px-md-4"
+                                        , MENU:"navbar navbar-expand-lg navbar-light bg-light"}
+                            , CONTENT:"menubar"}
+                      } 
+        }                 
 };
-//
-//CONFIG.ICON ={new:'icon-o-plus' , search:'icon-search',   edit:'icon-edit'  , save:'icon-o-check'
-//          , print:'icon-print'    ,  trash:'icon-trash' , filter:'icon-filter', back:'icon-o-arrow-left', next:'icon-o-arrow-right'
-//          ,    ok:'icon-o-check',  close:'icon-o-x',    home:'icon-home', undo:'icon-undo'};
-
 //@note: Retorna o objeto com o status http
 CONFIG.HTTP.STATUS.get = status =>{
           let res = Object.getByValue(CONFIG.HTTP.STATUS, status,'VALUE');

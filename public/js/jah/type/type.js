@@ -178,7 +178,7 @@ var TYPE = function() {
     return {
         SLIDEBOX: properties=>{return new j$.ui.frame.slidebox(properties)}
    ,    FRAMEBOX: properties=>{return new j$.ui.frame.framebox(properties)}
-   ,     DROPBOX: properties=>{return new j$.ui.frame.dropbox(properties)}
+//    ,     DROPBOX: properties=>{return new j$.ui.frame.dropbox(properties)}
    ,       DIGIT: properties=>{return new j$.ui.type.Digit(properties)}
    ,     BOOLEAN: properties=>{return new j$.ui.type.Boolean(properties)}
    ,      LETTER: (size,properties)=>{return new j$.ui.type.Letter(size,properties)}
@@ -1226,35 +1226,35 @@ j$.ui.frame=function(){
         if (properties.hide){self.hide();}
         return self;
    }
-   function dropbox(properties){
-        let self = this;
-        Object.preset(properties, {container:i$(CONFIG.SIDEBAR.CONTENT), style:'wrap_dropbox', hide:true});
-        properties.id =j$.util.getId(properties.style, properties.id);
-        Object.preset(self, properties);
-        let create=function(){
-            let idFieldset =properties.id + "_dropbox";
-            self.container.insert("<div id='" +idFieldset+ "'>"
-                        +"<div class='wrap_dropbox_legend' id='" +self.id+ "_dropbox_legend'>"
-                        +"<span title='Esconder' onclick='j$.ui.frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
-                        + self.caption+"</div>"
-                        + "<div class='wrap_target_dropbox' id='" +self.id+ "'></div>"
-                        +"</div>");
-            self.source = i$(idFieldset);
-            self.source.stylize(self.style);
-            self.target = i$(self.id);
-            self.target.stylize(self.targetStyle);
-            self.legend = i$(self.id+ "_dropbox_legend");
-            self.legend.stylize(self.legendStyle);
-            self.button = i$(self.id+ "_button");
-        }();
-        items[self.id]=self;
-        Object.preset(self,{toggle:()=>{j$.ui.frame.toggle(self.id)}
-                          , show  :()=>{j$.ui.frame.show(self.id)}});
-        self.hide=()=>{j$.ui.frame.hide(self.id)};
-        if (properties.hide){self.hide();}
+//    function dropbox(properties){
+//         let self = this;
+//         Object.preset(properties, {container:i$(CONFIG.SIDEBAR.CONTENT), style:'wrap_dropbox', hide:true});
+//         properties.id =j$.util.getId(properties.style, properties.id);
+//         Object.preset(self, properties);
+//         let create=function(){
+//             let idFieldset =properties.id + "_dropbox";
+//             self.container.insert("<div id='" +idFieldset+ "'>"
+//                         +"<div class='wrap_dropbox_legend' id='" +self.id+ "_dropbox_legend'>"
+//                         +"<span title='Esconder' onclick='j$.ui.frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
+//                         + self.caption+"</div>"
+//                         + "<div class='wrap_target_dropbox' id='" +self.id+ "'></div>"
+//                         +"</div>");
+//             self.source = i$(idFieldset);
+//             self.source.stylize(self.style);
+//             self.target = i$(self.id);
+//             self.target.stylize(self.targetStyle);
+//             self.legend = i$(self.id+ "_dropbox_legend");
+//             self.legend.stylize(self.legendStyle);
+//             self.button = i$(self.id+ "_button");
+//         }();
+//         items[self.id]=self;
+//         Object.preset(self,{toggle:()=>{j$.ui.frame.toggle(self.id)}
+//                           , show  :()=>{j$.ui.frame.show(self.id)}});
+//         self.hide=()=>{j$.ui.frame.hide(self.id)};
+//         if (properties.hide){self.hide();}
 
-        return self;
-   }
+//         return self;
+//    }
    let toggle=function(id){
         let frame = this.items[id];
         if (frame.button.className == "showbox"){

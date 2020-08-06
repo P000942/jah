@@ -405,8 +405,21 @@ j$.Dashboard.Tabs=function(){
 }();
 
 j$.Dashboard.Menubar=function(){
-    let menubar, _c$ = CONFIG[CONFIG.MENU.PARSER.toUpperCase()];
-    let idContent=_c$.CONTENT;
+    let menubar, _c$ = CONFIG.MENU.OPTIONS[CONFIG.MENU.PARSER.toUpperCase()];
+    //let idContent=_c$.CONTENT;
+
+    const initialized = function(){
+        i$(j$.Dashboard.idContent).className =_c$.CLASS.CONTENT;
+        i$(_c$.CONTENT).className = _c$.CLASS.MENU;
+        for (key in CONFIG.MENU.OPTIONS){
+            option =  CONFIG.MENU.OPTIONS[key]
+            if (key != CONFIG.MENU.PARSER.toUpperCase()){             
+                i$(option.CONTENT).remove();
+            }
+        }
+        return true;
+    };    
+
     return{
         //menu={key:'', caption:'', url:'', title:'', items:[]}
       bindItems: function(menu, Services){
@@ -425,101 +438,104 @@ j$.Dashboard.Menubar=function(){
                     j$.Dashboard.Menubar.bindItems(menu, Services);
                 }
         }
-    , create: function(){   menubar = j$.ui.Menu.create(j$.Dashboard.Menubar.idContent)}
+    ,  create:function(){
+               initialized();
+               menubar = j$.ui.Menu.create(_c$.CONTENT)
+            }
     , addMenu:function(menu){return menubar.addMenu(menu)}
     , getMenu:function(menu_key){ return menubar.getMenu(menu_key)}
-    , render:function(menu){ menubar.render()}
-    , idContent:idContent
+    ,  render:function(menu){ menubar.render()}
+    , idContent:_c$.CONTENT
     }
 }();
 
-j$.Dashboard.Sidebar=function(){
-    let menubar, items={}, idContent=CONFIG.SIDEBAR.CONTENT; 
-    function render(item){ // vai para o contexto de menu no addMenu
-        let menu  = this
-          , onClick ="href='javascript:"
-                    +"j$.Dashboard.Sidebar.c$."+menu.key+".c$."+item.key+".open(\""+menu.key+"\",\""+item.key +"\")' "
-          , clas$ =` class='${CONFIG.SIDEBAR.CLASS.LINK}' `;
+// j$.Dashboard.Sidebar=function(){
+//     let menubar, items={}, idContent=CONFIG.SIDEBAR.CONTENT; 
+//     function render(item){ // vai para o contexto de menu no addMenu
+//         let menu  = this
+//           , onClick ="href='javascript:"
+//                     +"j$.Dashboard.Sidebar.c$."+menu.key+".c$."+item.key+".open(\""+menu.key+"\",\""+item.key +"\")' "
+//           , clas$ =` class='${CONFIG.SIDEBAR.CLASS.LINK}' `;
         
-        let _base =  menu.dropbox.target.insert(`<div class="${CONFIG.SIDEBAR.CLASS.WRAP}">`
-                                   + `<a ${onClick} ${clas$}> ${item.caption} </a></div>`); 
-        if (item.onClick)
-           $(_base).click(item.onClick);                                             
-        return _base;
-    }      
-    function create(item){ // vai para o contexto de menu no addMenu
-        let menu  = this;
-        item.Parent=menu;
-        menu.c$[item.key]=item;
-        if (item.partial && !item.url)
-            item.url = item.partial;  
-        if (item.partial)
-            item.open=function(keyMenu, keyItem){
-                let option=j$.Dashboard.Sidebar.c$[keyMenu].c$[keyItem];
-                j$.Dashboard.Tabs.openPartial(option);
-            };
-        else
-            item.open=function(keyMenu, keyItem){
-                let option=j$.Dashboard.Sidebar.c$[keyMenu].c$[keyItem];
-                j$.Dashboard.Tabs.delegateTo(option);
-            };             
-        menu.render(item);  
-        return item;   
-    }    
-    function add(items){    
-        if (dataExt.isObject(items) || (dataExt.isString(items) && !items.isEmpty())){
-            if (items.items)
-               return j$.Dashboard.Sidebar.addMenu(items)   //adiciona o menu
-                                          .add(items.items);//adiciona o submenu
-            else
-               return this.create(items);                  
-        }else if (dataExt.isArray(items)){
-            _items=[]
-            for (let idx=0; idx<items.length;idx++)
-            //items.forEach((item,idx)=>{
-                _items[idx]=this.add(items[idx]); 
-            //})
-            return _items;
-        } //else 
-        //     return _base.divider.add(items);          
-    }
-    return{
-        //menu={key:'', caption:'', url:'', hint:'', items:[]}
-        bindItems: function(menu, Services){
-            //var menuBase = menubar.addMenu(menu);
-            menu.items.forEach(option=>{    
-                menu.create(Services[option]);                               
-            })
-        }
-    ,  bindToTabs: function(Services, options){
-         for (let key in options){
-            let menu = options[key];
-            if (dataExt.isArray(menu))
-                menu = {items:options[key]};
-            Object.preset(menu, {key, id:`${idContent}_${key}`});
-            j$.Dashboard.Sidebar.addMenu(menu);
-            j$.Dashboard.Sidebar.bindItems(menu, Services);
-         }
-    }
-    , create(){return true}
-    , addMenu(menu){
-         Object.identify(menu);                   // garantir 'key' e 'id'
-         Object.label(menu,['caption', 'label']); // garantir o caption 
-         menu.dropbox  = TYPE.DROPBOX(menu);
-         if (!menu.c$)
-            menu.c$={};         
-         j$.Dashboard.Sidebar.c$[menu.key]=menu;
-         menu.add = add;       
-         menu.render = render;  
-         menu.create = create;
-         return menu;
-    }
-    , idContent:idContent
-    , c$:items
-    , C$(key){return items[key]}
-    , render(){return true}
-    }
-}()
+//         let _base =  menu.dropbox.target.insert(`<div class="${CONFIG.SIDEBAR.CLASS.WRAP}">`
+//                                    + `<a ${onClick} ${clas$}> ${item.caption} </a></div>`); 
+//         if (item.onClick)
+//            $(_base).click(item.onClick);                                             
+//         return _base;
+//     }      
+//     function create(item){ // vai para o contexto de menu no addMenu
+//         let menu  = this;
+//         item.Parent=menu;
+//         menu.c$[item.key]=item;
+//         if (item.partial && !item.url)
+//             item.url = item.partial;  
+//         if (item.partial)
+//             item.open=function(keyMenu, keyItem){
+//                 let option=j$.Dashboard.Sidebar.c$[keyMenu].c$[keyItem];
+//                 j$.Dashboard.Tabs.openPartial(option);
+//             };
+//         else
+//             item.open=function(keyMenu, keyItem){
+//                 let option=j$.Dashboard.Sidebar.c$[keyMenu].c$[keyItem];
+//                 j$.Dashboard.Tabs.delegateTo(option);
+//             };             
+//         menu.render(item);  
+//         return item;   
+//     }    
+//     function add(items){    
+//         if (dataExt.isObject(items) || (dataExt.isString(items) && !items.isEmpty())){
+//             if (items.items)
+//                return j$.Dashboard.Sidebar.addMenu(items)   //adiciona o menu
+//                                           .add(items.items);//adiciona o submenu
+//             else
+//                return this.create(items);                  
+//         }else if (dataExt.isArray(items)){
+//             _items=[]
+//             for (let idx=0; idx<items.length;idx++)
+//             //items.forEach((item,idx)=>{
+//                 _items[idx]=this.add(items[idx]); 
+//             //})
+//             return _items;
+//         } //else 
+//         //     return _base.divider.add(items);          
+//     }
+//     return{
+//         //menu={key:'', caption:'', url:'', hint:'', items:[]}
+//         bindItems: function(menu, Services){
+//             //var menuBase = menubar.addMenu(menu);
+//             menu.items.forEach(option=>{    
+//                 menu.create(Services[option]);                               
+//             })
+//         }
+//     ,  bindToTabs: function(Services, options){
+//          for (let key in options){
+//             let menu = options[key];
+//             if (dataExt.isArray(menu))
+//                 menu = {items:options[key]};
+//             Object.preset(menu, {key, id:`${idContent}_${key}`});
+//             j$.Dashboard.Sidebar.addMenu(menu);
+//             j$.Dashboard.Sidebar.bindItems(menu, Services);
+//          }
+//     }
+//     , create(){return true}
+//     , addMenu(menu){
+//          Object.identify(menu);                   // garantir 'key' e 'id'
+//          Object.label(menu,['caption', 'label']); // garantir o caption 
+//          menu.dropbox  = TYPE.DROPBOX(menu);
+//          if (!menu.c$)
+//             menu.c$={};         
+//          j$.Dashboard.Sidebar.c$[menu.key]=menu;
+//          menu.add = add;       
+//          menu.render = render;  
+//          menu.create = create;
+//          return menu;
+//     }
+//     , idContent:idContent
+//     , c$:items
+//     , C$(key){return items[key]}
+//     , render(){return true}
+//     }
+// }()
 
 j$.ui.Open = function(){
     return{

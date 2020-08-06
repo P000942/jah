@@ -36,7 +36,7 @@ const adapter={
          ,    Outros:['Assunto', 'SituacaoAtividade','Partial'] // key e caption serão igual a "Outros"
          ,  Consulta:['Pessoa','Basico']
        }
-       ,factory: "Menubar" // "Menubar"  ou "Sidebar"    
+       //,factory: "Menubar" // "Menubar"  ou "Sidebar"    
     }   
 };
 System.using("js/crud/modelo.js"); // Didatico para ver como carregar um arquivo javascript ou css
