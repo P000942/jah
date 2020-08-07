@@ -556,11 +556,14 @@ function superType(Type, Properties) {
       // SELF.Label.create(wrap, SELF.id, key, SELF.design);
    }
    this.create= (wrap, id, key, design) =>{
-       SELF.identify(wrap, id, key, design);
-       TYPE.HELPER.createLabel(SELF, wrap)
-       let wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput',design.clas$.field);
+       SELF.identify(wrap, id, key, design);       
+       let wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput',design.clas$.column);
+       if (design.inLine)
+          TYPE.HELPER.createLabel(SELF, wrap)
+       else   
+          TYPE.HELPER.createLabel(SELF, wrapInput)
        let input     = j$.ui.Render.input(wrapInput, SELF.id, SELF.type, SELF.maxlength, SELF.attributes);
-       wrapInput.stylize(SELF.design.inputStyle);
+       wrapInput.stylize(SELF.design.columnStyle);
        if (SELF.onChangeHandle)
           input.onchange = SELF.onChangeHandle;
        SELF.bind(input) //(i$(SELF.id));

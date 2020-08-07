@@ -645,16 +645,16 @@ System.Action = ()=>{
 j$.util = function(){
     let sequence = {};
     let getId = function(key, id){
+        let _k =(dataExt.isString(key)) ? key.split(" ")[0] :'SequenceId';
         if (id!=undefined){
             if (!id.isEmpty())
                 return id;
         }
-        if (key==undefined)
-            key = 'SequenceId';
-        if (sequence[key]==undefined)
-            sequence[key]=0;
-        sequence[key]=sequence[key]+1;
-        return key + "_" + sequence[key];
+
+        if (sequence[_k]==undefined)
+            sequence[_k]=0;
+        sequence[key]=sequence[_k]+1;
+        return _k + "_" + sequence[_k];
     };
     return{
         getId:getId

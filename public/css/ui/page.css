@@ -121,6 +121,10 @@ fieldset > legend{
     text-align: right;
 }
 
+.wrap_classic{
+  /* font-size: 1.5rem; */
+}
+
 .wrap_input, .wrap_classic_field{
     height:30px;
     line-height: 30px;
@@ -170,7 +174,7 @@ fieldset > legend{
     font-size: 14px;
     font-weight: bold;
     height: 30px;
-    padding-top: 0px;
+    padding-left: 10px; 
     text-align: left;
     padding-bottom: 4px;
 }
@@ -199,10 +203,10 @@ fieldset > legend{
     border: 1px solid #005000;
 }
 
-.wrap_framebox > .wrap_box
+.wrap_framebox > div
 ,.slidebox_show > div
 {
-    padding: 4px;
+    padding-left: 10px;
 }
 
 

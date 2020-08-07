@@ -5,17 +5,21 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="../css/bootstrap.css">
     <link rel="stylesheet" href="../css/font-awesome.css">
 
-    <link rel="stylesheet" href="../css/bootstrap-responsive.min.css">
+    <!-- <link rel="stylesheet" href="../css/bootstrap-responsive.min.css"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" 
+    crossorigin="anonymous">  
     <link rel="stylesheet" href="../css/layout.css" />
 
     <script src="../js/vendor/jquery-3.5.1.js"></script>
 
-    <script src="../js/vendor/bootstrap.min.js"></script>
+    <!-- <script src="../js/vendor/bootstrap.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script> 
     <script src="../js/jah/api/dataExt.js"></script>
     <script src="../js/jah/config.js"></script>
     <script src="../js/jah/api/system.js"></script>
@@ -63,35 +67,38 @@
           ,    title:'Exemplo Designer'
           , design:[
                 {type:'classic'
-                     , fields:['Digito','ufLegenda'], labelStyle:{width:'140px'}}
+                     , fields:['Digito','ufLegenda']} //, labelStyle:{width:'140px'}}
               , {type:'line'
-                     , style:{width:'90%', marginBottom:'5px', borderColor:'green'}, title:'inLine'}
-              , {type:'inLine'
-                     , fields:['Dinheiro','Numerico'], style:{marginLeft:'60px'}}
+                     , style:{width:'90%', marginBottom:'5px', borderColor:'green'}, title:'colunas'}
+              , {type:'column'
+                     , fields:['Dinheiro','Numerico'], style:{marginLeft:'60px'}
+                     , grid:['col-sm-2','col-sm-3']
+                    }
               , {type:'line'
                      , style:{marginLeft:'width:100%', marginBottom:'5px', borderColor:'green'}, title:"Caracteres Especiais"}
-              , {type:'inLine'  , fields:[['Nome', 'Letra'],['Maiuscula','Minuscula']]
+              , {type:'column'  , fields:[['Nome', 'Letra'],['Maiuscula','Minuscula']]
                                 , style:{marginLeft:'34px'}
-                                , labelStyle:{width:'85px',  textAlign:'left' }
-                                , columnStyle:{width:'360px', display: 'inline-block'}
+                             /*    , labelStyle:{width:'85px',  textAlign:'left' }
+                                , columnStyle:{width:'360px', display: 'inline-block'} */
                             }
               , {type:'line'    , style:{marginBottom:'1px', borderColor:'green'}
                                 , title:{text:"Campos Especiais Formatados", style:{textAlign:'left'}}}
-              , {type:'inLine'  , fields:[['CNPJ','CCA'],['CPF','CEP']]
+              , {type:'column'  , fields:[['CNPJ','CCA'],['CPF','CEP']]
                                 , style:{marginLeft:'3.0em'}
-                                , labelStyle:{width:'4em'}
-                                , columnStyle:{width:'350px', display: 'inline-block'}
+                      /*           , labelStyle:{width:'4em'}
+                                , columnStyle:{width:'350px', display: 'inline-block'} */
                             }
               , {type:'line'    , style:{marginTop:'1px'}
                                 , title:{text:"Estilo de Coluna", style:{textAlign:'left'}}}
               , {type:'column'  , fields:[['Data','Hora'],['Telefone','Placa']], style:{marginLeft:'80px'}}
-              , {type:'slidebox.column', fields:['Mascara','MascaraUsuario'], id:'slidebox', title:'Máscaras'
-                                       , design:[{type:'inLine', fields:'Check'}]} // 1.quando tem apenas um campo, não precisar usar o um array para definir
+              , {type:'slidebox.column', fields:['Mascara','MascaraUsuario']
+                                       , id:'slidebox', title:'Máscaras'
+                                       , design:[{type:'classic', fields:'Check'}]} // 1.quando tem apenas um campo, não precisar usar o um array para definir
                                                                                    // 2.Inclui no frame 'slidebox' os fields definidos no Array no estilo 'column'
                                                                                    // 3.Em seguida, no mesmo frame desenha tudo o que está definido em design (recursivo)
               , {type:'framebox',  id:'framebox', title:'Listas'}
-              , {type:'inLine',  frame:'framebox', fields:['listUf', 'Lista']} //Outra forma de colocar os campos em um frame é indicar o nome do mesmo
-              , {type:'classic',  container:'framebox', fields:'Email'} //Pode-se ainda indicar o id de algum container específico;
+              , {type:'column',  frame:'framebox', fields:['listUf', 'Lista']} //Outra forma de colocar os campos em um frame é indicar o nome do mesmo
+              , {type:'classic',  container:'framebox', fields:'Email'}        //Pode-se ainda indicar o id de algum container específico;
            ]
     };
 
@@ -122,26 +129,24 @@
 
 </head>
 <body>
-    <div id="page" class='page'>
-        <header>
-           <div class="header-top">
-              <div  class="top-left"></div>
-           </div>
-           <nav class="navbar" id="menubar"></nav>
+    <!-- <div id="page" class='page'> -->
+        <header class="navbar navbar-expand navbar-light bg-light sticky-top flex-md-nowrap p-0 shadow">
+           <div class="top-left navbar-brand col-md-2 col-lg-2"></div>
+           <nav id="menubar"></nav>
         </header>
 
-        <nav id="nav-left"><div  id="sidebar"></div></nav>
+        <!-- <nav id="nav-left"><div  id="sidebar"></div></nav> -->
 
-        <section id="content_section">
+        <section id="content_section" class="container-fluid">
             <div id='content'></div>
         </section>
 
-        <aside id="nav-right"></aside>
+        <!-- <aside id="nav-right"></aside> -->
 
-        <footer class="navbar-fixed-bottom">
+        <!-- <footer class="navbar-fixed-bottom">
             <div class="footer" id="Sefaz">© 2013 - Secretaria de Estado da Fazenda</div>
-        </footer>
+        </footer> -->
 
-    </div>
+    <!-- </div> -->
 </body>
 </html>
