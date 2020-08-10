@@ -654,6 +654,14 @@ Object.preset = (receiver, propertie, defaultvalue)=>{
     }
     return receiver;
 };
+Object.toLowerCase = (propertie)=>{
+    let receiver ={};
+    if (dataExt.isObject(propertie)){ // copia propriedades do objeto
+       for (let key in propertie)
+           receiver[key.toLowerCase()] = propertie[key]
+    }
+    return receiver;
+};
 // var aux = {a:1,b:2}
 // console.log(Object.preset(aux,'c',{x:1, y:2}));
 // aux = Object.preset({a:1,b:2},{x:1, y:2});

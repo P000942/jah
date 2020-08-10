@@ -39,13 +39,15 @@ j$.ui.Render= function(){
                 }
                 return result;
           }
-         , wrap:(wrap, id, clas$)=>{
+         , wrap:(wrap, id, clas$, style)=>{
               let id$ = j$.util.getId(clas$, id);
-              if (!i$(id$))
+              if (!i$(id$)){
                  wrap.insert(`<div id='${id$}' class='${clas$}'></div>`);
+                 i$(id$).stylize(style);
+              }   
               return i$(id$);
           }
-        , label: (wrap, label, inputId, clas$="col-sm-2 col-form-label col-form-label-sm", mandatory)=>{
+        , label: (wrap, label, inputId, clas$=CONFIG.LABEL.CLASS.DEFAULT, mandatory)=>{
               let att={clas$
                        ,  id:(inputId) ?inputId+ '_label' :j$.util.getId('Label')
                        , for:(inputId) ?inputId :null
@@ -54,13 +56,11 @@ j$.ui.Render= function(){
               if (!i$(att.id)){ // cria se não existir
                  let _att = j$.ui.Render.attributes(att,'label')
                  , required =(mandatory) ?'<span class="required">*</span>' :'';
-                 $(wrap).prepend(`<label ${_att} >${label}${required}:</label>`);
+                 $(wrap).append(`<label ${_att} >${label}${required}:</label>`);
               }
               return i$(att.id);
         }
         , input:(wrap, id, inputType, maxlength, attributes)=>{
-            //   if (attributes && !attributes.clas$)
-            //      attributes.clas$ = "form-control";
               if (!i$(id)){
                  let size =(maxlength)?" size='" +maxlength+ "'":""
                  ,   type = (inputType)?inputType:'text'
@@ -301,19 +301,13 @@ TYPE.HELPER = {
 
         inputField.maxlength = (inputField.size>inputField.mask.size) ?inputField.size :inputField.mask.size;
     }
-    , bindField: function(inputField, _input){
+    , bindField: function(inputField, _input, clas$=CONFIG.INPUT.CLASS.DEFAULT){
         inputField.binded=true;
         inputField.Input=_input;
         inputField.Input.bind(inputField);
         inputField.id =_input.id;
-        inputField.classDefault = CONFIG.INPUT.CLASS.DEFAULT;
-        // if (!inputField.key)
-        //     inputField.key =inputField.id;
-        let hint = "";
- 
-        inputField.Error = j$.Feedback; //new j$.ui.type.HintIcon(_input, _input.id+'_error', CONFIG.ACTION.ERROR.KEY);
-        // if (inputField.hint)
-        //    inputField.Hint = new j$.ui.type.HintIcon(_input, _input.id+'_info', CONFIG.ACTION.INFO.KEY, inputField.hint);
+        inputField.classDefault = clas$;
+        inputField.Error = j$.Feedback; 
         
         TYPE.HELPER.setLabel(inputField, _input); // definir o label
  
@@ -348,12 +342,6 @@ TYPE.HELPER = {
         _input.className   = _input.className + " " + inputField.classDefault;
     }
 };
-// Helper={}
-// Helper.Label = function(){
-//    RETURN {
-
-//    }
-// }()
 
 class Ma$k{
     constructor(mask){
@@ -557,16 +545,21 @@ function superType(Type, Properties) {
    }
    this.create= (wrap, id, key, design) =>{
        SELF.identify(wrap, id, key, design);       
-       let wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput',design.clas$.column);
-       if (design.inLine)
-          TYPE.HELPER.createLabel(SELF, wrap)
-       else   
-          TYPE.HELPER.createLabel(SELF, wrapInput)
+       let wrapInput;
+       if (design.labelInTheSameWrap){
+          wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput',design.clas$.column, SELF.design.columnStyle);
+          TYPE.HELPER.createLabel(SELF, wrapInput, design.clas$.label)          
+       }else{   
+          TYPE.HELPER.createLabel(SELF, wrap, design.clas$.label);
+          wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput',design.clas$.column, SELF.design.columnStyle);
+       }   
+          
        let input     = j$.ui.Render.input(wrapInput, SELF.id, SELF.type, SELF.maxlength, SELF.attributes);
-       wrapInput.stylize(SELF.design.columnStyle);
+      // wrapInput.stylize(SELF.design.columnStyle);
        if (SELF.onChangeHandle)
           input.onchange = SELF.onChangeHandle;
-       SELF.bind(input) //(i$(SELF.id));
+       SELF.bind(input, design.clas$.input) 
+    //    return wrapInput;
    };
    this.text  =p_value=>{return SELF.value(p_value);}; // Se tem um texto associado ou uma lista (pode ser usado para um AJAX)
    this.value =p_value=>{ // Retorna o valor sem m�scara (caso haja)
@@ -609,7 +602,7 @@ function superType(Type, Properties) {
         i$(SELF.id).className = SELF.classDefault; //CONFIG.INPUT.CLASS.DEFAULT;
    };
 
-   this.bind = _input=>{TYPE.HELPER.bindField(SELF,_input)}
+   this.bind = (_input, clas$)=>{TYPE.HELPER.bindField(SELF,_input,clas$)}
 
    this.filterToggle=showFilter=>{
         SELF.onFilter = (dataExt.isDefined(showFilter))

@@ -10,9 +10,9 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
                       integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" 
                       crossorigin="anonymous">      
-    <link rel="stylesheet" href="css/font-awesome.css">
-    <link type="text/css" rel="stylesheet" href="css/layout.css" />
-    <script src="js/vendor/jquery-3.5.1.js"></script>
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/layout.css" />
+    <script src="../js/vendor/jquery-3.5.1.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script> 
@@ -25,11 +25,10 @@
     <script src="../js/jah/ui/page.js"></script>
 </head>
 <body>
-    <!-- <div id="page" class='page'> -->
        
         <section id="content_section" class="container-fluid">
             <div id="content" role="main"></div>
-         
+               <fieldset class="crud">
                     <div class="form-row">
                         <div class="form-group col-md-6">
                         <label for="inputEmail4">Email</label>
@@ -41,16 +40,20 @@
                         </div>
                     </div>      
                     <div class="form-group row">
-                        <label for="colFormLabelSm" class="col-sm-2 col-md-2 col-form-label col-form-label-sm">Email</label>
-                        <div class="col-sm-10 col-md-10">
-                          <input type="email" class="form-control form-control-sm" id="colFormLabelSm" placeholder="col-form-label-sm">
+                        <label for="colFormLabelSm" class="col-sm-2 col-md-2 col-form-label lbl_inLine">Email</label>
+                        <div class="col-sm-4 col-md-4">
+                          <input type="email" class="form-control" id="colFormLabelSm" placeholder="col-form-label-sm">
+                        </div>
+                        <label for="phone" class="col-form-label col-auto lbl_inLine" style="text-align: right;">phone</label>
+                        <div class="col-sm-4 col-md-4">
+                          <input type="text" class="form-control" id="phone" placeholder="col-form-label-sm">
                         </div>
                     </div>
-                
+                </fieldset>
             </div>
         </section>
 
-    <!-- </div> -->
+
 
 </body>
 </html>

@@ -580,33 +580,35 @@ j$.ui.Page = function(){
      , C$:key=>{return items[key]}
      , createAdapter: adapter=>{j$.ui.Adapter = new j$.ui.adapterFactory(adapter); return j$.ui.Adapter;}
      , Designer:function(){
-          let addField=(form, section, fieldset, design, key, wrap)=>{
+          let addField=(form, section, fieldset, design, key, wrapRow)=>{
               if (fieldset.C$(key)){
                  let id =   form.id +'_'+key;
-                 if (!wrap)
-                     wrap = j$.ui.Render.wrap(section, id+'_wrapRow', design.clas$.row);
-                 fieldset.C$(key).create(wrap, id, key, design);
-                 wrap.stylize(design.rowStyle);
+                 if (!wrapRow)
+                     wrapRow = j$.ui.Render.wrap(section, id+'_wrapRow', design.clas$.row, design.rowStyle);
+                 fieldset.C$(key).create(wrapRow, id, key, design);
+                 //wrapRow.stylize(design.rowStyle);
               }
-              return wrap;
+              return wrapRow;
           };
           let addRow= (page, section, fieldset, fields, design)=>{
               if (dataExt.isArray(fields)){
-                 let wrapRow;                                      
-                 for (let i=0; i<fields.length; i++){                                          
+                 let wrapRow, key;                                      
+                 for (let i=0; i<fields.length; i++){ 
+                     key = fields[i];                                         
                      if (design.grid && design.grid[i])
                         design.clas$.column += ' ' +design.grid[i];
-                     wrapRow = addField(page.form, section, fieldset, design, fields[i], wrapRow);
-                     if (design.inLine)
-                         wrapRow = false;
+                     wrapRow = addField(page.form, section, fieldset, design, key, wrapRow);
+                     if (!design.inLine)                     
+                    //  if (!design.labelInTheSameWrap) // renderizar o label no mesmo wrap d
+                         wrapRow = null;
                  }     
               }else
                   addField(page.form, section, fieldset, design, fields);
-            //   return wrapRow;
+
           };
           let addSection=(page, section, fieldset, design)=>{
                let wrapSection = (design.clas$.section) 
-                            ?j$.ui.Render.wrap(section, null,design.clas$.section)
+                            ?j$.ui.Render.wrap(section, null,design.clas$.section, design.style)
                             :section                
                 if (dataExt.isArray(design.fields[0])){
                     for (let k=0; k<design.fields.length; k++)
@@ -614,7 +616,7 @@ j$.ui.Page = function(){
                 }else{
                     addRow(page, wrapSection, fieldset, design.fields, design) ;
                 }
-                wrapSection.stylize(design.style); 
+                //wrapSection.stylize(design.style); 
                 return wrapSection;    
           };
           return{
@@ -658,25 +660,32 @@ j$.ui.Page = function(){
                     }
             }
             , standard:(page, section, fieldset)=>{
+                   let design={clas$:Object.toLowerCase(CONFIG.DESIGN.STANDARD)
+                        , labelStyle:{textAlign:'right'}
+                      }
                   if (fieldset){
-                     for (let key in fieldset.c$){
-                        let design={clas$:{section:'wrap_classic',row:'form-group row', column:"col-auto"}
-                             ,     inLine:true
-                             , labelStyle:{textAlign:'right'}
-                            }
-                        addField(page.form, section, fieldset, design, key);
-                     }
+                     for (let key in fieldset.c$)
+                        addField(page.form, section, fieldset, design, key);                     
                   }
               }
             ,   classic:(page, section, fieldset, design)=>{
-                    design.clas$={section:'wrap_classic',row:'form-group row', column:"col-auto"};                    
-                    Object.preset(design,{labelStyle:{textAlign:'right'}, inLine:true});    
+                    design.clas$=Object.toLowerCase(CONFIG.DESIGN.CLASSIC);                    
+                    Object.preset(design,{labelStyle:{textAlign:'right'}});    
                     let wrapSection = addSection(page, section, fieldset, design);
-                   // wrapSection.stylize(design.style);
                     return wrapSection;
               }
+              , inLine:(page, section, fieldset, design)=>{
+                    design.clas$=Object.toLowerCase(CONFIG.DESIGN.INLINE);                    
+                    Object.preset(design,{inLine:true, labelInTheSameWrap:false});    
+                    let wrapSection = addSection(page, section, fieldset, design);
+                    return wrapSection;
+              }              
             ,   column:(page, section, fieldset, design)=>{
-                    design.clas$={section:'wrap_classic',row:'form-row', column:"form-group", design:design};
+                    //design.clas$={section:'wrap_classic',row:'form-row', column:"form-group", design:design};
+                    design.clas$=Object.toLowerCase(CONFIG.DESIGN.COLUMN); 
+                    design.design = design;
+                    Object.preset(design,{inLine:true, labelInTheSameWrap:true});
+                    
                     let wrapSection = addSection(page, section, fieldset, design);
                     wrapSection.stylize(design.style);
                     return wrapSection;

@@ -173,11 +173,15 @@ const CONFIG = {
       ,    INFO:{CLASS:'alert-info'}
     }
     ,FEEDBACK:{CLASS:{VALID:'valid-feedback', INVALID:'invalid-feedback', LEGEND:''}}
-    ,   INPUT:{CLASS:{DEFAULT:'form-control form-control-sm',FOCUS:'input_focus'
+    ,   INPUT:{CLASS:{DEFAULT:'form-control form-control-sm', FOCUS:'input_focus'
                     , INVALID:'form-control form-control-sm is-invalid'
                     ,   VALID:'form-control form-control-sm is-valid'
                     }
-              }
+              }     
+    ,   LABEL:{CLASS:{DEFAULT:"col-sm-2 col-form-label col-form-label-sm"
+                     , INLINE:"col-form-label col-auto lbl_inLine"
+                     }}    
+    ,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row", COLUMN:"col-auto", FIELD:"col-auto"}}                           
     ,   CHECK:{CLASS:{DEFAULT:'form-check-input', ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
     ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
@@ -191,6 +195,16 @@ const CONFIG = {
                       } 
         }                 
 };
+CONFIG.DESIGN={
+      STANDARD:{SECTION:CONFIG.WRAP.CLASS.SECTION ,  ROW:CONFIG.WRAP.CLASS.ROW, COLUMN:CONFIG.WRAP.CLASS.COLUMN, FIELD:CONFIG.WRAP.CLASS.FIELD
+                , INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.DEFAULT} 
+    ,  CLASSIC:{SECTION:CONFIG.WRAP.CLASS.SECTION ,  ROW:CONFIG.WRAP.CLASS.ROW, COLUMN:CONFIG.WRAP.CLASS.COLUMN, FIELD:CONFIG.WRAP.CLASS.FIELD
+              ,   INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.DEFAULT}  
+    ,   COLUMN:{SECTION:CONFIG.WRAP.CLASS.SECTION ,  ROW:"form-row", COLUMN:"form-group",FIELD:CONFIG.WRAP.CLASS.FIELD
+              ,   INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.DEFAULT} 
+    ,   INLINE:{SECTION:CONFIG.WRAP.CLASS.SECTION ,  ROW:CONFIG.WRAP.CLASS.ROW, COLUMN:CONFIG.WRAP.CLASS.COLUMN, FIELD:CONFIG.WRAP.CLASS.FIELD
+              ,   INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.INLINE}                                          
+} 
 //@note: Retorna o objeto com o status http
 CONFIG.HTTP.STATUS.get = status =>{
           let res = Object.getByValue(CONFIG.HTTP.STATUS, status,'VALUE');
