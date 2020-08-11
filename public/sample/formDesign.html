@@ -70,9 +70,11 @@
                      , fields:['Digito','ufLegenda']} //, labelStyle:{width:'140px'}}
               , {type:'line'
                      , style:{width:'90%', marginBottom:'5px', borderColor:'green'}, title:'colunas'}
-              , {type:'column'
-                     , fields:['Dinheiro','Numerico'], style:{marginLeft:'60px'}
-                     , grid:['col-sm-2','col-sm-3']
+              , {type:'column', style:{marginLeft:'40px'}
+                     ,  fields:['Dinheiro','Numerico']
+                     , columns:[{clas$:'col-sm-2', style:'color:blue;'}
+                                ,'col-sm-4' // classe é a propriedade default para o caso de string na ocorrencia do array
+                               ]
                     }
               , {type:'line'
                      , style:{marginLeft:'width:100%', marginBottom:'5px', borderColor:'green'}, title:"Caracteres Especiais"}

@@ -580,6 +580,17 @@ j$.ui.Page = function(){
      , C$:key=>{return items[key]}
      , createAdapter: adapter=>{j$.ui.Adapter = new j$.ui.adapterFactory(adapter); return j$.ui.Adapter;}
      , Designer:function(){
+          let getAttInSection =(design, wrapSection, prop, idx)=>{
+              let att;
+              if (design[wrapSection] && design[wrapSection][idx]) {// existe a secao e a ocorrencia
+                 if (dataExt.isObject(design[wrapSection][idx])){
+                    if (design[wrapSection][idx][prop])             // existe o atributo
+                       att = design[wrapSection][idx][prop];                
+                 } else if (dataExt.isString(design[wrapSection][idx]) && prop=="clas$") // é o atributo default para o caso de vir string
+                    att = design[wrapSection][idx];
+              }      
+              return att;      
+          }
           let addField=(form, section, field, design, key, wrapRow)=>{
               if (field){
                  let id =   form.id +'_'+key;
@@ -588,14 +599,15 @@ j$.ui.Page = function(){
                  field.create(wrapRow, id, key, design);
               }
               return wrapRow;
-          };
+          }
           let addRow= (page, section, fieldset, fields, design)=>{
               if (dataExt.isArray(fields)){
-                 let wrapRow, key, originalClass=design.clas$.column;
+                 let wrapRow, key, colClass, originalClass=design.clas$.column;
                  for (let i=0; i<fields.length; i++){ 
-                     key = fields[i];                                                            
-                     if (design.grid && design.grid[i])
-                        design.clas$.column = originalClass +' '+ design.grid[i];
+                     key = fields[i];                                                        
+                     colClass = getAttInSection(design, "columns", "clas$", i);
+                     design.columnStyle = getAttInSection(design, "columns", "style", i);
+                     design.clas$.column = (colClass) ?originalClass +' '+colClass :originalClass;                         
                      wrapRow = addField(page.form, section, fieldset.c$[key], design, key, wrapRow);
                      if (!design.inLine)                                         
                          wrapRow = null;
