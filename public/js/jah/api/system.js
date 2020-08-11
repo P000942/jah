@@ -21,7 +21,7 @@ const ERROR = function() {
         if (field){
             if (method!="hide")
                msg=subscribe(msg,field);
-            if (handle)
+            if (handle && handle[method])
                 handle[method](field, msg,clas$);
             else
                 ERROR[method](field, msg,clas$);

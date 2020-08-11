@@ -580,31 +580,29 @@ j$.ui.Page = function(){
      , C$:key=>{return items[key]}
      , createAdapter: adapter=>{j$.ui.Adapter = new j$.ui.adapterFactory(adapter); return j$.ui.Adapter;}
      , Designer:function(){
-          let addField=(form, section, fieldset, design, key, wrapRow)=>{
-              if (fieldset.C$(key)){
+          let addField=(form, section, field, design, key, wrapRow)=>{
+              if (field){
                  let id =   form.id +'_'+key;
                  if (!wrapRow)
                      wrapRow = j$.ui.Render.wrap(section, id+'_wrapRow', design.clas$.row, design.rowStyle);
-                 fieldset.C$(key).create(wrapRow, id, key, design);
-                 //wrapRow.stylize(design.rowStyle);
+                 field.create(wrapRow, id, key, design);
               }
               return wrapRow;
           };
           let addRow= (page, section, fieldset, fields, design)=>{
               if (dataExt.isArray(fields)){
-                 let wrapRow, key;                                      
+                 let wrapRow, key, originalClass=design.clas$.column;
                  for (let i=0; i<fields.length; i++){ 
-                     key = fields[i];                                         
+                     key = fields[i];                                                            
                      if (design.grid && design.grid[i])
-                        design.clas$.column += ' ' +design.grid[i];
-                     wrapRow = addField(page.form, section, fieldset, design, key, wrapRow);
-                     if (!design.inLine)                     
-                    //  if (!design.labelInTheSameWrap) // renderizar o label no mesmo wrap d
+                        design.clas$.column = originalClass +' '+ design.grid[i];
+                     wrapRow = addField(page.form, section, fieldset.c$[key], design, key, wrapRow);
+                     if (!design.inLine)                                         
                          wrapRow = null;
-                 }     
+                 }    
+                 design.clas$.column = originalClass;
               }else
-                  addField(page.form, section, fieldset, design, fields);
-
+                  addField(page.form, section, fieldset.c$[fields], design, fields);
           };
           let addSection=(page, section, fieldset, design)=>{
                let wrapSection = (design.clas$.section) 
@@ -616,14 +614,13 @@ j$.ui.Page = function(){
                 }else{
                     addRow(page, wrapSection, fieldset, design.fields, design) ;
                 }
-                //wrapSection.stylize(design.style); 
                 return wrapSection;    
           };
           return{
               create:page=>{
                  if (page.service.Interface.design){ // Serah feito segundo o design
                      j$.ui.Page.Designer.design(page, page.service.Interface.design, page.fieldset);
-                 }else{            // Serah tudo no modo standard
+                 }else{                              // Serah tudo no modo standard
                      j$.ui.Page.Designer.standard(page, page.fieldset, page.service.Fieldset);
                  }
               }
@@ -660,12 +657,12 @@ j$.ui.Page = function(){
                     }
             }
             , standard:(page, section, fieldset)=>{
-                   let design={clas$:Object.toLowerCase(CONFIG.DESIGN.STANDARD)
-                        , labelStyle:{textAlign:'right'}
+                  let design={clas$:Object.toLowerCase(CONFIG.DESIGN.STANDARD)
+                       , labelStyle:{textAlign:'right'}
                       }
                   if (fieldset){
                      for (let key in fieldset.c$)
-                        addField(page.form, section, fieldset, design, key);                     
+                        addField(page.form, section, fieldset.c$[key], design, key);                     
                   }
               }
             ,   classic:(page, section, fieldset, design)=>{
@@ -681,11 +678,8 @@ j$.ui.Page = function(){
                     return wrapSection;
               }              
             ,   column:(page, section, fieldset, design)=>{
-                    //design.clas$={section:'wrap_classic',row:'form-row', column:"form-group", design:design};
-                    design.clas$=Object.toLowerCase(CONFIG.DESIGN.COLUMN); 
-                    design.design = design;
-                    Object.preset(design,{inLine:true, labelInTheSameWrap:true});
-                    
+                    Object.preset(design,{clas$:Object.toLowerCase(CONFIG.DESIGN.COLUMN)
+                                         ,inLine:true, labelInTheSameWrap:true, design});                    
                     let wrapSection = addSection(page, section, fieldset, design);
                     wrapSection.stylize(design.style);
                     return wrapSection;

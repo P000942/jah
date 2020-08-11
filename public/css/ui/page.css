@@ -125,7 +125,6 @@ fieldset > legend{
     text-align: right;
 }
 
-.wrap_classic{}
 
 .wrap_input, .wrap_classic_field{
     height:30px;
@@ -171,11 +170,11 @@ fieldset > legend{
         display:inline;
 }
 
-.wrap_framebox_legend, .wrap_dropbox_legend {
-    font-family: Verdana, Helvetica, Arial, Sans-Serif;
+.wrap_framebox_legend, .wrap_dropbox_legend, .wrap_classic {
+    /* font-family: Verdana, Helvetica, Arial, Sans-Serif;
     font-size: 14px;
-    font-weight: bold;
-    height: 30px;
+    font-weight: bold; */
+    /* height: 30px; */
     padding-left: 10px; 
     text-align: left;
     padding-bottom: 4px;
