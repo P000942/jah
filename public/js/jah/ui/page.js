@@ -580,14 +580,16 @@ j$.ui.Page = function(){
      , C$:key=>{return items[key]}
      , createAdapter: adapter=>{j$.ui.Adapter = new j$.ui.adapterFactory(adapter); return j$.ui.Adapter;}
      , Designer:function(){
-          let getAttInSection =(design, wrapSection, prop, idx)=>{
-              let att;
+          let getAttInSection =(design, wrapSection, idx)=>{
+              let att={clas$:null, style:null}, properties=["clas$", "style"];
               if (design[wrapSection] && design[wrapSection][idx]) {// existe a secao e a ocorrencia
-                 if (dataExt.isObject(design[wrapSection][idx])){
-                    if (design[wrapSection][idx][prop])             // existe o atributo
-                       att = design[wrapSection][idx][prop];                
-                 } else if (dataExt.isString(design[wrapSection][idx]) && prop=="clas$") // é o atributo default para o caso de vir string
-                    att = design[wrapSection][idx];
+                 for (prop in att){
+                    if (dataExt.isObject(design[wrapSection][idx])){
+                        if (design[wrapSection][idx][prop])             // existe o atributo
+                            att[prop] = design[wrapSection][idx][prop];                
+                    } else if (dataExt.isString(design[wrapSection][idx]) && prop=="clas$") // é o atributo default para o caso de vir string
+                        att[prop] = design[wrapSection][idx];
+                 }     
               }      
               return att;      
           }
@@ -602,12 +604,12 @@ j$.ui.Page = function(){
           }
           let addRow= (page, section, fieldset, fields, design)=>{
               if (dataExt.isArray(fields)){
-                 let wrapRow, key, colClass, originalClass=design.clas$.column;
+                 let wrapRow, key, att, originalClass=design.clas$.column;
                  for (let i=0; i<fields.length; i++){ 
-                     key = fields[i];                                                        
-                     colClass = getAttInSection(design, "columns", "clas$", i);
-                     design.columnStyle = getAttInSection(design, "columns", "style", i);
-                     design.clas$.column = (colClass) ?originalClass +' '+colClass :originalClass;                         
+                     key = fields[i];      
+                     att = getAttInSection(design, "columns", i)                                                
+                     design.columnStyle = att.style;
+                     design.clas$.column = (att.clas$) ?originalClass +' '+att.clas$ :originalClass;                         
                      wrapRow = addField(page.form, section, fieldset.c$[key], design, key, wrapRow);
                      if (!design.inLine)                                         
                          wrapRow = null;
@@ -668,14 +670,12 @@ j$.ui.Page = function(){
                            j$.ui.Page.Designer.design(page, design.design, masterSection);
                     }
             }
-            , standard:(page, section, fieldset)=>{
-                  let design={clas$:Object.toLowerCase(CONFIG.DESIGN.STANDARD)
+            , standard:(page, section, fieldset)=>{ // padrao da geracao automatica
+                  let design={clas$:Object.toLowerCase(CONFIG.DESIGN.CLASSIC)
                        , labelStyle:{textAlign:'right'}
+                       ,     fields:Object.keys(fieldset.c$)
                       }
-                  if (fieldset){
-                     for (let key in fieldset.c$)
-                        addField(page.form, section, fieldset.c$[key], design, key);                     
-                  }
+                  addSection(page, section, fieldset, design);         
               }
             ,   classic:(page, section, fieldset, design)=>{
                     design.clas$=Object.toLowerCase(CONFIG.DESIGN.CLASSIC);                    
