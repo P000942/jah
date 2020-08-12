@@ -63,7 +63,10 @@
 }
 .lbl_inLine{
   text-align:right; padding: 0 2px 0 12px; 
-  /* display:block; margin: 0 0 2px 0; */
+}
+
+.col_space{
+  margin-right: 10px;
 }
 
 .red, .required{color:red;}

@@ -180,6 +180,7 @@ const CONFIG = {
               }     
     ,   LABEL:{CLASS:{DEFAULT:"col-sm-2 col-form-label col-form-label-sm"
                      , INLINE:"col-form-label col-auto lbl_inLine"
+                     , COLUMN:"col-form-label col-form-label-sm col-auto"
                      }}    
     ,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row", COLUMN:"col-auto"}}                           
     ,   CHECK:{CLASS:{DEFAULT:'form-check-input', ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
@@ -198,8 +199,8 @@ const CONFIG = {
 CONFIG.DESIGN={
    CLASSIC:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:CONFIG.WRAP.CLASS.ROW, COLUMN:CONFIG.WRAP.CLASS.COLUMN
             , INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.DEFAULT}  
-,   COLUMN:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:"form-row"           , COLUMN:"form-group"
-            , INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.DEFAULT} 
+,   COLUMN:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:"form-row"           , COLUMN:"form-group col_space"
+            , INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.COLUMN} 
 ,   INLINE:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:CONFIG.WRAP.CLASS.ROW, COLUMN:CONFIG.WRAP.CLASS.COLUMN
             , INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.INLINE}                                          
 } 

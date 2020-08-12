@@ -580,18 +580,33 @@ j$.ui.Page = function(){
      , C$:key=>{return items[key]}
      , createAdapter: adapter=>{j$.ui.Adapter = new j$.ui.adapterFactory(adapter); return j$.ui.Adapter;}
      , Designer:function(){
-          let getAttInSection =(design, wrapSection, idx)=>{
-              let att={clas$:null, style:null}, properties=["clas$", "style"];
-              if (design[wrapSection] && design[wrapSection][idx]) {// existe a secao e a ocorrencia
-                 for (prop in att){
-                    if (dataExt.isObject(design[wrapSection][idx])){
-                        if (design[wrapSection][idx][prop])             // existe o atributo
-                            att[prop] = design[wrapSection][idx][prop];                
-                    } else if (dataExt.isString(design[wrapSection][idx]) && prop=="clas$") // é o atributo default para o caso de vir string
-                        att[prop] = design[wrapSection][idx];
-                 }     
-              }      
-              return att;      
+          let getAttInSection =(design, idx)=>{
+              let sections={columns:{}, labels:{}}   // a ideia eh garantir que essas sections tenham tds as props de att
+                ,      att={clas$:null,  style:null} // isso eh para evitar ficar fazendo IFs mais adiante
+                , _section
+              function setSection(section, prop){
+                  let value;
+                  if (dataExt.isObject(section)){
+                     if (section[prop])              // existe o atributo
+                         value = section[prop];                
+                  }else if (dataExt.isString(section) && prop=="clas$") // é o atributo default para o caso de vir string
+                     value = section;
+                  return value;    
+              }                                      
+              for (key in sections){                
+                  _section = sections[key]
+                  for (prop in att){
+                      _section[prop] = att[prop];                    // para garantir as propriedades de att na sectionn
+                      if (design[key]){
+                         if (dataExt.isArray(design[key])) { // existe a secao e a ocorrencia
+                            _section[prop] =setSection(design[key][idx], prop)
+                         }else{
+                            _section[prop] = setSection(design[key], prop)
+                         }      
+                      }     
+                  }  
+             }      
+             return sections;      
           }
           let addField=(form, section, field, design, key, wrapRow)=>{
               if (field){
@@ -602,33 +617,79 @@ j$.ui.Page = function(){
               }
               return wrapRow;
           }
-          let addRow= (page, section, fieldset, fields, design)=>{
+          let addRow= (page, section, fieldset, design, reposit)=>{
+              let fields = reposit.fields;
               if (dataExt.isArray(fields)){
-                 let wrapRow, key, att, originalClass=design.clas$.column;
+                 let wrapRow, key, att
+                   , originalClassCol=design.clas$.column
+                   , originalClassLabel=design.clas$.label;
                  for (let i=0; i<fields.length; i++){ 
                      key = fields[i];      
-                     att = getAttInSection(design, "columns", i)                                                
-                     design.columnStyle = att.style;
-                     design.clas$.column = (att.clas$) ?originalClass +' '+att.clas$ :originalClass;                         
+                     
+                     att = getAttInSection(reposit, i)      
+                     design.columnStyle = att.columns.style;
+                     design.clas$.column = (att.columns.clas$) ?originalClassCol +' '+att.columns.clas$ :originalClassCol;    
+                                         
+                     if (att.labels.style)
+                        design.labelStyle  = (design.labelStyle) ?design.labelStyle  +' '+ att.labels.style :att.labels.style;
+                     design.clas$.label = (att.labels.clas$)    ?originalClassLabel +' '+ att.labels.clas$ :originalClassLabel;    
+                       
                      wrapRow = addField(page.form, section, fieldset.c$[key], design, key, wrapRow);
                      if (!design.inLine)                                         
                          wrapRow = null;
                  }    
-                 design.clas$.column = originalClass;
+                 design.clas$.column = originalClassCol;
+                 design.clas$.label = originalClassLabel;
               }else
                   addField(page.form, section, fieldset.c$[fields], design, fields);
           };
-          let addSection=(page, section, fieldset, design)=>{
-               let wrapSection = (design.clas$.section) 
-                            ?j$.ui.Render.wrap(section, null,design.clas$.section, design.style)
-                            :section                
-                if (dataExt.isArray(design.fields[0])){
-                    for (let k=0; k<design.fields.length; k++)
-                        addRow(page, wrapSection, fieldset, design.fields[k], design);
-                }else{
-                    addRow(page, wrapSection, fieldset, design.fields, design) ;
-                }
-                return wrapSection;    
+          let addSection=(page, section, fieldset, design)=>{              
+               let reposit={}
+                 , wrapSection = (design.clas$.section) 
+                               ?j$.ui.Render.wrap(section, null,design.clas$.section, design.style)
+                               :section;              
+               /* Eh necessario organizar as sections pq, para falicitar,
+                  ...existem varias possibilidades de escreve o codigo de uma sessao
+                  exemplo: labels="col-sm-2" //vai assumir essa propriedade para todas as colunas e linhas da section
+                              ou =["col-sm-2","col-sm-2"]  //assume essa propriedade para todas as linhas da section
+                              ou =[["col-sm-2","col-sm-2"], ["col-sm-2","col-sm-2"]] 
+               */                        
+               function parseSection(fields, row){ 
+                   let sections = ["labels","columns"];
+                   reposit.fields =fields;
+                   if (design.coupled){ // para configurar 'labels' e 'columns' de forma igual
+                       design.labels = design.coupled;
+                       design.columns = design.coupled;
+                   }
+                   function parse(section, key){
+                        if (dataExt.isArray(section)){ 
+                            if (dataExt.isArray(section[row])) // para section=[[],...,[]]
+                                reposit[key] = section[row];
+                            else
+                                reposit[key] = section;        // para section=[]
+                        }else 
+                            reposit[key] = section             // String ou Object
+                   }                     
+                   sections.forEach(key=>{
+                        if (design[key])                      // a section existe
+                        //    if (coupled){                        
+                        //       parse(design[key], "columns");
+                        //       parse(design[key], "labels");
+                        //    }else
+                              parse(design[key], key);
+                       // }
+                   })
+               }                             
+               if (dataExt.isArray(design.fields[0])){
+                   design.fields.forEach((fieldS,idx)=>{
+                       parseSection(fieldS, idx);
+                       addRow(page, wrapSection, fieldset, design, reposit);
+                   })    
+               }else{
+                   parseSection(design.fields)
+                   addRow(page, wrapSection, fieldset, design, reposit) ;
+               }
+               return wrapSection;    
           };
           return{
               create:page=>{
@@ -692,8 +753,7 @@ j$.ui.Page = function(){
             ,   column:(page, section, fieldset, design)=>{
                     Object.preset(design,{clas$:Object.toLowerCase(CONFIG.DESIGN.COLUMN)
                                          ,inLine:true, labelInTheSameWrap:true, design});                    
-                    let wrapSection = addSection(page, section, fieldset, design);
-                    wrapSection.stylize(design.style);
+                    let wrapSection = addSection(page, section, fieldset, design);                   
                     return wrapSection;
               }
             , line:(page, section, fieldset, design)=>{
