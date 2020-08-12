@@ -263,12 +263,12 @@ TYPE.HELPER = {
                inputField.mandatory = labelField.mandatory;
         }
    }
-   , createLabel: function(inputField, wrap, clas$){
+   , createLabel: function(inputField, wrap, clas$, style){
         if (inputField.label.isEmpty()) // label é o texto que foi setado no construtor
             inputField.label=inputField.key;
 
         let lbl = j$.ui.Render.label(wrap, inputField.label, inputField.id, clas$ ,inputField.mandatory)
-        lbl.stylize(inputField.design.labelStyle);
+        lbl.stylize(style);
         return {label:inputField.label, mandatory:inputField.mandatory}
    }
    , setProperties: function(inputField, Type, Properties) {
@@ -536,29 +536,27 @@ function superType(Type, Properties) {
    this.format= p_value=> {
         return  (this.mask) ?this.mask.format(p_value) :this.value(p_value);
    };
-   this.identify= (wrap, id, key, design)=>{
+   this.identify= (wrap, id, key)=>{
        SELF.id =j$.util.getId(SELF.type, id);
        SELF.key =(key)?key : SELF.id;
-       if (!design) design={};
-       SELF.design = design;
-      // SELF.Label.create(wrap, SELF.id, key, SELF.design);
+    //    if (!design) design={};
+    //    SELF.design = design;
    }
-   this.create= (wrap, id, key, design) =>{
-       SELF.identify(wrap, id, key, design);       
+   this.create= (wrap, id, key,  design) =>{
+       SELF.identify(wrap, id, key);       
        let wrapInput;
        if (design.labelInTheSameWrap){
-          wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput',design.clas$.column, SELF.design.columnStyle);
-          TYPE.HELPER.createLabel(SELF, wrapInput, design.clas$.label)          
+          wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput',design.column.clas$, design.column.style);
+          TYPE.HELPER.createLabel(SELF, wrapInput, design.label.clas$, design.label.style)          
        }else{   
-          TYPE.HELPER.createLabel(SELF, wrap, design.clas$.label);
-          wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput',design.clas$.column, SELF.design.columnStyle);
+          TYPE.HELPER.createLabel(SELF, wrap, design.label.clas$, design.label.style);
+          wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput',design.column.clas$, design.column.style);
        }   
           
        let input     = j$.ui.Render.input(wrapInput, SELF.id, SELF.type, SELF.maxlength, SELF.attributes);
-      // wrapInput.stylize(SELF.design.columnStyle);
        if (SELF.onChangeHandle)
           input.onchange = SELF.onChangeHandle;
-       SELF.bind(input, design.clas$.input) 
+       SELF.bind(input, design.input.clas$) 
     //    return wrapInput;
    };
    this.text  =p_value=>{return SELF.value(p_value);}; // Se tem um texto associado ou uma lista (pode ser usado para um AJAX)

@@ -179,7 +179,7 @@ fieldset > legend{
     font-weight: bold; */
     /* height: 30px; */
     padding-left: 10px; 
-    text-align: left;
+    /* text-align: left; */
     padding-bottom: 4px;
 }
 .wrap_framebox_legend {

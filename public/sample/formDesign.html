@@ -69,12 +69,13 @@
                 {type:'classic'
                      , fields:['Digito','ufLegenda']} //, labelStyle:{width:'140px'}}
               , {type:'line'
-                     , style:{width:'90%', marginBottom:'5px', borderColor:'green'}, title:'colunas'}
+                     , style:{width:'95%', marginBottom:'5px', borderColor:'green'}, title:'colunas'}
               , {type:'column', style:{marginLeft:'40px'}
                      ,  fields:['Dinheiro','Numerico']
-                     , columns:[{clas$:'col-sm-2', style:'color:blue;'} // para colocar atributos no wrap column
+                     , column:[{clas$:'col-sm-2', style:'color:blue;'} // para colocar atributos no wrap column
                                 ,'col-sm-4' // classe é a propriedade default para o caso de string na ocorrencia do array
                                ]
+                     ,    row:{style:{backgroundColor:'red'}}          
                     }
               , {type:'line'
                      , style:{marginLeft:'width:100%', marginBottom:'5px', borderColor:'green'}, title:"Caracteres Especiais"}
@@ -86,17 +87,17 @@
                                 , title:{text:"Campos Especiais Formatados", style:{textAlign:'left'}}}
               , {type:'inLine'  , fields:[['CNPJ','CCA'],['CPF','CEP']]
                                 , style:{marginLeft:'3.0em'}
-                                , labels: "col-sm-1" //["col-sm-1", "col-sm-1"]
-                                ,columns: "col-sm-2" //["col-sm-2", "col-sm-1"]
-                             //   ,coupled: "col-sm-2" // aplica para 'columns' e 'labels' 
-                      /*           , labelStyle:{width:'4em'}
-                                , columnStyle:{width:'350px', display: 'inline-block'} */
+                                , label: [["col-sm-1", "col-sm-2"],["col-sm-1", "col-sm-2"]]
+                                ,column: "col-sm-2" //["col-sm-2", "col-sm-1"]
+                             //   ,coupled: "col-sm-2" // aplica para 'column' e 'label' 
                             }
               , {type:'line'    , style:{marginTop:'1px'}
                                 , title:{text:"Estilo de Coluna", style:{textAlign:'left'}}}
-              , {type:'column'  , fields:[['Data','Hora'],['Telefone','Placa']], style:{marginLeft:'80px'}}
+              , {type:'column'  , fields:[['Data','Hora'],['Telefone','Placa']]
+                                , coupled: "col-sm-2"
+                                , style:{marginLeft:'80px'}}
               , {type:'slidebox.column', fields:['Mascara','MascaraUsuario']
-                                       //, columns:['col-sm-2']
+                                       //, column:['col-sm-2']
                                        , id:'slidebox', title:'Máscaras'
                                        , design:[{type:'classic', fields:'Check'}]} // 1.quando tem apenas um campo, não precisar usar o um array para definir
                                                                                     // 2.Inclui no frame 'slidebox' os fields definidos no Array no estilo 'column'
