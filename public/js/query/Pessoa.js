@@ -6,7 +6,18 @@ j$.service.create("Pessoa",
             container:CONFIG.LAYOUT.CONTENT    
               , title:'Exemplo de Consulta - Pessoas'
               , List:true 
-              , Buttons:CONFIG.QUERY.preset()         
+              , Buttons:CONFIG.QUERY.preset()        
+              , design:[
+                {type:'classic'
+                     , fields:['id','data']} 
+              , {type:'line'
+                     , style:{marginBottom:'5px', borderColor:'green'}, title:'divisor de informação'}
+              , {type:'inLine'
+                     ,  fields:[['ativo','sexo'],['nome']]
+                    }
+              , {type:'line', title:'Números'}      
+              , {type:'column'  , fields:['valor','vl']}      
+                  ]       
       }
       , fieldset:{
                  id:TYPE.INTEGER(4,{label:'Código'})

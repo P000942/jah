@@ -178,9 +178,9 @@ const CONFIG = {
                     ,   VALID:'form-control form-control-sm is-valid'
                     }
               }     
-    ,   LABEL:{CLASS:{DEFAULT:"col-sm-2 col-form-label col-form-label-sm space"
+    ,   LABEL:{CLASS:{DEFAULT:"col-sm-1 col-form-label col-form-label-sm space"
                      , INLINE:"col-form-label col-auto lbl_inLine"
-                     , COLUMN:"col-form-label col-form-label-sm col-auto space"
+                     , COLUMN:"col-auto space"
                      }}    
     ,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row", COLUMN:"col-auto space"}}                           
     ,   CHECK:{CLASS:{DEFAULT:'form-check-input', COLUMN:"form-check",  LABEL:"form-check-label"
