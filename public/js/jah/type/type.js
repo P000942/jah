@@ -301,12 +301,11 @@ TYPE.HELPER = {
 
         inputField.maxlength = (inputField.size>inputField.mask.size) ?inputField.size :inputField.mask.size;
     }
-    , bindField: function(inputField, _input, clas$=CONFIG.INPUT.CLASS.DEFAULT){
+    , bindField: function(inputField, _input){
         inputField.binded=true;
         inputField.Input=_input;
         inputField.Input.bind(inputField);
         inputField.id =_input.id;
-        inputField.classDefault = clas$;
         inputField.Error = j$.Feedback; 
         
         TYPE.HELPER.setLabel(inputField, _input); // definir o label
@@ -331,10 +330,7 @@ TYPE.HELPER = {
                      break;
              case 'select':
                  inputField.popule();
-                 break;
-             case 'checkbox':
-                 inputField.classDefault = CONFIG.CHECK.CLASS.DEFAULT;
-                 break;                 
+                 break;           
              default:
                  break
         }
@@ -531,7 +527,7 @@ function superType(Type, Properties) {
         if (value == undefined)
             value = this.Record.value;
         i$(this.id).content(value);
-        i$(this.id).className = SELF.classDefault //CONFIG.INPUT.CLASS.DEFAULT; //"input_text";
+        i$(this.id).className = SELF.classDefault  
    };
    this.format= p_value=> {
         return  (this.mask) ?this.mask.format(p_value) :this.value(p_value);
@@ -542,9 +538,18 @@ function superType(Type, Properties) {
     //    if (!design) design={};
     //    SELF.design = design;
    }
-   this.create= (wrap, id, key,  design) =>{
-       SELF.identify(wrap, id, key);       
+   function parseClass(design){
+      if (SELF.type=='checkbox'){
+          design.input.clas$  = CONFIG.CHECK.CLASS.DEFAULT;
+          design.column.clas$ = CONFIG.CHECK.CLASS.COLUMN;
+          design.label.clas$ += " "+CONFIG.CHECK.CLASS.LABEL;
+      }      
+   }
+   this.create= (wrap, id, key,  design) =>{              
        let wrapInput;
+       SELF.identify(wrap, id, key);
+       parseClass(design);
+       SELF.classDefault = design.input.clas$;
        if (design.labelInTheSameWrap){
           wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput',design.column.clas$, design.column.style);
           TYPE.HELPER.createLabel(SELF, wrapInput, design.label.clas$, design.label.style)          
@@ -553,11 +558,10 @@ function superType(Type, Properties) {
           wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput',design.column.clas$, design.column.style);
        }   
           
-       let input     = j$.ui.Render.input(wrapInput, SELF.id, SELF.type, SELF.maxlength, SELF.attributes);
+       let input = j$.ui.Render.input(wrapInput, SELF.id, SELF.type, SELF.maxlength, SELF.attributes);
        if (SELF.onChangeHandle)
           input.onchange = SELF.onChangeHandle;
-       SELF.bind(input, design.input.clas$) 
-    //    return wrapInput;
+       SELF.bind(input); 
    };
    this.text  =p_value=>{return SELF.value(p_value);}; // Se tem um texto associado ou uma lista (pode ser usado para um AJAX)
    this.value =p_value=>{ // Retorna o valor sem m�scara (caso haja)
@@ -600,7 +604,7 @@ function superType(Type, Properties) {
         i$(SELF.id).className = SELF.classDefault; //CONFIG.INPUT.CLASS.DEFAULT;
    };
 
-   this.bind = (_input, clas$)=>{TYPE.HELPER.bindField(SELF,_input,clas$)}
+   this.bind = (_input)=>{TYPE.HELPER.bindField(SELF,_input)}
 
    this.filterToggle=showFilter=>{
         SELF.onFilter = (dataExt.isDefined(showFilter))

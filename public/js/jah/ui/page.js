@@ -598,7 +598,7 @@ j$.ui.Page = function(){
                       ,      att={clas$:null,  style:null} // isso eh para evitar ficar fazendo IFs mais adiante
                       , _section;                      
 
-                    function setSection(section, prop){
+                    function setAtt(section, prop){
                         let value;
                         if (dataExt.isObject(section)){
                            if (section[prop])              // existe o atributo
@@ -623,11 +623,10 @@ j$.ui.Page = function(){
                         _section = sections[key]
                         for (prop in att){
                             if (reposit[key]){
-                               if (dataExt.isArray(reposit[key])) { // existe a secao e a ocorrencia
-                                  _section[prop] = setSection(reposit[key][idx], prop)
-                               }else{
-                                  _section[prop] = setSection(reposit[key], prop)
-                               }      
+                               if (dataExt.isArray(reposit[key])) // existe a secao e a ocorrencia
+                                  _section[prop] = setAtt(reposit[key][idx], prop)
+                               else
+                                  _section[prop] = setAtt(reposit[key], prop)      
                             }     
                         }  
                         blend(key)

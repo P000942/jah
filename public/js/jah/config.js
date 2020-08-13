@@ -173,17 +173,18 @@ const CONFIG = {
       ,    INFO:{CLASS:'alert-info'}
     }
     ,FEEDBACK:{CLASS:{VALID:'valid-feedback', INVALID:'invalid-feedback', LEGEND:''}}
-    ,   INPUT:{CLASS:{DEFAULT:'form-control form-control-sm', FOCUS:'input_focus'
+    ,   INPUT:{CLASS:{DEFAULT:'form-control form-control-sm space', FOCUS:'input_focus'
                     , INVALID:'form-control form-control-sm is-invalid'
                     ,   VALID:'form-control form-control-sm is-valid'
                     }
               }     
-    ,   LABEL:{CLASS:{DEFAULT:"col-sm-2 col-form-label col-form-label-sm"
+    ,   LABEL:{CLASS:{DEFAULT:"col-sm-2 col-form-label col-form-label-sm space"
                      , INLINE:"col-form-label col-auto lbl_inLine"
-                     , COLUMN:"col-form-label col-form-label-sm col-auto"
+                     , COLUMN:"col-form-label col-form-label-sm col-auto space"
                      }}    
-    ,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row", COLUMN:"col-auto"}}                           
-    ,   CHECK:{CLASS:{DEFAULT:'form-check-input', ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
+    ,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row", COLUMN:"col-auto space"}}                           
+    ,   CHECK:{CLASS:{DEFAULT:'form-check-input', COLUMN:"form-check",  LABEL:"form-check-label"
+                      , ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
     ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
     ,    MENU:{PARSER:"menubar"
