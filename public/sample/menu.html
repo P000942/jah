@@ -1,7 +1,3 @@
-<!--
-To change this template, choose Tools 
-and open the template in the editor.
--->
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,74 +5,43 @@ and open the template in the editor.
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="../css/bootstrap.css">
     <link rel="stylesheet" href="../css/font-awesome.css">
 
-    <link rel="stylesheet" href="../css/bootstrap-responsive.min.css">
+    <!-- <link rel="stylesheet" href="../css/bootstrap-responsive.min.css"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" 
+    crossorigin="anonymous">  
     <link rel="stylesheet" href="../css/layout.css" />
 
     <script src="../js/vendor/jquery-3.5.1.js"></script>
-    <script src="../js/vendor/bootstrap.min.js"></script>
+
+    <!-- <script src="../js/vendor/bootstrap.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script> 
+    
     <script src="../js/jah/api/dataExt.js"></script>
     <script src="../js/jah/config.js"></script>
     <script src="../js/jah/api/system.js"></script>
     <script src="../js/jah/ui/menu.js"></script>
 </head>
 <body>
-    <div id="page" class='page'>
-        <header>
-           <div class="header-top">
-              <div  class="top-left"></div>
-           </div>
+        <header class="navbar navbar-expand navbar-light bg-light sticky-top flex-md-nowrap p-0 shadow">
+            <div class="top-left navbar-brand col-md-2 col-lg-2"></div>
+            <input class="form-control form-control-dark w-100 col-md-6" type="text" placeholder="Pesquisar" aria-label="Search">
            <nav class="navbar" id="menubar"></nav>
         </header>
 
         <nav id="nav-left"><div  id="sidebar"></div></nav>
 
-        <section id="content_section"><div id='content'>
-            <ul class="nav navbar-nav" id="menubarRoot1111">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Dropup
-                      <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                      <li><a href="#">Ação</a></li>
-                      <li><a href="#">Outra ação</a></li>
-                      <li><a href="#">Algo mais aqui</a></li>
-                      <li role="separator" class="divider"></li>
-                      <li><a href="#">Link separado</a></li>
-                      <li class="dropdown-submenu">
-                        <a class="dropdown-toggle" id="dropdownMenu4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Submenu
-                            <!-- <span class="caret"></span> -->
-                          </a>
-                       <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                        <li><a href="#">Ação</a></li>
-                        <li><a href="#">Outra ação</a></li>
-                      </ul>
-                  </li>
-                    </ul>
-                </li>
-
-
-            </ul>
-
+        <section id="content_section" class="container-fluid"><div id='content'>           
         </div></section>
-
-        <aside id="nav-right"></aside>
-
-        <footer class="navbar-fixed-bottom">
-            <div class="footer" id="Sefaz">© 2013 - Secretaria de Estado da Fazenda</div>
-        </footer>
 
     </div>
 </body>
 </html>
 <script type="text/javascript">
-// google.setOnLoadCallback(function(a,b) {
     $(document).ready(function(){
         const menu = j$.ui.Menu.create("menubar");
         menu.addMenu({caption:"Home", active:true});

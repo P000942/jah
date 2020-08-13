@@ -538,17 +538,25 @@ function superType(Type, Properties) {
     //    if (!design) design={};
     //    SELF.design = design;
    }
-   function parseClass(design){
+   function parseDesign(design){
+      if (!design){
+          design ={
+                input:{clas$: CONFIG.INPUT.CLASS.DEFAULT}
+             , column:{clas$: CONFIG.WRAP.CLASS.COLUMN}
+             ,  label:{clas$: CONFIG.LABEL.CLASS.DEFAULT}              
+          }     
+      }
       if (SELF.type=='checkbox'){
           design.input.clas$  = CONFIG.CHECK.CLASS.DEFAULT;
           design.column.clas$ = CONFIG.CHECK.CLASS.COLUMN;
           design.label.clas$ += " "+CONFIG.CHECK.CLASS.LABEL;
-      }      
+      }  
+      return design;    
    }
    this.create= (wrap, id, key,  design) =>{              
        let wrapInput;
        SELF.identify(wrap, id, key);
-       parseClass(design);
+       design = parseDesign(design);
        SELF.classDefault = design.input.clas$;
        if (design.labelInTheSameWrap){
           wrapInput = j$.ui.Render.wrap(wrap,SELF.id+'_wrapInput',design.column.clas$, design.column.style);
@@ -789,7 +797,7 @@ j$.ui.type.Cep=function(Properties){
    this.inherit({size:8, validator:{handler:value=>{return value.ehCep();}, error:ERROR.MESSAGE.Cep}, mask:{format:'00000-000|_____-___', strip:'-'}}, Properties);
 }
 
-j$.ui.type.Mask=function(mask, Properties){
+j$.ui.type.Mask=function(mask, Properties={}){
     let strip=mask.replace(/\w|[@]|[#]/g,""); // Pega somente caracteres especiais;
     let prompt='|'+mask.replace(/\w|[@]|[#]/g,"_"); //Montar prompt para entrada de dados;
     let dataType = (mask.replace(c$.MASK.DecimalCharacter,"").replace(/\d|[#]/g,"").length>0)? DATATYPE.CHAR : DATATYPE.NUMBER;
@@ -797,8 +805,7 @@ j$.ui.type.Mask=function(mask, Properties){
     if (!Properties.align)
         Properties.align = (dataType==DATATYPE.CHAR) ?c$.ALIGN.LEFT : c$.ALIGN.RIGHT;
     this.inherit = superType;
-    this.inherit({validator:validator, dataType:dataType, mask:{format:mask+prompt, strip:strip}}, Properties);
-    
+    this.inherit({validator:validator, dataType:dataType, mask:{format:mask+prompt, strip:strip}}, Properties);    
 }
 
 j$.ui.type.List=function(Properties){

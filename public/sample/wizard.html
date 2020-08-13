@@ -5,19 +5,25 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="../css/bootstrap.css">
     <link rel="stylesheet" href="../css/font-awesome.css">
->
+
+    <!-- <link rel="stylesheet" href="../css/bootstrap-responsive.min.css"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" 
+    crossorigin="anonymous">  
     <link rel="stylesheet" href="../css/layout.css" />
 
     <script src="../js/vendor/jquery-3.5.1.js"></script>
-    <script src="../js/vendor/bootstrap.min.js"></script>
 
+    <!-- <script src="../js/vendor/bootstrap.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script> 
+    
+    <script src="../js/jah/api/dataExt.js"></script>
     <script src="../js/jah/config.js"></script>
     <script src="../js/jah/api/system.js"></script>
-    <script src="../js/jah/api/dataExt.js"></script>
     <script src="../js/jah/type/typecast.js"></script>
     <script src="../js/jah/type/type.js"></script>
     <script src="../js/jah/ui/tabs.js"></script>
@@ -97,8 +103,10 @@
                            });
 
 const wizard = function(){
+    let _criarMenu =true;
     return {
-      criarMenu:function(){
+      criarMenu:function(){  
+         if (_criarMenu){          
             let menu = j$.ui.Menu.create("menubar");
             menu.addMenu({caption:"Home", active:true});
             let menu_link = menu.addMenu("Tabs");
@@ -131,13 +139,9 @@ const wizard = function(){
                       ws.tabs.open({key:'tab_'+menu.key, caption:menu.caption, url:menu.url});
                  }
              });
-            //  menu_link.add({caption:'Partial'
-            //     , onClick:function(menu, event){
-            //           ws.tabs.open(tabPartial);
-            //      }
-            //  });
-             //menu_link.add({caption:'Eventos', onClick:criarTab});
              menu.render();
+        } 
+        _criarMenu =false;     
       }
       , abrirForm: function (idContent){
             myPage.init(idContent)
@@ -149,35 +153,17 @@ const wizard = function(){
 </script>
 
 </head>
-    <div id="page" class='page'>
         <header>
-           <div class="header-top">
-               <div class="top-left"></div>
-              <div class="top-center">
-                    <form class="form-search">
-                     <div class="input-append">
-                    <input type="text" class="span2 search-query" style="width:250px;">
-                    <button type="submit" class="btn"><i class="icon-search"></i>Pesquisar</button>
-                    </div>
-                    </form>
-              </div>
-               <div class="top-right">
+            <header class="navbar navbar-expand navbar-light bg-light sticky-top flex-md-nowrap p-0 shadow">
+                <div class="top-left navbar-brand col-md-2 col-lg-2"></div>
+                <input class="form-control form-control-dark w-100 col-md-6" type="text" placeholder="Pesquisar" aria-label="Search">
+                <!-- //<div class="top-right"> -->
                    <a class="btn" href="#" onclick="wizard.criarMenu();" title="Criar Menu"><i class="icon-align-left"></i>Criar Menu</a>
-               </div>
-           </div>
-           <nav class="navbar" id="menubar"></nav>
+                <!-- </div> -->
+           <!-- </div> -->
+            <nav class="navbar" id="menubar"></nav>
         </header>
 
-        <nav id="nav-left"><div  id="sidebar"></div></nav>
-
-        <section id="content_section"><div id='content'></div></section>
-
-        <aside id="nav-right"></aside>
-
-        <footer class="navbar-fixed-bottom">
-            <div class="footer" id="Sefaz">© 2013 - Secretaria de Estado da Fazenda</div>
-        </footer>
-
-    </div>
+        <section id="content_section" class="container-fluid"><div id='content'></div></section>
 </body>
 </html>
