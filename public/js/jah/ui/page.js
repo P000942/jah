@@ -691,12 +691,12 @@ j$.ui.Page = function(){
           return{
               create:page=>{
                  if (page.service.Interface.design){ // Serah feito segundo o design
-                     j$.ui.Page.Designer.design(page, page.service.Interface.design, page.fieldset);
+                     j$.ui.Page.Designer.design(page, page.fieldset, page.service.Interface.design);
                  }else{                              // Serah tudo no modo standard
                      j$.ui.Page.Designer.standard(page, page.fieldset, page.service.Fieldset);
                  }
               }
-            , design: (page, designs, container)=>{
+            , design: (page, container, designs)=>{
                     for (let i=0; i<designs.length; i++){
                         let masterSection
                           , section = container
@@ -730,14 +730,13 @@ j$.ui.Page = function(){
             }
             , standard:(page, section, fieldset)=>{ // padrao da geracao automatica
                   let design={clas$:Object.toLowerCase(CONFIG.DESIGN.CLASSIC)
-                       , labelStyle:{textAlign:'right'}
                        ,     fields:Object.keys(fieldset.c$)
                       }
                   addSection(page, section, fieldset, design);         
               }
             ,   classic:(page, section, fieldset, design)=>{
                     design.clas$=Object.toLowerCase(CONFIG.DESIGN.CLASSIC);                    
-                    Object.preset(design,{labelStyle:{textAlign:'right'}});    
+                    // Object.preset(design,{labelStyle:{textAlign:'right'}});    
                     let wrapSection = addSection(page, section, fieldset, design);
                     return wrapSection;
               }

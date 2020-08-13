@@ -11,7 +11,7 @@ j$.service.create("Pessoa",
                 {type:'classic'
                      , fields:['id','data']} 
               , {type:'line'
-                     , style:{marginBottom:'5px', borderColor:'green'}, title:'divisor de informação'}
+                     , style:{marginRight:'50px', borderColor:'green'}, title:'divisor de informação'}
               , {type:'inLine'
                      ,  fields:[['ativo','sexo'],['nome']]
                     }

@@ -178,11 +178,11 @@ const CONFIG = {
                     ,   VALID:'form-control form-control-sm is-valid'
                     }
               }     
-    ,   LABEL:{CLASS:{DEFAULT:"col-sm-1 col-form-label col-form-label-sm space"
-                     , INLINE:"col-form-label col-auto lbl_inLine"
+    ,   LABEL:{CLASS:{DEFAULT:"col-form-label col-form-label-sm col-sm-1 inLine space"
+                     , INLINE:"col-form-label col-form-label-sm col-auto inLine"
                      , COLUMN:"col-auto space"
                      }}    
-    ,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row", COLUMN:"col-auto space"}}                           
+    ,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row space", COLUMN:"col-auto space"}}                           
     ,   CHECK:{CLASS:{DEFAULT:'form-check-input', COLUMN:"form-check",  LABEL:"form-check-label"
                       , ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
     ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
@@ -200,7 +200,7 @@ const CONFIG = {
 CONFIG.DESIGN={
    CLASSIC:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:CONFIG.WRAP.CLASS.ROW, COLUMN:CONFIG.WRAP.CLASS.COLUMN
             , INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.DEFAULT}  
-,   COLUMN:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:"form-row"           , COLUMN:"form-group col_space"
+,   COLUMN:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:"form-row space"           , COLUMN:"form-group space"
             , INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.COLUMN} 
 ,   INLINE:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:CONFIG.WRAP.CLASS.ROW, COLUMN:CONFIG.WRAP.CLASS.COLUMN
             , INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.INLINE}                                          

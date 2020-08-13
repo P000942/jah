@@ -102,9 +102,11 @@
                                        , design:[{type:'classic', fields:'Check'}]} // 1.quando tem apenas um campo, não precisar usar o um array para definir
                                                                                     // 2.Inclui no frame 'slidebox' os fields definidos no Array no estilo 'column'
                                                                                     // 3.Em seguida, no mesmo frame desenha tudo o que está definido em design (recursivo)
-              , {type:'framebox',  id:'framebox', title:'Listas'}
-              , {type:'column',  frame:'framebox', fields:['listUf', 'Lista']} //Outra forma de colocar os campos em um frame é indicar o nome do mesmo
-              , {type:'classic',  container:'framebox', fields:'Email'}        //Pode-se ainda indicar o id de algum container específico;
+              , {type:'framebox',  id:'framebox', title:'Listas'} // aqui apenas cria o frame - abaixo coloca as secoes
+                //Outra forma de colocar os campos em um frame é indicar o nome do mesmo
+              , {type:'column',  frame:'framebox', fields:['listUf', 'Lista'], coupled: "col-sm-2"} 
+               //Pode-se ainda indicar o id de algum container específico - qualquer container;
+              , {type:'classic',  container:'framebox', fields:'Email', label:"col-sm-2"}       
            ]
     };
 
