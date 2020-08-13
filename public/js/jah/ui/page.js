@@ -591,14 +591,14 @@ j$.ui.Page = function(){
           }
           let addRow= (page, section, fieldset, design, reposit)=>{
                 let fields = reposit.fields;                
-                let getAttInSection =(reposit, idx)=>{
-                     // a ideia eh garantir que essas sections tenham tds as props de att
-                    let sections=Object.setIfExist({column:{}, label:{}, input:{}, row:{}}
-                                                  ,design, ["labelInTheSameWrap"]) 
-                      ,      att={clas$:null,  style:null} // isso eh para evitar ficar fazendo IFs mais adiante
+                let blendSection =(reposit, idx)=>{
+                    // combinar os atributos(clas$,  style) de todas a sections 
+                    // combinar as 'definicoes de design do cliente'
+                    //      com os 'padroes do designer' (classic, column,...) 
+                    let sections={column:{}, label:{}, input:{}, row:{}} // a ideia eh garantir que essas sections tenham tds as props de att
+                      ,      att={clas$:null,  style:null}               // isso eh para evitar ficar fazendo IFs mais adiante
                       , _section;                      
-
-                    function setAtt(section, prop){
+                    function setValue(section, prop){
                         let value;
                         if (dataExt.isObject(section)){
                            if (section[prop])              // existe o atributo
@@ -606,43 +606,34 @@ j$.ui.Page = function(){
                         }else if (dataExt.isString(section) && prop=="clas$") // é o atributo default para o caso de vir string
                            value = section;
                         return value;    
-                    }                       
-                    function blend(key){ // combinar os padroes do designer com as definicoes do cliente
-                        let    mix= sections[key]
-                          , style = design[`${key}Style`]
-                          , clas$ = design.clas$[key];                                                
-                        if (mix.style) 
-                           style = (style) ? Object.setIfExist(style,mix.style) :mix.style;                                                 
-                        mix.style =  style;  
-                        
-                        if (mix.clas$) 
-                           clas$ = (clas$) ?clas$ +' '+ mix.clas$ :mix.clas$;                        
-                         mix.clas$ =clas$;    
-                    }                                   
+                    }                                                         
                     for (key in sections){                
                         _section = sections[key]
                         for (prop in att){
+                            _section[prop] =att[prop]; // garantir a existes dos atributos de att em cada section
                             if (reposit[key]){
                                if (dataExt.isArray(reposit[key])) // existe a secao e a ocorrencia
-                                  _section[prop] = setAtt(reposit[key][idx], prop)
+                                  _section[prop] = setValue(reposit[key][idx], prop)
                                else
-                                  _section[prop] = setAtt(reposit[key], prop)      
+                                  _section[prop] = setValue(reposit[key], prop)      
                             }     
                         }  
-                        blend(key)
-                     }      
-                   return sections;// sections;      
+                        // combinar os padroes do designer com as definicoes do cliente
+                        _section.clas$ =(_section.clas$) ?design.clas$[key] +' '+ _section.clas$ :design.clas$[key]; 
+                     }    
+                     sections.labelInTheSameWrap=design.labelInTheSameWrap;   
+                   return sections;      
                 }                
               if (dataExt.isArray(fields)){
                  let wrapRow, key, mixed;
                  fields.forEach((key,i)=>{                                              
-                     mixed = getAttInSection(reposit, i);   
+                     mixed = blendSection(reposit, i);   
                      wrapRow = addField(page.form, section, fieldset.c$[key], key, mixed, wrapRow);
                      if (!design.inLine)                                         
                          wrapRow = null;
                  })    
               }else{
-                  addField(page.form, section, fieldset.c$[fields], fields, getAttInSection(reposit));
+                  addField(page.form, section, fieldset.c$[fields], fields, blendSection(reposit));
               }    
           };
           let addSection=(page, section, fieldset, design)=>{              
@@ -693,7 +684,9 @@ j$.ui.Page = function(){
                  if (page.service.Interface.design){ // Serah feito segundo o design
                      j$.ui.Page.Designer.design(page, page.fieldset, page.service.Interface.design);
                  }else{                              // Serah tudo no modo standard
-                     j$.ui.Page.Designer.standard(page, page.fieldset, page.service.Fieldset);
+                     //j$.ui.Page.Designer.standard(page, page.fieldset, page.service.Fieldset);
+                     let design = {fields:Object.keys(page.service.Fieldset.c$)}
+                     j$.ui.Page.Designer.classic(page, page.fieldset, page.service.Fieldset, design);
                  }
               }
             , design: (page, container, designs)=>{
@@ -728,29 +721,19 @@ j$.ui.Page = function(){
                            j$.ui.Page.Designer.design(page, design.design, masterSection);
                     }
             }
-            , standard:(page, section, fieldset)=>{ // padrao da geracao automatica
-                  let design={clas$:Object.toLowerCase(CONFIG.DESIGN.CLASSIC)
-                       ,     fields:Object.keys(fieldset.c$)
-                      }
-                  addSection(page, section, fieldset, design);         
-              }
             ,   classic:(page, section, fieldset, design)=>{
-                    design.clas$=Object.toLowerCase(CONFIG.DESIGN.CLASSIC);                    
-                    // Object.preset(design,{labelStyle:{textAlign:'right'}});    
-                    let wrapSection = addSection(page, section, fieldset, design);
-                    return wrapSection;
+                    design.clas$=Object.toLowerCase(CONFIG.DESIGN.CLASSIC);                     
+                    return addSection(page, section, fieldset, design);
               }
               , inLine:(page, section, fieldset, design)=>{
                     design.clas$=Object.toLowerCase(CONFIG.DESIGN.INLINE);                    
                     Object.preset(design,{inLine:true, labelInTheSameWrap:false});    
-                    let wrapSection = addSection(page, section, fieldset, design);
-                    return wrapSection;
+                    return addSection(page, section, fieldset, design);
               }              
             ,   column:(page, section, fieldset, design)=>{
                     Object.preset(design,{clas$:Object.toLowerCase(CONFIG.DESIGN.COLUMN)
                                          ,inLine:true, labelInTheSameWrap:true, design});                    
-                    let wrapSection = addSection(page, section, fieldset, design);                   
-                    return wrapSection;
+                    return addSection(page, section, fieldset, design);                   
               }
             , line:(page, section, fieldset, design)=>{
                 let wrapLine = j$.ui.Render.line(section, design.id, 'wrap_line', design.title);
