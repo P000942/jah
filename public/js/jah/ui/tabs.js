@@ -34,8 +34,8 @@ j$.ui.Tabs.Root =function(idTab, idContent){
         if (!idContent){       
            throw  EXCEPTION.format(EXCEPTION.ITEM.INVALID_ELEMENT, "Impossível montar um objeto tabs sem indicar o 'ID' do elemento html onde será montado");
         }else{
-           i$(idContent).insert({top: "<div id='"+idWrap+"' class='tabs_wrap' />"}); //wrap geral do tab
-           i$(idWrap).insert({top: "<div id='" +idTab+ "' class='tabs' />"});        //wrap das tab-link
+           i$(idContent).insert({top: `<div id='${idWrap}' class='${CONFIG.TAB.CLASS.CONTAINER}' />`}); //wrap geral do tab
+           i$(idWrap).insert({top: `<div id='${idTab}' class='${CONFIG.TAB.CLASS.BUTTONS}' />`});       //Wrap das tab-link
         }
         return true;
     }();
@@ -93,13 +93,8 @@ j$.ui.Tabs.Root =function(idTab, idContent){
                            , fixed:false, loaded:false, active:false, parent: _parent
                            , caption:tab.caption, id:tab.key, key:tab.key, idContent:tab.key+"_Content" 
                       });		  
-         this.title = title=>{ 
-              return false;
-              if (title != undefined)                  
-                 _tab.Header.title.innerHTML=title;
-              else  
-                 return _tab.Header.title.innerHTML;
-         };                  
+
+         this.title =text=>{return _tab.Header.title(text)}                  
          
          const initialized=function(){
               Object.setIfExist(_tab, tab, ['onLoad','onActivate','onDeactivate', 'onClose', 'fixed','url']);
@@ -119,32 +114,39 @@ j$.ui.Tabs.Root =function(idTab, idContent){
              }             
              i$(idTab).insert({bottom: _tab.render() + "\n"}); // cria o link da tab
              i$(idWrap).insert({bottom: 
-                                      "<div class='tab_wrap' id='" + _tab.id + "'>" 
-                                      +"<div class='tab_header' id='" + _tab.id + "_header'>"
-                                      +   "<span class='tab_header_title' id='" + _tab.id + "_header_title'></span>"
-                                      +   "<span class='tab_header_menu' id='" + _tab.id + "_header_menu'></span>"
-                                      +"</div>"
-                                      +"<div class='tab' id='" + _tab.idContent + "'>" + html + "</div>"
+                                       `<div class='${CONFIG.TAB.CLASS.WRAP}' id='${_tab.id}'>` 
+                                      +`<div class='${CONFIG.TAB.CLASS.CONTENT}' id='${_tab.idContent}'>${html}</div>`
                                       +"</div>\n"
                               }); // cria o container da tab               
          };          
          this.Header = function(){
-             let element = i$(_tab.id + "_header")
-               , titleElement = i$(_tab.id + "_header_title")
-             const create=function(){                     
-                     if (tab.title && !tab.title.isEmpty())
-                        titleElement.innerHTML=tab.title; 
-                     else
-                        element.hide();
-                  //   element.hide();  
-             }();                 
+             let element
+               , id = _tab.id + "_header"
+               , idTitle = `${id}_title`
+               , idMenu  = `${id}_menu`;
+             const create=function(){                    
+                i$(_tab.id).insert({top:                 
+                    `<div  class='${CONFIG.TAB.CLASS.HEADER}' id='${id}'>`
+                   +`<div class='${CONFIG.TAB.CLASS.TITLE}'  id='${idTitle}'></div>`
+                   +`<nav class='${CONFIG.TAB.CLASS.MENU}'   id='${idMenu}'></nav>`
+                   +"</div>"});  
+                element = i$(id);
+                title(tab.title);
+                element.hide();  
+             }();   
+             function title(text){
+                if (text && dataExt.isString(text)) 
+                   i$(idTitle).innerHTML=text;
+                return  i$(idTitle).innerHTML; 
+             }             
              return{
-                 title:titleElement                
-               , menu:i$(_tab.id + "_header_menu")
+                 title
+               , menu:i$(idMenu)
+               , show(){element.show()}
+               , hide(){element.hide()}
              };
          }();	
 
-         //_tab.Header.create();
          this.Menu = function(){            
              let menubar;
              const create=function(){                     
@@ -158,7 +160,8 @@ j$.ui.Tabs.Root =function(idTab, idContent){
                             let item = Items[idx];    
                             menuBase.add(item);                  
                          }                             
-                     }                     
+                     }    
+                     _tab.Header.show();                 
                  }
                , bindToMenu: (Items, design)=>{
                             for (let key in design){

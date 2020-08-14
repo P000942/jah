@@ -1,20 +1,35 @@
 /* O container do conte�do de cada tab*/
-.tab {padding: 4px 2px 4px 2px;}
+.tab_content {padding: 4px 2px 4px 2px;}
 .tab_header {
 /*    background-color:rgb(120,150,120); */
-    background-color: rgba(120,180,120,0.7);
-    height: 25px; width: 100%; margin: 0; padding: 0px;
+    background-color: rgba(120,180,120,0.2);
+    height: 42px; width: 100%; margin: 0; padding: 0px;
+    display: inline-block; 
 }
-.tab_header_title{padding:2px 2px 1px 4px; color: black; font-size: 1.2em; margin: 0; display: inline-block; height: 23px; float: left;min-width: 300px;}
-.tab_header_menu{padding:0 4px 1px 4px; display: inline-block; height: 20px; float:right; min-width: 120px;}
-/* tabs � container dos links das orelhas - ou seja - as orelhas ficam dentro dele */
-.tabs{
+.tab_header_title{
+   padding:5px 2px 1px 4px; 
+   color: black; 
+   font-size: 1.2em; margin: 0; 
+   /* display: inline-block; */
+   float: left; 
+   min-width: 300px; 
+}
+.tab_header_menu{
+   padding:0 4px 1px 4px; 
+   margin-right: 20px;
+   
+   float:right; 
+   min-width: 120px; 
+}
+
+/* tabs container dos links das orelhas - ou seja - as orelhas ficam dentro dele */
+.tabs_buttons{
 	margin:0; margin-top:4px; margin-left:2px; z-index:4; text-align: left;
         display: block; position: relative;
         height: 26px;
 }
-
 .tabs_wrap{padding:0;} /*wrap geral das tabs */
+
 .tab_wrap{   /*wrap de uma tab */
       width:98%;  border: 0px solid rgb(120,150,120);
       border-top:4px solid rgb(120,150,120);

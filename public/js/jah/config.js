@@ -182,6 +182,15 @@ const CONFIG = {
                      , INLINE:"col-form-label col-form-label-sm col-auto inLine"
                      , COLUMN:"col-auto space"
                      }}    
+    ,   TAB:{CLASS:{HEADER:"tab_header"  //tab_header
+                  ,  TITLE:"tab_header_title"
+                  ,   MENU:"tab_header_menu" //tab_header_menu
+                  ,   WRAP:"tab_wrap"
+                  ,CONTENT:"tab_content"
+                  ,BUTTONS:"tabs_buttons"
+                ,CONTAINER:"tabs_wrap"
+                     }}    
+                     
     ,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row space", COLUMN:"col-auto space"}}                           
     ,   CHECK:{CLASS:{DEFAULT:'form-check-input', COLUMN:"form-check",  LABEL:"form-check-label"
                       , ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
