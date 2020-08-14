@@ -556,7 +556,9 @@ j$.ui.Page = function(){
        const create=function(){
           _form.clear();
           $(wrap).append("<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>");
-          $('#'+form.id).append("<fieldset class='crud' id='" +form.id+ "Fieldset'><legend id='" +form.id+ "Header' class='crud'>" +form.title+ "</legend></fieldset>");
+          $('#'+form.id).append("<fieldset class='crud' id='" +form.id+ "Fieldset'>"
+                              //<legend id='" +form.id+ "Header' class='crud'>" +form.title+ "</legend>"
+                              +"</fieldset>");
           $('#'+form.id+' > fieldset').append("<div id='" +form.id+ "Alert'></div>");
           $('#'+form.id).append("<div id='" +form.id+ "Footer'></div>");
           _form.body     =i$(form.id);

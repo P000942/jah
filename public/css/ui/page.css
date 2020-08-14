@@ -1,8 +1,3 @@
-:root {
-    --bg-color-fildset: rgba(246,255,250,0.7);
-    --bg-color-legend: rgba(246,255,250,0.01);
-    --border-color-fildset: rgb(120,150,120);
-  }
 
 .list-ikon {
     background-position: right center;    
@@ -47,11 +42,11 @@
 
 .odd {background-color:#f6f7f8;}
 .even {background-color: #fff;}
-
+/* 
 fieldset{
 	border: solid 1px #000;
 	-moz-border-radius: 1em;
-}
+} */
 fieldset fieldset{
 	border: none;
 	background: #fff;
@@ -59,17 +54,18 @@ fieldset fieldset{
 
 fieldset.crud {
 	padding: 1em;
-	background-color: var(--bg-color-fildset);
-
-	border: solid 1px var(--border-color-fildset);
-	margin-bottom: 2px;
-        border-radius:8px 8px 0  0;
+  background-color: var(--bg-color-fildset);
+  
+  /* border: 1px solid var(--color-line);
+  border-left: 0; border-right: 0; border-bottom: 0; */
+	margin-bottom: 2px; margin-top: 2px;
+        /* border-radius:8px 8px 0  0; */
 }
 
 legend.crud,  fieldset.crud > legend{
   background-color: rgba(182,211,143,0.80);
   color: #333333;
-  border: solid 1px var(--border-color-fildset);
+  border: solid 1px var(--color-line);
   margin-bottom: 2px;
   padding: 1px 5px 2px 5px;
   height: 25px;
@@ -183,14 +179,15 @@ table.list thead th > div > ul.pagination{
   margin: 1px 0;
 }
 
-table.list { border: 1px solid rgb(120,200,120);  border-collapse: collapse; width: 100%; margin-bottom: 4px; }
+table.list { border: 1px solid var(--color-line);  border-collapse: collapse; width: 100%; margin-bottom: 4px; }
 table.list th {
-  background-color:rgba(120,150,120,0.15);
+  background-color: var(--bg-header);
+  /* rgba(120,150,120,0.15); */
   padding:0 1px 1px 0;
   white-space:nowrap;
   font-size: 11px;
 }
-table.list td { vertical-align: top; border: 1px solid rgb(120,200,120); font-size: 11px; padding:0; padding-left:2px;}
+table.list td { vertical-align: top; border: 1px solid var(--color-line); font-size: 11px; padding:0; padding-left:2px;}
 table.list td.id { width: 2%; text-align: center;}
 table.list td.checkbox { width: 15px; padding: 0px;}
 

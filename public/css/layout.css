@@ -12,6 +12,12 @@
 @import url('ui/sidebar.css') screen;
 @import url('ui/tabs.css') screen;
 @import url('ui/page.css') screen;
+:root {
+    --bg-color-fildset: rgba(246,255,250,0.7);
+    --bg-color-legend: rgba(246,255,250,0.01);
+    --bg-header: rgba(120,180,120,0.2);
+    --color-line: rgb(120,150,120);
+}
 /* Clear Floated Elements */
 .clearfix:before, .clearfix:after {content: "\0020";
          display: block; height: 0; visibility: hidden;}

@@ -130,13 +130,14 @@ j$.ui.Tabs.Root =function(idTab, idContent){
                    +`<div class='${CONFIG.TAB.CLASS.TITLE}'  id='${idTitle}'></div>`
                    +`<nav class='${CONFIG.TAB.CLASS.MENU}'   id='${idMenu}'></nav>`
                    +"</div>"});  
-                element = i$(id);
-                title(tab.title);
-                element.hide();  
+                element = i$(id);               
+                title(tab.title);                
              }();   
              function title(text){
                 if (text && dataExt.isString(text)) 
                    i$(idTitle).innerHTML=text;
+                else
+                   element.hide();    
                 return  i$(idTitle).innerHTML; 
              }             
              return{

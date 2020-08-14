@@ -197,10 +197,10 @@ const CONFIG = {
     ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
     ,    MENU:{PARSER:"menubar"
-            , OPTIONS:{SIDEBAR:{CLASS:{CONTENT:"col-md-10 ml-sm-auto col-lg-10 px-md-4"
+            , OPTIONS:{SIDEBAR:{CLASS:{CONTENT:"col-md-10 ml-sm-auto col-lg-10 px-md-2"
                                         , MENU:"col-md-2 col-lg-2 d-md-block nav-side-menu"}
                             , CONTENT:"sidebar"}
-                     , MENUBAR:{CLASS:{CONTENT:"col-md-12 ml-sm-auto col-lg-12 px-md-4"
+                     , MENUBAR:{CLASS:{CONTENT:"col-md-12 ml-sm-auto col-lg-12 px-md-2"
                                         , MENU:"navbar navbar-expand-lg navbar-light bg-light"}
                             , CONTENT:"menubar"}
                       } 
