@@ -32,6 +32,11 @@
   padding-right: 5px;
 }
 
+.menubar_space {
+  padding-top: 3px;
+  padding-bottom: 2px;
+}
+
 .inLine{
   text-align:right; 
   padding: 0 2px 0 10px; 
