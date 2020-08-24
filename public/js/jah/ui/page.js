@@ -520,17 +520,19 @@ j$.ui.Page = function(){
        }
        const create=function(){
           _modal.clear();
-          let txFixed=(fixed)?'':"<button type='button' class='close'  data-dismiss='modal'>&times;</button>";
+          let txFixed=(fixed)?'':"<button type='button' class='close'  data-dismiss='modal' aria-label='Close'>"
+                     +"<span aria-hidden='true'>&times;</span>"
+                     +"</button>";
           $(wrap).append("<div id='" +form.id+ "Modal' class='modal fade' role='dialog'>"
-                        +  "<div class='modal-dialog'>"
+                        +  "<div class='modal-dialog modal-sm modal-lg'>"
                         +    "<div class='modal-content'>"
-                        +      "<div id='" +form.id+ "Header' class='modal-header'>"
-                        +              txFixed
+                        +      "<div id='" +form.id+ "Header' class='modal-header'>"                        
                         +              "<h4 class='modal-title' id='" +form.id+ "Caption' >" +form.title+ "</h4>"
+                        +              txFixed
                         +      "</div>"
-                        +      "<div id='" +form.id+ "Body' class='modal-body'>"
+                        +      "<div id='" +form.id+ "Body' class='modal-body'> <div class='container'>"
                         +              "<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>"
-                        +      "</div>"
+                        +      "</div></div>"
                         +      "<div id='" +form.id+ "Footer' class='modal-footer'>"
                                   //+"<button type='button' class='btn btn-default' data-dismiss='modal'>Fechar</button>"
                         +       "</div>"

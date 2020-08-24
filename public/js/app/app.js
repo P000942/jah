@@ -16,13 +16,13 @@ const adapter={
                  Papel:{caption:'Papel'    ,   crud:true, title:'Cadastro de Papel', onClick:openPapel}
           ,    Usuario:{caption:'Usuário'  ,   crud:true, title:'Cadastro de Usuário'}
           ,  Documento:{caption:'Documento',   crud:true, title:'Cadastro de Documento'}
-          ,    Assunto:{caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto', modal:true}
+          ,    Assunto:{caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto'}
   ,  SituacaoAtividade:{caption:'Situação' ,   crud:true, title:'Cadastro de Situações da Atividade'}
           ,    Partial:{partial:urlPartial ,              title:'Partial - Qual a razao disso aqui'}
           ,     Pessoa:{caption:'Pessoa'   ,  query:true, title:'Exemplo de consulta'}
           ,     Basico:{caption:'Básico'   ,  query:true, title:'Consulta Básica', resource:'pessoa'}
           ,     Tarefa:{caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa'}
-          ,   Mensagem:{caption:'Mensagem' ,   crud:true, title:'Mensagem' }//      , resource:'mensagem', modal:true}
+          ,   Mensagem:{caption:'Mensagem' ,   crud:true, title:'Mensagem' , modal:true}//      , resource:'mensagem', modal:true}
        //   ,         Uf:{caption:'UF'       ,   crud:true, title:'Unidades da federacao', resource:'uf'}
         }
    , designer: { 

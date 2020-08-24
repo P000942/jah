@@ -178,7 +178,7 @@ const CONFIG = {
                     ,   VALID:'form-control form-control-sm is-valid'
                     }
               }     
-    ,   LABEL:{CLASS:{DEFAULT:"col-form-label col-form-label-sm col-sm-1 inLine space"
+    ,   LABEL:{CLASS:{DEFAULT:"col-form-label col-form-label-sm col-3 col-sm-2 col-md-2 col-xl-2 inLine space"
                      , INLINE:"col-form-label col-form-label-sm col-auto inLine"
                      , COLUMN:"col-auto space"
                      }}    
