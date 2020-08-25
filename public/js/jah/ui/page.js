@@ -212,14 +212,14 @@ j$.ui.Buttons=function(actionController, buttons, presetFunction){
 
     function submenu(button){
        if (button.submenu){
-          let root  = $("#"+button.id+" > ul")[0].id; // obtendo o root para os elementos
+          let root  = $("#"+button.id+" > div > div")[0].id; // obtendo o root para os elementos
           for (let key in button.submenu.c$){
               let subitem = Object.merge({},button.submenu.c$[key],["key","caption", "onclick"]);
               preset(key,subitem, _wrap);
               subitem.caption = (subitem.caption) ?subitem.caption 
                                                   :subitem.value;
               subitem.id = button.id + subitem.key;
-              subitem.element = j$.ui.Render.li(i$(root),subitem);
+              subitem.element = j$.ui.Render.menuItem(i$(root),subitem);
           }
        }
     }

@@ -83,6 +83,10 @@ j$.ui.Render= function(){
              wrap.insert('<li><a ' +j$.ui.Render.attributes({id:properties.id, onclick:properties.onclick})+' >' +properties.caption+ '</a></li>');
              return i$(properties.id);
          }
+         , menuItem:(wrap, properties)=>{
+            wrap.insert('<a class="dropdown-item" href="#" ' +j$.ui.Render.attributes({id:properties.id, onclick:properties.onclick})+' >' +properties.caption+ '</a>');
+            return i$(properties.id);
+        }         
          , line:(section, id, wrapStyle, title)=>{
                let wrapId=j$.util.getId(wrapStyle, id)
                  , legend="", idLegend=`${wrapId}_legend`;
@@ -109,11 +113,12 @@ j$.ui.Render= function(){
              return '<a' +j$.ui.Render.attributes(properties,['value', 'element'])+ '>'+j$.ui.Render.icon(properties)+properties.value+'</a>';
          }
          , formatButtonDropdown:(properties)=>{
-             return '<div id="' +properties.id+ '"  class="btn-group">'
-                   +'<a' +j$.ui.Render.attributes(properties,['value','onclick','submenu','id'])+ '>'+j$.ui.Render.icon(properties)+'</a>'
-                   +'<button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>'
-                   +'<ul id="'+properties.id+'Menu" class="dropdown-menu">'
-                   +'</ul></div>';
+             return '<div id="' +properties.id+ '"  class="btn-group" role="group" aria-label="Button group with nested dropdown">'                 
+                   +  '<div class="btn-group" role="group">'                   
+                   +    '<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" ' +j$.ui.Render.attributes(properties,['value','onclick','submenu','id'])+ '>'+j$.ui.Render.icon(properties)+'</button>'              
+                   +    '<div id="'+properties.id+'Menu" class="dropdown-menu"></div>'
+                   +    '</div>'
+                   +'</div>';
          }
          , icon:(properties)=>{
             let iconClass
