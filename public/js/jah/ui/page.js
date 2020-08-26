@@ -24,41 +24,38 @@
         ]
  */
 
-j$.ui.Grid=function(page, wrap, TEMPLATE){
-    let self_grid = this;
-    TEMPLATE =(TEMPLATE) ?TEMPLATE :CONFIG.GRID.DEFAULT;
-    self_grid.index= c$.RC.NONE;
+j$.ui.Grid=function(page, btn_template=CONFIG.GRID.DEFAULT){
+    let _grid = this;    
+    _grid.index= c$.RC.NONE;
     let pager = null;
 
-    Object.preset(self_grid,{table:null, Designer:designer() });
+    Object.preset(_grid,{table:null, Designer:designer() });
 
     const initialized=function(){
         Object.preset(page.service.Interface,{List:{}});
         if (page.actionController)
-           self_grid.actionController = page.actionController;
+           _grid.actionController = page.actionController;
         return true;
     }();
 
-    this.Buttons = new j$.ui.Buttons(self_grid.actionController, page.service.Interface.List.Buttons, CONFIG[TEMPLATE].GRID.preset);
+    this.Buttons = new j$.ui.Buttons(_grid.actionController, page.service.Interface.List.Buttons, CONFIG[btn_template].GRID.preset);
 
-    this.init=(Resource, wrapGrid)=>{
-        self_grid.index= c$.RC.NONE;
+    this.init=(Resource)=>{
+        _grid.index= c$.RC.NONE;
         pager = Resource.Dataset.createPager(page.service.Interface.List);
-        if (!wrapGrid)
-            wrapGrid=wrap;
-        if (wrapGrid && pager){
-           self_grid.Designer.table(wrapGrid);
-           self_grid.paginator = new j$.ui.Pager(wrapGrid, pager , page.actionController+".List.Pager");
-           self_grid.Pager= self_grid.paginator.Controller(self_grid.Detail.populate);
-           self_grid.Pager.first();
+        if (pager){
+           _grid.Designer.table(page.form);
+           _grid.paginator = new j$.ui.Pager(page.form, pager , page.actionController+".List.Pager");
+           _grid.Pager= _grid.paginator.Controller(_grid.Detail.populate);
+           _grid.Pager.first();
         }
     };
 
     this.getPosition=cell=>{
-        self_grid.index= c$.RC.NONE; //REVIEW: Pode dá chabu
+        _grid.index= c$.RC.NONE; //REVIEW: Pode dá chabu
         if (cell)
-           self_grid.index= cell.parentNode.parentNode.rowIndex -1;
-        return self_grid.index;
+           _grid.index= cell.parentNode.parentNode.rowIndex -1;
+        return _grid.index;
     };
 
     function designer(){
@@ -79,21 +76,25 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
         ws.getRow=row=>{
             ws.ctCell=0;
             if (row && row>-1)
-               ws.lastRow=self_grid.table.rows[row];
+               ws.lastRow=_grid.table.rows[row];
             else
-               ws.lastRow = self_grid.table.insertRow(self_grid.table.rows.length);
+               ws.lastRow = _grid.table.insertRow(_grid.table.rows.length);
             return ws.lastRow;
         };
         return{
-           table:wrap=>{
-              if (!i$(wrap.id+'_list')){
-                wrap.insert("<div class='wrap_list' id='" +wrap.id+ "ListWrap'></div>");
-                let wrapList = i$(wrap.id+"ListWrap");
-                wrapList.insert("<table class='list' id='"+wrap.id+ "_list'></table>");
-              }
-              self_grid.table =i$(wrap.id+'_list');
+           table:parent=>{
+              let idList = `${parent.id}_list`
+                , idWrap = `${parent.id}ListWrap`;  
+              if (!i$(idList)){
+                 let tab = page.tabs.open({key:`${parent.id}Detalhe`, caption:"Detalhes", fixed:true})
+                  , html =`<div class='${CONFIG.GRID.CLASS.WRAP}' id='${idWrap}'>`
+                        +`<table class='${CONFIG.GRID.CLASS.TABLE}' id='${idList}'></table>`
+                        +`</div>`;
+                  tab.append(html);         
+              }         
+              _grid.table = i$(idList);
            }
-         , clear:()=>{self_grid.table.innerHTML='';}
+         , clear:()=>{_grid.table.innerHTML='';}
          , getRow:row=>{return ws.getRow(row);}
          , addRow:()=>{
                 ws.getRow();
@@ -101,20 +102,20 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
                 ws.clsRow=(ws.clsRow==='even')?ws.clsRow = 'odd':ws.clsRow = 'even';
                 return ws.lastRow;
          }
-         , deleteRow:row=>{self_grid.table.deleteRow(row);}
+         , deleteRow:row=>{_grid.table.deleteRow(row);}
          , addColumn:field=>{ws.change(field, true);}
          , changeColumn:field=>{ws.change(field, false);}
          , addButtons:()=>{
              let cell =ws.lastRow.insertCell(ws.ctCell);
-             cell.innerHTML = self_grid.Buttons.format();
+             cell.innerHTML = _grid.Buttons.format();
          }
          , header:()=>{
-             let header = self_grid.table.createTHead();
+             let header = _grid.table.createTHead();
              let headerDetail = header.insertRow(0);
                 for(let key in page.service.Fieldset.c$){
                     let df = page.service.Fieldset.c$[key];
                     if (df.persist){
-                        let idListHeader = self_grid.table.id+"_header."+key;
+                        let idListHeader = _grid.table.id+"_header."+key;
                         let label = document.createElement("th");
                         let clas$ = (df.Header.clas$)?' class="' +df.Header.clas$+ '"':'';
 
@@ -128,7 +129,7 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
                 // criar barra para navegar nas paginas
                 label = document.createElement("th");
                 headerDetail.appendChild(label);
-                self_grid.paginator.createNavigator(label);
+                _grid.paginator.createNavigator(label);
             }
         };
     };
@@ -136,52 +137,52 @@ j$.ui.Grid=function(page, wrap, TEMPLATE){
     this.Detail=function(){
         return{
             update:function(row,Record){
-                    self_grid.Designer.getRow(row);
+                    _grid.Designer.getRow(row);
                     page.service.Fieldset.sweep(function(field){
-                        self_grid.Designer.changeColumn(field);
+                        _grid.Designer.changeColumn(field);
                     });
             }
           , remove:function(pos){
-                   let row = self_grid.getPosition(pos);
+                   let row = _grid.getPosition(pos);
                    let pageNumber =pager.Control.number;
-                   self_grid.Designer.deleteRow(row);
+                   _grid.Designer.deleteRow(row);
                    pager.restart();
                    if (pageNumber>pager.Control.last)
-                      self_grid.Pager.last();
+                      _grid.Pager.last();
                    else
-                      self_grid.Pager.get(pageNumber);
+                      _grid.Pager.get(pageNumber);
                     return row;
             }
           , add:function(Record, populating){
-                   self_grid.Designer.addRow();
+                   _grid.Designer.addRow();
                    page.service.Fieldset.populate(Record, function(field){
-                          self_grid.Designer.addColumn(field);
+                          _grid.Designer.addColumn(field);
                    });
-                   self_grid.Designer.addButtons();
+                   _grid.Designer.addButtons();
                    if (!populating){ //*quando for um registro inserido pelo usuário, recalcula as páginas e posiciona na ultima
                        pager.restart();
-                       self_grid.Pager.last(); // Para posicionar na página onde foi inserido o novo registro
+                       _grid.Pager.last(); // Para posicionar na página onde foi inserido o novo registro
                    }
             }
           ,clear:()=>{
-             self_grid.Designer.clear();
+             _grid.Designer.clear();
           }
           , populate:function(){
                 page.reset(); // o formulário
-                 self_grid.Detail.clear();
+                 _grid.Detail.clear();
                 if (pager.Record.count !=  c$.RC.NOT_FOUND){
                     pager.sweep(function(row, record){
-                       self_grid.Detail.add(record,true);
+                       _grid.Detail.add(record,true);
                     });
-                    self_grid.Designer.header();
+                    _grid.Designer.header();
                 }
           }
          , populateAll:function(){ // preenche todos registros no grid, sem paginação
-              self_grid.table.innerHTML='';
+              _grid.table.innerHTML='';
               for (row=0; row<pager.dataset.count;row++){
-                   self_grid.Detail.add(pager.dataset.get(row));
+                   _grid.Detail.add(pager.dataset.get(row));
               }
-              self_grid.Designer.header();
+              _grid.Designer.header();
            }
       };
     }();
@@ -561,8 +562,8 @@ j$.ui.Page = function(){
           $('#'+form.id).append("<fieldset class='crud' id='" +form.id+ "Fieldset'>"
                               //<legend id='" +form.id+ "Header' class='crud'>" +form.title+ "</legend>"
                               +"</fieldset>");
-          $('#'+form.id+' > fieldset').append("<div id='" +form.id+ "Alert'></div>");
-          $('#'+form.id).append("<div id='" +form.id+ "Footer'></div>");
+          $('#'+form.id+' > fieldset').append(`<div id='${form.id}Alert'></div>`);
+          $('#'+form.id).append(`<div id='${form.id}Footer'></div>`);
           _form.body     =i$(form.id);
           _form.form     =i$(form.id);
           _form.fieldset =i$(form.id+"Fieldset");
@@ -832,10 +833,12 @@ j$.ui.Form=function(service, modal) {
     this.init= function(externalController) {
         j$.ui.Page.Designer.create($i); // cria os fields
         $i.Buttons.create($i.footer);   // cria os buttoes html
+        if (service.Child || service.Interface.List) // cria um tab para comportar o list e|ou child
+            $i.tabs = j$.ui.Tabs.create(`${$i.form.id}Tabs`, $i.footer.id); 
        // Typecast.Init(service.Interface);              // inicializa as máscaras (já é inicializado qdo a mask é redenrizado em cada input)
         if (service.Interface.List){
            if (service.Interface.List===true){service.Interface.List={};}
-           $i.List = new j$.ui.Grid($i, $i.footer); // cria o grid
+           $i.List = new j$.ui.Grid($i); // cria o grid
         }
         if (service.Resource)
            service.Resource=null;

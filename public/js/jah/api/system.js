@@ -168,7 +168,7 @@ if (System.api.jquery){
             }
         }
     }
-    Element.prototype.insert = function(content) {
+    Element.prototype.insert = function(content, idInner) {
         let id = "#" + this.id;
         if (dataExt.isString(content)){
             $(id).append(content);
@@ -182,6 +182,7 @@ if (System.api.jquery){
             if (content.top)
                $(id).prepend(content.top);
         }
+        return (idInner) ?i$(idInner) :null;
     }
     Element.prototype.remove = function() {
         if (!this.id.isEmpty())

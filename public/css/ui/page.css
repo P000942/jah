@@ -171,14 +171,6 @@ fieldset > legend{
 	width:100%; position:relative;
 }
 
-/* 
-a.navigator-actual,a.navigator-number{font-size:14px;  margin-left: 3px; margin-right: 1px; font-family: "Courier New", Arial;}
-a.navigator-actual{color:royalblue; }
-a.navigator-number{color:lightgrey; }
-a.navigator-number:hover,a.navigator-actual:hover{font-weight:bold; color:white;} */
-
-
-
 /***** Tables *****/
 table.list thead th > div > ul.pagination{
   margin: 1px 0;

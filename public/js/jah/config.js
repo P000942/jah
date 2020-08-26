@@ -162,6 +162,9 @@ const CONFIG = {
             MAXLINE:10        // Quantidade de registros na página
           , MAXPAGE:5         // Quantidade de páginas na barra de navegação
           , DEFAULT: 'CRUD'   // O template de GRID default
+          ,   CLASS:{TABLE:"list"
+                    , WRAP:"wrap_list"
+                    }
     }
     , QUERY:{BUTTONS:{}
           , GRID:{BUTTONS:{}}
