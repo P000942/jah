@@ -417,7 +417,12 @@ j$.service = function(){
         }    
         open(){
             let record =  this.Parent.service.Fieldset.sweep();
-            j$.Dashboard.openItem(this, record);
+            //j$.Dashboard.openItem(this, record);            
+            this.Parent.tabs.open({key:`tab_${this.id}`
+                             , caption:this.caption
+                             ,   title: this.title
+                             ,  onLoad: tab=>{j$.service.c$[this.key].init(tab.idContent)}
+            });
         }
         refresh(){
             return  this.Parent.service.Fieldset.sweep();
