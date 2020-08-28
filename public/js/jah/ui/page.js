@@ -779,7 +779,11 @@ j$.ui.Form=function(service, modal) {
     this.service = service;
     service.page = this;
 
-    let DEFAULT_BUTTON_PRESET = CONFIG.CRUD.preset;
+    let DEFAULT_BUTTON_PRESET = CONFIG.CRUD.preset
+      , alignButtons = (service.alignButton) ?service.alignButton :CONFIG.CRUD.ALIGN_BUTTONS;
+    
+    if (modal)
+         alignButtons=c$.ALIGN.BOTTOM;
 
     if (service.constructor && service.constructor.name==="query")
         DEFAULT_BUTTON_PRESET = CONFIG.QUERY.preset;
@@ -802,31 +806,6 @@ j$.ui.Form=function(service, modal) {
 
     $i.inherit($i.container, service.Interface);
 
-    $i.Alert = function(alert){
-        return{
-            show (msg,_class=CONFIG.ALERT.INFO.CLASS, inFocus){
-                if (msg){
-                   inFocus = (inFocus) ?`<strong>${inFocus}</strong> ` : "";
-                   if (alert) 
-                      j$.ui.Alert.show( [`${inFocus}${msg}`], _class, alert);
-                }else
-                     $i.Alert.hide();
-            }
-            , hide(){
-                if (alert)
-                   j$.ui.Alert.hide(alert);
-            }
-            ,id:alert
-        } 
-    }($i.alert);
-
-    $i.reset = ()=>{
-        $i.Alert.hide();
-        $i.form.reset(); // inputs do form
-        $i.service.Fieldset.reset(); // atributo dos fields (class, valor default, etc)
-        if ($i.List)
-           $i.List.index= c$.RC.NONE;
-    }
     if (!service.Interface.Buttons)
         service.Interface.Buttons = DEFAULT_BUTTON_PRESET();
 
@@ -844,7 +823,8 @@ j$.ui.Form=function(service, modal) {
     $i.Buttons = new j$.ui.Buttons($i.actionController, service.Interface.Buttons, DEFAULT_BUTTON_PRESET);
     this.init= function(externalController) {
         j$.ui.Page.Designer.create($i); // cria os fields
-        $i.Buttons.create($i.footer);   // cria os buttoes html //$i.footer
+        let wrapButtons  = (alignButtons==c$.ALIGN.TOP) ?$i.menu :$i.footer;
+        $i.Buttons.create(wrapButtons);   // cria os buttoes html  
         // if (service.Child || service.Interface.List) // cria um tab para comportar o list e|ou child
         //     $i.tabs = j$.ui.Tabs.create(`${$i.form.id}Tabs`, $i.footer.id); 
         // Typecast.Init(service.Interface);              // inicializa as máscaras (já é inicializado qdo a mask é redenrizado em cada input)
@@ -874,6 +854,31 @@ j$.ui.Form=function(service, modal) {
             $i.C$ = service.Fieldset.C$;
         }    
     };
+    $i.Alert = function(alert){
+        return{
+            show (msg,_class=CONFIG.ALERT.INFO.CLASS, inFocus){
+                if (msg){
+                   inFocus = (inFocus) ?`<strong>${inFocus}</strong> ` : "";
+                   if (alert) 
+                      j$.ui.Alert.show( [`${inFocus}${msg}`], _class, alert);
+                }else
+                     $i.Alert.hide();
+            }
+            , hide(){
+                if (alert)
+                   j$.ui.Alert.hide(alert);
+            }
+            ,id:alert
+        } 
+    }($i.alert);
+
+    $i.reset = ()=>{
+        $i.Alert.hide();
+        $i.form.reset(); // inputs do form
+        $i.service.Fieldset.reset(); // atributo dos fields (class, valor default, etc)
+        if ($i.List)
+           $i.List.index= c$.RC.NONE;
+    }    
     $i.Header = function(){
         let element = $i.header
           , idTitle = `${$i.form.id}Title`

@@ -3,7 +3,7 @@
  */
 const c$ = {  NOW: new Date()
            ,   RC:{NOT_FOUND:-1, NONE:-1}
-           ,ALIGN:{LEFT:'left', CENTER:'center', RIGHT:'right', JUSTIFY:'justify'}
+           ,ALIGN:{LEFT:'left', CENTER:'center', RIGHT:'right', JUSTIFY:'justify', TOP:'top', BOTTOM:'bottom'}
            ,MOUSE:{BUTTON:{LEFT:0,CENTER:1,RIGHT:2}}
            ,ORDER:{ASCENDING:'ASC', DESCENDING:'DESC', NONE:'NONE'}
            ,  KEY:{F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123
@@ -157,6 +157,7 @@ const CONFIG = {
     , CRUD:{BUTTONS:{}
           , GRID:{BUTTONS:{}}
           , CONTEXT: 'js/crud/'
+          , ALIGN_BUTTONS: c$.ALIGN.BOTTOM
       }
     , CHILD:{MODAL: true}  
     , GRID:{
