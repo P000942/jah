@@ -96,7 +96,7 @@ j$.ui.Tabs.Root =function(idTab, idContent){
                            , caption:tab.caption, id:tab.key, key:tab.key, idContent:tab.key+"_Content" 
                       });		  
 
-         this.title =text=>{return _tab.Header.title(text)}                  
+         //this.title =text=>{return _tab.Header.title(text)}                  
          
          const initialized=function(){
               Object.setIfExist(_tab, tab, ['onLoad','onActivate','onDeactivate', 'onClose', 'fixed','url']);
@@ -121,64 +121,64 @@ j$.ui.Tabs.Root =function(idTab, idContent){
                                       +"</div>\n"
                               }); // cria o container da tab               
          };          
-         this.Header = function(){
-             let element
-               , id = _tab.id + "_header"
-               , idTitle = `${id}_title`
-               , idMenu  = `${id}_menu`;
-             const create=function(){                    
-                i$(_tab.id).insert({top:                 
-                    `<div  class='${CONFIG.TAB.CLASS.HEADER}' id='${id}'>`
-                   +`<div class='${CONFIG.TAB.CLASS.TITLE}'  id='${idTitle}'></div>`
-                   +`<nav class='${CONFIG.TAB.CLASS.MENU}'   id='${idMenu}'></nav>`
-                   +"</div>"});  
-                element = i$(id);               
-                title(tab.title);                
-             }();   
-             function title(text){
-                if (text && dataExt.isString(text)) 
-                   i$(idTitle).innerHTML=text;
-                else
-                   element.hide();    
-                return  i$(idTitle).innerHTML; 
-             }             
-             return{
-                 title
-               , menu:i$(idMenu)
-               , show(){element.show()}
-               , hide(){element.hide()}
-             };
-         }();	
+        //  this.Header = function(){
+        //      let element
+        //        , id = _tab.id + "_header"
+        //        , idTitle = `${id}_title`
+        //        , idMenu  = `${id}_menu`;
+        //      const create=function(){                    
+        //         i$(_tab.id).insert({top:                 
+        //             `<div class='${CONFIG.TAB.CLASS.HEADER}' id='${id}'>`
+        //            +`<div class='${CONFIG.TAB.CLASS.TITLE}'  id='${idTitle}'></div>`
+        //            +`<nav class='${CONFIG.TAB.CLASS.MENU}'   id='${idMenu}'></nav>`
+        //            +"</div>"});  
+        //         element = i$(id);               
+        //         title(tab.title);                
+        //      }();   
+        //      function title(text){
+        //         if (text && dataExt.isString(text)) 
+        //            i$(idTitle).innerHTML=text;
+        //         else
+        //            element.hide();    
+        //         return  i$(idTitle).innerHTML; 
+        //      }             
+        //      return{
+        //          title
+        //        , menu:i$(idMenu)
+        //        , show(){element.show()}
+        //        , hide(){element.hide()}
+        //      };
+        //  };//();	
 
-         this.Menu = function(){            
-             let menubar;
-             const create=function(){                     
-                 menubar=j$.ui.Menu.create(_tab.Header.menu.id);
-             }();             
-             return{
-                 add:(menu, Items)=>{                     
-                     let menuBase = menubar.addMenu(menu);
-                     if (Items){
-                         for (let idx=0; idx<Items.length;  idx++){
-                            let item = Items[idx];    
-                            menuBase.add(item);                  
-                         }                             
-                     }    
-                     _tab.Header.show();                 
-                 }
-               , bindToMenu: (Items, design)=>{
-                            for (let key in design){
-                                let menu = design[key];
-                                if (dataExt.isArray(menu))
-                                    menu = {items:design[key]};
-                                Object.preset(menu, {key:key, caption:key});                    
-                                _tab.Menu.add(menu, Items);                                                          
-                            }
+        //  this.Menu = function(){            
+        //      let menubar;
+        //      const create=function(){                     
+        //          menubar=j$.ui.Menu.create(_tab.Header.menu.id);
+        //      }();             
+        //      return{
+        //          add:(menu, Items)=>{                     
+        //              let menuBase = menubar.addMenu(menu);
+        //              if (Items){
+        //                  for (let idx=0; idx<Items.length;  idx++){
+        //                     let item = Items[idx];    
+        //                     menuBase.add(item);                  
+        //                  }                             
+        //              }    
+        //              _tab.Header.show();                 
+        //          }
+        //        , bindToMenu: (Items, design)=>{
+        //                     for (let key in design){
+        //                         let menu = design[key];
+        //                         if (dataExt.isArray(menu))
+        //                             menu = {items:design[key]};
+        //                         Object.preset(menu, {key:key, caption:key});                    
+        //                         _tab.Menu.add(menu, Items);                                                          
+        //                     }
 
-                 } 
-                , render: menubar.render 
-             };
-         }();         
+        //          } 
+        //         , render: menubar.render 
+        //      };
+        //  };//();         
          
           // executar a ação associada a TAB indica(key)
           function load(){              

@@ -564,6 +564,12 @@ j$.ui.Page = function(){
        const create=function(){
           _form.clear();
           $(wrap).append("<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>");
+
+          $('#'+form.id).append(`<div class='${CONFIG.TAB.CLASS.HEADER}' id='${form.id}Header'>`
+                                +`<div class='${CONFIG.TAB.CLASS.TITLE}' id='${form.id}Title'>${form.title}</div>`
+                                +`<nav class='${CONFIG.TAB.CLASS.MENU}'  id='${form.id}Menu'></nav>`
+                                +"</div>");  
+
           $('#'+form.id).append("<fieldset class='crud' id='" +form.id+ "Fieldset'>"
                               //<legend id='" +form.id+ "Header' class='crud'>" +form.title+ "</legend>"
                               +"</fieldset>");
@@ -572,8 +578,9 @@ j$.ui.Page = function(){
           _form.body     =i$(form.id);
           _form.form     =i$(form.id);
           _form.fieldset =i$(form.id+"Fieldset");
-          _form.caption  =i$(form.id+"Header");
+          _form.caption  =i$(form.id+"Title");
           _form.header   =i$(form.id+"Header");
+          _form.menu     =i$(form.id+"Menu");
           _form.footer   =i$(form.id+'Footer');
           _form.alert    =i$(form.id+"Alert");
        }();
@@ -792,7 +799,8 @@ j$.ui.Form=function(service, modal) {
         service.Interface.id = service.id.toFirstLower();
     // se for modal, herda de um template próprio para modal
     this.inherit = (modal) ?j$.ui.Page.Designer.modal 
-                           :j$.ui.Page.Designer.form
+                           :j$.ui.Page.Designer.form;
+
     $i.inherit($i.container, service.Interface);
 
     $i.Alert = function(alert){
@@ -837,7 +845,7 @@ j$.ui.Form=function(service, modal) {
     $i.Buttons = new j$.ui.Buttons($i.actionController, service.Interface.Buttons, DEFAULT_BUTTON_PRESET);
     this.init= function(externalController) {
         j$.ui.Page.Designer.create($i); // cria os fields
-        $i.Buttons.create($i.footer);   // cria os buttoes html
+        $i.Buttons.create($i.footer);   // cria os buttoes html //$i.footer
         if (service.Child || service.Interface.List) // cria um tab para comportar o list e|ou child
             $i.tabs = j$.ui.Tabs.create(`${$i.form.id}Tabs`, $i.footer.id); 
        // Typecast.Init(service.Interface);              // inicializa as máscaras (já é inicializado qdo a mask é redenrizado em cada input)
@@ -867,6 +875,24 @@ j$.ui.Form=function(service, modal) {
             $i.C$ = service.Fieldset.C$;
         }    
     };
+    $i.Header = function(){
+        let element = $i.header
+          , idTitle = `${$i.form.id}Title`
+          , idMenu  = `${$i.form.id}Menu`;
+        function title(text){
+           if (text && dataExt.isString(text)) 
+              i$(idTitle).innerHTML=text;
+           else
+              element.hide();    
+           return  i$(idTitle).innerHTML; 
+        }             
+        return{
+            title
+          , menu:i$(idMenu)
+          , show(){element.show()}
+          , hide(){element.hide()}
+        };
+    }();    
 };
 
 j$.Observer=function(Parent){
