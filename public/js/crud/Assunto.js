@@ -33,6 +33,7 @@
                    }
             , child:{   Tarefa:{caption:'Ver Tarefa'
                              , bindBy:"idAssunto"
+                             //, modal:true
                              , fieldset:{idAssunto:TYPE.INTEGER(4,{label:'Assunto', readOnly:true, parentLegend:"txTitulo"})
                                         , idTarefa:TYPE.INTEGER(4,{label:'Código', readOnly:true})
                                         , txTarefa:TYPE.CHAR(30,{label:'Tarefa', mandatory:true})

@@ -44,7 +44,7 @@ j$.ui.Grid=function(page, btn_template=CONFIG.GRID.DEFAULT){
         _grid.index= c$.RC.NONE;
         pager = Resource.Dataset.createPager(page.service.Interface.List);
         if (pager){
-           _grid.Designer.table(page.form);
+           _grid.Designer.table();
            _grid.paginator = new j$.ui.Pager(page.form, pager , page.actionController+".List.Pager");
            _grid.Pager= _grid.paginator.Controller(_grid.Detail.populate);
            _grid.Pager.first();
@@ -82,15 +82,16 @@ j$.ui.Grid=function(page, btn_template=CONFIG.GRID.DEFAULT){
             return ws.lastRow;
         };
         return{
-           table:parent=>{
-              let idList = `${parent.id}_list`
-                , idWrap = `${parent.id}ListWrap`;  
+           table:()=>{
+              let idList =`${page.form.id}List`
+                , idWrap =`${page.form.id}ListWrap`
+                ,   html =`<div class='${CONFIG.GRID.CLASS.WRAP}' id='${idWrap}'>`
+                         +`<table class='${CONFIG.GRID.CLASS.TABLE}' id='${idList}'></table>`
+                         +`</div>`; 
               if (!i$(idList)){
-                 let tab = page.tabs.open({key:`${parent.id}Detalhe`, caption:"Detalhes", fixed:true})
-                  , html =`<div class='${CONFIG.GRID.CLASS.WRAP}' id='${idWrap}'>`
-                        +`<table class='${CONFIG.GRID.CLASS.TABLE}' id='${idList}'></table>`
-                        +`</div>`;
-                  tab.append(html);         
+                 //let tab = page.tabs.open({key:`${page.form.id}Detalhe`, caption:"Detalhes", fixed:true})
+                 //tab.append(hmtl);
+                 page.footer.insert(html);         
               }         
               _grid.table = i$(idList);
            }
@@ -405,24 +406,24 @@ j$.service = function(){
         constructor(key, parent, properties){
             Object.join(this, properties);
             this.Parent = parent; // Página que está criando os filhos
-           // let initialized = function(){
-                let idService  = parent.service.id;
-                let txGetValue = `j$.$S.${idService}.Fieldset.c$.${parent.service.resource.id}.value()`;
-                this.id = idService +''+key.toFirstUpper();
-                Object.preset(this,j$.service.adapter.get(key)) // Vai copiar todas as propriedades do adapter.services que não exite no service
-                this.onclick = this.Parent.actionController+'.child("'+key+'",' + txGetValue+ ')';
-                if (this.crud || this.query)
-                    this.service = j$.service.make(key,this);
-           // }();
+            let idService  = parent.service.id
+              , txGetValue = `j$.$S.${idService}.Fieldset.c$.${parent.service.resource.id}.value()`;
+            this.id = idService +''+key.toFirstUpper();
+            Object.preset(this,j$.service.adapter.get(key)) // Vai copiar todas as propriedades do adapter.services que não exite no service
+            this.onclick = this.Parent.actionController+'.child("'+key+'",' + txGetValue+ ')';
+            if (dataExt.isUndefined(this.modal))
+                this.modal = CONFIG.CHILD.MODAL;
+            if (this.crud || this.query)
+                this.service = j$.service.make(key,this);
         }    
         open(){
-            let record =  this.Parent.service.Fieldset.sweep();
-            //j$.Dashboard.openItem(this, record);            
-            this.Parent.tabs.open({key:`tab_${this.id}`
-                             , caption:this.caption
-                             ,   title: this.title
-                             ,  onLoad: tab=>{j$.service.c$[this.key].init(tab.idContent)}
-            });
+            let record = this.Parent.service.Fieldset.sweep();            
+            j$.Dashboard.openItem(this, record);            
+            // this.Parent.tabs.open({key:`tab_${this.id}`
+            //                  , caption:this.caption
+            //                  ,   title: this.title
+            //                  ,  onLoad: tab=>{j$.service.c$[this.key].init(tab.idContent)}
+            // });
         }
         refresh(){
             return  this.Parent.service.Fieldset.sweep();
@@ -566,13 +567,11 @@ j$.ui.Page = function(){
           $(wrap).append("<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>");
 
           $('#'+form.id).append(`<div class='${CONFIG.TAB.CLASS.HEADER}' id='${form.id}Header'>`
-                                +`<div class='${CONFIG.TAB.CLASS.TITLE}' id='${form.id}Title'>${form.title}</div>`
-                                +`<nav class='${CONFIG.TAB.CLASS.MENU}'  id='${form.id}Menu'></nav>`
-                                +"</div>");  
+                               +`<div class='${CONFIG.TAB.CLASS.TITLE}'  id='${form.id}Title'>${form.title}</div>`
+                               +`<nav class='${CONFIG.TAB.CLASS.MENU}'   id='${form.id}Menu'></nav>`
+                               +"</div>");  
 
-          $('#'+form.id).append("<fieldset class='crud' id='" +form.id+ "Fieldset'>"
-                              //<legend id='" +form.id+ "Header' class='crud'>" +form.title+ "</legend>"
-                              +"</fieldset>");
+          $('#'+form.id).append("<fieldset class='crud' id='" +form.id+ "Fieldset'></fieldset>");
           $('#'+form.id+' > fieldset').append(`<div id='${form.id}Alert'></div>`);
           $('#'+form.id).append(`<div id='${form.id}Footer'></div>`);
           _form.body     =i$(form.id);
@@ -846,9 +845,9 @@ j$.ui.Form=function(service, modal) {
     this.init= function(externalController) {
         j$.ui.Page.Designer.create($i); // cria os fields
         $i.Buttons.create($i.footer);   // cria os buttoes html //$i.footer
-        if (service.Child || service.Interface.List) // cria um tab para comportar o list e|ou child
-            $i.tabs = j$.ui.Tabs.create(`${$i.form.id}Tabs`, $i.footer.id); 
-       // Typecast.Init(service.Interface);              // inicializa as máscaras (já é inicializado qdo a mask é redenrizado em cada input)
+        // if (service.Child || service.Interface.List) // cria um tab para comportar o list e|ou child
+        //     $i.tabs = j$.ui.Tabs.create(`${$i.form.id}Tabs`, $i.footer.id); 
+        // Typecast.Init(service.Interface);              // inicializa as máscaras (já é inicializado qdo a mask é redenrizado em cada input)
         if (service.Interface.List){
            if (service.Interface.List===true){service.Interface.List={};}
            $i.List = new j$.ui.Grid($i); // cria o grid
