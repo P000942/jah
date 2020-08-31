@@ -566,9 +566,9 @@ j$.ui.Page = function(){
           _form.clear();
           $(wrap).append("<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>");
 
-          $('#'+form.id).append(`<div class='${CONFIG.TAB.CLASS.HEADER}' id='${form.id}Header'>`
-                               +`<div class='${CONFIG.TAB.CLASS.TITLE}'  id='${form.id}Title'>${form.title}</div>`
-                               +`<nav class='${CONFIG.TAB.CLASS.MENU}'   id='${form.id}Menu'></nav>`
+          $('#'+form.id).append(`<div class='${CONFIG.CRUD.CLASS.HEADER}' id='${form.id}Header'>`
+                               +`<div class='${CONFIG.CRUD.CLASS.TITLE}'  id='${form.id}Title'>${form.title}</div>`
+                               +`<nav class='${CONFIG.CRUD.CLASS.MENU}'   id='${form.id}Menu'></nav>`
                                +"</div>");  
 
           $('#'+form.id).append("<fieldset class='crud' id='" +form.id+ "Fieldset'></fieldset>");

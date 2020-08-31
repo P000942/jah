@@ -156,6 +156,9 @@ const CONFIG = {
     }
     , CRUD:{BUTTONS:{WRAP:'wrap_command', ALIGN: c$.ALIGN.BOTTOM}
           , GRID:{BUTTONS:{}}
+          , CLASS:{HEADER:"tab_header"  
+                  , TITLE:"tab_header_title"
+                  ,  MENU:"tab_header_menu" }
           , CONTEXT: 'js/crud/'          
       }
     , CHILD:{MODAL: true}  
@@ -180,15 +183,18 @@ const CONFIG = {
     ,   INPUT:{CLASS:{DEFAULT:'form-control form-control-sm space', FOCUS:'input_focus'
                     , INVALID:'form-control form-control-sm is-invalid'
                     ,   VALID:'form-control form-control-sm is-valid'
+                    ,REQUIRED:'required'
                     }
               }     
     ,   LABEL:{CLASS:{DEFAULT:"col-form-label col-form-label-sm col-3 col-sm-2 col-md-2 col-xl-2 inLine space"
                      , INLINE:"col-form-label col-form-label-sm col-auto inLine"
                      , COLUMN:"col-auto space"
                      }}    
-    ,   TAB:{CLASS:{HEADER:"tab_header"  //tab_header
-                  ,  TITLE:"tab_header_title"
-                  ,   MENU:"tab_header_menu" //tab_header_menu
+    ,   TAB:{CLASS:{ CLOSE:"link_tab_close"  
+                  ,  TITLE:"link_tab"  
+                  , ACTIVE:"active_link_tab" 
+                  , HOVER:"link_tab_hover"              
+                  , HOVER_ACTIVE:"active_link_tab_hover"
                   ,   WRAP:"tab_wrap"
                   ,CONTENT:"tab_content"
                   ,BUTTONS:"tabs_buttons"

@@ -34,8 +34,6 @@ j$.ui.Tabs.Root =function(idTab, idContent){
         if (!idContent){       
            throw  EXCEPTION.format(EXCEPTION.ITEM.INVALID_ELEMENT, "Impossível montar um objeto tabs sem indicar o 'ID' do elemento html onde será montado");
         }else{
-        //    i$(idContent).insert({top: `<div id='${idWrap}' class='${CONFIG.TAB.CLASS.CONTAINER}' />`}); //wrap geral do tab
-        //    i$(idWrap).insert({top: `<div id='${idTab}' class='${CONFIG.TAB.CLASS.BUTTONS}' />`});       //Wrap das tab-link
            i$(idContent).insert(`<div id='${idWrap}' class='${CONFIG.TAB.CLASS.CONTAINER}' />`); //wrap geral do tab
            i$(idWrap).insert(`<div id='${idTab}' class='${CONFIG.TAB.CLASS.BUTTONS}' />`);       //Wrap das tab-link
         }
@@ -121,65 +119,7 @@ j$.ui.Tabs.Root =function(idTab, idContent){
                                       +"</div>\n"
                               }); // cria o container da tab               
          };          
-        //  this.Header = function(){
-        //      let element
-        //        , id = _tab.id + "_header"
-        //        , idTitle = `${id}_title`
-        //        , idMenu  = `${id}_menu`;
-        //      const create=function(){                    
-        //         i$(_tab.id).insert({top:                 
-        //             `<div class='${CONFIG.TAB.CLASS.HEADER}' id='${id}'>`
-        //            +`<div class='${CONFIG.TAB.CLASS.TITLE}'  id='${idTitle}'></div>`
-        //            +`<nav class='${CONFIG.TAB.CLASS.MENU}'   id='${idMenu}'></nav>`
-        //            +"</div>"});  
-        //         element = i$(id);               
-        //         title(tab.title);                
-        //      }();   
-        //      function title(text){
-        //         if (text && dataExt.isString(text)) 
-        //            i$(idTitle).innerHTML=text;
-        //         else
-        //            element.hide();    
-        //         return  i$(idTitle).innerHTML; 
-        //      }             
-        //      return{
-        //          title
-        //        , menu:i$(idMenu)
-        //        , show(){element.show()}
-        //        , hide(){element.hide()}
-        //      };
-        //  };//();	
-
-        //  this.Menu = function(){            
-        //      let menubar;
-        //      const create=function(){                     
-        //          menubar=j$.ui.Menu.create(_tab.Header.menu.id);
-        //      }();             
-        //      return{
-        //          add:(menu, Items)=>{                     
-        //              let menuBase = menubar.addMenu(menu);
-        //              if (Items){
-        //                  for (let idx=0; idx<Items.length;  idx++){
-        //                     let item = Items[idx];    
-        //                     menuBase.add(item);                  
-        //                  }                             
-        //              }    
-        //              _tab.Header.show();                 
-        //          }
-        //        , bindToMenu: (Items, design)=>{
-        //                     for (let key in design){
-        //                         let menu = design[key];
-        //                         if (dataExt.isArray(menu))
-        //                             menu = {items:design[key]};
-        //                         Object.preset(menu, {key:key, caption:key});                    
-        //                         _tab.Menu.add(menu, Items);                                                          
-        //                     }
-
-        //          } 
-        //         , render: menubar.render 
-        //      };
-        //  };//();         
-         
+    
           // executar a ação associada a TAB indica(key)
           function load(){              
               if (!_tab.loaded && _tab.onLoad)                  
@@ -222,17 +162,16 @@ j$.ui.Tabs.Root =function(idTab, idContent){
           }
 		  
 	      function render(){			 
-              let linkClose =(_tab.fixed)?'':"<a class='link_tab_close' href=\"javascript:j$.ui.Tabs.c$." + _tab.parent.key 
+              let linkClose =(_tab.fixed)?'':`<a class='${CONFIG.TAB.CLASS.CLOSE}' href=\"javascript:j$.ui.Tabs.c$.` + _tab.parent.key 
                             + ".close('" + _tab.key + "');\" >&nbsp;&nbsp;</a>";              
-              return "<span class='link_tab' onmouseover='j$.ui.Tabs.HANDLE.onmouseover(this);' onmouseout='j$.ui.Tabs.HANDLE.onmouseout(this);' id='tab_link_"+ this.key+"'>"
-                   +"<a class='link_tab' id='link_" + _tab.key +  "' " 
+              return `<span class='${CONFIG.TAB.CLASS.TITLE}' onmouseover='j$.ui.Tabs.HANDLE.onmouseover(this);' onmouseout='j$.ui.Tabs.HANDLE.onmouseout(this);' id='tab_link_`+ this.key+"'>"
+                   +`<a class='${CONFIG.TAB.CLASS.TITLE}' id='link_` + _tab.key +  "' " 
 		           + "href=\"javascript:j$.ui.Tabs.c$." + _tab.parent.key + ".activate('" + _tab.key + "');\" >"
                    + _tab.caption + "</a>"
                    + linkClose +"</span>";
           }
 		  
          function addContent(html){			 
-               // _tab.idContent.insert({bottom:html}); 
                 i$(_tab.idContent).insert({bottom:html}); 
          }
          function updContent(html){			 
@@ -254,14 +193,14 @@ j$.ui.Tabs.Root =function(idTab, idContent){
 j$.ui.Tabs.HANDLE = {
     onmouseover: obj=>{
         if (obj.className.indexOf('active')>-1)
-            obj.className = "active_link_tab_hover";
+            obj.className = CONFIG.TAB.CLASS.HOVER_ACTIVE;
         else
-            obj.className = "link_tab_hover";
+            obj.className = CONFIG.TAB.CLASS.HOVER;
     },
     onmouseout: obj=>{
         if (obj.className.indexOf('active')>-1)
-            obj.className = "active_link_tab";
+            obj.className = CONFIG.TAB.CLASS.ACTIVE;
         else        
-        obj.className = "link_tab";
+            obj.className = CONFIG.TAB.CLASS.TITLE;
     }    
 };

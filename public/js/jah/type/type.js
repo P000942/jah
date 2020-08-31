@@ -55,7 +55,7 @@ j$.ui.Render= function(){
               label =(label)?label : att.id;
               if (!i$(att.id)){ // cria se não existir
                  let _att = j$.ui.Render.attributes(att,'label')
-                 , required =(mandatory) ?'<span class="required">*</span>' :'';
+                 , required =(mandatory) ?`<span class="${CONFIG.INPUT.CLASS.REQUIRED}">*</span>` :'';
                  $(wrap).append(`<label ${_att} >${label}${required}:</label>`);
               }
               return i$(att.id);
