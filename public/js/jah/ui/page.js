@@ -228,7 +228,7 @@ j$.ui.Buttons=function(actionController, buttons, presetFunction){
 
     this.create=wrap=>{
         _wrap = wrap;
-        wrapButtons=j$.ui.Render.wrap(_wrap, _wrap.id+ '_button', 'wrap_command');
+        wrapButtons=j$.ui.Render.wrap(_wrap, _wrap.id+ '_button', CONFIG.CRUD.BUTTONS.WRAP);
         for (let key in _btn.Items){
             _btn.add(key,_btn.Items[key]);
         };
@@ -780,7 +780,7 @@ j$.ui.Form=function(service, modal) {
     service.page = this;
 
     let DEFAULT_BUTTON_PRESET = CONFIG.CRUD.preset
-      , alignButtons = (service.alignButton) ?service.alignButton :CONFIG.CRUD.ALIGN_BUTTONS;
+      , alignButtons = (service.alignButton) ?service.alignButton :CONFIG.CRUD.BUTTONS.ALIGN;
     
     if (modal)
          alignButtons=c$.ALIGN.BOTTOM;

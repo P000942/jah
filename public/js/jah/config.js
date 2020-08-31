@@ -154,10 +154,9 @@ const CONFIG = {
        ,  INIT:{KEY:'init',    VALUE:'Iniciar'  , ICON:''}
        ,SUBVISION:{KEY:'subvision', VALUE:'Detalhes', ICON:'icon-list'}
     }
-    , CRUD:{BUTTONS:{}
+    , CRUD:{BUTTONS:{WRAP:'wrap_command', ALIGN: c$.ALIGN.BOTTOM}
           , GRID:{BUTTONS:{}}
-          , CONTEXT: 'js/crud/'
-          , ALIGN_BUTTONS: c$.ALIGN.BOTTOM
+          , CONTEXT: 'js/crud/'          
       }
     , CHILD:{MODAL: true}  
     , GRID:{
@@ -201,7 +200,7 @@ const CONFIG = {
                       , ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
     ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
-    ,    MENU:{PARSER:"menubar"
+    ,    MENU:{PARSER:"menubar" // ou 'sidebar'
             , OPTIONS:{SIDEBAR:{CLASS:{CONTENT:"col-md-10 ml-sm-auto col-lg-10 px-md-2"
                                         , MENU:"col-md-2 col-lg-2 d-md-block nav-side-menu"}
                             , CONTENT:"sidebar"}

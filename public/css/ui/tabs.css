@@ -66,12 +66,7 @@ a.link_tab_close, a.link_tab_close:hover{ text-decoration:none;
                  font-family: FontAwesome;
                  font-size: 13pt;
 }
-/* a.link_tab_close{ text-decoration:none;
-                 background-image: url(../../images/icon/dialog-close.png);
-}
-a.link_tab_close:hover{   text-decoration:none;
-               background-image: url(../../images/icon/dialog-close-hover.png);
-} */
+
 a.link_tab_close:after{  
   color: lightgrey;
   content: "\f057";

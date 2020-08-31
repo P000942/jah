@@ -68,12 +68,6 @@ body{
 }
 
 /* Estilo para a figura t�tulo da pagina */
-/*.cabecalho#Pag {
-	background-image:url(../images/layout/titulo.gif);
-	cursor:pointer;  Coloque o caminha para a pasta de imagens
-	height:83px;
-}*/
-
 .top-left {
     background-image:url(../images/layout/topo-am.png);
     background-repeat: no-repeat;
@@ -109,11 +103,6 @@ body{
 /*vertical-align:middle;*/
     height: 64px;
     width: 100%;
-/*	color:rgb(10,80,10);
-        height:63px;
-	font-family:Verdana, Arial, Helvetica;
-	font-size:18px;
-	font-weight:bold;    	padding-left:200px;*/
 }
 
 .menubar, .footer#Sefaz {
