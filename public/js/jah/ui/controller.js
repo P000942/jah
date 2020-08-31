@@ -168,7 +168,7 @@ function ResponseController($service){
   }
 
   function init(){
-      hide(['SAVE','CHILD']);
+      hide(['BACK', 'SAVE','CHILD']);
       EDITED    = false;
       NEW_RECORD=false;
       if (_me.UpdateController)
