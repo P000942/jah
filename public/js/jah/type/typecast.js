@@ -26,7 +26,7 @@ const Typecast = {
 		                      && dataExt.isDefined(field.Mask)==false){
 			if(!field.id) Typecast.Utils.GenerateID(field);
 					
-			let behaviour     = Typecast.Behaviours.Mask;  
+			let behaviour     = Typecast.Mask;  
 			Typecast.InitMask = true;
 			behaviour.initField(field, maskProperties);
 
@@ -38,8 +38,8 @@ const Typecast = {
 		}            
 	}
 	
-	, Behaviours : {
-		Mask : {
+	// , Behaviours : {
+	, Mask : {
 			Init : ()=>{},
 			
 			initField : (field, maskProperties)=>{ //inicializa as máscaras
@@ -51,7 +51,7 @@ const Typecast = {
 					fieldData = field.getAttribute("data-mask");
 				else
 					fieldData = fld;
-				Typecast.Behaviours.Mask.ParseFieldData(field, fieldData);
+				Typecast.Mask.ParseFieldData(field, fieldData);
 				field.value = (field.DefaultText.length>0) ?field.DefaultText.join("") :field.DefaultText;
 				if (!maskProperties) {
 					if (!field.isAlignRight)
@@ -62,14 +62,14 @@ const Typecast = {
 			
 			onFocusHandler : (e=window.event)=>{
 				if (e.target.isAlignRight)
-				   Typecast.Behaviours.Mask.CursorManager.Reposition(e.target);
+				   Typecast.Mask.CursorManager.Reposition(e.target);
 			},
 			
 			lostFocusHandler : ()=>{},
 			
 			keyUpHandler : function(e=window.event){
 				let key = Typecast.Utils.getKey(e)
-				  , mask = Typecast.Behaviours.Mask;
+				  , mask = Typecast.Mask;
 				// else if(key.code==c$.KEY.ESC){}
 				// else{}
 				if (!key.isHandleKey) return;
@@ -86,9 +86,9 @@ const Typecast = {
 					if (this.isAlignRight){
 						mask.DataManager.shiftRight(this);
 					}else if (this.AllowInsert){
-						let preBackspaceCursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0];
+						let preBackspaceCursorPosition = Typecast.Mask.CursorManager.GetPosition(this)[0];
 						mask.CursorManager.Move(this, -1);
-						let postBackspaceCursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0]-1;
+						let postBackspaceCursorPosition = Typecast.Mask.CursorManager.GetPosition(this)[0]-1;
 
 						if(preBackspaceCursorPosition != postBackspaceCursorPosition) 
 							mask.DataManager.RemoveCharacterByShiftLeft(this,1);
@@ -96,10 +96,10 @@ const Typecast = {
 					mask.Render(this);
 					mask.CursorManager.Reposition(this);
 				}else if(key.code==c$.KEY.END){
-					let startIdx = Typecast.Behaviours.Mask.MaskManager.FindNearestMaskCharacter(this, this.DataIndex[this.DataIndex.length-1], 1);
-					Typecast.Behaviours.Mask.CursorManager.SetPosition(this, startIdx);
+					let startIdx = Typecast.Mask.MaskManager.FindNearestMaskCharacter(this, this.DataIndex[this.DataIndex.length-1], 1);
+					Typecast.Mask.CursorManager.SetPosition(this, startIdx);
 				}else if(key.code==c$.KEY.HOME){
-					Typecast.Behaviours.Mask.CursorManager.SetPosition(this, this.MaskIndex[0]);
+					Typecast.Mask.CursorManager.SetPosition(this, this.MaskIndex[0]);
 				}else if(key.code==c$.KEY.LEFT || (key.code==c$.KEY.UP && this.isAlignRight==false)){
 					mask.CursorManager.Move(this, -1);
 				}else if(key.code==c$.KEY.UP && this.isAlignRight){
@@ -114,7 +114,7 @@ const Typecast = {
 				let key = Typecast.Utils.getKey(e);
 				if (!key.isValidChar) {return}
 
-				let mask = Typecast.Behaviours.Mask
+				let mask = Typecast.Mask
 				  , render=false;
 				mask.CursorManager.TabbedInSetPosition(this);
 				maskCurrent=mask.MaskManager.CurrentMaskCharacter(this);				
@@ -149,11 +149,11 @@ const Typecast = {
 			},
 			mouseUpHandler : function(e=window.event){
 				if (this.isAlignRight)
-					Typecast.Behaviours.Mask.CursorManager.Reposition(this);
+					Typecast.Mask.CursorManager.Reposition(this);
 				else{
-					let cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(this)[0];
-					let startIdx = Typecast.Behaviours.Mask.MaskManager.FindNearestMaskCharacter(this, cursorPosition, 0);
-					Typecast.Behaviours.Mask.CursorManager.SetPosition(this, startIdx);
+					let cursorPosition = Typecast.Mask.CursorManager.GetPosition(this)[0];
+					let startIdx = Typecast.Mask.MaskManager.FindNearestMaskCharacter(this, cursorPosition, 0);
+					Typecast.Mask.CursorManager.SetPosition(this, startIdx);
 				}	
 			},
 			
@@ -192,7 +192,7 @@ const Typecast = {
 				},
 				
 				CurrentMaskCharacter : function(field){
-					let cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(field)[0];
+					let cursorPosition = Typecast.Mask.CursorManager.GetPosition(field)[0];
 					return field.Mask[cursorPosition];
 				},
 				
@@ -248,7 +248,7 @@ const Typecast = {
 				Move : function(field, dir){
 					let cursorPosition = this.GetPosition(field)[0];
 					if (!field.isAlignRight || (field.isAlignRight && field.Data.length>0)){
-						let startIdx = Typecast.Behaviours.Mask.MaskManager.FindNearestMaskCharacter(field, cursorPosition, dir);
+						let startIdx = Typecast.Mask.MaskManager.FindNearestMaskCharacter(field, cursorPosition, dir);
 						this.SetPosition(field, startIdx);
 					}else{
 						this.SetPosition(field, cursorPosition);
@@ -273,7 +273,7 @@ const Typecast = {
 					Typecast.Utils.PartialSelect(field, startIdx, endIdx);
 				},
 				TabbedInSetPosition : function(field){//onde será posicionado o cursor para inserir o valor
-					let mask = Typecast.Behaviours.Mask;
+					let mask = Typecast.Mask;
 					
 					if(mask.MaskManager.CurrentMaskCharacter(field) == undefined){
 						let startIdx=0;
@@ -320,7 +320,7 @@ const Typecast = {
 			DataManager : {
 				AddData : function(field, char){
 					//(field.alignToReposiotion==c$.ALIGN.RIGHT)
-					let cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(field)[0];
+					let cursorPosition = Typecast.Mask.CursorManager.GetPosition(field)[0];
 					if (field.isAlignRight){
 						if (cursorPosition ==field.MaskIndex.length)
 						   this.InsertCharacter(field, char);
@@ -382,7 +382,7 @@ const Typecast = {
 				RemoveCharacterByShiftLeft : function(field, pos=0){
 					let lastCharacterPosition = field.DataIndex[field.DataIndex.length-1]
 					  , currentCharacterPosition = this.CurrentDataIndexPosition(field)
-					  , cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(field)[0];
+					  , cursorPosition = Typecast.Mask.CursorManager.GetPosition(field)[0];
 					
 					if(currentCharacterPosition != null && (lastCharacterPosition >= cursorPosition || (lastCharacterPosition ==0  && lastCharacterPosition == cursorPosition))){
 						if (lastCharacterPosition ==0)
@@ -403,7 +403,7 @@ const Typecast = {
 					}
 				},
 				CurrentDataIndexPosition : function(field){
-					let cursorPosition = Typecast.Behaviours.Mask.CursorManager.GetPosition(field)[0];
+					let cursorPosition = Typecast.Mask.CursorManager.GetPosition(field)[0];
 					let currentDataIndexPosition = null;
 					for(let i=0; i<field.MaskIndex.length; i++){
 						if(field.MaskIndex[i] == cursorPosition){
@@ -438,7 +438,7 @@ const Typecast = {
 				
 				this.CursorManager.RestorePosition(field);
 			}
-		},
+		// },
 	},
 	
 	Utils : {
