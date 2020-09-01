@@ -346,11 +346,11 @@ TYPE.HELPER = {
 
 class Ma$k{
     constructor(mask){
-        Object.preset(this,{fmt:null, prompt:null, strip:null, mask:null, size:1, TCMask:null, align:c$.ALIGN.LEFT});
+        Object.preset(this,{fmt:null, prompt:null, strip:null, mask:null, size:1, align:c$.ALIGN.LEFT});
         if (mask){
             Object.setIfExist(this,mask,['strip','empty','align']);
             if (mask.format){
-                this.TCMask = 'TCMask['+ mask.format +']';
+                // this.TCMask = 'TCMask['+ mask.format +']';
                 this.fmt = mask.format;
                 let vMask = mask.format.split(c$.MASK.FieldDataSeparator);
                 this.mask = vMask[0];
@@ -368,46 +368,16 @@ class Ma$k{
         return vl;
     };
     render (inputField){
-         if (this.TCMask){
-             inputField.addClassName(this.TCMask);
+         if (this.mask){
+             //inputField.addClassName(this.TCMask);
+             inputField.setAttribute("data-mask", this.mask); 
+             if (this.prompt)
+                inputField.setAttribute("data-prompt", this.prompt);           
              Typecast.Format(inputField, this);
          }
     }
 }
 
-// superMask=function(mask){
-//     let SELF=this;
-//     Object.preset(SELF,{format:null, prompt:null, strip:null, mask:null, size:1, TCMask:null});
-//     let initialized = function(){
-//         if (mask){
-//             Object.setIfExist(SELF,mask,['strip','empty']);
-//             if (mask.format){
-//                 SELF.TCMask = 'TCMask['+ mask.format +']';
-//                 SELF.format = mask.format;
-//                 var vMask = mask.format.split(c$.MASK.FieldDataSeparator);
-//                 SELF.mask = vMask[0];
-//                 SELF.prompt = (vMask.length>1) ? vMask[1] : null;
-//                 SELF.size = SELF.mask.length;
-//             }
-//         }
-//     }();
-//     this.format = value=>{
-//         return (SELF.mask)?value.mask(SELF.mask) :value;
-//     };
-//     this.unformat = value=>{
-//         let vl = (SELF.strip) ?value.stripChar(SELF.strip) :value.trim();
-//         vl = vl.stripChar("_"); // Remover o caracter de prompt
-//         if (SELF.empty && vl==SELF.empty)
-//            vl =''
-//         return vl;
-//     };
-//     this.render = function(inputField){
-//          if (SELF.TCMask){
-//              inputField.addClassName(SELF.TCMask);
-//              Typecast.Format(inputField);
-//          }
-//     }
-// }
 //TYPE.TEST.assert(TYPE.CCA(),'04.150.945-5');
 //TYPE.TEST.assert(TYPE.PHONE(),'(092)8122-0122');
 //TYPE.TEST.assert(TYPE.CNPJ(),'07.311.461/0001-24');
@@ -423,14 +393,17 @@ class Ma$k{
 j$.Feedback =function (){
     let _msg=null
       , _markIfValid = true;
+    function fmtMsg(msg=""){ 
+        return dataExt.isString(msg) ?msg :msg.statusText;
+    }      
     function fmtId(field, msg=""){ 
         let fb = i$(`${field.id}_legend`);
-        _msg=msg;
+        _msg=fmtMsg(msg);
         if (!fb){
            $(field.Input.parentElement).append(`<div id='${field.id}_legend'></div >`);
            fb = i$(`${field.id}_legend`);
         }  
-        fb.content(msg);   
+        fb.content(_msg);   
         return fb;
     }
     function hide(field){

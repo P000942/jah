@@ -110,7 +110,8 @@
     };
 
     myPage.Fieldset= j$.ui.createFieldset({
-                     Digito:TYPE.DIGIT({label:'Dígito', resource:{name:'estadoCivil', local:true}, title:'informe o código aparece a legenda.'}),
+                     Digito:TYPE.DIGIT({label:'Dígito', resource:{name:'estadoCivil', local:true, id:'idEstadoCivil', text:'txEstadoCivil'}
+                                                     , title:'informe o código aparece a legenda.'}),
                   ufLegenda:TYPE.UPPERCASE(2,{label:'UF com Legenda', resource:{name:'uf', local:true, id:'sgUf', text:'txEstado'}}),
                    Numerico:TYPE.NUMERIC(4,2,{label:'Numérico', mandatory:true}),
                    Dinheiro:TYPE.MONEY(10),

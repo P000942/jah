@@ -22,12 +22,12 @@ const Typecast = {
 		}
 	}
 	, Format : function(field, maskProperties){ //inicializa as máscaras dos elemntos
-		if(field.type=="text" && field.className && field.className.indexOf("TC") != -1 && dataExt.isDefined(field.Mask)==false){
+		if(field.type=="text" && dataExt.isDefined(field.getAttribute("data-mask"))  
+		                      && dataExt.isDefined(field.Mask)==false){
 			if(!field.id) Typecast.Utils.GenerateID(field);
-			
-			let behaviourName = (field.className.indexOf("[") != -1) ? field.className.substring(field.className.indexOf("TC")+2, field.className.indexOf("[")) : field.className.substring(field.className.indexOf("TC")+2, field.className.length);
-			let behaviour     = Typecast.Behaviours[behaviourName]
-			Typecast["Init" + behaviourName] = true;
+					
+			let behaviour     = Typecast.Behaviours.Mask;  
+			Typecast.InitMask = true;
 			behaviour.initField(field, maskProperties);
 
 			field.onfocus    = behaviour.onFocusHandler;
@@ -47,7 +47,8 @@ const Typecast = {
 				//#todo: {id} não é uma boa opcao - melhor ver algo específico do html5
 				  , fld = (c$.MASK.MASKS[field.id]) ?c$.MASK.MASKS[field.id] :null;
 				if(!fld)
-					fieldData = field.className.substring(field.className.indexOf("[")+1, field.className.indexOf("]"))
+					//fieldData = field.className.substring(field.className.indexOf("[")+1, field.className.indexOf("]"))
+					fieldData = field.getAttribute("data-mask");
 				else
 					fieldData = fld;
 				Typecast.Behaviours.Mask.ParseFieldData(field, fieldData);
@@ -157,12 +158,13 @@ const Typecast = {
 			},
 			
 			ParseFieldData : function(field, fieldData){ //inicializa os valores de dados
-				fieldData = fieldData.split(c$.MASK.FieldDataSeparator);
+				//fieldData = fieldData.split(c$.MASK.FieldDataSeparator);
 				field.CursorPersistance = [];
 				field.Data          = [];
 				field.DataIndex     = [];
-				field.DefaultText   = (fieldData[1]) ? fieldData[1].split("") : "";//if default text isn't provided use mask
-				field.Mask          = this.MaskManager.ParseMask(fieldData[0],field);
+				field.DefaultText   = (field.getAttribute("data-prompt")) ?field.getAttribute("data-prompt").split("") :"";
+				//(fieldData[1]) ? fieldData[1].split("") : "";
+				field.Mask          = this.MaskManager.ParseMask(fieldData,field);
 				field.MaskIndex     = this.MaskManager.ParseMaskIndex(field.Mask);
 				
 				let IsComplexMask   = this.MaskManager.IsComplexMask(field);
