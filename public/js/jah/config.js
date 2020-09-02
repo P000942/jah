@@ -21,11 +21,7 @@ const c$ = {  NOW: new Date()
                   , AllowInsert : true
                   , LowerCaseCharacter:'a'
                   , UpperCaseCharacter:'A'
-                  , DisplayMaskCharacters : false //Display mask characters when default text is not present
-                  , MASKS : { // o Typecast identifica por uma propriedade do html #todo: Qual?
-                            fax: "(###) ###-####,(   )    -    "
-                          , cpx: "###.###.###-##,___.___.___-__"
-                    }
+                  , DisplayMaskCharacters : false //Display mask characters when default text is not present                 
                   , DATE :{
                         "default":      "dd/mm/yyyy"
                         , shortDate:      "d/m/yy"
@@ -40,7 +36,16 @@ const c$ = {  NOW: new Date()
                         , isoDateTime:    "yyyy-mm-dd'T'HH:MM:ss"
                         , isoUtcDateTime: "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'"
                 }  
-     }
+            }
+            ,  MASKS: { // serah gerado uma propriedade do html data-mask e data-prompt: 
+                    fax: {format:"(###) ###-####,(   )    -    ", strip:',()'}
+                ,   cpx: "###.###.###-##,___.___.___-__"
+                ,   cpf: {format:'000.000.000-00|___.___.___-__', strip:'.-'}
+                ,  cnpj: {format:'00.000.000/0000-00|__.___.___/____-__', strip:'-/.'}
+                ,   cca: {format:'00.000.000-0|__.___.___-_', strip:'.-'}
+                ,   cep: {format:'00000-000|_____-___', strip:'-'}
+                , placa: {format:'AAA-0000|___-____', strip:'.-'}
+            }
 }
 
 c$.ORDER.CLASS =  order =>{

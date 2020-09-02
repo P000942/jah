@@ -1,10 +1,3 @@
-/*
-Typecast 1.4 (release)
-by Ara Pehlivanian (http://arapehlivanian.com)
-
-This work is licensed under a Creative Commons Licence
-http://creativecommons.org/licenses/by-nd/2.5/
-*/
 const Typecast = {
 	InitMask : false,
 	InitSuggest : false,
@@ -12,8 +5,7 @@ const Typecast = {
 	Init : function(formId){
 		let inputs = (formId) ?$(`#${formId}`).find("input") :$("input") ;
 		this.Parse(inputs);
-		this.Behaviours.Mask.Init();
-	//	this.Behaviours.Suggest.Init();
+		this.Mask.Init();
 	},
 	
 	Parse : function(inputs){ // ler e inicializar todos os inputs ou todos dentro de um elemento
@@ -37,21 +29,11 @@ const Typecast = {
 			field.onmouseup  = behaviour.mouseUpHandler;
 		}            
 	}
-	
-	// , Behaviours : {
 	, Mask : {
 			Init : ()=>{},
 			
 			initField : (field, maskProperties)=>{ //inicializa as máscaras
-				let fieldData = []
-				//#todo: {id} não é uma boa opcao - melhor ver algo específico do html5
-				  , fld = (c$.MASK.MASKS[field.id]) ?c$.MASK.MASKS[field.id] :null;
-				if(!fld)
-					//fieldData = field.className.substring(field.className.indexOf("[")+1, field.className.indexOf("]"))
-					fieldData = field.getAttribute("data-mask");
-				else
-					fieldData = fld;
-				Typecast.Mask.ParseFieldData(field, fieldData);
+				Typecast.Mask.ParseFieldData(field);
 				field.value = (field.DefaultText.length>0) ?field.DefaultText.join("") :field.DefaultText;
 				if (!maskProperties) {
 					if (!field.isAlignRight)
@@ -158,13 +140,12 @@ const Typecast = {
 			},
 			
 			ParseFieldData : function(field, fieldData){ //inicializa os valores de dados
-				//fieldData = fieldData.split(c$.MASK.FieldDataSeparator);
-				field.CursorPersistance = [];
+				field.CursorPosition= [];
 				field.Data          = [];
 				field.DataIndex     = [];
 				field.DefaultText   = (field.getAttribute("data-prompt")) ?field.getAttribute("data-prompt").split("") :"";
-				//(fieldData[1]) ? fieldData[1].split("") : "";
-				field.Mask          = this.MaskManager.ParseMask(fieldData,field);
+
+				field.Mask          = this.MaskManager.ParseMask(field);
 				field.MaskIndex     = this.MaskManager.ParseMaskIndex(field.Mask);
 				
 				let IsComplexMask   = this.MaskManager.IsComplexMask(field);
@@ -174,11 +155,14 @@ const Typecast = {
 			},
 			
 			MaskManager : {
-				ParseMask : function(mask,field){                                        
-					let arr =[];
-					let maskCharacters = Object.values(c$.MASK.MaskCharacters).join("") // juntas as mascaras em uma string
-					mask.split("").forEach((item,idx)=>{if (maskCharacters.includes(item)) 
-						                                   arr[idx]=item;})
+				ParseMask : function(field){                                        
+					let arr =[]
+					  , mask=field.getAttribute("data-mask")
+					  , maskCharacters = Object.values(c$.MASK.MaskCharacters).join(""); // juntas os caracteres de mascara em uma string
+					mask.split("").forEach((item,idx)=>{
+														if (maskCharacters.includes(item)) 
+														   arr[idx]=item;
+													  })
 					field.hasDecimalCharInMask=mask.includes(c$.MASK.DecimalCharacter);
 					return arr;
 				},
@@ -291,10 +275,10 @@ const Typecast = {
 					}
 				},
 				PersistPosition : function(field){
-					field.CursorPersistance = this.GetPosition(field);
+					field.CursorPosition = this.GetPosition(field);
 				},
 				RestorePosition : function(field){
-					this.SetPosition(field, field.CursorPersistance[0]);
+					this.SetPosition(field, field.CursorPosition[0]);
 				},
 				Reposition: function(field){
 					if (field.isAlignRight){
@@ -361,10 +345,7 @@ const Typecast = {
 					if (field.isAlignRight)
 						this.shiftLeft(field);
 					else
-					     this.shift(field,lastCharacterPosition, (lastCharacterPosition-currentCharacterPosition));
-					// for(let i=lastCharacterPosition; i>=currentCharacterPosition; i--){
-					// 	field.Data[field.MaskIndex[i+1]] = field.Data[field.MaskIndex[i]];
-					// }
+					     this.shift(field,lastCharacterPosition, (lastCharacterPosition-currentCharacterPosition));			
 					field.Data[field.MaskIndex[currentCharacterPosition]] = char;
 				},
 				OverwriteCharacter : function(field, char, cursorPosition){
@@ -417,11 +398,10 @@ const Typecast = {
 			
 			Render : function(field){
 				this.CursorManager.PersistPosition(field);
-				let composite = []//, idx=((field.alignToReposiotion==c$.ALIGN.RIGHT)?field.Mask.length:-1);
+				let composite = [];
 				const Pos = index =>({
 					index
-					, get:()=> ++index
-					    //(field.alignToReposiotion==c$.ALIGN.RIGHT) ?--index :++index
+					, get:()=> ++index					    
 				})
 				const pos=Pos(-1);
 				for(let i=0; i<field.Mask.length; i++){

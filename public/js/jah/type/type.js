@@ -109,7 +109,6 @@ j$.ui.Render= function(){
              return i$(properties.id);
          }
          , formatButton:(properties)=>{
-             //#todo: formata class 2x desnecessariamente
              return '<a' +j$.ui.Render.attributes(properties,['value', 'element'])+ '>'+j$.ui.Render.icon(properties)+properties.value+'</a>';
          }
          , formatButtonDropdown:(properties)=>{
@@ -294,11 +293,8 @@ TYPE.HELPER = {
                             , 'readOnly', 'disabled', 'defaultValue', 'type'
                             , 'dataType', 'list','attributes', 'resource']);
             Object.setIfExist(inputField.attributes, Properties,['min', 'max', 'step', 'pattern', 'placeholder']);                            
-            if (Properties.resource){
-                // inputField.AdapterResource = j$.Resource.ResponseHandler;  // Quando tiver RESOURCE
-                // inputField.AdapterResource(Properties, inputField);
+            if (Properties.resource)
                 inputField.Resource =  j$.Resource.create(inputField.resource, inputField);
-            }
         }
         inputField.mask = new Ma$k(mask);
         if (!inputField.size)
@@ -346,19 +342,41 @@ TYPE.HELPER = {
 
 class Ma$k{
     constructor(mask){
-        Object.preset(this,{fmt:null, prompt:null, strip:null, mask:null, size:1, align:c$.ALIGN.LEFT});
-        if (mask){
-            Object.setIfExist(this,mask,['strip','empty','align']);
-            if (mask.format){
-                // this.TCMask = 'TCMask['+ mask.format +']';
-                this.fmt = mask.format;
-                let vMask = mask.format.split(c$.MASK.FieldDataSeparator);
-                this.mask = vMask[0];
-                this.prompt = (vMask.length>1) ? vMask[1] : null;
-                this.size = this.mask.length;
-            }
-        }
+        Object.preset(this,{fmt:null, prompt:null, strip:null, mask:null, size:1, align:c$.ALIGN.LEFT});        
+        this.parse(mask);
     };
+    parse(parm){
+        function interpret(mask){ 
+            let _mask=mask;
+            if (dataExt.isString(mask)){ // sendo strig, vai verificar se na calecao masks padrao
+                if (c$.MASKS[mask]) 
+                   _mask = c$.MASKS[mask]; 
+            }    
+            return _mask;
+        }
+        let split = mask=>{ // separa as partes da definicao da mascara (format e prompt)
+            let fmt=(mask && mask.format) ?mask.format :mask
+              , values;
+            if (dataExt.isArray(fmt))        
+                values= mask;               
+            else if (dataExt.isString(fmt))  
+                values= fmt.split(c$.MASK.FieldDataSeparator);  
+            this.mask   = values[0];                    // [0] é o formato da mascara
+            this.prompt = (values.length>1) ?values[1] :null; // [1] é o prompt  da mascara
+                                           
+            this.strip = (values.length>2)  ?values[2] :null; // [2] são os caracters de strip
+                                                                                        
+            this.size   = this.mask.length;                
+            return values;            
+        }
+        if (parm){             
+            let mask=interpret(parm);            
+            split(mask);
+
+            if (dataExt.isObject(mask))        // copia as propriedades 
+                Object.setIfExist(this,mask,['strip','empty','align']);
+        }    
+    }
     format (value){return (this.mask)?value.mask(this.mask) :value}
     unformat (value){
         let vl = (this.strip) ?value.stripChar(this.strip) :value.trim();
@@ -368,13 +386,24 @@ class Ma$k{
         return vl;
     };
     render (inputField){
-         if (this.mask){
-             //inputField.addClassName(this.TCMask);
-             inputField.setAttribute("data-mask", this.mask); 
-             if (this.prompt)
-                inputField.setAttribute("data-prompt", this.prompt);           
-             Typecast.Format(inputField, this);
+         let bind=()=>{
+            if (this.mask){
+                inputField.setAttribute("data-mask", this.mask); 
+                if (this.prompt)
+                   inputField.setAttribute("data-prompt", this.prompt);           
+                Typecast.Format(inputField, this);
+                return true;
+            }             
+            return false;
          }
+         if (!bind()){
+            // situacao que acontecerah qdo colocar data-mask='' direto no html e fizer o bind depois
+            // seria ate incomum, visto que pode fazer direto pelo type.mask
+            if (inputField.getAttribute("data-mask") && !this.mask){
+                this.parse(inputField.getAttribute("data-mask"));
+                bind();
+            }    
+         }       
     }
 }
 
@@ -604,7 +633,7 @@ function superType(Type, Properties) {
 
 j$.ui.type.Digit=function(Properties) {
    this.inherit = superType;
-   this.inherit({size:1, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isDigit();}, error:ERROR.MESSAGE.Digit}, mask:{format:'#|_', strip:'_'}}, Properties);
+   this.inherit({size:1, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isDigit();}, error:ERROR.MESSAGE.Digit}, mask:['#','_']}, Properties);
 }
 
 j$.ui.type.Numeric=function(size,decimal, Properties){
@@ -752,27 +781,27 @@ j$.ui.type.Password=function(size, Properties){
 
 j$.ui.type.Cpf=function(Properties){
    this.inherit = superType;
-   this.inherit({size:11, validator:{handler:value=>{return value.ehCpf();}, error:ERROR.MESSAGE.Cpf}, mask:{format:'000.000.000-00|___.___.___-__', strip:'.-'}}, Properties);
+   this.inherit({size:11, validator:{handler:value=>{return value.ehCpf();}, error:ERROR.MESSAGE.Cpf}, mask:"cpf"}, Properties);
 }
 
 j$.ui.type.Cnpj=function(Properties){
    this.inherit = superType;
-   this.inherit({size:14, validator:{handler:value=>{return value.ehCnpj();}, error:ERROR.MESSAGE.Cnpj}, mask:{format:'00.000.000/0000-00|__.___.___/____-__', strip:'-/.'}}, Properties);
+   this.inherit({size:14, validator:{handler:value=>{return value.ehCnpj();}, error:ERROR.MESSAGE.Cnpj}, mask:"cnpj"}, Properties);
 }
 
 j$.ui.type.Cca=function(Properties){
    this.inherit = superType;
-   this.inherit({size:9, validator:{handler:value=>{return value.ehCca();}, error:ERROR.MESSAGE.Cca}, mask:{format:'00.000.000-0|__.___.___-_', strip:'.-'}}, Properties);
+   this.inherit({size:9, validator:{handler:value=>{return value.ehCca();}, error:ERROR.MESSAGE.Cca}, mask:"cca"}, Properties);
 }
 
 j$.ui.type.Placa=function(Properties){
    this.inherit = superType;
-   this.inherit({size:7, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.ehPlaca();}, error:ERROR.MESSAGE.Placa}, mask:{format:'AAA-0000|___-____', strip:'.-'}}, Properties);
+   this.inherit({size:7, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.ehPlaca();}, error:ERROR.MESSAGE.Placa}, mask:"placa"}, Properties);
 }
 
 j$.ui.type.Cep=function(Properties){
    this.inherit = superType;
-   this.inherit({size:8, validator:{handler:value=>{return value.ehCep();}, error:ERROR.MESSAGE.Cep}, mask:{format:'00000-000|_____-___', strip:'-'}}, Properties);
+   this.inherit({size:8, validator:{handler:value=>{return value.ehCep();}, error:ERROR.MESSAGE.Cep}, mask:"cep"}, Properties);
 }
 
 j$.ui.type.Mask=function(mask, Properties={}){
