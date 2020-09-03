@@ -902,25 +902,8 @@ Function.prototype.inheritsFrom = function(parentClassOrObject){
 // var felix = new Gato( "Felix" );
 // felix.grite();
 
-//#Depreciado: substituir por forEach
-// Array.prototype.each = function(callback /*, parms*/){
-//     var len = this.length;
-//     if (typeof callback != "function")
-//        throw new TypeError();
-
-//     //var parms = arguments[1];
-//     for (var i = 0; i < len; i++){
-//       if (i in this)
-//     	  callback(this[i]);
-//     	  //callback.call(parms, this[i], i, this);
-//     }
-// };
 Array.prototype.each = Array.prototype.forEach;
 
-//#Depreciado: substituir por .includes
-// Array.prototype.has = function(value){
-//    return (this.indexOf(value)>-1)?true:false;
-// };
 Array.prototype.has = Array.prototype.includes;
 // var aux = [1,'test',2]; aux.has(1);aux.has('test');aux.has(4)
 // Alias para o each

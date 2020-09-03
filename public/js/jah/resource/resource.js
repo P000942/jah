@@ -171,8 +171,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
         getURL(recourseName){return context}
       ,   init($context){context=$context}
       , create(resource, externalResponseHandler){
-            let Definition = j$.Resource.parse(resource);
-            //#todo: verifica se resource jah existe para não recriar
+            let Definition = j$.Resource.parse(resource);        
             if (!j$.$R[Definition.name]){ // recurso não existe, será criado
                items[Definition.name] =new Resource(Definition, externalResponseHandler);
             } else {
