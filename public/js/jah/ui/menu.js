@@ -247,9 +247,11 @@ j$.ui.Menu.Base=function(inheritor, properties){
           let ct = 0;
           return{
               add:()=>{
-                  ct +=1;
-                  _base.put('divider'+ct,divider);
-                  return divider;
+                  if (_base.Root.key==c$.MENU.TYPE.MENUBAR){
+                     ct +=1;
+                     _base.put('divider'+ct,divider);
+                     return divider;
+                  }   
               }
           };
     }();

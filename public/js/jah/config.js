@@ -9,6 +9,7 @@ const c$ = {  NOW: new Date()
            ,  KEY:{F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123
                 , TAB:9, ENTER:13, ESC:27, COMMA:44, BACKSPACE:8, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, INS:45, DEL:46, REFRESH:116}
            ,FILTER:{}
+           ,  MENU:{TYPE:{SIDEBAR:'sidebar', MENUBAR:'menubar'}}
            ,  MASK:{
                     FieldDataSeparator : "|"
                   , Prompt: "_"
@@ -211,7 +212,7 @@ const CONFIG = {
                       , ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
     ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
-    ,    MENU:{PARSER:"sidebar" // "menubar" ou 'sidebar'
+    ,    MENU:{PARSER:c$.MENU.TYPE.SIDEBAR // "menubar" ou 'sidebar'
             , OPTIONS:{SIDEBAR:{CLASS:{CONTENT:"col-md-10 ml-sm-auto col-lg-10 px-md-2"
                                         , MENU:"col-md-2 col-lg-2 d-md-block nav-side-menu"}
                             , CONTENT:"sidebar"}
