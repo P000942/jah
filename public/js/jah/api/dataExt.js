@@ -110,180 +110,10 @@ String.preset= function(value, vlDefault='') {
 //let aux=null; String.preset(aux)
 //zen = vl => String.preset(vl); zen(null); zen()
 
-//window.document.write("<span id='w_len' style='display:none;'>X</span>");
-/*Função que padroniza valor*/
-function numberFormat( value, decimals=2, dec=c$.MASK.DecimalCharacter, sep=c$.MASK.ThousandsSeparator ) {
-    // %        nota 1: Para 1000.55 retorna com precisão 1
-    //                 no FF/Opera é 1,000.5, mas no IE é 1,000.6
-    // *     exemplo 1: number_format(1234.56);
-    // *     retorno 1: '1,235'
-    // *     exemplo 2: number_format(1234.56, 2, ',', ' ');
-    // *     retorno 2: '1 234,56'
-    // *     exemplo 3: number_format(1234.5678, 2, '.', '');
-    // *     retorno 3: '1234.57'
-    // *     exemplo 4: number_format(67, 2, ',', '.');
-    // *     retorno 4: '67,00'
-    // *     exemplo 5: number_format(1000);
-    // *     retorno 5: '1,000'
-    // *     exemplo 6: number_format(67.311, 2);
-    // *     retorno 6: '67.31'
-
-    //let n = number //, prec = decimals;
-    value = !isFinite(+value) ? 0 : +value;
-    decimals = !isFinite(+decimals) ? 0 : Math.abs(decimals);
-
-    let s = (decimals > 0) ? value.toFixed(decimals) : Math.round(value).toFixed(decimals);
-      //fix for IE parseFloat(0.55).toFixed(0) = 0;
-
-    let abs = Math.abs(value).toFixed(decimals);
-    let _, i;
-
-    if (abs >= 1000) {
-        _ = abs.split(/\D/);
-        i = _[0].length % 3 || 3;
-
-        _[0] = s.slice(0,i + (value < 0)) +
-              _[0].slice(i).replace(/(\d{3})/g, sep+'$1');
-
-        s = _.join(dec);
-    } else 
-        s = s.replace('.', dec);
-
-    return s;
-}
-
-const dateFormat = function () {
-	let	token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
-		timezone = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g,
-		timezoneClip = /[^-+\dA-Z]/g,
-		pad = function (val, len) {
-			val = String(val);
-			len = len || 2;
-			while (val.length < len) val = "0" + val;
-			return val;
-		};
-
-	// Regexes and supporting functions are cached through closure
-	return function (date, mask, utc) {
-		let dF = dateFormat;
-
-		// You can't provide utc if you skip other args (use the "UTC:" mask prefix)
-		if (arguments.length == 1 && Object.prototype.toString.call(date) == "[object String]" && !/\d/.test(date)) {
-			mask = date;
-			date = undefined;
-		}
-
-		// Passing date through Date applies Date.parse, if necessary
-		date = date ? new Date(date) : new Date;
-		if (isNaN(date)) throw SyntaxError("Data Invalida");
-
-		mask = String(c$.MASK.DATE[mask] || mask || c$.MASK.DATE["default"]);
-
-		// Allow setting the utc argument via the mask
-		if (mask.slice(0, 4) == "UTC:") {
-			mask = mask.slice(4);
-			utc = true;
-		}
-
-		let	_ = utc ? "getUTC" : "get",
-			d = date[_ + "Date"](),
-			D = date[_ + "Day"](),
-			m = date[_ + "Month"](),
-			y = date[_ + "FullYear"](),
-			H = date[_ + "Hours"](),
-			M = date[_ + "Minutes"](),
-			s = date[_ + "Seconds"](),
-			L = date[_ + "Milliseconds"](),
-			o = utc ? 0 : date.getTimezoneOffset(),
-			flags = {
-				d:    d,
-				dd:   pad(d),
-				ddd:  dF.i18n.dayNames[D],
-				dddd: dF.i18n.dayNames[D + 7],
-				m:    m + 1,
-				mm:   pad(m + 1),
-				mmm:  dF.i18n.monthNames[m],
-				mmmm: dF.i18n.monthNames[m + 12],
-				yy:   String(y).slice(2),
-				yyyy: y,
-				h:    H % 12 || 12,
-				hh:   pad(H % 12 || 12),
-				H:    H,
-				HH:   pad(H),
-				M:    M,
-				MM:   pad(M),
-				s:    s,
-				ss:   pad(s),
-				l:    pad(L, 3),
-				L:    pad(L > 99 ? Math.round(L / 10) : L),
-				t:    H < 12 ? "a"  : "p",
-				tt:   H < 12 ? "am" : "pm",
-				T:    H < 12 ? "A"  : "P",
-				TT:   H < 12 ? "AM" : "PM",
-				Z:    utc ? "UTC" : (String(date).match(timezone) || [""]).pop().replace(timezoneClip, ""),
-				o:    (o > 0 ? "-" : "+") + pad(Math.floor(Math.abs(o) / 60) * 100 + Math.abs(o) % 60, 4),
-				S:    ["th", "st", "nd", "rd"][d % 10 > 3 ? 0 : (d % 100 - d % 10 != 10) * d % 10]
-			};
-
-		return mask.replace(token, function ($0) {
-			return $0 in flags ? flags[$0] : $0.slice(1, $0.length - 1);
-		});
-	};
-}();
-
-//c$.NOW.format("dd/mm/yyyy")
-//c$.NOW.format("HH:MM:ss")
-//c$.NOW.format(c$.MASK.DATE.default)
-
-// Internationalization strings
-dateFormat.i18n = {
-	dayNames: [
-		"Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab",
-		"Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "S�bado"
-	],
-	monthNames: [
-		"Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dec",
-		"Janeiro", "Fevereiro", "Mar�o", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-	]
-};
-
 // For convenience...
 Date.prototype.format = function (mask, utc) {
 	return dateFormat(this, mask, utc);
 };
-
-var Test$ = function(){
-    return{Date:value=>{console.log("isDate('"    +value+ "'):"+ value.isDate())},
-          Digit:value=>{console.log("isDigit('"   +value+ "'):"+ value.isDigit())},
-         Letter:value=>{console.log("isLetter('"  +value+ "'):"+ value.isLetter())},
-        Integer:value=>{console.log("isInteger('" +value+ "'):"+ value.isInteger())},
-        Numeric:value=>{console.log("isNumeric('" +value+ "'):"+ value.isNumeric())},
-          Money:value=>{console.log("isMoney('"   +value+ "'):"+ value.isMoney())},
-          Email:value=>{console.log("isMail('"    +value+ "'):"+ value.isEmail())},
-           Hour:value=>{console.log("isHour('"    +value+ "'):"+ value.isHour())},
-         isName:value=>{console.log('"' +value+ '".isName() -> '+ value.isName())},
-          Phone:value=>{console.log("Phone('"     +value+ "'):"+ value.isPhone())},
-           Mask:(value,mask)=>{console.log("'"+value+"'.mask("+mask+"):"+ value.mask(mask))},
-  isValidInMask:(value,mask)=>{console.log("'"+value+"'.isValidInMask("+mask+"):"+ value.isValidInMask(mask))},
-          Empty:value=>{console.log("isEmpty('"   +value+ "'):"+ value.isEmpty())}
-    }
-}();
-
-var Testa = function(){
-    return{CPF:value=>{console.log('ehCpf('     +value+ '):'+ value.ehCpf())},
-          CNPJ:value=>{console.log('ehCnpj('    +value+ '):'+ value.ehCnpj())},
-           CCA:value=>{console.log('ehCca('     +value+ '):'+ value.ehCca())},
-           CEP:value=>{console.log('ehCep('     +value+ '):'+ value.ehCep())},
-         Placa:value=>{console.log('ehPlaca('    +value+ '):'+ value.ehPlaca())},
-          AIDF:value=>{console.log('ehAidf('    +value+ '):'+ value.ehAidf())},
-          CNAE:value=>{console.log('ehCNAE('    +value+ '):'+ value.ehCNAE())},
-      Processo:value=>{console.log('ehProcesso('+value+ '):'+ value.ehProcesso())},
-digitoModule11:(value,dig,lim)=>{console.log('Module11('   +value+ '):'+ value.module11(dig,lim))},
-     digitoCpf:(value,dig,lim)=>{console.log('digitoCpf('  +value+ '):'+ value.digitoCpf())},
-    digitoCnpj:(value,dig,lim)=>{console.log('digitoCnpj(' +value+ '):'+ value.digitoCnpj())},
-     digitoCca:(value,dig,lim)=>{console.log('digitoCca('   +value+ '):'+ value.digitoCca())}
-    }
-}();
 
 String.prototype.regexValidate = function(regularExpression){
     if (this.isEmpty()){return false;}
@@ -557,61 +387,35 @@ String.prototype.isValidInMask = function(mask){
 // //console.log("123451234512".point(10).width);
 // //console.log("123451234512".point(10).height);
 
-var dataExt = function(){
-    return {
-              init:()=>true
-      ,       type:obj=>{return Object.prototype.toString.call(obj).match(/^\[object (.*)\]$/)[1]}
-      ,    isArray:obj=>{return (dataExt.type(obj)==='Array')}
-      ,   isString:obj=>{return (dataExt.type(obj)==='String')}
-      ,    isValue:obj=>{return (dataExt.type(obj)==='String' || dataExt.type(obj)==='Number')}
-      ,   isNumber:obj=>{return (dataExt.type(obj)==='Number')}
-      ,   isObject:obj=>{return (dataExt.type(obj)==='Object')}
-      ,     isCrud:obj=>{return (dataExt.isDefined(obj)) ?(obj.constructor.name==='Crud') :false}
-      , isFunction:obj=>{return (dataExt.type(obj)==='Function')}
-      ,isUndefined:obj=>{return !dataExt.isDefined(obj)}
-      ,  isDefined:obj=>{return (obj==null || obj==undefined) ?false :true}
-    };
-}();
-// console.log("dataExt.type('resource'): "    , dataExt.type('resource'))
-// console.log("dataExt.type(1): "             , dataExt.type(1))
-// console.log("dataExt.type({a:'1', b:'2'}): ", dataExt.type({a:'1', b:'2'}))
-// console.log("dataExt.type({a:1, b:2}): "    , dataExt.type({a:1, b:2}))
-// console.log("dataExt.type(['1','2']): "     , dataExt.type(['1','2']))
-// console.log("dataExt.type(()=>false): "     , dataExt.type(()=>false))
-// console.log("dataExt.isString('resource'): ", dataExt.isString('resource'))
-// console.log("dataExt.isNumber(1): "         , dataExt.isNumber(1))
-// console.log("dataExt.dataExt.isArray([1, 2]): ", dataExt.isArray([1, 2]))
-// console.log("dataExt.dataExt.isArray(1): "  , dataExt.isArray(1))
-// console.log("dataExt.isObject({a:'1', b:'2'}): ", dataExt.isObject({a:'1', b:'2'}))
-// console.log("dataExt.isObject({a:1, b:2}): ", dataExt.isObject({a:1, b:2}))
-// console.log("dataExt.isObject(1): "         , dataExt.isObject(1))
-// console.log("dataExt.isFunction(()=>false): ", dataExt.isFunction(()=>false))
-// console.log("dataExt.isValue(1): "          , dataExt.isValue(1)) 
-// console.log("dataExt.isValue('resource'): " , dataExt.isValue("resource"))
-// console.log("dataExt.dataExt.isValue([1,2]): ", dataExt.isValue([1,2]))
-// console.log("dataExt.isDefined('resource'): ", dataExt.isDefined('resource'))
-// console.log("dataExt.isDefined(): "         , dataExt.isDefined())
 
-dataExt.format = function(){
-    return {
-        money:value=>{
-           value = value.toString().replace(",",'.');
-           return numberFormat(value, 2);
+String.prototype.gsub=function(pattern, replacement) {
+    let result = '', source = this, match;
+    function prepareReplacement(replacement) {
+        if (dataExt.isFunction(replacement)) return replacement;
+        var template = new Template(replacement);
+        return function(match) { return template.evaluate(match) };
+    }
+    replacement = prepareReplacement(replacement);
+
+    if (dataExt.isString(pattern))
+        pattern = RegExp.escape(pattern);
+
+    if (!(pattern.length || pattern.source)) {
+        replacement = replacement('');
+        return replacement + source.split('').join(replacement) + replacement;
+    }
+
+    while (source.length > 0) {
+        if (match = source.match(pattern)) {
+        result += source.slice(0, match.index);
+        result += String.preset(replacement(match));
+        source  = source.slice(match.index + match[0].length);
+        } else {
+        result += source, source = '';
         }
-      ,record:(name, parent)=>{
-          if (parent){
-             parent.id   = 'id' +name.toFirstUpper();
-             parent.text = 'tx' +name.toFirstUpper();
-             return parent;
-          } else {
-             return {id: 'id'+name.toFirstUpper()
-                 , text: 'tx'+name.toFirstUpper()};
-          }
-        }
-    };
-}();
-// console.log("dataExt.format.money(12): "   , dataExt.format.money(12))
-// console.log("dataExt.format.money("12,1"): "   , dataExt.format.money(12))
+    }
+    return result;
+}
 
 //@note: procura por valor no objeto e retorna array com as propriedades que contem o valor
 Object.getByValue = function(object, value, attribute="value"){
@@ -924,75 +728,231 @@ Array.prototype.select = function(callback /*, parms*/){
     }
     return results;
 };
-// Array.prototype.exists = function(item, callback){
-//     var len = this.length;
-//     if (typeof callback != "function")
-//        throw new TypeError();
 
-//     for (var i = 0; i < len; i++){
-//         if (i in this){
-//     	   if (callback(item, this[i]))
-//     	      return true;
-//         }
-//     }
-//     return false;
-// };
+/*Função que padroniza valor*/
+function numberFormat( value, decimals=2, dec=c$.MASK.DecimalCharacter, sep=c$.MASK.ThousandsSeparator ) {
+    // %        nota 1: Para 1000.55 retorna com precisão 1
+    //                 no FF/Opera é 1,000.5, mas no IE é 1,000.6
+    // *     exemplo 1: number_format(1234.56);
+    // *     retorno 1: '1,235'
+    // *     exemplo 2: number_format(1234.56, 2, ',', ' ');
+    // *     retorno 2: '1 234,56'
+    // *     exemplo 3: number_format(1234.5678, 2, '.', '');
+    // *     retorno 3: '1234.57'
+    // *     exemplo 4: number_format(67, 2, ',', '.');
+    // *     retorno 4: '67,00'
+    // *     exemplo 5: number_format(1000);
+    // *     retorno 5: '1,000'
+    // *     exemplo 6: number_format(67.311, 2);
+    // *     retorno 6: '67.31'
 
-//depreciado: substituido por .find
-// Array.prototype.find = function(callback){
-//     if (typeof callback != "function")
-//         throw new TypeError();
-//     for (var i = 0; i < this.length; i++){
-//         if (i in this){
-//            if (callback(this[i],i))
-//                return this[i];
-//         }
-//     }
-// };
-//depreciado: substituido por .map
-// Array.prototype.collect = function(callback){
-//     var results = [];
-//     if (typeof callback != "function")
-//         throw new TypeError();
+    //let n = number //, prec = decimals;
+    value = !isFinite(+value) ? 0 : +value;
+    decimals = !isFinite(+decimals) ? 0 : Math.abs(decimals);
 
-//     for (var i = 0; i < this.length; i++){
-//         if (i in this){
-//                results.push(callback(this[i]));
-//         }
-//     }
-//     return results;
-// };
-    //   var aux=[1, 2,3];
-    //   console.log(aux.collect( function(item){ return (item*2);} ));
+    let s = (decimals > 0) ? value.toFixed(decimals) : Math.round(value).toFixed(decimals);
+      //fix for IE parseFloat(0.55).toFixed(0) = 0;
 
-String.prototype.gsub=function(pattern, replacement) {
-    let result = '', source = this, match;
-    function prepareReplacement(replacement) {
-        if (dataExt.isFunction(replacement)) return replacement;
-        var template = new Template(replacement);
-        return function(match) { return template.evaluate(match) };
+    let abs = Math.abs(value).toFixed(decimals);
+    let _, i;
+
+    if (abs >= 1000) {
+        _ = abs.split(/\D/);
+        i = _[0].length % 3 || 3;
+
+        _[0] = s.slice(0,i + (value < 0)) +
+              _[0].slice(i).replace(/(\d{3})/g, sep+'$1');
+
+        s = _.join(dec);
+    } else 
+        s = s.replace('.', dec);
+
+    return s;
+}
+
+const dateFormat = function () {
+	let	token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
+		timezone = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g,
+		timezoneClip = /[^-+\dA-Z]/g,
+		pad = function (val, len) {
+			val = String(val);
+			len = len || 2;
+			while (val.length < len) val = "0" + val;
+			return val;
+		};
+
+	// Regexes and supporting functions are cached through closure
+	return function (date, mask, utc) {
+		let dF = dateFormat;
+
+		// You can't provide utc if you skip other args (use the "UTC:" mask prefix)
+		if (arguments.length == 1 && Object.prototype.toString.call(date) == "[object String]" && !/\d/.test(date)) {
+			mask = date;
+			date = undefined;
+		}
+
+		// Passing date through Date applies Date.parse, if necessary
+		date = date ? new Date(date) : new Date;
+		if (isNaN(date)) throw SyntaxError("Data Invalida");
+
+		mask = String(c$.MASK.DATE[mask] || mask || c$.MASK.DATE["default"]);
+
+		// Allow setting the utc argument via the mask
+		if (mask.slice(0, 4) == "UTC:") {
+			mask = mask.slice(4);
+			utc = true;
+		}
+
+		let	_ = utc ? "getUTC" : "get",
+			d = date[_ + "Date"](),
+			D = date[_ + "Day"](),
+			m = date[_ + "Month"](),
+			y = date[_ + "FullYear"](),
+			H = date[_ + "Hours"](),
+			M = date[_ + "Minutes"](),
+			s = date[_ + "Seconds"](),
+			L = date[_ + "Milliseconds"](),
+			o = utc ? 0 : date.getTimezoneOffset(),
+			flags = {
+				d:    d,
+				dd:   pad(d),
+				ddd:  dF.i18n.dayNames[D],
+				dddd: dF.i18n.dayNames[D + 7],
+				m:    m + 1,
+				mm:   pad(m + 1),
+				mmm:  dF.i18n.monthNames[m],
+				mmmm: dF.i18n.monthNames[m + 12],
+				yy:   String(y).slice(2),
+				yyyy: y,
+				h:    H % 12 || 12,
+				hh:   pad(H % 12 || 12),
+				H:    H,
+				HH:   pad(H),
+				M:    M,
+				MM:   pad(M),
+				s:    s,
+				ss:   pad(s),
+				l:    pad(L, 3),
+				L:    pad(L > 99 ? Math.round(L / 10) : L),
+				t:    H < 12 ? "a"  : "p",
+				tt:   H < 12 ? "am" : "pm",
+				T:    H < 12 ? "A"  : "P",
+				TT:   H < 12 ? "AM" : "PM",
+				Z:    utc ? "UTC" : (String(date).match(timezone) || [""]).pop().replace(timezoneClip, ""),
+				o:    (o > 0 ? "-" : "+") + pad(Math.floor(Math.abs(o) / 60) * 100 + Math.abs(o) % 60, 4),
+				S:    ["th", "st", "nd", "rd"][d % 10 > 3 ? 0 : (d % 100 - d % 10 != 10) * d % 10]
+			};
+
+		return mask.replace(token, function ($0) {
+			return $0 in flags ? flags[$0] : $0.slice(1, $0.length - 1);
+		});
+	};
+}();
+
+//c$.NOW.format("dd/mm/yyyy")
+//c$.NOW.format("HH:MM:ss")
+//c$.NOW.format(c$.MASK.DATE.default)
+
+// Internationalization strings
+dateFormat.i18n = {
+	dayNames: [
+		"Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab",
+		"Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "S�bado"
+	],
+	monthNames: [
+		"Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dec",
+		"Janeiro", "Fevereiro", "Mar�o", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+	]
+};
+
+var Test$ = function(){
+    return{Date:value=>{console.log("isDate('"    +value+ "'):"+ value.isDate())},
+          Digit:value=>{console.log("isDigit('"   +value+ "'):"+ value.isDigit())},
+         Letter:value=>{console.log("isLetter('"  +value+ "'):"+ value.isLetter())},
+        Integer:value=>{console.log("isInteger('" +value+ "'):"+ value.isInteger())},
+        Numeric:value=>{console.log("isNumeric('" +value+ "'):"+ value.isNumeric())},
+          Money:value=>{console.log("isMoney('"   +value+ "'):"+ value.isMoney())},
+          Email:value=>{console.log("isMail('"    +value+ "'):"+ value.isEmail())},
+           Hour:value=>{console.log("isHour('"    +value+ "'):"+ value.isHour())},
+         isName:value=>{console.log('"' +value+ '".isName() -> '+ value.isName())},
+          Phone:value=>{console.log("Phone('"     +value+ "'):"+ value.isPhone())},
+           Mask:(value,mask)=>{console.log("'"+value+"'.mask("+mask+"):"+ value.mask(mask))},
+  isValidInMask:(value,mask)=>{console.log("'"+value+"'.isValidInMask("+mask+"):"+ value.isValidInMask(mask))},
+          Empty:value=>{console.log("isEmpty('"   +value+ "'):"+ value.isEmpty())}
     }
-    replacement = prepareReplacement(replacement);
+}();
 
-    if (dataExt.isString(pattern))
-        pattern = RegExp.escape(pattern);
-
-    if (!(pattern.length || pattern.source)) {
-        replacement = replacement('');
-        return replacement + source.split('').join(replacement) + replacement;
+var Testa = function(){
+    return{CPF:value=>{console.log('ehCpf('     +value+ '):'+ value.ehCpf())},
+          CNPJ:value=>{console.log('ehCnpj('    +value+ '):'+ value.ehCnpj())},
+           CCA:value=>{console.log('ehCca('     +value+ '):'+ value.ehCca())},
+           CEP:value=>{console.log('ehCep('     +value+ '):'+ value.ehCep())},
+         Placa:value=>{console.log('ehPlaca('    +value+ '):'+ value.ehPlaca())},
+          AIDF:value=>{console.log('ehAidf('    +value+ '):'+ value.ehAidf())},
+          CNAE:value=>{console.log('ehCNAE('    +value+ '):'+ value.ehCNAE())},
+      Processo:value=>{console.log('ehProcesso('+value+ '):'+ value.ehProcesso())},
+digitoModule11:(value,dig,lim)=>{console.log('Module11('   +value+ '):'+ value.module11(dig,lim))},
+     digitoCpf:(value,dig,lim)=>{console.log('digitoCpf('  +value+ '):'+ value.digitoCpf())},
+    digitoCnpj:(value,dig,lim)=>{console.log('digitoCnpj(' +value+ '):'+ value.digitoCnpj())},
+     digitoCca:(value,dig,lim)=>{console.log('digitoCca('   +value+ '):'+ value.digitoCca())}
     }
+}();
 
-    while (source.length > 0) {
-        if (match = source.match(pattern)) {
-        result += source.slice(0, match.index);
-        result += String.preset(replacement(match));
-        source  = source.slice(match.index + match[0].length);
-        } else {
-        result += source, source = '';
+var dataExt = function(){
+    return {
+              init:()=>true
+      ,       type:obj=>{return Object.prototype.toString.call(obj).match(/^\[object (.*)\]$/)[1]}
+      ,    isArray:obj=>{return (dataExt.type(obj)==='Array')}
+      ,   isString:obj=>{return (dataExt.type(obj)==='String')}
+      ,    isValue:obj=>{return (dataExt.type(obj)==='String' || dataExt.type(obj)==='Number')}
+      ,   isNumber:obj=>{return (dataExt.type(obj)==='Number')}
+      ,   isObject:obj=>{return (dataExt.type(obj)==='Object')}
+      ,     isCrud:obj=>{return (dataExt.isDefined(obj)) ?(obj.constructor.name==='Crud') :false}
+      , isFunction:obj=>{return (dataExt.type(obj)==='Function')}
+      ,isUndefined:obj=>{return !dataExt.isDefined(obj)}
+      ,  isDefined:obj=>{return (obj==null || obj==undefined) ?false :true}
+    };
+}();
+// console.log("dataExt.type('resource'): "    , dataExt.type('resource'))
+// console.log("dataExt.type(1): "             , dataExt.type(1))
+// console.log("dataExt.type({a:'1', b:'2'}): ", dataExt.type({a:'1', b:'2'}))
+// console.log("dataExt.type({a:1, b:2}): "    , dataExt.type({a:1, b:2}))
+// console.log("dataExt.type(['1','2']): "     , dataExt.type(['1','2']))
+// console.log("dataExt.type(()=>false): "     , dataExt.type(()=>false))
+// console.log("dataExt.isString('resource'): ", dataExt.isString('resource'))
+// console.log("dataExt.isNumber(1): "         , dataExt.isNumber(1))
+// console.log("dataExt.dataExt.isArray([1, 2]): ", dataExt.isArray([1, 2]))
+// console.log("dataExt.dataExt.isArray(1): "  , dataExt.isArray(1))
+// console.log("dataExt.isObject({a:'1', b:'2'}): ", dataExt.isObject({a:'1', b:'2'}))
+// console.log("dataExt.isObject({a:1, b:2}): ", dataExt.isObject({a:1, b:2}))
+// console.log("dataExt.isObject(1): "         , dataExt.isObject(1))
+// console.log("dataExt.isFunction(()=>false): ", dataExt.isFunction(()=>false))
+// console.log("dataExt.isValue(1): "          , dataExt.isValue(1)) 
+// console.log("dataExt.isValue('resource'): " , dataExt.isValue("resource"))
+// console.log("dataExt.dataExt.isValue([1,2]): ", dataExt.isValue([1,2]))
+// console.log("dataExt.isDefined('resource'): ", dataExt.isDefined('resource'))
+// console.log("dataExt.isDefined(): "         , dataExt.isDefined())
+
+dataExt.format = function(){
+    return {
+        money:value=>{
+           value = value.toString().replace(",",'.');
+           return numberFormat(value, 2);
         }
-    }
-    return result;
-    }
+      ,record:(name, parent)=>{
+          if (parent){
+             parent.id   = 'id' +name.toFirstUpper();
+             parent.text = 'tx' +name.toFirstUpper();
+             return parent;
+          } else {
+             return {id: 'id'+name.toFirstUpper()
+                 , text: 'tx'+name.toFirstUpper()};
+          }
+        }
+    };
+}();
+// console.log("dataExt.format.money(12): "   , dataExt.format.money(12))
+// console.log("dataExt.format.money("12,1"): "   , dataExt.format.money(12))
 
 function Template(template, pattern) {
     let $this=this;
