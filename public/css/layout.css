@@ -1,22 +1,21 @@
 @charset "utf-8";
 /*
-    Document   : layout
-    Created on : May 17, 2011, 3:37:30 PM
     Author     : P000942 - José Geraldo Ferreira Gomes
-    Description:
-        Purpose of the stylesheet follows.
-       @import url('ui/menu.css') screen;
 */
-/* @import url('ui/icon.css') screen; */
-/* @import url('ui/message.css') screen; */
 @import url('ui/sidebar.css') screen;
 @import url('ui/tabs.css') screen;
 @import url('ui/page.css') screen;
 :root {
-    --bg-color-fildset: rgba(246,255,250,0.7);
+    --bg-color-fildset: rgba(246,255,250,0.9);
+    --bg-color-page:rgba(246,255,250,0.5)
     --bg-color-legend: rgba(246,255,250,0.01);
-    --bg-header: rgba(120,180,120,0.2);
+    --bg-header: rgba(120,180,120,0.5);
+    --bg-sidebar-item: rgba(246,255,250,0.5);
+    --border-sidebar-item: rgb(200, 220, 220);
+    --bg-sidebar-hover: rgb(110, 160, 110);
+    --bg-sidebar-menu: rgb(210, 245, 210); 
     --color-line: rgb(120,150,120);
+    --border: rgb(120,150,120);
 }
 /* Clear Floated Elements */
 .clearfix:before, .clearfix:after {content: "\0020";
@@ -45,7 +44,7 @@ body{
     width:100%;
     margin-bottom: 20px;
     border:1px solid black;
-    background-color: rgba(246,255,250,0.5);
+    background-color: var(--bg-color-page);
 }
 #content{
     min-height: 700px;

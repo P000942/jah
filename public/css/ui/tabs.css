@@ -44,7 +44,8 @@
 
 .tab_wrap{   /*wrap de uma tab */
       border-top:4px solid rgb(120,150,120);
-      background-color:rgba(246,255,250,0.5);
+      background-color: var(--bg-color-page);
+      /* rgba(246,255,250,0.5); */
       margin-bottom:4px; margin-left:2px;
 }
 
