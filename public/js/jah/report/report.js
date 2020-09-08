@@ -1,4 +1,5 @@
 /*====================Constantes==================*/
+'use strict';
 const Report = {};
 Report.Util = function(){
     return {
@@ -227,8 +228,8 @@ j$.Report = function(page, Fieldset, dataset, id_div, idx){
 
 //são as colunas do relatório
 Report.Columns =function (page, Fieldset){
-    let totalWidth = 0;
-    me = this;
+    let totalWidth = 0
+      , me = this;
     this.Fieldset = Fieldset;
     prepare(page, Fieldset);
 
@@ -242,7 +243,7 @@ Report.Columns =function (page, Fieldset){
        //var cols = new Hash();
        let leftPos = 0;
        let idx = 0;
-       for(key in Fieldset.c$){
+       for(let key in Fieldset.c$){
           let field = Fieldset.c$[key];
           if (!field.key) {field.key=key}
           if (!field.id) {field.id=key}
@@ -323,7 +324,7 @@ Report.HeaderDetail =function (columns, report){
         $this.writeColumns();
     };
     this.writeColumns= () => {
-        for (key in $this.Columns.c$)
+        for (let key in $this.Columns.c$)
             $this.writeColumn(this.Columns.c$[key])
     };
     this.writeColumn=function(column) {
@@ -332,7 +333,7 @@ Report.HeaderDetail =function (columns, report){
         if (column.Header.clas$)
             clas$ += column.Header.clas$;
 
-        id = column.id + "-" + $this.id;
+        let id = column.id + "-" + $this.id;
         let html = "<li onclick='" +$this.sortFunction+ "(\"" + column.key + "\")' id='" + id + "'>"
                 + "<a>" +column.label+ "</a>"
                 + "</li>";
@@ -400,7 +401,7 @@ Report.Detail = function(Columns, report){
     }
 
     this.writeColumn= function(column, line, id_line) {
-        id = column.id + "-" + id_line;
+        let id = column.id + "-" + id_line;
 
         let html = '<li onclick="DetailMouseUp(event,\''  +column.key+ '\',\'' + column.Record.value + '\','
                  + line + ',' + this.report.idx + ')" id="' +id+ '">'
@@ -476,7 +477,7 @@ Report.Header = function (){
 Report.Footer = function (){
   let $this=this;
   let initialize=function(){
-        this.id = "";
+      $this.id = "";
   }();
   this.write= function(page) {
         this.id = "footer-" + page.id;

@@ -147,7 +147,7 @@ function ResponseController($service){
    this.isNewRecord = ()=>{return NEW_RECORD};
 
    function print(){
-      r3port=window.open("report.html", _me.service.id ,'toolbar=no,location=no,directories=no,status=no,menubar=yes,scrollbars=yes,resizable=yes, height=1024,width=1280, fullscreen=yes');
+      let r3port=window.open("report.html", _me.service.id ,'toolbar=no,location=no,directories=no,status=no,menubar=yes,scrollbars=yes,resizable=yes, height=1024,width=1280, fullscreen=yes');
    }
 
   function sort(sort){
