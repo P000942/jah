@@ -10,7 +10,8 @@
      .Parser           => Conversor dos dados do formato de origem para o do recordset
      .store            => É o repositório onde ficam os dados
  */
-
+'use strict';
+// import dataExt from  "../jah/api/dataExt.js"; 
  j$.Requester = function(){ // É  uma instancia única
      let context = CONFIG.RESOURCE.CONTEXT;
      function URL(url, responseHandler){
@@ -143,7 +144,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
     let items = {}
       , properties=['name','context','source','local','cache','key','id','text', 'autoCharge','url']
       , context = CONFIG.RESOURCE.CONTEXT;
-    DefaultHandler =function (){
+     const DefaultHandler =function (){
        /* Um caminho padrao para tratar as respostas do servidor
           se tem algo comum a fazer, passa por aqui antes e já devolve algo mais elaborado.
        */
@@ -587,7 +588,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
 j$.$R =j$.Resource.c$;
 
 j$.Resource.Pager=function(dataset, page){
-   _me = this;
+   let _me = this;
    dataset.Pager = _me;
    _me.Dataset = null;
    this.restart=restart;
@@ -802,7 +803,7 @@ j$.Resource.Store= function(){
    }
 
    function getResourceInContext(urlContext, resourceName){
-        for (leturlContext in store){
+        for (let urlContext in store){
             for (let key in store[urlContext]){
                 if (key==resourceName){
                     return store[urlContext][key];
