@@ -23,7 +23,7 @@
        , {type:'line'     , design:{style}}
         ]
  */
-
+'use strict';
 j$.ui.Grid=function(page, btn_template=CONFIG.GRID.DEFAULT){
     let _grid = this;    
     _grid.index= c$.RC.NONE;
@@ -128,7 +128,7 @@ j$.ui.Grid=function(page, btn_template=CONFIG.GRID.DEFAULT){
                     }
                 }
                 // criar barra para navegar nas paginas
-                label = document.createElement("th");
+                let label = document.createElement("th");
                 headerDetail.appendChild(label);
                 _grid.paginator.createNavigator(label);
             }
@@ -180,7 +180,7 @@ j$.ui.Grid=function(page, btn_template=CONFIG.GRID.DEFAULT){
           }
          , populateAll:function(){ // preenche todos registros no grid, sem paginação
               _grid.table.innerHTML='';
-              for (row=0; row<pager.dataset.count;row++){
+              for (let row=0; row<pager.dataset.count;row++){
                    _grid.Detail.add(pager.dataset.get(row));
               }
               _grid.Designer.header();
@@ -623,9 +623,9 @@ j$.ui.Page = function(){
                            value = section;
                         return value;    
                     }                                                         
-                    for (key in sections){                
+                    for (let key in sections){                
                         _section = sections[key]
-                        for (prop in att){
+                        for (let prop in att){
                             _section[prop] =att[prop]; // garantir a existes dos atributos de att em cada section
                             if (reposit[key]){
                                if (dataExt.isArray(reposit[key])) // existe a secao e a ocorrencia

@@ -1,6 +1,7 @@
 /*
  * By Geraldo Gomes
  */
+'use strict';
 j$.ui.Menu = function(){ // factory
     let items = {}
       , _parser = CONFIG.MENU.PARSER
@@ -219,7 +220,7 @@ j$.ui.Menu.Base=function(inheritor, properties){
                     else
                        return _base.submenu.addMenu(items);                  
                 }else if (dataExt.isArray(items)){
-                    _items=[]
+                    let _items=[]
                     for (let idx=0; idx<items.length;idx++)
                     //items.forEach((item,idx)=>{
                         _items[idx]=_base.submenu.add(items[idx]); 

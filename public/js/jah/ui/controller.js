@@ -17,7 +17,7 @@
  *       :Se precisa fazer atualizações-> ResourceRequest -> ResponseController -> UpdateController
  *       :Se não precisa -> ResponseController -> UpdateController
  */
-
+'use strict';
 j$.ui.Controller = function(){
     let items = {};
     return{

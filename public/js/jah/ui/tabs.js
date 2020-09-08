@@ -1,7 +1,7 @@
 /* 
  by Geraldo Gomes
  */
-
+'use strict';
 j$.ui.Tabs = function(){
     let tabs = {}, _root=null;
     return{        
