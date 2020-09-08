@@ -1,10 +1,12 @@
 /*
  by Geraldo Gomes
  */
+'use strict';
+// import {CONFIG, c$} from  "../config.js";
+// import dataExt from  "../api/dataExt.js"; 
 function i$(id) {
     return document.getElementById(id);
 }
-const NO_IE=document.getElementById&&!document.all;
 
 const ERROR = function() {
     let handle =null;
@@ -79,25 +81,214 @@ const EXCEPTION = function() {
 }();
 
 const System = function(){
-    let result = null;
-    let _QueryString={};
-    let importJS= file =>{
-        let headTag = document.getElementsByTagName('head')[0];
-        let script  = document.createElement("script");
-        script.type ="text/javascript";
-        script.src = file;
-        headTag.appendChild(script);
-    };
-    let importCSS =  (file, media) =>{
-       if (media == undefined)
-           media = "screen";
-        let headTag = document.getElementsByTagName('head')[0];
-        let script  = document.createElement("link");
-        script.type ="text/css";
-        script.src = file;
-        script.media =media;
-        headTag.appendChild(script);
-    };
+    let result = null
+      , _QueryString={}
+      , importJS= file =>{
+            let headTag = document.getElementsByTagName('head')[0];
+            let script  = document.createElement("script");
+            script.type ="text/javascript";
+            script.src = file;
+            headTag.appendChild(script);
+        }
+      , importCSS =  (file, media) =>{
+            if (media == undefined)
+                media = "screen";
+                let headTag = document.getElementsByTagName('head')[0];
+                let script  = document.createElement("link");
+                script.type ="text/css";
+                script.src = file;
+                script.media =media;
+                headTag.appendChild(script);
+        }
+      , initialized=function(){
+            Element.prototype.stylize = function(properties) {
+                if (properties){
+                    if (typeof properties =='string'){
+                    if (properties.match(/[:;]/gi)==null) //Se tem ':' eh uma string com style
+                        this.className = properties;
+                    else                             //senao, pode ser o nome de uma class
+                        this.style.cssText = properties;
+                    }else{
+                        for (let att in properties){
+                            if (att.trim().toLowerCase() == 'clas$')
+                                this.className = properties[att];
+                            else
+                            this.style[att]=properties[att];
+                        }
+                    }
+                }
+            }
+            Element.prototype.insert = function(content, idInner) {
+                let id = "#" + this.id;
+                if (dataExt.isString(content)){
+                    $(id).append(content);
+                }else{
+                    if (content.after)
+                    $(id).after(content.after);
+                    if (content.bottom)
+                    $(id).append(content.bottom);
+                    if (content.before)
+                    $(id).before(content.before);
+                    if (content.top)
+                    $(id).prepend(content.top);
+                }
+                return (idInner) ?i$(idInner) :null;
+            }
+            Element.prototype.remove = function() {
+                if (!this.id.isEmpty())
+                $("#" + this.id).remove();
+            }
+            Element.prototype.addClassName = function(className) {
+                if (!this.id.isEmpty())
+                $("#" + this.id).addClass(className);
+            }
+            Element.prototype.hide = function() {
+                if (!this.id.isEmpty())
+                $("#" + this.id).hide();
+            }
+            Element.prototype.show = function() {
+                if (!this.id.isEmpty())
+                    $("#" + this.id).show();
+            }
+            Element.prototype.toggle = function() {
+                if (!this.id.isEmpty())
+                    $("#" + this.id).toggle();
+            }
+            Event.observe = function(node, event, callback) {
+                let element = null;
+                if (dataExt.isString(node))
+                    element = $("#" + node);
+                else
+                    element = $("#" + node.id);
+                element.bind(event, callback);
+            }
+            Event.element=function(event){return event.target}
+        
+            window['Ajax']={
+                Request:function(url, properties){
+                    let options={url:url};
+                    if (properties.parameters)
+                        options.data = properties.parameters;
+                    if (properties.method)
+                        options.type = properties.method.toUpperCase();
+                    else
+                        options.type = 'GET';
+                    if (properties.asynchronous)
+                        options.async = properties.asynchronous;
+                    if (properties.encoding)
+                        options.scriptCharset = properties.encoding;
+                    if (properties.evalJSON)
+                        options.dataType = 'json';
+                    if (properties.contentType)
+                            options.contentType = properties.contentType;
+                    if (properties.onSuccess)
+                        options.success = properties.onSuccess;
+                    if (properties.onFailure)
+                        options.error = properties.onFailure;
+                    if (properties.onComplete)
+                        options.complete = properties.onComplete;
+                    if (properties.postBody && (options.type == 'POST' || options.type == 'PUT')){
+                        options.processData = false;
+                        options.data = properties.postBody;
+                    }
+                    $.ajax(options);
+                }
+            , Updater:function(idContent, url, parm){
+                    $.ajax({
+                    url: url,
+                    cache: false,
+                    data: parm.parameters,
+                    complete:parm.onComplete
+                    }).done(function( html ) {
+                        $("#"+idContent).append(html);
+                    });
+                }
+            };
+    
+        /* pega o valor de um elemento */
+            Element.prototype.get= function(){
+                let value = '';
+                switch(dataExt.type(this)){
+                    case 'HTMLSelectElement':
+                        if (this.selectedIndex > -1)
+                            value = this.options[this.selectedIndex];
+                        break;
+                    case 'HTMLInputElement':
+                        value = this.value;
+                        break;
+                    default:
+                        value= this.textContent;
+                }
+                return value;
+            }
+            Element.prototype.content= function(value){
+                if (value == undefined){
+                let value = '';
+                switch(dataExt.type(this)){
+                    case 'HTMLSelectElement':
+                        value = this.selectedIndex;
+                        break;
+                    case 'HTMLInputElement':
+                        if (this.type == "radio" || this.type == "checkbox")
+                            value = this.checked;
+                        if (this.type == "text" || this.type == "hidden")
+                            value = this.value;
+                            break;
+                    default:
+                        value= this.textContent;
+                }
+                return value;
+                }else{
+                    switch(dataExt.type(this)){
+                        case 'HTMLSelectElement':
+                            this.value = value;
+                            break;
+                        case 'HTMLInputElement':
+                            if (this.type == "radio" || this.type == "checkbox")
+                                this.checked = value;
+                            if (this.type == "text" || this.type == "hidden")
+                                this.value = value;
+                                break;
+                        default:
+                            this.textContent=value;
+                    }
+                }
+            }
+    
+            Element.prototype.reset= function(){
+                switch(dataExt.type(this)){
+                    case 'HTMLSelectElement':
+                        this.selectedIndex=-1;
+                        break;
+                    case 'HTMLInputElement':
+                        if (this.type == "radio" || this.type == "checkbox")
+                            this.checked = false;
+                        if (this.type == "text" || this.type == "hidden")
+                            this.value = "";
+                        break;
+                    default:
+                        this.textContent="";
+                }
+            }
+        
+            String.prototype.pixel = function(fontSize){
+                i$('w_len').style.fontSize=fontSize + "px";
+                i$('w_len').innerHTML = "X".repeat(this.length + 1);
+                return {width:i$('w_len').getWidth(), height:i$('w_len').getHeight()};
+            }
+            //alert("123451234512".pixel(10).width);
+            //alert("123451234512".pixel(10).height);
+            String.prototype.point = function(fontSize){
+                i$('w_len').style.fontSize=fontSize + "pt";
+                i$('w_len').innerHTML = "X".repeat(this.length + 1);
+                return {width:i$('w_len').getWidth(), height:i$('w_len').getHeight()};
+            }
+            //alert("123451234512".point(10).width);
+            //alert("123451234512".point(10).height);
+            //===> fim
+            return true;
+        }();
+
     return{
         using: (url, media) =>{
             if (url.toUpperCase().indexOf('.CSS') > -1)
@@ -106,34 +297,27 @@ const System = function(){
                importJS(url);
         }
       , parameters: key=>{return _QueryString[key]}
-      , init:()=>{
-            if (System.Browser.msie){
-                c$.MOUSE.BUTTON.LEFT = 1;
-                c$.MOUSE.BUTTON.CENTER = 4;
-            }
-
-           // System.Hint.init();
-            /* pegar os parametros passados na URL */
+      , queryString:()=>{
             let parms=location.search.replace(/\x3F/,"").replace(/\x2B/g," ").split("&");
             if (parms!=""){
-                for(i=0;i<parms.length;i++){
+                for(let i=0;i<parms.length;i++){
                     nvar=parms[i].split("=");
                     _QueryString[nvar[0]]=unescape(nvar[1]);
                 }
             }
-            //return _QueryString;
+            return _QueryString;
         }
       , result:function(){return result;}
       , api:{prototype:false, jquery:false}
     };
 }();
-const j$={ui:{},sys:System,sample:{}};
 
+const j$={ui:{},sample:{}};
 //@note: util apenas em dsv para ver os objetos/colecoes e seus respectivos shortcut - que estão instanciados
 //j$.$V() ou j$.$V("$R")
 j$.$V= key =>{
    let shortCut = {"$C":"Controller:","$P":"Page:","$R":"Resource:","$S":"Service:", "$T":"Tabs:"};
-   for (id in shortCut){
+   for (let id in shortCut){
       if (j$[id]){
          if (key){
             if (id==key)
@@ -145,196 +329,6 @@ j$.$V= key =>{
       }
    }
 }
-
-if (window['jQuery'] != undefined)
-   System.api.jquery=true;
-
-// Extender UI
-if (System.api.jquery){
-    Element.prototype.stylize = function(properties) {
-        if (properties){
-            if (typeof properties =='string'){
-               if (properties.match(/[:;]/gi)==null) //Se tem ':' eh uma string com style
-                   this.className = properties;
-               else                             //senao, pode ser o nome de uma class
-                   this.style.cssText = properties;
-            }else{
-                for (let att in properties){
-                    if (att.trim().toLowerCase() == 'clas$')
-                        this.className = properties[att];
-                    else
-                       this.style[att]=properties[att];
-                }
-            }
-        }
-    }
-    Element.prototype.insert = function(content, idInner) {
-        let id = "#" + this.id;
-        if (dataExt.isString(content)){
-            $(id).append(content);
-        }else{
-            if (content.after)
-               $(id).after(content.after);
-            if (content.bottom)
-               $(id).append(content.bottom);
-            if (content.before)
-               $(id).before(content.before);
-            if (content.top)
-               $(id).prepend(content.top);
-        }
-        return (idInner) ?i$(idInner) :null;
-    }
-    Element.prototype.remove = function() {
-        if (!this.id.isEmpty())
-           $("#" + this.id).remove();
-    }
-    Element.prototype.addClassName = function(className) {
-        if (!this.id.isEmpty())
-           $("#" + this.id).addClass(className);
-    }
-    Element.prototype.hide = function() {
-        if (!this.id.isEmpty())
-           $("#" + this.id).hide();
-    }
-    Element.prototype.show = function() {
-        if (!this.id.isEmpty())
-            $("#" + this.id).show();
-    }
-    Element.prototype.toggle = function() {
-        if (!this.id.isEmpty())
-            $("#" + this.id).toggle();
-    }
-    Event.observe = function(node, event, callback) {
-        let element = null;
-        if (dataExt.isString(node))
-            element = $("#" + node);
-        else
-            element = $("#" + node.id);
-        element.bind(event, callback);
-     }
-    Event.element=function(event){return event.target}
-
-    window['Ajax']={
-        Request:function(url, properties){
-            let options={url:url};
-            if (properties.parameters)
-                options.data = properties.parameters;
-            if (properties.method)
-                options.type = properties.method.toUpperCase();
-            else
-                options.type = 'GET';
-            if (properties.asynchronous)
-                options.async = properties.asynchronous;
-            if (properties.encoding)
-                options.scriptCharset = properties.encoding;
-            if (properties.evalJSON)
-                options.dataType = 'json';
-            if (properties.contentType)
-                    options.contentType = properties.contentType;
-            if (properties.onSuccess)
-                options.success = properties.onSuccess;
-            if (properties.onFailure)
-                options.error = properties.onFailure;
-            if (properties.onComplete)
-                options.complete = properties.onComplete;
-            if (properties.postBody && (options.type == 'POST' || options.type == 'PUT')){
-                options.processData = false;
-                options.data = properties.postBody;
-            }
-            $.ajax(options);
-        }
-      , Updater:function(idContent, url, parm){
-              $.ajax({
-              url: url,
-              cache: false,
-              data: parm.parameters,
-              complete:parm.onComplete
-              }).done(function( html ) {
-                 $("#"+idContent).append(html);
-              });
-       }
-     };
-}
-/* pega o valor de um elemento */
-Element.prototype.get= function(){
-    let value = '';
-    switch(dataExt.type(this)){
-        case 'HTMLSelectElement':
-            if (this.selectedIndex > -1)
-                value = this.options[this.selectedIndex];
-            break;
-        case 'HTMLInputElement':
-            value = this.value;
-            break;
-        default:
-            value= this.textContent;
-    }
-    return value;
-}
-Element.prototype.content= function(value){
-    if (value == undefined){
-      let value = '';
-      switch(dataExt.type(this)){
-        case 'HTMLSelectElement':
-          value = this.selectedIndex;
-          break;
-        case 'HTMLInputElement':
-          if (this.type == "radio" || this.type == "checkbox")
-            value = this.checked;
-          if (this.type == "text" || this.type == "hidden")
-            value = this.value;
-            break;
-        default:
-          value= this.textContent;
-      }
-      return value;
-    }else{
-      switch(dataExt.type(this)){
-        case 'HTMLSelectElement':
-          this.value = value;
-          break;
-        case 'HTMLInputElement':
-          if (this.type == "radio" || this.type == "checkbox")
-            this.checked = value;
-          if (this.type == "text" || this.type == "hidden")
-            this.value = value;
-            break;
-        default:
-          this.textContent=value;
-      }
-    }
-}
-
-Element.prototype.reset= function(){
-    switch(dataExt.type(this)){
-        case 'HTMLSelectElement':
-            this.selectedIndex=-1;
-            break;
-        case 'HTMLInputElement':
-            if (this.type == "radio" || this.type == "checkbox")
-                this.checked = false;
-            if (this.type == "text" || this.type == "hidden")
-                this.value = "";
-            break;
-        default:
-            this.textContent="";
-    }
-}
-
-String.prototype.pixel = function(fontSize){
-    i$('w_len').style.fontSize=fontSize + "px";
-    i$('w_len').innerHTML = "X".repeat(this.length + 1);
-    return {width:i$('w_len').getWidth(), height:i$('w_len').getHeight()};
-}
-//alert("123451234512".pixel(10).width);
-//alert("123451234512".pixel(10).height);
-String.prototype.point = function(fontSize){
-    i$('w_len').style.fontSize=fontSize + "pt";
-    i$('w_len').innerHTML = "X".repeat(this.length + 1);
-    return {width:i$('w_len').getWidth(), height:i$('w_len').getHeight()};
-}
-//alert("123451234512".point(10).width);
-//alert("123451234512".point(10).height);
 
 j$.Dashboard = function(){
     let idContent=CONFIG.LAYOUT.CONTENT
@@ -373,7 +367,6 @@ j$.Dashboard = function(){
             }
     }
     , idContent:idContent
-   // , idToolbar:idToolbar
     }
 }();
 
@@ -412,8 +405,8 @@ j$.Dashboard.Menubar=function(){
     const initialized = function(){
         i$(j$.Dashboard.idContent).className =_c$.CLASS.CONTENT;
         i$(_c$.CONTENT).className = _c$.CLASS.MENU;
-        for (key in CONFIG.MENU.OPTIONS){
-            option =  CONFIG.MENU.OPTIONS[key]
+        for (let key in CONFIG.MENU.OPTIONS){
+            let option =  CONFIG.MENU.OPTIONS[key]
             if (key != CONFIG.MENU.PARSER.toUpperCase()){             
                 i$(option.CONTENT).remove();
             }
@@ -515,7 +508,7 @@ j$.Node=function(inheritor, properties){
     function getItem(key){
         return _node.c$[key];
     }
-    addItem=(key, item)=>{
+    let addItem=(key, item)=>{
         _node.length +=1;
         _node.c$[key]=item;
     };
@@ -574,46 +567,5 @@ j$.util = function(){
     };
 }();
 
-//startPoint: executa quando abre a pagina web
-$(document).ready(function(){
-    System.Browser = function(){
-        return {
-            getPosOffSet: (what, offsettype)=>{
-                    let totaloffset=(offsettype=="left")? what.offsetLeft : what.offsetTop;
-                    let parentEl=what.offsetParent;
-                    while (parentEl!=null){
-                        totaloffset=(offsettype=="left")? totaloffset+parentEl.offsetLeft : totaloffset+parentEl.offsetTop;
-                        parentEl=parentEl.offsetParent;
-                }
-                return totaloffset;
-            }
-            ,clearEdge: (obj, whichedge, target)=>{
-                        let edgeoffset=0;
-                        let windowedge=null;
-                        if (target == undefined)
-                            target = dropmenuobj;
-                        if (whichedge=="rightedge"){
-                                windowedge=System.Browser.msie && !window.opera? System.Browser.body.scrollLeft+System.Browser.body.clientWidth-15 : window.pageXOffset+window.innerWidth-15;
-                                target.contentmeasure=target.offsetWidth;
-                                if (windowedge-target.x < target.contentmeasure)
-                                        edgeoffset=target.contentmeasure-obj.offsetWidth;
-                        }else{
-                                windowedge=System.Browser.msie && !window.opera? System.Browser.body.scrollTop+System.Browser.body.clientHeight-15 : window.pageYOffset+window.innerHeight-18;
-                                target.contentmeasure=target.offsetHeight;
-                                if (windowedge-target.y < target.contentmeasure)
-                                        edgeoffset=target.contentmeasure+obj.offsetHeight;
-                        }
-                        return edgeoffset;
-            }
-            , compatible:()=>{return (System.Browser.msie||System.Browser.gecko||System.Browser.webkit||System.Browser.opera||System.Browser.safari)?true:false;}
-//            , msie:(System.api.prototype)?Prototype.Browser.IE:$.browser.msie
-//            , gecko:(System.api.prototype)?Prototype.Browser.Gecko:$.browser.mozilla
-//            , opera:(System.api.prototype)?Prototype.Browser.Opera:$.browser.opera
-//            , webkit:(System.api.prototype)?Prototype.Browser.WebKit:$.browser.webkit
-//            , safari:(System.api.prototype)?Prototype.Browser.MobileSafari:$.browser.safari
-            , body:(document.compatMode && document.compatMode!="BackCompat")? document.documentElement : document.body
-        };
-    }();
 
-    System.init();
-});
+// export {i$, ERROR, EXCEPTION, System, j$};
