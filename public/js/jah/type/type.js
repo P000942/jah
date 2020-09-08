@@ -1,7 +1,7 @@
 /*
    By Geraldo Gomes
  */
-//'use strict';
+'use strict';
 j$.ui.type={};
 j$.ui.createFieldset = (fields)=>{return new Fieldset(fields)}
 var DATATYPE = {NUMBER:{parse:value=>{return parseFloat(value);}},
@@ -145,7 +145,7 @@ j$.ui.Render= function(){
 
 j$.ui.Alert= function(){
     //let $alert = this;
-    _wrap = CONFIG.LAYOUT.ALERT_CONTENT;
+    let _wrap = CONFIG.LAYOUT.ALERT_CONTENT;
     return {
        show:function(msg, alertClass, wrap=i$(_wrap)){
            this.hide(wrap);
@@ -241,7 +241,7 @@ TYPE.HELPER = {
             lbl=inputField.parentNode.innerHTML;
         }
         let labels=document.getElementsByTagName("label"),i;
-        for( i=0; i<labels.length;i++ ){
+        for(let i=0; i<labels.length;i++ ){
            if(labels[i].htmlFor==inputField.id)
               lbl=labels[i].innerHTML;
         }
@@ -859,7 +859,7 @@ j$.ui.type.List=function(Properties){
        if ($list)
            list=$list;
        SELF.clear();
-       for(key in list){
+       for(let key in list){
             let option=document.createElement("option");
             option.text = list[key];
             option.value = key;
@@ -879,7 +879,7 @@ j$.ui.type.List=function(Properties){
 
    function maxlen(list){
         let max = 0;
-        for(key in list){
+        for(let key in list){
            let item = list[key];
            if (item.length > max)
                 max = item.length;
@@ -1033,7 +1033,7 @@ class Fieldset{
             let criteria={};
             return {
               clear: ()=>{
-                 for(key in _fs.c$){
+                 for(let key in _fs.c$){
                     _fs.c$[key].filterToggle(false);
                  }
               }
