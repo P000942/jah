@@ -1,7 +1,7 @@
 /*
    By Geraldo Gomes
  */
-
+//'use strict';
 j$.ui.type={};
 j$.ui.createFieldset = (fields)=>{return new Fieldset(fields)}
 var DATATYPE = {NUMBER:{parse:value=>{return parseFloat(value);}},
@@ -144,10 +144,10 @@ j$.ui.Render= function(){
 
 
 j$.ui.Alert= function(){
-    let $alert = this;
-    this.wrap = CONFIG.LAYOUT.ALERT_CONTENT;
+    //let $alert = this;
+    _wrap = CONFIG.LAYOUT.ALERT_CONTENT;
     return {
-       show:function(msg, alertClass, wrap=i$($alert.wrap)){
+       show:function(msg, alertClass, wrap=i$(_wrap)){
            this.hide(wrap);
            if (dataExt.isString(msg))
                j$.ui.Render.alert(wrap, msg, alertClass);
@@ -169,7 +169,7 @@ j$.ui.Alert= function(){
      , success:(msg, wrap)=>{
                   j$.ui.Alert.show(msg, CONFIG.ALERT.SUCCESS.CLASS, wrap)
                }
-     , hide:(wrap=i$($alert.wrap))=>{ wrap.innerHTML=''}
+     , hide:(wrap=i$(_wrap))=>{ wrap.innerHTML=''}
    }
 }();
 //j$.ui.Alert.error("Meu texto de erro", i$("assuntoAlert")) // assuntoAlert é o padrão da tabs "servico"+"Alert"
@@ -944,8 +944,8 @@ j$.ui.type.Boolean=function(Properties){
            },
            maxlen:function(){
                let max=0;
-               for (key in list){
-                   var item = list[key];
+               for (let key in list){
+                   let item = list[key];
                    if (item.text.length > max)
                        max = item.text.length;
                }

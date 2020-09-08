@@ -1,3 +1,6 @@
+'use strict'
+// import dataExt from  "../api/dataExt.js"; 
+// import {c$} from  "../config.js";
 const Typecast = {
 	InitMask : false,
 	InitSuggest : false,
@@ -455,3 +458,5 @@ const Typecast = {
 		}	
 	}
 }
+
+// export default Typecast;

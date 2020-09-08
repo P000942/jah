@@ -1,6 +1,8 @@
 /*
  by Geraldo Gomes
  */
+'use strict'
+//import dataExt from  "./api/dataExt.js"; 
 const c$ = {  NOW: new Date()
            ,   RC:{NOT_FOUND:-1, NONE:-1}
            ,ALIGN:{LEFT:'left', CENTER:'center', RIGHT:'right', JUSTIFY:'justify', TOP:'top', BOTTOM:'bottom'}
@@ -373,4 +375,4 @@ CONFIG.action= vl_key =>{
     return (key)?action:null;
 };
 
-
+//export {CONFIG, c$};
