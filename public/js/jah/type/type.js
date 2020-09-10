@@ -666,9 +666,7 @@ const TYPE = function() {
         } // return
     }(); // end .type    
     return {
-        SLIDEBOX: properties=>{return new j$.ui.frame.slidebox(properties)}
-   ,    FRAMEBOX: properties=>{return new j$.ui.frame.framebox(properties)}
-   ,       DIGIT: properties=>{return new type.Digit(properties)}
+           DIGIT: properties=>{return new type.Digit(properties)}
    ,     BOOLEAN: properties=>{return new type.Boolean(properties)}
    ,      LETTER: (size,properties)=>{return new type.Letter(size,properties)}
    ,   LOWERCASE: (size,properties)=>{return new type.LowerCase(size,properties)}
@@ -708,6 +706,17 @@ const TYPE = function() {
                 };
             }()
     };
+//TYPE.TEST.assert(TYPE.CCA(),'04.150.945-5');
+//TYPE.TEST.assert(TYPE.PHONE(),'(092)8122-0122');
+//TYPE.TEST.assert(TYPE.CNPJ(),'07.311.461/0001-24');
+//TYPE.TEST.assert(TYPE.CPF(),'417.660.402-68');
+//TYPE.TEST.assert(TYPE.Placa(),'JGG-1111');
+//TYPE.TEST.assert(TYPE.CEP(),'69029-080');
+//TYPE.TEST.assert(TYPE.DATE(),'30/10/2011');
+//TYPE.TEST.assert(TYPE.NUMERIC(),'1');
+//TYPE.TEST.assert(TYPE.BOOLEAN({list:{'true':{value:true, text:'Ativo'}, 'false':{value:false, text:'Desativado'}}}),true);
+//TYPE.TEST.assert(TYPE.BOOLEAN({list:{'true':{value:1, text:'Ativo'}, 'false': {value:9, text:'Cancelado'}}}),1);
+//TYPE.TEST.assert(TYPE.LIST({list:{'M':'Masculino', 'F':'Feminino'}}),'M');    
 }();
 
 TYPE.HELPER = function(){
@@ -989,19 +998,6 @@ TYPE.HANDLE = {
         return autotab;
     }
 };
-
-//TYPE.TEST.assert(TYPE.CCA(),'04.150.945-5');
-//TYPE.TEST.assert(TYPE.PHONE(),'(092)8122-0122');
-//TYPE.TEST.assert(TYPE.CNPJ(),'07.311.461/0001-24');
-//TYPE.TEST.assert(TYPE.CPF(),'417.660.402-68');
-//TYPE.TEST.assert(TYPE.Placa(),'JGG-1111');
-//TYPE.TEST.assert(TYPE.CEP(),'69029-080');
-//TYPE.TEST.assert(TYPE.DATE(),'30/10/2011');
-//TYPE.TEST.assert(TYPE.NUMERIC(),'1');
-//TYPE.TEST.assert(TYPE.BOOLEAN({list:{'true':{value:true, text:'Ativo'}, 'false':{value:false, text:'Desativado'}}}),true);
-//TYPE.TEST.assert(TYPE.BOOLEAN({list:{'true':{value:1, text:'Ativo'}, 'false': {value:9, text:'Cancelado'}}}),1);
-//TYPE.TEST.assert(TYPE.LIST({list:{'M':'Masculino', 'F':'Feminino'}}),'M');
-
 // colaca os textos e estilos quando da validação dos campos
 j$.Feedback =function (){
     let _msg=null
@@ -1051,7 +1047,6 @@ j$.Feedback =function (){
         ,noMarkIfValid(mark=false){_markIfValid=mark}
     }   
 }();
-
 j$.ui.Render= function(){
     return {
         attributes:(attributes, exception)=>{
@@ -1183,131 +1178,4 @@ j$.ui.Render= function(){
     };
 }();    
 
-j$.ui.Alert= function(){
-//let $alert = this;
-let _wrap = CONFIG.LAYOUT.ALERT_CONTENT;
-return {
-show:function(msg, alertClass, wrap=i$(_wrap)){
-    this.hide(wrap);
-    if (dataExt.isString(msg))
-        j$.ui.Render.alert(wrap, msg, alertClass);
-    else if (dataExt.isArray(msg) && msg.length === 1){
-        j$.ui.Render.alert(wrap, msg[0], alertClass);
-    }else{
-        let html='<lu>'
-        msg.each(function(text){html+=`<li>${text}</li>`});
-        html+='</lu>'
-        j$.ui.Render.alert(wrap, html , alertClass);
-    }
-}
-,   error:(msg, wrap)=>{
-            j$.ui.Alert.show(msg, CONFIG.ALERT.ERROR.CLASS, wrap)
-        }
-,    info:(msg, wrap)=>{
-            j$.ui.Alert.show(msg, CONFIG.ALERT.INFO.CLASS, wrap)
-        }
-, success:(msg, wrap)=>{
-            j$.ui.Alert.show(msg, CONFIG.ALERT.SUCCESS.CLASS, wrap)
-        }
-, hide:(wrap=i$(_wrap))=>{ wrap.innerHTML=''}
-}
-}(); // j$.ui.Alert
-//j$.ui.Alert.error("Meu texto de erro", i$("assuntoAlert")) // assuntoAlert é o padrão da tabs "servico"+"Alert"
-//j$.ui.Alert.info("Meu texto info"))                        // será exibido no padrão definido em CONFIG
-//j$.ui.Alert.success("Meu texto bem sucedido"))
-//j$.ui.Alert.show("Minha mensagem de alert", CLASS, idWrap) // CLASS: Veja em CONFIG
-//j$.ui.Alert.hide(idWrap))                                  // Para desaparecer o Alert
-
-j$.ui.frame=function(){
-   let me = this;
-   let items={};
-   function slidebox(properties){
-        let self = this;
-        Object.preset(properties, {container:i$('content'), style:'slidebox_show'});
-        properties.id =j$.util.getId(properties.style, properties.id);
-        Object.preset(self, properties);
-        let create=function(){
-            let idFieldset =properties.id + "_slidebox";
-            self.container.insert("<fieldset id='" +idFieldset+ "'>"
-                        +"<legend class='slidebox_legend' id='" +self.id+ "_slidebox_legend'>"
-                        +"<span title='Esconder' onclick='j$.ui.frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
-                        + self.legend+"</legend>"
-                        + "<div id='" +self.id+ "'></div>"
-                        +"</fieldset>");
-            self.source = i$(idFieldset);
-            self.source.stylize(self.style);
-            self.target = i$(self.id);
-            self.legend = i$(self.id+ "_slidebox_legend");
-            self.button = i$(self.id+ "_button");
-        }();
-        items[self.id]=self;
-        Object.preset(self,{toggle:()=>{j$.ui.frame.toggle(self.id)}
-                          , show  :()=>{j$.ui.frame.show(self.id)}});
-        self.hide=()=>{j$.ui.frame.hide(self.id)};
-        if (properties.hide){self.hide();}
-        return self;
-   }
-   function framebox(properties){
-        let self = this;
-        Object.preset(properties, {container:i$('content'), style:'wrap_framebox'});
-        properties.id =j$.util.getId(properties.style, properties.id);
-        Object.preset(self, properties);
-        let create=function(){
-            let idFieldset =properties.id + "_framebox";
-            self.container.insert("<div id='" +idFieldset+ "'>"
-                        +"<div class='wrap_framebox_legend' id='" +self.id+ "_framebox_legend'>"
-                        +"<span title='Esconder' onclick='j$.ui.frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
-                        + self.legend+"</div>"
-                        + "<div class='wrap_box' id='" +self.id+ "'></div>"
-                        +"</div>");
-            self.source = i$(idFieldset);
-            self.source.stylize(self.style);
-            self.target = i$(self.id);
-            self.legend = i$(self.id+ "_framebox_legend");
-            self.button = i$(self.id+ "_button");
-        }();
-        items[self.id]=self;
-        Object.preset(self,{toggle:()=>{j$.ui.frame.toggle(self.id)}
-                          , show  :()=>{j$.ui.frame.show(self.id)}});
-        self.hide=()=>{j$.ui.frame.hide(self.id)};
-        if (properties.hide){self.hide();}
-        return self;
-   }
-   let toggle=function(id){
-        let frame = this.items[id];
-        if (frame.button.className == "showbox"){
-            this.hide(id);
-        } else {
-            this.show(id);
-        }
-   };
-   let hide=function(id){
-       let frame = this.items[id];
-           frame.button.className =  "hidebox";
-           frame.button.title = "esconder";
-           if (frame.constructor.name=='slidebox')
-              frame.source.className = "slidebox_hide";
-           frame.target.hide();
-   };
-   let show=function(id){
-       let frame = this.items[id];
-           frame.button.className =  "showbox";
-           frame.button.title = "Exibir";
-           if (frame.constructor.name=='slidebox')
-              frame.source.className = "slidebox_show";
-
-           frame.target.show();
-   };
-   return{
-       // properties={container:'', id:'', style:'', legend:''}
-       slidebox:function(properties){return new slidebox(properties);}
-     , framebox:function(properties){return new framebox(properties);}
-     //, dropbox:function(properties){return new dropbox(properties);}
-     , toggle:toggle
-     , show:show
-     , hide:hide
-     , items:items
-   };
-}();
-
-// export {TYPE, j$.Feedback, j$.ui, j$.Fieldset};
+// export {j$.Fieldset, TYPE, j$.Feedback, j$.ui};

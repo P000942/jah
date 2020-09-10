@@ -1,6 +1,6 @@
 /* j$.service - Eh o template do serviço, comtém as informações a respeito de um serviço desejado
  *              pode ser do tipo: 'crud', 'query' ou 'user'(criado pelo usuário)
- * j$.ui.Page: Cria a página que expõe o serviço (os elementos html)
+ * j$.Page: Cria a página que expõe o serviço (os elementos html)
  *              pode ser do tipo: 'form' ou 'modal'
  * Adapter   : Contém informações declaradas na aplicaçaõ que são usadas no 'Menu', 'Tabs' e 'j$.service'. Útil para evitar redundância nas declarações
  *             Exmeplo: 'title', 'resouce' e outras informações serão aproveitadas em ambos.
@@ -8,7 +8,7 @@
  * 1.Através de j$.service é criado o template do serviço
  * 2.Em algum ponto da interface(geralmente pelo menu) é solicitado a exposição desse serviço.
  * 3.O método '.init(idContainer, modal)' do serviço deve ser chamado
- * 4.Neste método (.init) é solicitado j$.ui.Page que cria a página através do método '.create(service,modal)'
+ * 4.Neste método (.init) é solicitado j$.Page que cria a página através do método '.create(service,modal)'
  * 5.Atavés do paramametro 'modal' o método sabe se é para criar um form ou um modal. A página será criada segundo as informações do 'service'
  * 6.Na criação página também é criado o 'actionController' para receber as ações da página(ver o fluxo no controller.js)
  * service(crud, query,user) -> page(crud, modal) -> controller(external, standard)
@@ -377,9 +377,9 @@ j$.service = function(){
             // DEFINIR os métodos default  
             if ($i.init==undefined){
                 $i.init=function(idTarget, modal, param){
-                if (idTarget)
-                    $i.Interface.container=idTarget;
-                j$.ui.Page.create($i, modal).init();
+                    if (idTarget)
+                        $i.Interface.container=idTarget;
+                    j$.Page.create($i, modal).init();
                 };
             }
             if ($i.autoRequest==undefined  && dataExt.isCrud($i)){
@@ -510,80 +510,343 @@ j$.service = function(){
 }() //j$.service
 j$.$S = j$.service.c$;
 
-j$.ui.Page = function(){
-   let items = {};
-   const Modal =function(wrap,form, fixed){
-       let _modal = this;
-       //this.show = show;
-       this.display=show;
-       function show(){
-           $("#"+_modal.form.id+"Modal").modal('show'); // exibe o modal
-       }
-       this.clear=function(){
-           if (i$(form.id+ "Modal")) {$("#"+form.id+ "Modal").remove();}
-       }
-       this.hide=function(){
-           $("#"+_modal.form.id+"Modal").modal('hide'); // exibe o modal
-       }
-       const create=function(){
-          _modal.clear();
-          let txFixed=(fixed)?'':"<button type='button' class='close'  data-dismiss='modal' aria-label='Close'>"
-                     +"<span aria-hidden='true'>&times;</span>"
-                     +"</button>";
-          $(wrap).append("<div id='" +form.id+ "Modal' class='modal fade' role='dialog'>"
-                        +  "<div class='modal-dialog modal-sm modal-lg'>"
-                        +    "<div class='modal-content'>"
-                        +      "<div id='" +form.id+ "Header' class='modal-header'>"                        
-                        +              "<h4 class='modal-title' id='" +form.id+ "Caption' >" +form.title+ "</h4>"
-                        +              txFixed
-                        +      "</div>"
-                        +      "<div id='" +form.id+ "Body' class='modal-body'> <div class='container'>"
-                        +              "<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>"
-                        +      "</div></div>"
-                        +      "<div id='" +form.id+ "Footer' class='modal-footer'>"
-                                  //+"<button type='button' class='btn btn-default' data-dismiss='modal'>Fechar</button>"
-                        +       "</div>"
-                        +     "</div>"
-                        +   "</div>"
-                        + "</div>");
-          $('#'+form.id).append("<div id='" +form.id+ "Alert'></div>");
-          _modal.body     =i$(form.id+ "Body");
-          _modal.form     =i$(form.id);
-          _modal.fieldset =i$(form.id);
-          _modal.caption  =i$(form.id+"Caption");
-          _modal.header   =i$(form.id+"Header");
-          _modal.footer   =i$(form.id+"Footer");
-          _modal.alert    =i$(form.id+"Alert");
-       }();
-   }
-   const Form =function(wrap,form){
-       let _form = this;
-       this.display=show;
-       function show(){ _form.form.show()}
-       this.clear=()=>{ wrap.innerHTML=""}
-       this.hide=()=>{_form.form.hide()}
-       const create=function(){
-          _form.clear();
-          $(wrap).append("<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>");
+j$.Page = function(){
+   let items = {}
+     , frame=function(){
+            let me = this;
+            let items={};
+            function slidebox(properties){
+                let self = this;
+                Object.preset(properties, {container:i$('content'), style:'slidebox_show'});
+                properties.id =j$.util.getId(properties.style, properties.id);
+                Object.preset(self, properties);
+                let create=function(){
+                    let idFieldset =properties.id + "_slidebox";
+                    self.container.insert("<fieldset id='" +idFieldset+ "'>"
+                                +"<legend class='slidebox_legend' id='" +self.id+ "_slidebox_legend'>"
+                                +"<span title='Esconder' onclick='j$.Page.Frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
+                                + self.legend+"</legend>"
+                                + "<div id='" +self.id+ "'></div>"
+                                +"</fieldset>");
+                    self.source = i$(idFieldset);
+                    self.source.stylize(self.style);
+                    self.target = i$(self.id);
+                    self.legend = i$(self.id+ "_slidebox_legend");
+                    self.button = i$(self.id+ "_button");
+                }();
+                items[self.id]=self;
+                Object.preset(self,{toggle:()=>{j$.Page.Frame.toggle(self.id)}
+                                , show  :()=>{j$.Page.Frame.show(self.id)}});
+                self.hide=()=>{j$.Page.Frame.hide(self.id)};
+                if (properties.hide){self.hide();}
+                return self;
+            }
+            function framebox(properties){
+                let self = this;
+                Object.preset(properties, {container:i$('content'), style:'wrap_framebox'});
+                properties.id =j$.util.getId(properties.style, properties.id);
+                Object.preset(self, properties);
+                let create=function(){
+                    let idFieldset =properties.id + "_framebox";
+                    self.container.insert("<div id='" +idFieldset+ "'>"
+                                +"<div class='wrap_framebox_legend' id='" +self.id+ "_framebox_legend'>"
+                                +"<span title='Esconder' onclick='j$.Page.Frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
+                                + self.legend+"</div>"
+                                + "<div class='wrap_box' id='" +self.id+ "'></div>"
+                                +"</div>");
+                    self.source = i$(idFieldset);
+                    self.source.stylize(self.style);
+                    self.target = i$(self.id);
+                    self.legend = i$(self.id+ "_framebox_legend");
+                    self.button = i$(self.id+ "_button");
+                }();
+                items[self.id]=self;
+                Object.preset(self,{toggle:()=>{j$.Page.Frame.toggle(self.id)}
+                                , show  :()=>{j$ui.Page.Frame.show(self.id)}});
+                self.hide=()=>{j$.Page.Frame.hide(self.id)};
+                if (properties.hide){self.hide();}
+                return self;
+            }
+            let toggle=function(id){
+                let frame = this.items[id];
+                if (frame.button.className == "showbox"){
+                    this.hide(id);
+                } else {
+                    this.show(id);
+                }
+            };
+            let hide=function(id){
+                let frame = this.items[id];
+                    frame.button.className =  "hidebox";
+                    frame.button.title = "esconder";
+                    if (frame.constructor.name=='slidebox')
+                    frame.source.className = "slidebox_hide";
+                    frame.target.hide();
+            };
+            let show=function(id){
+                let frame = this.items[id];
+                    frame.button.className =  "showbox";
+                    frame.button.title = "Exibir";
+                    if (frame.constructor.name=='slidebox')
+                    frame.source.className = "slidebox_show";
+        
+                    frame.target.show();
+            };
+            return{
+                // properties={container:'', id:'', style:'', legend:''}
+                slidebox:function(properties){return new slidebox(properties)}
+            , framebox:function(properties){return new framebox(properties)}
+            //, dropbox:function(properties){return new dropbox(properties);}
+            , toggle:toggle
+            , show:show
+            , hide:hide
+            , items:items
+            };
+        }();
+   let designer= function (){          
+        let addField=(form, section, field, key, mixed, wrapRow)=>{
+            if (field){
+                let id =   form.id +'_'+key;
+            if (!wrapRow)
+                wrapRow = j$.ui.Render.wrap(section, id+'_wrapRow', mixed.row.clas$, mixed.row.style);
+            field.create(wrapRow, id, key, mixed);
+            }
+            return wrapRow;
+        }
+        let addRow= (page, section, fieldset, design, reposit)=>{
+            let fields = reposit.fields;                
+            let blendSection =(reposit, idx)=>{
+                // combinar os atributos(clas$,  style) de todas a sections 
+                // combinar as 'definicoes de design do cliente'
+                //      com os 'padroes do designer' (classic, column,...) 
+                let sections={column:{}, label:{}, input:{}, row:{}} // a ideia eh garantir que essas sections tenham tds as props de att
+                    ,      att={clas$:null,  style:null}               // isso eh para evitar ficar fazendo IFs mais adiante
+                    , _section;                      
+                function setValue(section, prop){
+                    let value;
+                    if (dataExt.isObject(section)){
+                        if (section[prop])              // existe o atributo
+                            value = section[prop];                
+                    }else if (dataExt.isString(section) && prop=="clas$") // é o atributo default para o caso de vir string
+                        value = section;
+                    return value;    
+                }                                                         
+                for (let key in sections){                
+                    _section = sections[key]
+                    for (let prop in att){
+                        _section[prop] =att[prop]; // garantir a existes dos atributos de att em cada section
+                        if (reposit[key]){
+                            if (dataExt.isArray(reposit[key])) // existe a secao e a ocorrencia
+                                _section[prop] = setValue(reposit[key][idx], prop)
+                            else
+                                _section[prop] = setValue(reposit[key], prop)      
+                        }     
+                    }  
+                    // combinar os padroes do designer com as definicoes do cliente
+                    _section.clas$ =(_section.clas$) ?design.clas$[key] +' '+ _section.clas$ :design.clas$[key]; 
+                }    
+                sections.labelInTheSameWrap=design.labelInTheSameWrap;   
+                return sections;      
+            }                
+            if (dataExt.isArray(fields)){
+            let wrapRow, key, mixed;
+            fields.forEach((key,i)=>{                                              
+                mixed = blendSection(reposit, i);   
+                wrapRow = addField(page.form, section, fieldset.c$[key], key, mixed, wrapRow);
+                if (!design.inLine)                                         
+                    wrapRow = null;
+            })    
+            }else{
+                addField(page.form, section, fieldset.c$[fields], fields, blendSection(reposit));
+            }    
+        };
+        let addSection=(page, section, fieldset, design)=>{              
+            let reposit={}
+            , wrapSection = (design.clas$.section) 
+                            ?j$.ui.Render.wrap(section, null,design.clas$.section, design.style)
+                            :section;              
+            /* Eh necessario organizar as sections pq, para falicitar,
+                ...existem varias possibilidades de escreve o codigo de uma sessao
+                exemplo: label="col-sm-2" //vai assumir essa propriedade para todas as colunas e linhas da section
+                            ou =["col-sm-2","col-sm-2"]  //assume essa propriedade para todas as linhas da section
+                            ou =[["col-sm-2","col-sm-2"], ["col-sm-2","col-sm-2"]] 
+            */                        
+            function parseSection(fields, row){ 
+                let sections = ["label","column","input","row"];
+                reposit.fields =fields;
+                if (design.coupled){ // para configurar 'label' e 'column' de forma igual
+                    design.label = design.coupled;
+                    design.column = design.coupled;
+                }
+                function parse(section, key){
+                    if (dataExt.isArray(section)){ 
+                        if (dataExt.isArray(section[row])) // para section=[[],...,[]]
+                            reposit[key] = section[row];
+                        else
+                            reposit[key] = section;        // para section=[]
+                    }else 
+                        reposit[key] = section             // String ou Object
+                }                     
+                sections.forEach(key=>{
+                    if (design[key])                      // a section existe
+                            parse(design[key], key);
+                })
+            }                             
+            if (dataExt.isArray(design.fields[0])){
+                design.fields.forEach((fieldS,idx)=>{
+                    parseSection(fieldS, idx);
+                    addRow(page, wrapSection, fieldset, design, reposit);
+                })    
+            }else{
+                parseSection(design.fields)
+                addRow(page, wrapSection, fieldset, design, reposit) ;
+            }
+            return wrapSection;    
+        };
+        const Modal =function(wrap,form, fixed){
+            let _modal = this;
+            //this.show = show;
+            this.display=show;
+            function show(){
+                $("#"+_modal.form.id+"Modal").modal('show'); // exibe o modal
+            }
+            this.clear=function(){
+                if (i$(form.id+ "Modal")) {$("#"+form.id+ "Modal").remove();}
+            }
+            this.hide=function(){
+                $("#"+_modal.form.id+"Modal").modal('hide'); // exibe o modal
+            }
+            const create=function(){
+               _modal.clear();
+               let txFixed=(fixed)?'':"<button type='button' class='close'  data-dismiss='modal' aria-label='Close'>"
+                          +"<span aria-hidden='true'>&times;</span>"
+                          +"</button>";
+               $(wrap).append("<div id='" +form.id+ "Modal' class='modal fade' role='dialog'>"
+                             +  "<div class='modal-dialog modal-sm modal-lg'>"
+                             +    "<div class='modal-content'>"
+                             +      "<div id='" +form.id+ "Header' class='modal-header'>"                        
+                             +              "<h4 class='modal-title' id='" +form.id+ "Caption' >" +form.title+ "</h4>"
+                             +              txFixed
+                             +      "</div>"
+                             +      "<div id='" +form.id+ "Body' class='modal-body'> <div class='container'>"
+                             +              "<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>"
+                             +      "</div></div>"
+                             +      "<div id='" +form.id+ "Footer' class='modal-footer'>"
+                                       //+"<button type='button' class='btn btn-default' data-dismiss='modal'>Fechar</button>"
+                             +       "</div>"
+                             +     "</div>"
+                             +   "</div>"
+                             + "</div>");
+               $('#'+form.id).append("<div id='" +form.id+ "Alert'></div>");
+               _modal.body     =i$(form.id+ "Body");
+               _modal.form     =i$(form.id);
+               _modal.fieldset =i$(form.id);
+               _modal.caption  =i$(form.id+"Caption");
+               _modal.header   =i$(form.id+"Header");
+               _modal.footer   =i$(form.id+"Footer");
+               _modal.alert    =i$(form.id+"Alert");
+            }();
+        }
+        const Form =function(wrap,form){
+            let _form = this;
+            this.display=show;
+            function show(){ _form.form.show()}
+            this.clear=()=>{ wrap.innerHTML=""}
+            this.hide=()=>{_form.form.hide()}
+            const create=function(){
+               _form.clear();
+               $(wrap).append("<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>");
+     
+               $('#'+form.id).append(`<div class='${CONFIG.CRUD.CLASS.HEADER}' id='${form.id}Header'>`
+                                    +`<div class='${CONFIG.CRUD.CLASS.TITLE}'  id='${form.id}Title'>${form.title}</div>`
+                                    +`<nav class='${CONFIG.CRUD.CLASS.MENU}'   id='${form.id}Menu'></nav>`
+                                    +"</div>");  
+     
+               $('#'+form.id).append("<fieldset class='crud' id='" +form.id+ "Fieldset'></fieldset>");
+               $('#'+form.id+' > fieldset').append(`<div id='${form.id}Alert'></div>`);
+               $('#'+form.id).append(`<div id='${form.id}Footer'></div>`);
+               _form.body     =i$(form.id);
+               _form.form     =i$(form.id);
+               _form.fieldset =i$(form.id+"Fieldset");
+               _form.caption  =i$(form.id+"Title");
+               _form.header   =i$(form.id+"Header");
+               _form.menu     =i$(form.id+"Menu");
+               _form.footer   =i$(form.id+'Footer');
+               _form.alert    =i$(form.id+"Alert");
+            }();
+        }        
+        return{
+            create:page=>{
+                if (page.service.Interface.design){ // Serah feito segundo o design
+                    j$.Page.Designer.design(page, page.fieldset, page.service.Interface.design);
+                }else{                              // Serah tudo no modo standard
+                    //j$.Page.Designer.standard(page, page.fieldset, page.service.Fieldset);
+                    let design = {fields:Object.keys(page.service.Fieldset.c$)}
+                    j$.Page.Designer.classic(page, page.fieldset, page.service.Fieldset, design);
+                }
+            }
+            ,  design: (page, container, designs)=>{
+                for (let i=0; i<designs.length; i++){
+                    let masterSection
+                        , section = container
+                        , design  = designs[i];
+                    if (design.container != undefined)
+                        section =i$(design.container);
 
-          $('#'+form.id).append(`<div class='${CONFIG.CRUD.CLASS.HEADER}' id='${form.id}Header'>`
-                               +`<div class='${CONFIG.CRUD.CLASS.TITLE}'  id='${form.id}Title'>${form.title}</div>`
-                               +`<nav class='${CONFIG.CRUD.CLASS.MENU}'   id='${form.id}Menu'></nav>`
-                               +"</div>");  
-
-          $('#'+form.id).append("<fieldset class='crud' id='" +form.id+ "Fieldset'></fieldset>");
-          $('#'+form.id+' > fieldset').append(`<div id='${form.id}Alert'></div>`);
-          $('#'+form.id).append(`<div id='${form.id}Footer'></div>`);
-          _form.body     =i$(form.id);
-          _form.form     =i$(form.id);
-          _form.fieldset =i$(form.id+"Fieldset");
-          _form.caption  =i$(form.id+"Title");
-          _form.header   =i$(form.id+"Header");
-          _form.menu     =i$(form.id+"Menu");
-          _form.footer   =i$(form.id+'Footer');
-          _form.alert    =i$(form.id+"Alert");
-       }();
-   }
+                    if (design.frame != undefined){
+                        if (frame.items[design.frame])
+                            section = frame.items[design.frame].target;
+                        else
+                            try{
+                                throw CONFIG.EXCEPTION.INVALID_ELEMENT
+                            } catch(exception){
+                                if (exception===CONFIG.EXCEPTION.INVALID_ELEMENT)
+                                    console.log(exception.id +":"+  exception.text + "'['"+design.frame+"']");
+                            }
+                    }
+                    let type=design.type.split(/[.]/g);
+                    for (let k=0; k<type.length; k++){
+                        section = j$.Page.Designer[type[k]](page, section,  page.service.Fieldset, design);
+                        if (!section)
+                            section = container;
+                        if (k==0)
+                            masterSection = section;
+                        design.id=null;
+                    }
+                    if (design.design)
+                        j$.Page.Designer.design(page, design.design, masterSection);
+                }
+                }
+            ,  classic:(page, section, fieldset, design)=>{
+                    design.clas$=Object.toLowerCase(CONFIG.DESIGN.CLASSIC);                     
+                    return addSection(page, section, fieldset, design);
+                }
+            ,   inLine:(page, section, fieldset, design)=>{
+                    design.clas$=Object.toLowerCase(CONFIG.DESIGN.INLINE);                    
+                    Object.preset(design,{inLine:true, labelInTheSameWrap:false});    
+                    return addSection(page, section, fieldset, design);
+                }              
+            ,   column:(page, section, fieldset, design)=>{
+                    Object.preset(design,{clas$:Object.toLowerCase(CONFIG.DESIGN.COLUMN)
+                                        ,inLine:true, labelInTheSameWrap:true, design});                    
+                    return addSection(page, section, fieldset, design);                   
+                }
+            ,   line:(page, section, fieldset, design)=>{
+                    let wrapLine = j$.ui.Render.line(section, design.id, 'wrap_line', design.title);
+                        wrapLine.stylize(design.style);
+                }
+            , table:fields=>{}
+            , section:fields=>{}
+            , slidebox:(page, section, fieldset, design)=>{
+                    return frame.slidebox({container:section, id:design.id, legend:design.title}).target;
+                }
+            , framebox:(page, section, fieldset, design)=>{
+                    return frame.framebox({container:section, id:design.id, legend:design.title}).target;
+                }
+            , form:Form
+            , modal:Modal
+        };
+    }()
 
    return {
        create: function(service, modal){
@@ -595,184 +858,11 @@ j$.ui.Page = function(){
      , c$:items
      , C$:key=>{return items[key]}
      , createAdapter: adapter=>{j$.ui.Adapter = new j$.ui.adapterFactory(adapter); return j$.ui.Adapter;}
-     , Designer:function(){          
-          let addField=(form, section, field, key, mixed, wrapRow)=>{
-              if (field){
-                 let id =   form.id +'_'+key;
-                 if (!wrapRow)
-                     wrapRow = j$.ui.Render.wrap(section, id+'_wrapRow', mixed.row.clas$, mixed.row.style);
-                 field.create(wrapRow, id, key, mixed);
-              }
-              return wrapRow;
-          }
-          let addRow= (page, section, fieldset, design, reposit)=>{
-                let fields = reposit.fields;                
-                let blendSection =(reposit, idx)=>{
-                    // combinar os atributos(clas$,  style) de todas a sections 
-                    // combinar as 'definicoes de design do cliente'
-                    //      com os 'padroes do designer' (classic, column,...) 
-                    let sections={column:{}, label:{}, input:{}, row:{}} // a ideia eh garantir que essas sections tenham tds as props de att
-                      ,      att={clas$:null,  style:null}               // isso eh para evitar ficar fazendo IFs mais adiante
-                      , _section;                      
-                    function setValue(section, prop){
-                        let value;
-                        if (dataExt.isObject(section)){
-                           if (section[prop])              // existe o atributo
-                               value = section[prop];                
-                        }else if (dataExt.isString(section) && prop=="clas$") // é o atributo default para o caso de vir string
-                           value = section;
-                        return value;    
-                    }                                                         
-                    for (let key in sections){                
-                        _section = sections[key]
-                        for (let prop in att){
-                            _section[prop] =att[prop]; // garantir a existes dos atributos de att em cada section
-                            if (reposit[key]){
-                               if (dataExt.isArray(reposit[key])) // existe a secao e a ocorrencia
-                                  _section[prop] = setValue(reposit[key][idx], prop)
-                               else
-                                  _section[prop] = setValue(reposit[key], prop)      
-                            }     
-                        }  
-                        // combinar os padroes do designer com as definicoes do cliente
-                        _section.clas$ =(_section.clas$) ?design.clas$[key] +' '+ _section.clas$ :design.clas$[key]; 
-                     }    
-                     sections.labelInTheSameWrap=design.labelInTheSameWrap;   
-                   return sections;      
-                }                
-              if (dataExt.isArray(fields)){
-                 let wrapRow, key, mixed;
-                 fields.forEach((key,i)=>{                                              
-                     mixed = blendSection(reposit, i);   
-                     wrapRow = addField(page.form, section, fieldset.c$[key], key, mixed, wrapRow);
-                     if (!design.inLine)                                         
-                         wrapRow = null;
-                 })    
-              }else{
-                  addField(page.form, section, fieldset.c$[fields], fields, blendSection(reposit));
-              }    
-          };
-          let addSection=(page, section, fieldset, design)=>{              
-               let reposit={}
-                 , wrapSection = (design.clas$.section) 
-                               ?j$.ui.Render.wrap(section, null,design.clas$.section, design.style)
-                               :section;              
-               /* Eh necessario organizar as sections pq, para falicitar,
-                  ...existem varias possibilidades de escreve o codigo de uma sessao
-                  exemplo: label="col-sm-2" //vai assumir essa propriedade para todas as colunas e linhas da section
-                              ou =["col-sm-2","col-sm-2"]  //assume essa propriedade para todas as linhas da section
-                              ou =[["col-sm-2","col-sm-2"], ["col-sm-2","col-sm-2"]] 
-               */                        
-               function parseSection(fields, row){ 
-                   let sections = ["label","column","input","row"];
-                   reposit.fields =fields;
-                   if (design.coupled){ // para configurar 'label' e 'column' de forma igual
-                       design.label = design.coupled;
-                       design.column = design.coupled;
-                   }
-                   function parse(section, key){
-                        if (dataExt.isArray(section)){ 
-                            if (dataExt.isArray(section[row])) // para section=[[],...,[]]
-                                reposit[key] = section[row];
-                            else
-                                reposit[key] = section;        // para section=[]
-                        }else 
-                            reposit[key] = section             // String ou Object
-                   }                     
-                   sections.forEach(key=>{
-                        if (design[key])                      // a section existe
-                              parse(design[key], key);
-                   })
-               }                             
-               if (dataExt.isArray(design.fields[0])){
-                   design.fields.forEach((fieldS,idx)=>{
-                       parseSection(fieldS, idx);
-                       addRow(page, wrapSection, fieldset, design, reposit);
-                   })    
-               }else{
-                   parseSection(design.fields)
-                   addRow(page, wrapSection, fieldset, design, reposit) ;
-               }
-               return wrapSection;    
-          };
-          return{
-              create:page=>{
-                 if (page.service.Interface.design){ // Serah feito segundo o design
-                     j$.ui.Page.Designer.design(page, page.fieldset, page.service.Interface.design);
-                 }else{                              // Serah tudo no modo standard
-                     //j$.ui.Page.Designer.standard(page, page.fieldset, page.service.Fieldset);
-                     let design = {fields:Object.keys(page.service.Fieldset.c$)}
-                     j$.ui.Page.Designer.classic(page, page.fieldset, page.service.Fieldset, design);
-                 }
-              }
-            , design: (page, container, designs)=>{
-                    for (let i=0; i<designs.length; i++){
-                        let masterSection
-                          , section = container
-                          , design  = designs[i];
-                        if (design.container != undefined)
-                            section =i$(design.container);
-
-                        if (design.frame != undefined){
-                            if (j$.ui.frame.items[design.frame])
-                               section = j$.ui.frame.items[design.frame].target;
-                            else
-                                try{
-                                   throw CONFIG.EXCEPTION.INVALID_ELEMENT
-                                } catch(exception){
-                                    if (exception===CONFIG.EXCEPTION.INVALID_ELEMENT)
-                                        console.log(exception.id +":"+  exception.text + "'['"+design.frame+"']");
-                                }
-                        }
-                        let type=design.type.split(/[.]/g);
-                        for (let k=0; k<type.length; k++){
-                            section = j$.ui.Page.Designer[type[k]](page, section,  page.service.Fieldset, design);
-                            if (!section)
-                                section = container;
-                            if (k==0)
-                                masterSection = section;
-                            design.id=null;
-                        }
-                        if (design.design)
-                           j$.ui.Page.Designer.design(page, design.design, masterSection);
-                    }
-            }
-            ,   classic:(page, section, fieldset, design)=>{
-                    design.clas$=Object.toLowerCase(CONFIG.DESIGN.CLASSIC);                     
-                    return addSection(page, section, fieldset, design);
-              }
-              , inLine:(page, section, fieldset, design)=>{
-                    design.clas$=Object.toLowerCase(CONFIG.DESIGN.INLINE);                    
-                    Object.preset(design,{inLine:true, labelInTheSameWrap:false});    
-                    return addSection(page, section, fieldset, design);
-              }              
-            ,   column:(page, section, fieldset, design)=>{
-                    Object.preset(design,{clas$:Object.toLowerCase(CONFIG.DESIGN.COLUMN)
-                                         ,inLine:true, labelInTheSameWrap:true, design});                    
-                    return addSection(page, section, fieldset, design);                   
-              }
-            , line:(page, section, fieldset, design)=>{
-                let wrapLine = j$.ui.Render.line(section, design.id, 'wrap_line', design.title);
-                    wrapLine.stylize(design.style);
-              }
-            , table:fields=>{}
-            , section:fields=>{}
-            , slidebox:(page, section, fieldset, design)=>{
-                 return TYPE.SLIDEBOX({container:section, id:design.id, legend:design.title}).target;
-              }
-            , framebox:(page, section, fieldset, design)=>{
-                 return TYPE.FRAMEBOX({container:section, id:design.id, legend:design.title}).target;
-              }
-            , dropbox:(page, section, fieldset, design)=>{
-                 return TYPE.DROPBOX({container:section, id:design.id, legend:design.title}).target;
-              }
-            , form:Form
-            , modal:Modal
-          };
-       }()
+     , Designer:designer
+     , Frame:frame
    };
 }(); //j$.service
-j$.$P = j$.ui.Page.c$;
+j$.$P = j$.Page.c$;
 
 j$.ui.Form=function(service, modal) {
     let $i = this;
@@ -801,8 +891,8 @@ j$.ui.Form=function(service, modal) {
     if (!service.Interface.id)
         service.Interface.id = service.id.toFirstLower();
     // se for modal, herda de um template próprio para modal
-    this.inherit = (modal) ?j$.ui.Page.Designer.modal 
-                           :j$.ui.Page.Designer.form;
+    this.inherit = (modal) ?j$.Page.Designer.modal 
+                           :j$.Page.Designer.form;
 
     $i.inherit($i.container, service.Interface);
 
@@ -822,7 +912,7 @@ j$.ui.Form=function(service, modal) {
 
     $i.Buttons = new j$.ui.Buttons($i.actionController, service.Interface.Buttons, DEFAULT_BUTTON_PRESET);
     this.init= function(externalController) {
-        j$.ui.Page.Designer.create($i); // cria os fields
+        j$.Page.Designer.create($i); // cria os fields
         let wrapButtons  = (alignButtons==c$.ALIGN.TOP) ?$i.menu :$i.footer;
         $i.Buttons.create(wrapButtons);   // cria os buttoes html  
         // if (service.Child || service.Interface.List) // cria um tab para comportar o list e|ou child
@@ -899,44 +989,6 @@ j$.ui.Form=function(service, modal) {
     }();    
 };
 
-j$.Observer=function(Parent){
-    let $i = this;
-    $i.Items={};
-    $i.length = 0;
-    $i.c$ =  $i.Items;
-    $i.C$ = getItem;
-    $i.Parent = Parent;
-    function getItem(key){
-       return $i.Items[key];
-    }
-    $i.add = (key, item)=>{
-       $i.length +=1;
-       if (!item.Parent && $i.Parent)
-          item.Parent = $i.Parent;
-       if (!item.key)
-          item.key = key
-       $i.Items[key]=item;
-    };
-    $i.remove = key=>{
-       $i.length -=1;
-       $i.Items[key]=null;
-    };
-    $i.notify =notification =>{
-       for (let key in $i.c$)
-           $i.c$[key].notify(notification);
-    };
-    $i.first =()=>{
-       for (let key in $i.c$)
-           return $i.c$[key];
-    };
-    $i.sweep = (action, param)=>{
-        for(let key in $i.c$){
-           action($i.c$[key], param);
-        }
-    };
-    $i.each = this.sweep;
-};
-
 j$.ui.Modal=function(id, service, actionCallback) {
     let $this = this;
     if (service)
@@ -944,7 +996,7 @@ j$.ui.Modal=function(id, service, actionCallback) {
        //this.properties=(helper)?helper:{fixed:false};
     this.callback = actionCallback;
     //this.fixed = fixed(helper);
-    $this.inherit = j$.ui.Page.Designer.modal;
+    $this.inherit = j$.Page.Designer.modal;
     let ws ={buttons:{}, controller:{}}
     let callback=function(key, action){
         this.execute=function(){
@@ -1022,6 +1074,7 @@ j$.Confirm = new j$.ui.Modal("Confirme",{
 });
 //@Teste:  j$.Confirm.show();
 
+// Esse é o alert como modal
 j$.Alert = new j$.ui.Modal("Alert",{
                  text: '<p><strong>MUDAR O TEXTO:</strong></p>j$.Alert.text</br>ou</br>{text:"Meu texto"} no método show</p></br>'
                       +'<p><strong>MUDAR O TÍTULO:</strong></p>j$.Alert.title</br>ou</br>{title:"Meu texto"} no método show</p></br>'
@@ -1032,6 +1085,44 @@ j$.Alert = new j$.ui.Modal("Alert",{
               }
 });
 //@Teste: j$.Alert.show()
+
+// Esse alert é da página
+j$.ui.Alert= function(){
+    //let $alert = this;
+    let _wrap = CONFIG.LAYOUT.ALERT_CONTENT;
+    return {
+    show:function(msg, alertClass, wrap=i$(_wrap)){
+        this.hide(wrap);
+        if (dataExt.isString(msg))
+            j$.ui.Render.alert(wrap, msg, alertClass);
+        else if (dataExt.isArray(msg) && msg.length === 1){
+            j$.ui.Render.alert(wrap, msg[0], alertClass);
+        }else{
+            let html='<lu>'
+            msg.each(function(text){html+=`<li>${text}</li>`});
+            html+='</lu>'
+            j$.ui.Render.alert(wrap, html , alertClass);
+        }
+    }
+    ,   error:(msg, wrap)=>{
+                j$.ui.Alert.show(msg, CONFIG.ALERT.ERROR.CLASS, wrap)
+            }
+    ,    info:(msg, wrap)=>{
+                j$.ui.Alert.show(msg, CONFIG.ALERT.INFO.CLASS, wrap)
+            }
+    , success:(msg, wrap)=>{
+                j$.ui.Alert.show(msg, CONFIG.ALERT.SUCCESS.CLASS, wrap)
+            }
+    , hide:(wrap=i$(_wrap))=>{ wrap.innerHTML=''}
+    }
+}(); // j$.ui.Alert
+//j$.ui.Alert.error("Meu texto de erro", i$("assuntoAlert")) // assuntoAlert é o padrão da tabs "servico"+"Alert"
+//j$.ui.Alert.info("Meu texto info"))                        // será exibido no padrão definido em CONFIG
+//j$.ui.Alert.success("Meu texto bem sucedido"))
+//j$.ui.Alert.show("Minha mensagem de alert", CLASS, idWrap) // CLASS: Veja em CONFIG
+//j$.ui.Alert.hide(idWrap))                                  // Para desaparecer o Alert
+
+// j$.ui.
 
 j$.ui.adapterFactory = function(adapter){
    let $this=this;
@@ -1058,3 +1149,43 @@ j$.ui.adapterFactory = function(adapter){
    }
    this.load();
 };
+
+j$.Observer=function(Parent){
+    let $i = this;
+    $i.Items={};
+    $i.length = 0;
+    $i.c$ =  $i.Items;
+    $i.C$ = getItem;
+    $i.Parent = Parent;
+    function getItem(key){
+       return $i.Items[key];
+    }
+    $i.add = (key, item)=>{
+       $i.length +=1;
+       if (!item.Parent && $i.Parent)
+          item.Parent = $i.Parent;
+       if (!item.key)
+          item.key = key
+       $i.Items[key]=item;
+    };
+    $i.remove = key=>{
+       $i.length -=1;
+       $i.Items[key]=null;
+    };
+    $i.notify =notification =>{
+       for (let key in $i.c$)
+           $i.c$[key].notify(notification);
+    };
+    $i.first =()=>{
+       for (let key in $i.c$)
+           return $i.c$[key];
+    };
+    $i.sweep = (action, param)=>{
+        for(let key in $i.c$){
+           action($i.c$[key], param);
+        }
+    };
+    $i.each = this.sweep;
+};
+
+//export {i$, ERROR, EXCEPTION, System, j$};

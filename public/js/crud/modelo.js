@@ -20,7 +20,7 @@
            , init:function(idTarget){
                if (idTarget)
                    this.Interface.container=idTarget;
-               j$.ui.Page.create(this).init();
+               j$.Page.create(this).init();
             }
         });
     with(j$.service.c$.Tabela){

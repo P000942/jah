@@ -41,11 +41,11 @@ const adapter={
 };
 System.using("js/crud/modelo.js"); // Didatico para ver como carregar um arquivo javascript ou css
 
-j$.ui.Page.createAdapter(adapter);
+j$.Page.createAdapter(adapter);
 
 $(document).ready(function(){
     j$.Dashboard.init(j$.ui.Adapter);
-    j$.ui.Page.Helper.init(j$.Dashboard.Factory);
+    j$.Page.Helper.init(j$.Dashboard.Factory);
 ;});
 
 // => Essa é uma forma de você definir como quer mostrar os erros
@@ -57,7 +57,7 @@ ERROR.init({   show(field, msg,clas$){ERROR.invalid(field, msg)} //qualquer msg
            ,   hide(field)           {ERROR.hide   (field)} //para remover o erro           
            });
 
-j$.ui.Page.Helper = function(Factory){
+j$.Page.Helper = function(Factory){
      const criarMenu = function(Factory){
              let _path = CONFIG.SERVER.CONTEXT
                //, Factory = Factory

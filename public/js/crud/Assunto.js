@@ -23,7 +23,7 @@
             , init:function(idTarget, modal){
                 if (idTarget)
                     this.Interface.container=idTarget;
-                j$.ui.Page.create(this, modal).init();
+                j$.Page.create(this, modal).init();
             }
             , autoRequest:false // padrão é fazer o carregamento automático do recurso
             , resource:{name:'assunto'
