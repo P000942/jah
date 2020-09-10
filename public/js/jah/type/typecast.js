@@ -102,7 +102,7 @@ const Typecast = {
 				let mask = Typecast.Mask
 				  , render=false;
 				mask.CursorManager.TabbedInSetPosition(this);
-				maskCurrent=mask.MaskManager.CurrentMaskCharacter(this);				
+				let maskCurrent=mask.MaskManager.CurrentMaskCharacter(this);				
 
 				//Numeric Characters
 				if ( ((c$.MASK.MaskCharacters.Numeric.includes(maskCurrent)) && key.isDigit) ||
@@ -450,7 +450,7 @@ const Typecast = {
 			, isHandleKey = false
 			if (char.isDigit()) isDigit	=true
 			else if (char.isLetter()) isLetter=true 
-			else if ((key==c$.MASK.DecimalCharacter)) 
+			else if (char==c$.MASK.DecimalCharacter) 
 			     isDecimalCharacter=true;
 			if ([c$.KEY.INS, c$.KEY.DEL, c$.KEY.BACKSPACE, c$.KEY.END, c$.KEY.HOME, c$.KEY.UP, c$.KEY.DOWN, c$.KEY.LEFT, c$.KEY.RIGHT].includes(code)) 
 				isHandleKey = true;

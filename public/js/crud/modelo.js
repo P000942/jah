@@ -32,7 +32,7 @@
            , Buttons:CONFIG.CRUD.preset()
         };
 
-        Tabela.Fieldset= j$.ui.createFieldset({
+        Tabela.Fieldset= j$.Fieldset.create({
                                  idTabela:TYPE.INTEGER(4,{label:'Código', readOnly:true, resource:{name:'categoriaAssunto', local:true}})
                                 ,txTabela:TYPE.CHAR(30,{label:'Tabela', mandatory:true, title:'Informe a descrição para o campo.'})
                                });

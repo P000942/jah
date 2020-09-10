@@ -37,7 +37,7 @@ const ERROR = function() {
         ,     on:(field,msg,clas$) =>{field.Error.show(field, msg, clas$)} // sinonimo de show        
         ,    off:(field)           =>{field.Error.hide(field)} // sinonimo de hide
         ,   hide:(field)           =>{field.Error.hide(field)}
-        ,noMarkIfValid(mark)         {j$.Feedback.noMarkIfValid(mark)}
+        ,noMarkIfValid(mark)         {j$.Feedback.noMarkIfValid(mark)} 
         ,MESSAGE:CONFIG.ERROR.MESSAGE    
         , passForward:{ // => O componetes do framework fazem essa chamada
                     // => Se tem um handle externo, serah passado adiante
