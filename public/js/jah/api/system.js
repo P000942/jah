@@ -349,7 +349,7 @@ j$.Dashboard = function(){
                     item.onClick=j$.Dashboard.Tabs.openPartial;
                 else if (item.modal){
                     item.onClick=function(menu){
-                        j$.service.c$[menu.key].init(null, menu.modal);
+                        j$.Service.c$[menu.key].init(null, menu.modal);
                     }
                 } else
                     item.onClick=j$.Dashboard.Tabs.delegateTo;
@@ -361,7 +361,7 @@ j$.Dashboard = function(){
                 if (item.partial)
                     j$.Dashboard.Tabs.openPartial(item, null, record); //#Todo: passar o record
                 else if (item.modal){
-                    j$.service.c$[item.key].init(null, item.modal, record);
+                    j$.Service.c$[item.key].init(null, item.modal, record);
                 } else
                     j$.Dashboard.Tabs.delegateTo(item, null, record); //#Todo: passar o record
             }
@@ -381,7 +381,7 @@ j$.Dashboard.Tabs=function(){
                 j$.Dashboard.Tabs.open({key:ftmKey(service)
                     , caption:service.caption, title: service.title
                     ,  onLoad: function(tab){
-                                j$.service.c$[service.key].init(tab.idContent);
+                                j$.Service.c$[service.key].init(tab.idContent);
                             }
                 });
         }

@@ -1,4 +1,4 @@
-j$.service.create("Pessoa",
+j$.Service.create("Pessoa",
     {          
            
      // ,resource:{name:'usuuario'} 

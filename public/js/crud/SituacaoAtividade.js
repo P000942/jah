@@ -1,5 +1,5 @@
 
-j$.service.create("SituacaoAtividade",
+j$.Service.create("SituacaoAtividade",
      {  resource:{name:'situacaoAtividade', id:'idSituacaoAtividade'}
      , Interface:{
            container:CONFIG.LAYOUT.CONTENT

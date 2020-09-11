@@ -142,7 +142,7 @@ $(document).ready(function(){
 ;});
 
 
-// j$.service.createCrud("Uf"
+// j$.Service.createCrud("Uf"
 //            ,{fieldset:{idUf:TYPE.INTEGER(4,{label:'Código', readOnly:true})
 //                       ,sgUf:TYPE.UPPERCASE(2,{label:'UF', mandatory:true})
 //                       ,txEstado:TYPE.CHAR(40,{label:'Estado', mandatory:true})

@@ -1,11 +1,11 @@
-/* j$.service - Eh o template do serviço, comtém as informações a respeito de um serviço desejado
+/* j$.Service - Eh o template do serviço, comtém as informações a respeito de um serviço desejado
  *              pode ser do tipo: 'crud', 'query' ou 'user'(criado pelo usuário)
  * j$.Page: Cria a página que expõe o serviço (os elementos html)
  *              pode ser do tipo: 'form' ou 'modal'
- * Adapter   : Contém informações declaradas na aplicaçaõ que são usadas no 'Menu', 'Tabs' e 'j$.service'. Útil para evitar redundância nas declarações
+ * Adapter   : Contém informações declaradas na aplicaçaõ que são usadas no 'Menu', 'Tabs' e 'j$.Service'. Útil para evitar redundância nas declarações
  *             Exmeplo: 'title', 'resouce' e outras informações serão aproveitadas em ambos.
  *
- * 1.Através de j$.service é criado o template do serviço
+ * 1.Através de j$.Service é criado o template do serviço
  * 2.Em algum ponto da interface(geralmente pelo menu) é solicitado a exposição desse serviço.
  * 3.O método '.init(idContainer, modal)' do serviço deve ser chamado
  * 4.Neste método (.init) é solicitado j$.Page que cria a página através do método '.create(service,modal)'
@@ -26,7 +26,7 @@
 'use strict';
 
 //@note: Factory - para criar os servicos
-j$.service = function(){
+j$.Service = function(){
    let items = {};
    class CrudBase{
         constructor(adpater, service){
@@ -101,12 +101,12 @@ j$.service = function(){
             let idService  = parent.service.id
               , txGetValue = `j$.$S.${idService}.Fieldset.c$.${parent.service.resource.id}.value()`;
             this.id = idService +''+key.toFirstUpper();
-            Object.preset(this,j$.service.adapter.get(key)) // Vai copiar todas as propriedades do adapter.services que não exite no service
+            Object.preset(this,j$.Service.adapter.get(key)) // Vai copiar todas as propriedades do adapter.services que não exite no service
             this.onclick = this.Parent.actionController+'.child("'+key+'",' + txGetValue+ ')';
             if (dataExt.isUndefined(this.modal))
                 this.modal = CONFIG.CHILD.MODAL;
             if (this.crud || this.query)
-                this.service = j$.service.make(key,this);
+                this.service = j$.Service.make(key,this);
         }    
         open(){
             let record = this.Parent.service.Fieldset.sweep();            
@@ -114,7 +114,7 @@ j$.service = function(){
             // this.Parent.tabs.open({key:`tab_${this.id}`
             //                  , caption:this.caption
             //                  ,   title: this.title
-            //                  ,  onLoad: tab=>{j$.service.c$[this.key].init(tab.idContent)}
+            //                  ,  onLoad: tab=>{j$.Service.c$[this.key].init(tab.idContent)}
             // });
         }
         refresh(){
@@ -158,10 +158,10 @@ j$.service = function(){
     , c$:items
     , C$:key=>{return items[key]}
     , createCrud: function(key, service){
-           return this.create(key, new Crud(j$.service.adapter.get(key), service));
+           return this.create(key, new Crud(j$.Service.adapter.get(key), service));
        }
     , createQuery: function(key, service){
-           return this.create(key, new Query(j$.service.adapter.get(key), service));
+           return this.create(key, new Query(j$.Service.adapter.get(key), service));
        }
     , createChild: function(key, parent, service){
             return new Child(key, parent, service);
@@ -170,7 +170,7 @@ j$.service = function(){
           if (!key)
               throw new TypeError(CONFIG.EXCEPTION.SERVICE_NULL.text);
           if (service.constructor.name=="Object"){ //para o servicos que sao criados manualmente
-             items[key]=new CrudBase(j$.service.adapter.get(key),service);
+             items[key]=new CrudBase(j$.Service.adapter.get(key),service);
           } else
              items[key]=service;
           window[key] = items[key];
@@ -195,8 +195,8 @@ j$.service = function(){
           }
       }()
    }
-}() //j$.service
-j$.$S = j$.service.c$;
+}() //j$.Service
+j$.$S = j$.Service.c$;
 
 j$.Page = function(){
    let items = {}
@@ -632,7 +632,7 @@ j$.Page.Form=function(service, modal) {
         DEFAULT_BUTTON_PRESET = CONFIG.QUERY.preset;
 
     Object.preset($i, {
-                       actionController:(service.id) ?'j$.service.c$.'+service.id+'.actionController' :''
+                       actionController:(service.id) ?'j$.Service.c$.'+service.id+'.actionController' :''
                      , container:(service.Interface.container) ?i$(service.Interface.container) :i$(CONFIG.LAYOUT.CONTENT)
     });
     Object.preset(service.Interface,{Buttons:false});
@@ -657,7 +657,7 @@ j$.Page.Form=function(service, modal) {
       // $i.child={} // Contém os objetos filhos - no caso para a página
                      // no service.child tem os dados declarados para criar os filhos, no page.child, os objetos criados.
        for (let key in service.child){
-           $i.child.add(key, new j$.service.createChild(key,$i, service.child[key]))
+           $i.child.add(key, new j$.Service.createChild(key,$i, service.child[key]))
        }
        service.Interface.Buttons.CHILD = {value:CONFIG.ACTION.SUBVISION.VALUE}
        service.Interface.Buttons.CHILD.submenu=$i.child;

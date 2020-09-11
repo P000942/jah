@@ -1,5 +1,5 @@
 
-    j$.service.create("Assunto",
+    j$.Service.create("Assunto",
           {
               initialize: function(UpdateController) {console.log('initialize Assunto');}
             , onOpen: function(UpdateController) {
@@ -42,7 +42,7 @@
                       , Mensagem:{caption:'Ver Mensagem'}
                     }
         }); 
-    with(j$.service.c$){
+    with(j$.Service.c$){
         Assunto.Interface = {
            container:CONFIG.LAYOUT.CONTENT
               , id:'assunto'

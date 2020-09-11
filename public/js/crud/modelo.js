@@ -1,5 +1,5 @@
 
-    j$.service.create("Tabela",
+    j$.Service.create("Tabela",
          {
                 initialize: function(UpdateController) {console.log('initialize');}
            ,  beforeDelete: function(UpdateController) {
@@ -23,7 +23,7 @@
                j$.Page.create(this).init();
             }
         });
-    with(j$.service.c$.Tabela){
+    with(j$.Service.c$.Tabela){
         Tabela.Interface = {
            container:CONFIG.LAYOUT.CONTENT
            ,      id:Tabela.id.toLowerCase()
