@@ -47,7 +47,7 @@ j$.Dashboard.Service=function(){
       , idContent='root'
       , ftmKey = (service) =>{return "tab_"+service.Parent.key+'_'+service.key}
     return{
-          init: ()=>{ tabs = j$.ui.Tabs.create(j$.Dashboard.Service.idContent,j$.Dashboard.idContent) }
+          init: ()=>{ tabs = j$.Dashboard.Tabs.create(j$.Dashboard.Service.idContent,j$.Dashboard.idContent) }
         , open: properties =>{return tabs.open(properties)}
         , delegateTo: (service, event, record)=>{
                 j$.Dashboard.Service.open({key:ftmKey(service)
@@ -132,7 +132,7 @@ j$.Dashboard.Open = function(){
     };
 }();
 
-j$.ui.Tabs = function(){
+j$.Dashboard.Tabs = function(){
     let tabs = {}, _root=null
       , Root=function(idTab, idContent){ 
             let _root = this   
@@ -265,11 +265,11 @@ j$.ui.Tabs = function(){
                     i$(_tab.id).show();		
                 }
                 function render(){			 
-                    let linkClose =(_tab.fixed)?'':`<a class='${CONFIG.TAB.CLASS.CLOSE}' href=\"javascript:j$.ui.Tabs.c$.` + _tab.parent.key 
+                    let linkClose =(_tab.fixed)?'':`<a class='${CONFIG.TAB.CLASS.CLOSE}' href=\"javascript:j$.Dashboard.Tabs.c$.` + _tab.parent.key 
                                     + ".close('" + _tab.key + "');\" >&nbsp;&nbsp;</a>";              
-                    return `<span class='${CONFIG.TAB.CLASS.TITLE}' onmouseover='j$.ui.Tabs.HANDLE.onmouseover(this);' onmouseout='j$.ui.Tabs.HANDLE.onmouseout(this);' id='tab_link_`+ this.key+"'>"
+                    return `<span class='${CONFIG.TAB.CLASS.TITLE}' onmouseover='j$.Dashboard.Tabs.HANDLE.onmouseover(this);' onmouseout='j$.Dashboard.Tabs.HANDLE.onmouseout(this);' id='tab_link_`+ this.key+"'>"
                         +`<a class='${CONFIG.TAB.CLASS.TITLE}' id='link_` + _tab.key +  "' " 
-                        + "href=\"javascript:j$.ui.Tabs.c$." + _tab.parent.key + ".activate('" + _tab.key + "');\" >"
+                        + "href=\"javascript:j$.Dashboard.Tabs.c$." + _tab.parent.key + ".activate('" + _tab.key + "');\" >"
                         + _tab.caption + "</a>"
                         + linkClose +"</span>";
                 }
@@ -295,9 +295,9 @@ j$.ui.Tabs = function(){
       , open:(root,key)=>{tabs[root].open(key)}  
       , create: (idTabs, idContent)=>{
              tabs[idTabs] = new Root(idTabs, idContent);
-             if (!j$.ui.Tabs.root){
-                j$.ui.Tabs.root = tabs[idTabs]
-                j$.$T = j$.ui.Tabs.root.c$;
+             if (!j$.Dashboard.Tabs.root){
+                j$.Dashboard.Tabs.root = tabs[idTabs]
+                j$.$T = j$.Dashboard.Tabs.root.c$;
              }
              return tabs[idTabs];
       }
@@ -592,4 +592,4 @@ j$.ui.Menu = function(){ // factory
 //     }
 // }();
 
-// export {j$.ui.Tabs, j$.ui.Menu} ;
+// export default j$.Dashboard;

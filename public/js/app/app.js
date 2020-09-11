@@ -5,7 +5,7 @@ j$.$C => Atalho para os controles ativos
 j$.$P => Atalho para as páginas ativas
 j$.$R => Atalho para os recursos ativos
 j$.$S => Atalho para os servicos que foram definidos no adapater 
-j$.$T => Atalho para os tabs que estao abertos. (j$.ui.Tabs.root.c$ - pq existe a possibilidade ter mais de um grupo de tabs)
+j$.$T => Atalho para os tabs que estao abertos. (j$.Dashboard.Tabs.root.c$ - pq existe a possibilidade ter mais de um grupo de tabs)
 j$.$V() => Atalho para mostrar no log j$.$C, j$.$P, j$.$R, j$.$S
 */
 

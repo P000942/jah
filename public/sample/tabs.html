@@ -40,9 +40,9 @@
 $(document).ready(function(){
     const urlPartial = CONFIG.SERVER.CONTEXT + 'sample/partial.html'
         , urlPartial2 = CONFIG.SERVER.CONTEXT + 'sample/partial_1.html'
-        , tabs = j$.ui.Tabs.create('tabs','content') // cria o tab no container "content" 
-                                                     // 'tabs' é a chave de referencia a essa tab > j$.ui.Tabs.c$.tabs
-                                                     // sendo a primeira tab, tb pode ser j$.ui.Tabs.root
+        , tabs = j$.Dashboard.Tabs.create('tabs','content') // cria o tab no container "content" 
+                                                     // 'tabs' é a chave de referencia a essa tab > j$.Dashboard.Tabs.c$.tabs
+                                                     // sendo a primeira tab, tb pode ser j$.Dashboard.Tabs.root
         , tabPartial={key:"tab_Partial", caption:'Partial', url:urlPartial, title:'Title Partial Tab'}
         , menu = j$.ui.Menu.create("menubar")        // cria o menu no container "menubar" 
 
@@ -84,13 +84,13 @@ $(document).ready(function(){
     };
     // Cria a tab FIXA - 'Home'
     const criarHome= function (){
-         j$.ui.Tabs.c$.tabs.open({key:"Home", caption:"Home", fixed:true, url: urlPartial});
+         j$.Dashboard.Tabs.c$.tabs.open({key:"Home", caption:"Home", fixed:true, url: urlPartial});
     }();
     const delagateTab= function (idContent){
         j$.Dashboard.Open.partial(urlPartial,idContent);
     };
 
-    const sbmenu=j$.ui.Tabs.c$.tabs.add({key:"tab_submenu", caption:'submenu', url:urlPartial, title:'Title Submenu Tab'});
+    const sbmenu=j$.Dashboard.Tabs.c$.tabs.add({key:"tab_submenu", caption:'submenu', url:urlPartial, title:'Title Submenu Tab'});
     sbmenu.Menu.add("Álbun",["Album 1","Album 2", "Album 3"]);
     sbmenu.Menu.render();
 });
