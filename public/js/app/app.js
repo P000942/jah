@@ -44,7 +44,7 @@ System.using("js/crud/modelo.js"); // Didatico para ver como carregar um arquivo
 j$.Page.createAdapter(adapter);
 
 $(document).ready(function(){
-    j$.Dashboard.init(j$.ui.Adapter);
+    j$.Dashboard.init(j$.Page.Adapter);
     j$.Page.Helper.init(j$.Dashboard.Factory);
 ;});
 

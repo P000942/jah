@@ -153,19 +153,19 @@ j$.service = function(){
     };  
 
    return {
-       get:key=>{return items[key]}
-     , Items:items
-     , c$:items
-     , C$:key=>{return items[key]}
-     , createCrud: function(key, service){
+      get:key=>{return items[key]}
+    , Items:items
+    , c$:items
+    , C$:key=>{return items[key]}
+    , createCrud: function(key, service){
            return this.create(key, new Crud(j$.service.adapter.get(key), service));
        }
-     , createQuery: function(key, service){
+    , createQuery: function(key, service){
            return this.create(key, new Query(j$.service.adapter.get(key), service));
        }
     , createChild: function(key, parent, service){
-        return new Child(key, parent, service);
-    }
+            return new Child(key, parent, service);
+       }
     , create:(key, service)=>{
           if (!key)
               throw new TypeError(CONFIG.EXCEPTION.SERVICE_NULL.text);
@@ -176,25 +176,21 @@ j$.service = function(){
           window[key] = items[key];
           return items[key];
      }
-     , make:function(key, adapter){
+    , make:function(key, adapter){
           let service = items[key];
           if (!service){
-        //      service = items[key];
-        //   else{
-             if (adapter.crud)
-                service = this.createCrud(key,adapter);
-             else
-                service = this.createQuery(key,adapter);
+             service = (adapter.crud)
+                     ? this.createCrud(key,adapter)
+                     : this.createQuery(key,adapter);
           }
           return service;
      }
-     , adapter:function (){
+    , adapter:function (){
           return{
              get:function(key){
-                 if (j$.ui.Adapter)
-                    return j$.ui.Adapter.getService(key);
-                 else
-                    return {key:key};
+                return (j$.Page.Adapter)
+                      ? j$.Page.Adapter.getService(key)
+                      :{key:key};
              }
           }
       }()
@@ -204,98 +200,98 @@ j$.$S = j$.service.c$;
 
 j$.Page = function(){
    let items = {}
-     , frame=function(){
-            let me = this;
-            let items={};
-            function slidebox(properties){
-                let self = this;
-                Object.preset(properties, {container:i$('content'), style:'slidebox_show'});
-                properties.id =j$.util.getId(properties.style, properties.id);
-                Object.preset(self, properties);
-                let create=function(){
-                    let idFieldset =properties.id + "_slidebox";
-                    self.container.insert("<fieldset id='" +idFieldset+ "'>"
-                                +"<legend class='slidebox_legend' id='" +self.id+ "_slidebox_legend'>"
-                                +"<span title='Esconder' onclick='j$.Page.Frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
-                                + self.legend+"</legend>"
-                                + "<div id='" +self.id+ "'></div>"
-                                +"</fieldset>");
-                    self.source = i$(idFieldset);
-                    self.source.stylize(self.style);
-                    self.target = i$(self.id);
-                    self.legend = i$(self.id+ "_slidebox_legend");
-                    self.button = i$(self.id+ "_button");
-                }();
-                items[self.id]=self;
-                Object.preset(self,{toggle:()=>{j$.Page.Frame.toggle(self.id)}
-                                , show  :()=>{j$.Page.Frame.show(self.id)}});
-                self.hide=()=>{j$.Page.Frame.hide(self.id)};
-                if (properties.hide){self.hide();}
-                return self;
+   ,frame=function(){
+        let me = this;
+        let items={};
+        function slidebox(properties){
+            let self = this;
+            Object.preset(properties, {container:i$('content'), style:'slidebox_show'});
+            properties.id =j$.util.getId(properties.style, properties.id);
+            Object.preset(self, properties);
+            let create=function(){
+                let idFieldset =properties.id + "_slidebox";
+                self.container.insert("<fieldset id='" +idFieldset+ "'>"
+                            +"<legend class='slidebox_legend' id='" +self.id+ "_slidebox_legend'>"
+                            +"<span title='Esconder' onclick='j$.Page.Frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
+                            + self.legend+"</legend>"
+                            + "<div id='" +self.id+ "'></div>"
+                            +"</fieldset>");
+                self.source = i$(idFieldset);
+                self.source.stylize(self.style);
+                self.target = i$(self.id);
+                self.legend = i$(self.id+ "_slidebox_legend");
+                self.button = i$(self.id+ "_button");
+            }();
+            items[self.id]=self;
+            Object.preset(self,{toggle:()=>{j$.Page.Frame.toggle(self.id)}
+                            , show  :()=>{j$.Page.Frame.show(self.id)}});
+            self.hide=()=>{j$.Page.Frame.hide(self.id)};
+            if (properties.hide){self.hide();}
+            return self;
+        }
+        function framebox(properties){
+            let self = this;
+            Object.preset(properties, {container:i$('content'), style:'wrap_framebox'});
+            properties.id =j$.util.getId(properties.style, properties.id);
+            Object.preset(self, properties);
+            let create=function(){
+                let idFieldset =properties.id + "_framebox";
+                self.container.insert("<div id='" +idFieldset+ "'>"
+                            +"<div class='wrap_framebox_legend' id='" +self.id+ "_framebox_legend'>"
+                            +"<span title='Esconder' onclick='j$.Page.Frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
+                            + self.legend+"</div>"
+                            + "<div class='wrap_box' id='" +self.id+ "'></div>"
+                            +"</div>");
+                self.source = i$(idFieldset);
+                self.source.stylize(self.style);
+                self.target = i$(self.id);
+                self.legend = i$(self.id+ "_framebox_legend");
+                self.button = i$(self.id+ "_button");
+            }();
+            items[self.id]=self;
+            Object.preset(self,{toggle:()=>{j$.Page.Frame.toggle(self.id)}
+                            , show  :()=>{j$ui.Page.Frame.show(self.id)}});
+            self.hide=()=>{j$.Page.Frame.hide(self.id)};
+            if (properties.hide){self.hide();}
+            return self;
+        }
+        let toggle=function(id){
+            let frame = this.items[id];
+            if (frame.button.className == "showbox"){
+                this.hide(id);
+            } else {
+                this.show(id);
             }
-            function framebox(properties){
-                let self = this;
-                Object.preset(properties, {container:i$('content'), style:'wrap_framebox'});
-                properties.id =j$.util.getId(properties.style, properties.id);
-                Object.preset(self, properties);
-                let create=function(){
-                    let idFieldset =properties.id + "_framebox";
-                    self.container.insert("<div id='" +idFieldset+ "'>"
-                                +"<div class='wrap_framebox_legend' id='" +self.id+ "_framebox_legend'>"
-                                +"<span title='Esconder' onclick='j$.Page.Frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
-                                + self.legend+"</div>"
-                                + "<div class='wrap_box' id='" +self.id+ "'></div>"
-                                +"</div>");
-                    self.source = i$(idFieldset);
-                    self.source.stylize(self.style);
-                    self.target = i$(self.id);
-                    self.legend = i$(self.id+ "_framebox_legend");
-                    self.button = i$(self.id+ "_button");
-                }();
-                items[self.id]=self;
-                Object.preset(self,{toggle:()=>{j$.Page.Frame.toggle(self.id)}
-                                , show  :()=>{j$ui.Page.Frame.show(self.id)}});
-                self.hide=()=>{j$.Page.Frame.hide(self.id)};
-                if (properties.hide){self.hide();}
-                return self;
-            }
-            let toggle=function(id){
-                let frame = this.items[id];
-                if (frame.button.className == "showbox"){
-                    this.hide(id);
-                } else {
-                    this.show(id);
-                }
-            };
-            let hide=function(id){
-                let frame = this.items[id];
-                    frame.button.className =  "hidebox";
-                    frame.button.title = "esconder";
-                    if (frame.constructor.name=='slidebox')
-                    frame.source.className = "slidebox_hide";
-                    frame.target.hide();
-            };
-            let show=function(id){
-                let frame = this.items[id];
-                    frame.button.className =  "showbox";
-                    frame.button.title = "Exibir";
-                    if (frame.constructor.name=='slidebox')
-                    frame.source.className = "slidebox_show";
-        
-                    frame.target.show();
-            };
-            return{
-                // properties={container:'', id:'', style:'', legend:''}
-                slidebox:function(properties){return new slidebox(properties)}
-            , framebox:function(properties){return new framebox(properties)}
-            //, dropbox:function(properties){return new dropbox(properties);}
-            , toggle:toggle
-            , show:show
-            , hide:hide
-            , items:items
-            };
-        }();
-   let designer= function (){          
+        };
+        let hide=function(id){
+            let frame = this.items[id];
+                frame.button.className =  "hidebox";
+                frame.button.title = "esconder";
+                if (frame.constructor.name=='slidebox')
+                frame.source.className = "slidebox_hide";
+                frame.target.hide();
+        };
+        let show=function(id){
+            let frame = this.items[id];
+                frame.button.className =  "showbox";
+                frame.button.title = "Exibir";
+                if (frame.constructor.name=='slidebox')
+                frame.source.className = "slidebox_show";
+    
+                frame.target.show();
+        };
+        return{
+            // properties={container:'', id:'', style:'', legend:''}
+            slidebox:function(properties){return new slidebox(properties)}
+        , framebox:function(properties){return new framebox(properties)}
+        //, dropbox:function(properties){return new dropbox(properties);}
+        , toggle:toggle
+        , show:show
+        , hide:hide
+        , items:items
+        };
+    }()
+   ,designer= function (){          
         let addField=(form, section, field, key, mixed, wrapRow)=>{
             if (field){
                 let id =   form.id +'_'+key;
@@ -539,6 +535,32 @@ j$.Page = function(){
             , modal:Modal
         };
     }()
+   // Este é o adater default do Page
+   // o cliente pode criar um próprio com a mesma assinatura 
+   //#todo: Talvez fosse interessante colocar esse Adapter fora do Page (System?? Helper?)
+   ,Adapter = function(adapter){
+        let $this=this;
+        Object.preset(this, adapter);
+        this.load = ()=>{ // Fazer carga dos JS
+            for (let key in adapter.services){
+                let item = adapter.services[key];
+                item.key = key;
+                if (!item.partial && !item.url){
+                    if (item.crud)
+                        System.using(CONFIG.CRUD.CONTEXT+key+".js");
+                    else if (item.query)
+                        System.using(CONFIG.QUERY.CONTEXT+key+".js");
+                }
+            }
+        }
+        this.getService=key=>{
+        if ($this.services[key])
+            return $this.services[key];
+        else
+            return {key:key};
+        }
+        this.load();
+    };
 
    return {
        create: function(service, modal){
@@ -549,7 +571,10 @@ j$.Page = function(){
      , Items:items
      , c$:items
      , C$:key=>{return items[key]}
-     , createAdapter: adapter=>{j$.ui.Adapter = new j$.ui.adapterFactory(adapter); return j$.ui.Adapter;}
+     , createAdapter: (source, adapter=Adapter)=>{ // o cliente pode informador o adapter
+            j$.Page.Adapter = new adapter(source); 
+            return j$.Page.Adapter;
+        }
      , Designer:designer
      , Frame:frame
    };
@@ -1120,38 +1145,6 @@ j$.Alert = new j$.Page.Modal("Alert",{
               }
 });
 //@Teste: j$.Alert.show()
-
-
-
-
-// j$.ui.
-
-j$.ui.adapterFactory = function(adapter){
-   let $this=this;
-   Object.preset(this, adapter);
-//    this.services=adapter.services;
-//    this.design=adapter.design;
-   this.load = ()=>{ // Fazer carga dos JS
-       for (let key in adapter.services){
-           let item = adapter.services[key];
-           item.key = key;
-           if (!item.partial && !item.url){
-              if (item.crud)
-                 System.using(CONFIG.CRUD.CONTEXT+key+".js");
-              else if (item.query)
-                 System.using(CONFIG.QUERY.CONTEXT+key+".js");
-           }
-       }
-   }
-   this.getService=key=>{
-      if ($this.services[key])
-         return $this.services[key];
-      else
-         return {key:key};
-   }
-   this.load();
-};
-
 j$.Observer=function(Parent){
     let $i = this;
     $i.Items={};
