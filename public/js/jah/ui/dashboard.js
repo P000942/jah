@@ -104,7 +104,7 @@ j$.Dashboard.Menubar=function(){
         }
     ,  create:function(){
                initialized();
-               menubar = j$.ui.Menu.create(_c$.CONTENT)
+               menubar = j$.Dashboard.Menu.create(_c$.CONTENT)
             }
     , addMenu:function(menu){return menubar.addMenu(menu)}
     , getMenu:function(menu_key){ return menubar.getMenu(menu_key)}
@@ -319,7 +319,7 @@ j$.Dashboard.Tabs = function(){
       , root: _root
     };   
 }(); 
-j$.ui.Menu = function(){ // factory
+j$.Dashboard.Menu = function(){ // factory
     let items = {}
       , _parser = CONFIG.MENU.PARSER
       , _option = CONFIG.MENU.OPTIONS[_parser.toUpperCase()]
@@ -415,7 +415,7 @@ j$.ui.Menu = function(){ // factory
         this.inherit=System.Node;
         this.inherit(inheritor, properties);
         this.render = ()=>{
-            $('#'+_base.Parent.id).append(j$.ui.Menu.Designer.format(_base));
+            $('#'+_base.Parent.id).append(j$.Dashboard.Menu.Designer.format(_base));
             if (_base.onClick)
             $("#"+_base.id).click(_base.onClick);
             _base.submenu.render();
@@ -510,7 +510,7 @@ j$.ui.Menu = function(){ // factory
         }();
     
         function render(){
-            $('#'+_base.Parent.id).append(j$.ui.Menu.Designer.format(_base));
+            $('#'+_base.Parent.id).append(j$.Dashboard.Menu.Designer.format(_base));
             if (_base.onClick)
                 $("#"+_base.id).click(_base.onClick);
             _base.submenu.render();
@@ -542,7 +542,7 @@ j$.ui.Menu = function(){ // factory
         }
     
         function create(){
-            return j$.ui.Menu.Designer.createContainer(idContent);
+            return j$.Dashboard.Menu.Designer.createContainer(idContent);
         };
     }   
     //#todo: está sem uso no framework - mas é interessante para a criação de um menu
@@ -584,7 +584,7 @@ j$.ui.Menu = function(){ // factory
 //     let items = {};
 //     return{
 //       create(idContent, caption){
-//              items[idContent] =new j$.ui.Menu.Dropdown(idContent, caption);//MENU.create(idContent);
+//              items[idContent] =new j$.Dashboard.Menu.Dropdown(idContent, caption);//MENU.create(idContent);
 //              return items[idContent];
 //       }
 //       , c$:items

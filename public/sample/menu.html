@@ -42,7 +42,7 @@
 </html>
 <script type="text/javascript">
     $(document).ready(function(){
-        const menu = j$.ui.Menu.create("menubar");
+        const menu = j$.Dashboard.Menu.create("menubar");
         menu.addMenu({caption:"Home", active:true});
 
         const menu_link = menu.addMenu("Link");
@@ -50,12 +50,12 @@
                 menu_link.add({caption:'onClick', icon:'icon-pencil', onClick:function(){alert("onClick");}, hint:'Veja como estamos organizados'});
                 menu_link.add(); 
                 const menu_album = menu_link.submenu.add({key: 'Album', caption:'Álbum'});
-                      j$.ui.Menu.c$.menubar.c$.Link.c$.Album.add({caption:'Album 01'});
+                      j$.Dashboard.Menu.c$.menubar.c$.Link.c$.Album.add({caption:'Album 01'});
                       menu_album.addMenu('Album 02');
-                      j$.ui.Menu.c$.menubar.c$.Link.c$.Album.divider.add();
-                      j$.ui.Menu.c$.menubar.c$.Link.c$.Album.add({caption:'Album 03', url:'http://localhost:8383/jah/partial.html'});
-                      j$.ui.Menu.c$.menubar.c$.Link.c$.Album.add(); // vai incluir um separador - também com ["" ou null ]
-                      j$.ui.Menu.c$.menubar.c$.Link.c$.Album.addMenu(); // Vai incluir o menu
+                      j$.Dashboard.Menu.c$.menubar.c$.Link.c$.Album.divider.add();
+                      j$.Dashboard.Menu.c$.menubar.c$.Link.c$.Album.add({caption:'Album 03', url:'http://localhost:8383/jah/partial.html'});
+                      j$.Dashboard.Menu.c$.menubar.c$.Link.c$.Album.add(); // vai incluir um separador - também com ["" ou null ]
+                      j$.Dashboard.Menu.c$.menubar.c$.Link.c$.Album.addMenu(); // Vai incluir o menu
                       
         const menu_partial = menu.addMenu({caption:"Partial", hint:"Exibe o link usando ajax."})
                 menu_partial.add([{caption:'Visão Geral',   partial:'http://localhost:3000/sample/partial.html', hint:'Conheça a história e a caminhada da Comunidade'}

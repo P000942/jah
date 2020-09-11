@@ -107,7 +107,7 @@ const wizard = function(){
     return {
       criarMenu:function(){  
          if (_criarMenu){          
-            let menu = j$.ui.Menu.create("menubar");
+            let menu = j$.Dashboard.Menu.create("menubar");
             menu.addMenu({caption:"Home", active:true});
             let menu_link = menu.addMenu("Tabs");
             menu_link.add({caption:'Link',  url:ws.urlPartial});

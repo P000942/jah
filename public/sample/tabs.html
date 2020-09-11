@@ -44,7 +44,7 @@ $(document).ready(function(){
                                                      // 'tabs' é a chave de referencia a essa tab > j$.Dashboard.Tabs.c$.tabs
                                                      // sendo a primeira tab, tb pode ser j$.Dashboard.Tabs.root
         , tabPartial={key:"tab_Partial", caption:'Partial', url:urlPartial, title:'Title Partial Tab'}
-        , menu = j$.ui.Menu.create("menubar")        // cria o menu no container "menubar" 
+        , menu = j$.Dashboard.Menu.create("menubar")        // cria o menu no container "menubar" 
 
     menu.addMenu({caption:"Home", active:true});
     menu.addMenu("Tabs")
