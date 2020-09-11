@@ -653,7 +653,7 @@ j$.Page.Form=function(service, modal) {
         service.Interface.Buttons = DEFAULT_BUTTON_PRESET();
 
     if (service.child){
-       $i.child = new j$.Observer($i);
+       $i.child = new System.Observer($i);
       // $i.child={} // Contém os objetos filhos - no caso para a página
                      // no service.child tem os dados declarados para criar os filhos, no page.child, os objetos criados.
        for (let key in service.child){
@@ -1145,42 +1145,5 @@ j$.Alert = new j$.Page.Modal("Alert",{
               }
 });
 //@Teste: j$.Alert.show()
-j$.Observer=function(Parent){
-    let $i = this;
-    $i.Items={};
-    $i.length = 0;
-    $i.c$ =  $i.Items;
-    $i.C$ = getItem;
-    $i.Parent = Parent;
-    function getItem(key){
-       return $i.Items[key];
-    }
-    $i.add = (key, item)=>{
-       $i.length +=1;
-       if (!item.Parent && $i.Parent)
-          item.Parent = $i.Parent;
-       if (!item.key)
-          item.key = key
-       $i.Items[key]=item;
-    };
-    $i.remove = key=>{
-       $i.length -=1;
-       $i.Items[key]=null;
-    };
-    $i.notify =notification =>{
-       for (let key in $i.c$)
-           $i.c$[key].notify(notification);
-    };
-    $i.first =()=>{
-       for (let key in $i.c$)
-           return $i.c$[key];
-    };
-    $i.sweep = (action, param)=>{
-        for(let key in $i.c$){
-           action($i.c$[key], param);
-        }
-    };
-    $i.each = this.sweep;
-};
 
-//export {i$, ERROR, EXCEPTION, System, j$};
+//export {j$.Page, j$.Message, j$.Confirm, j$.Alert};

@@ -548,6 +548,63 @@ System.Action = ()=>{
     };
 };
 
+
+class Collection {
+    constructor() {
+        this.Items={};
+        this.length = 0;
+        this.c$ = this.Items;
+        //this.C$ = getItem;
+     }
+     getItem(key){
+        return this.Items[key];
+     }
+     C$ = this.getItem;
+     add = (key, item)=>{
+        this.length +=1;
+        if (!item.Parent && this.Parent)
+           item.Parent = this.Parent;
+        if (!item.key)
+           item.key = key
+        this.Items[key]=item;
+     }
+     remove = key=>{
+        this.length -=1;
+        this.Items[key]=null;
+     }
+     
+     first =()=>{
+        for (let key in this.c$)
+            return this.c$[key];
+     }
+
+     last =()=>{
+        let item; 
+        for (let key in this.c$)
+        item = this.c$[key];
+        return item;
+     }
+
+     sweep = (action, param)=>{
+         for(let key in this.c$){
+            action(this.c$[key], param);
+         }
+     }  
+     each = this.sweep;  
+}
+System.Collection = Collection;
+class Observer extends System.Collection{
+    constructor(Parent){
+        super(); 
+        this.Parent = Parent;               
+    }
+    notify =notification =>{
+        for (let key in this.c$)
+            this.c$[key].notify(notification);
+    }
+}
+System.Observer = Observer;
+
 j$.util = function(){
     let sequence = {};
     let getId = function(key, id){
@@ -566,6 +623,7 @@ j$.util = function(){
         getId:getId
     };
 }();
+
 
 
 // export {i$, ERROR, EXCEPTION, System, j$};
