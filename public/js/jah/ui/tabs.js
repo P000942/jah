@@ -8,7 +8,7 @@ j$.ui.Tabs = function(){
             let _root = this   
             , active_tab=null
             , idWrap = "wrap_"+idTab;
-            this.inherit=j$.Node;
+            this.inherit=System.Node;
             this.inherit({type:'Tabroot', Root:_root, Parent:null}, {key:idTab, id:idContent});   
             Object.preset(_root, {add:add, getItem: _root.C$, open:open, toggle:toggle, activate:activate, close:close}); 
         

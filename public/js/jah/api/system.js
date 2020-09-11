@@ -420,7 +420,7 @@ j$.ui.Open = function(){
     };
 }();
 
-j$.Node=function(inheritor, properties){
+System.Node=function(inheritor, properties){
     let _node = this;
     this.length = 0;
     this.c$ = {};

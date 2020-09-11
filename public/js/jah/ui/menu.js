@@ -95,7 +95,7 @@ j$.ui.Menu = function(){ // factory
     }
     , Base=function(inheritor, properties){
         let _base = this;
-        this.inherit=j$.Node;
+        this.inherit=System.Node;
         this.inherit(inheritor, properties);
         this.render = ()=>{
             $('#'+_base.Parent.id).append(j$.ui.Menu.Designer.format(_base));
@@ -211,7 +211,7 @@ j$.ui.Menu = function(){ // factory
     }
     ,  Navbar=function(idContent){
         let _navbar = this;
-        this.inherit=j$.Node;
+        this.inherit=System.Node;
         this.inherit({type:'Navbar', Root:_navbar, Parent:null},{key:idContent, id:create()});
         //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
         this.addMenu = properties =>{
@@ -232,7 +232,7 @@ j$.ui.Menu = function(){ // factory
     , Dropdown=function(idContent, caption){  
         let _dropdown = this
         , wCaption=(caption)?caption:'';
-        this.inherit=j$.Node;
+        this.inherit=System.Node;
         this.inherit({type:'Dropdown', Root:_dropdown, Parent:null},{key:idContent, id:create(), caption:wCaption});
         //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
         this.addMenu = properties=>{
