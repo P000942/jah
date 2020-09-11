@@ -38,15 +38,15 @@
 
 <script type="text/javascript">
      $(document).ready(function(){
-        ERROR.init({   show(field, msg,clas$){ERROR.invalid(field, msg)} //qualquer msg
-           ,invalid(field, msg)      {ERROR.invalid(field, msg)} //quando deu erro
-           ,  valid(field, msg)      {ERROR.valid  (field, msg)} //quando ok
-           ,   hide(field)           {ERROR.hide   (field)} //para remover o erro
+        TYPE.ERROR.init({   show(field, msg,clas$){TYPE.ERROR.invalid(field, msg)} //qualquer msg
+           ,invalid(field, msg)      {TYPE.ERROR.invalid(field, msg)} //quando deu erro
+           ,  valid(field, msg)      {TYPE.ERROR.valid  (field, msg)} //quando ok
+           ,   hide(field)           {TYPE.ERROR.hide   (field)} //para remover o erro
            });
-        ERROR.noMarkIfValid();
+        TYPE.ERROR.noMarkIfValid();
     //   myPage.init();
      });
-    //ERROR.init({callback:function(msg,oType){alert(oType.label+': '+msg);}});
+    //TYPE.ERROR.init({callback:function(msg,oType){alert(oType.label+': '+msg);}});
     const init =()=>{
         $("#content").removeClass("lookThis"); // isso é apenas para fazer demonstraçao
         myPage.init();

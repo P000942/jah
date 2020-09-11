@@ -8,49 +8,7 @@ function i$(id) {
     return document.getElementById(id);
 }
 
-const ERROR = function() {
-    let handle =null;
-    function subscribe(message, field){
-        CONFIG.ERROR.SUBSCRIBE.forEach(key=>{
-            if (field[key])
-               message = message.replace(`@{${key}}`, field[key]);
-            else   
-               message = message.replace(`@{${key}}`, '');
-        })
-        return message;
-    }
-    function forward(method, field, msg,clas$){
-        if (field){
-            if (method!="hide")
-               msg=subscribe(msg,field);
-            if (handle && handle[method])
-                handle[method](field, msg,clas$);
-            else
-                ERROR[method](field, msg,clas$);
-        }        
-    }    
-    return {  //Retorna a chamado do erro para o proprio campo de onde veio a chamado - vai seguir o comportamento padrao
-	        init:errorHandle=>{handle=errorHandle} // para definir um callback externo que trata as msgs
-        ,  valid:(field,msg)       =>{field.Error.valid(field, msg)}
-        ,invalid:(field,msg)       =>{field.Error.invalid(field, msg)}        
-        ,   show:(field,msg,clas$) =>{field.Error.show(field, msg, clas$)}
-        ,     on:(field,msg,clas$) =>{field.Error.show(field, msg, clas$)} // sinonimo de show        
-        ,    off:(field)           =>{field.Error.hide(field)} // sinonimo de hide
-        ,   hide:(field)           =>{field.Error.hide(field)}
-        ,noMarkIfValid(mark)         {j$.Feedback.noMarkIfValid(mark)} 
-        ,MESSAGE:CONFIG.ERROR.MESSAGE    
-        , passForward:{ // => O componetes do framework fazem essa chamada
-                    // => Se tem um handle externo, serah passado adiante
-                    // => Se nao tem um handle externo, executa os metodos do proprio error
-               valid:(field,msg)      =>{forward('valid', field, msg)}
-            ,invalid:(field,msg)      =>{forward('invalid'  , field, msg)}
-            ,   show:(field,msg,clas$)=>{forward('show'   , field, msg, clas$)}
-            ,     on:(field,msg,clas$)=>{forward('show'   , field, msg, clas$)} // sinonimo de show
-            ,    off:(field)          =>{forward('hide'  , field)} // sinonimo de hide
-            ,   hide:(field)          =>{forward('hide'  , field)}
-        }       
-    };
-}();
+
 
 const EXCEPTION = function() {
     let handle =null;
@@ -60,7 +18,7 @@ const EXCEPTION = function() {
            message += "\n"+ text;
     };
     return {
-	init: objectHandle =>{handle=objectHandle}
+	    init: objectHandle =>{handle=objectHandle}
       , show:(exception,text) => {
             if (handle)
                handle.callback(exception,text);
@@ -626,4 +584,4 @@ j$.util = function(){
 
 
 
-// export {i$, ERROR, EXCEPTION, System, j$};
+// export {i$, EXCEPTION, System, j$};

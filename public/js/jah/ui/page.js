@@ -1146,4 +1146,4 @@ j$.Alert = new j$.Page.Modal("Alert",{
 });
 //@Teste: j$.Alert.show()
 
-//export {j$.Page, j$.Message, j$.Confirm, j$.Alert};
+//export {j$.Service, j$.Page, j$.Message, j$.Confirm, j$.Alert};

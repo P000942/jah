@@ -319,10 +319,10 @@ const TYPE = function() {
             this.validate= p_value=>{
                     let value=SELF.value(p_value)
                     , valid=SELF.isValid(value);
-                    if (!valid && ERROR)
-                        ERROR.passForward.invalid(SELF, SELF.validator.error);
+                    if (!valid && TYPE.ERROR)
+                        TYPE.ERROR.passForward.invalid(SELF, SELF.validator.error);
                     else
-                        ERROR.passForward.valid(SELF,"");         
+                        TYPE.ERROR.passForward.valid(SELF,"");         
                     return valid;
             }
             this.isValid= p_value=>{
@@ -333,13 +333,13 @@ const TYPE = function() {
                         valid=SELF.validator.handler(value);
                     }else if (SELF.mandatory){
                         valid=false;
-                        SELF.validator.error = ERROR.MESSAGE.Mandatory;
+                        SELF.validator.error = TYPE.ERROR.MESSAGE.Mandatory;
                     }    
                     return valid;
             };
             
             this.reset= ()=>{
-                    ERROR.passForward.hide(SELF);
+                    TYPE.ERROR.passForward.hide(SELF);
                     if (!SELF.defaultValue.isEmpty())
                         i$(SELF.id).value=SELF.defaultValue;
                     i$(SELF.id).className = SELF.classDefault; //CONFIG.INPUT.CLASS.DEFAULT;
@@ -360,7 +360,7 @@ const TYPE = function() {
         return {
             Digit:function(Properties) {
                 this.inherit = superType;
-                this.inherit({size:1, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isDigit();}, error:ERROR.MESSAGE.Digit}, mask:['#','_']}, Properties);
+                this.inherit({size:1, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isDigit();}, error:TYPE.ERROR.MESSAGE.Digit}, mask:['#','_']}, Properties);
             }
         , Numeric:function(size,decimal, Properties){
                 this.inherit = superType;
@@ -372,48 +372,48 @@ const TYPE = function() {
                     //mask += '|'+'_'.repeat(size)+','+'_'.repeat(decimal);
                     _size = size+decimal+1;
                 }
-                this.inherit({size:_size, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isNumeric(decimal);}, error:ERROR.MESSAGE.Numeric}
+                this.inherit({size:_size, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isNumeric(decimal);}, error:TYPE.ERROR.MESSAGE.Numeric}
                             , mask:{format:mask+"|"+mask.replace(/#/g,"_"), strip:decimalChar, empty:decimalChar, align:c$.ALIGN.RIGHT}}, Properties);
             }
         , Integer:function(size, Properties){
                 this.inherit = superType;
-                this.inherit({size, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isInteger();}, error:ERROR.MESSAGE.Integer}, mask:{format:'#'.repeat(size)}}, Properties);
+                this.inherit({size, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isInteger();}, error:TYPE.ERROR.MESSAGE.Integer}, mask:{format:'#'.repeat(size)}}, Properties);
             }
         ,   Money:function(size, Properties){
                 this.inherit = superType;
                 let decimalChar=c$.MASK.DecimalCharacter;
                 let mask = '9'.repeat(size-3)+'0'+decimalChar+'00';
-                this.inherit({size:size+1, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isDecimal(2);}, error:ERROR.MESSAGE.Money}
+                this.inherit({size:size+1, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isDecimal(2);}, error:TYPE.ERROR.MESSAGE.Money}
                             , mask:{format:mask+"|"+mask.replace(/[0|9]/g,"_"), strip:decimalChar, empty:decimalChar, align:c$.ALIGN.RIGHT}}, Properties);
                 this.format= value=> {return dataExt.format.money(value); };
             }
         ,    Char:function(size, Properties){
                 this.inherit = superType;
-                this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{error:ERROR.MESSAGE.Char}}, Properties);
+                this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{error:TYPE.ERROR.MESSAGE.Char}}, Properties);
             }
         ,  Letter:function(size, Properties){
                 this.inherit = superType;
-                this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.isLetter();}, error:ERROR.MESSAGE.Letter}, mask:{format:'@'.repeat(size)}}, Properties);
+                this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.isLetter();}, error:TYPE.ERROR.MESSAGE.Letter}, mask:{format:'@'.repeat(size)}}, Properties);
             }
         , UpperCase:function(size, Properties){
                 this.inherit = superType;
-                this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.isLetter();}, error:ERROR.MESSAGE.Letter}, mask:{format:'A'.repeat(size)}}, Properties);
+                this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.isLetter();}, error:TYPE.ERROR.MESSAGE.Letter}, mask:{format:'A'.repeat(size)}}, Properties);
             }
         , LowerCase:function(size, Properties){
                 this.inherit = superType;
-                this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.isLetter();}, error:ERROR.MESSAGE.Letter}, mask:{format:'a'.repeat(size)}}, Properties);
+                this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.isLetter();}, error:TYPE.ERROR.MESSAGE.Letter}, mask:{format:'a'.repeat(size)}}, Properties);
             }
         ,    Name:function(size, Properties){
                 this.inherit = superType;
-                this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.isName();}, error:ERROR.MESSAGE.Name}}, Properties);
+                this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.isName();}, error:TYPE.ERROR.MESSAGE.Name}}, Properties);
             }
         ,   Email:function(size, Properties){
                 this.inherit = superType;
-                this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.isEmail();}, error:ERROR.MESSAGE.Email}}, Properties);
+                this.inherit({size:size, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.isEmail();}, error:TYPE.ERROR.MESSAGE.Email}}, Properties);
             }
         ,   Date:function(Properties){
                 this.inherit = superType;
-                this.inherit({size:10, dataType:DATATYPE.DATE, validator:{handler:value=>{return value.isDate();}, error:ERROR.MESSAGE.Date}, mask:{format:'00/00/0000|__/__/____', strip:'_', empty:'//'}}, Properties);
+                this.inherit({size:10, dataType:DATATYPE.DATE, validator:{handler:value=>{return value.isDate();}, error:TYPE.ERROR.MESSAGE.Date}, mask:{format:'00/00/0000|__/__/____', strip:'_', empty:'//'}}, Properties);
             }
         ,  Date5:function(Properties){
                 if (!Properties)
@@ -421,7 +421,7 @@ const TYPE = function() {
                 Properties.type="date"; // para garantir que será usado o tipo date do html5
                 this.inherit = superType;
                 this.inherit({size:10, dataType:DATATYPE.DATE, validator:{handler:value=>{return value.isDate();}
-                            , error:ERROR.MESSAGE.Date}}, Properties);
+                            , error:TYPE.ERROR.MESSAGE.Date}}, Properties);
                 this.value = p_value=>{
                     let value;
                     if (p_value)
@@ -444,7 +444,7 @@ const TYPE = function() {
                 Properties.type="datetime-local"; // para garantir que será usado o tipo date do html5
                 this.inherit = superType;
                 this.inherit({size:10, dataType:DATATYPE.DATE, validator:{handler:value=>{return value.isDateTime();}
-                            , error:ERROR.MESSAGE.Date}}, Properties);
+                            , error:TYPE.ERROR.MESSAGE.Date}}, Properties);
                 this.value = p_value=>{
                     let value;
                     if (p_value)
@@ -467,15 +467,15 @@ const TYPE = function() {
                 Properties.type="color"; // para garantir que será usado o tipo date do html5
                 this.inherit = superType;
                 this.inherit({size:10, dataType:DATATYPE.DATE
-                    , validator:{handler:value=>{return value.isColor();} , error:ERROR.MESSAGE.Date}}, Properties);
+                    , validator:{handler:value=>{return value.isColor();} , error:TYPE.ERROR.MESSAGE.Date}}, Properties);
             }
         ,   Hour:function(Properties){
                 this.inherit = superType;
-                this.inherit({size:4, validator:{handler:value=>{return value.isHour();}, error:ERROR.MESSAGE.Hour}, mask:{format:'00:00|__:__',empty:':'}}, Properties);
+                this.inherit({size:4, validator:{handler:value=>{return value.isHour();}, error:TYPE.ERROR.MESSAGE.Hour}, mask:{format:'00:00|__:__',empty:':'}}, Properties);
             }
         ,  Phone:function(Properties){
                 this.inherit = superType;
-                this.inherit({size:11, validator:{handler:value=>{withoutMask=true;return value.isPhone(withoutMask);}, error:ERROR.MESSAGE.Phone}, mask:{format:'(000)0000-0000|(___)____-____', strip:'()-'}}, Properties);
+                this.inherit({size:11, validator:{handler:value=>{withoutMask=true;return value.isPhone(withoutMask);}, error:TYPE.ERROR.MESSAGE.Phone}, mask:{format:'(000)0000-0000|(___)____-____', strip:'()-'}}, Properties);
             }
         ,  Range:function(size, Properties){
                 let _me = this;
@@ -485,34 +485,34 @@ const TYPE = function() {
                 Properties.type="range"; // para garantir que será usado o tipo date do html5
                 this.inherit = superType;
                 this.inherit({size, dataType:DATATYPE.DATE
-                    , validator:{handler:value=>{return value.isRange();} , error:ERROR.MESSAGE.Date}}, Properties);
+                    , validator:{handler:value=>{return value.isRange();} , error:TYPE.ERROR.MESSAGE.Date}}, Properties);
                 this.onChangeHandle=function(e){
                     _me.Legend.show(_me.value());
                 } 
             }
         , Password:function(size, Properties){
                 this.inherit = superType;
-                this.inherit({size:size, type:'password', dataType:DATATYPE.CHAR, validator:{error:ERROR.MESSAGE.Password}}, Properties);
+                this.inherit({size:size, type:'password', dataType:DATATYPE.CHAR, validator:{error:TYPE.ERROR.MESSAGE.Password}}, Properties);
             }
         ,     Cpf:function(Properties){
                 this.inherit = superType;
-                this.inherit({size:11, validator:{handler:value=>{return value.ehCpf();}, error:ERROR.MESSAGE.Cpf}, mask:"cpf"}, Properties);
+                this.inherit({size:11, validator:{handler:value=>{return value.ehCpf();}, error:TYPE.ERROR.MESSAGE.Cpf}, mask:"cpf"}, Properties);
             }
         ,    Cnpj:function(Properties){
                 this.inherit = superType;
-                this.inherit({size:14, validator:{handler:value=>{return value.ehCnpj();}, error:ERROR.MESSAGE.Cnpj}, mask:"cnpj"}, Properties);
+                this.inherit({size:14, validator:{handler:value=>{return value.ehCnpj();}, error:TYPE.ERROR.MESSAGE.Cnpj}, mask:"cnpj"}, Properties);
             }
         ,     Cca:function(Properties){
                 this.inherit = superType;
-                this.inherit({size:9, validator:{handler:value=>{return value.ehCca();}, error:ERROR.MESSAGE.Cca}, mask:"cca"}, Properties);
+                this.inherit({size:9, validator:{handler:value=>{return value.ehCca();}, error:TYPE.ERROR.MESSAGE.Cca}, mask:"cca"}, Properties);
             }
         ,   Placa:function(Properties){
                 this.inherit = superType;
-                this.inherit({size:7, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.ehPlaca();}, error:ERROR.MESSAGE.Placa}, mask:"placa"}, Properties);
+                this.inherit({size:7, dataType:DATATYPE.CHAR, validator:{handler:value=>{return value.ehPlaca();}, error:TYPE.ERROR.MESSAGE.Placa}, mask:"placa"}, Properties);
             }
         ,     Cep:function(Properties){
                 this.inherit = superType;
-                this.inherit({size:8, validator:{handler:value=>{return value.ehCep();}, error:ERROR.MESSAGE.Cep}, mask:"cep"}, Properties);
+                this.inherit({size:8, validator:{handler:value=>{return value.ehCep();}, error:TYPE.ERROR.MESSAGE.Cep}, mask:"cep"}, Properties);
             }
         ,    Mask:function(mask, Properties={}){
                 let strip=mask.replace(/\w|[@]|[#]/g,""); // Pega somente caracteres especiais;
@@ -528,7 +528,7 @@ const TYPE = function() {
                 let SELF = this
                   , list = null
                 this.inherit = superType;
-                this.inherit({type:'select',  dataType:DATATYPE.LIST, validator:{handler:SELF.exists, error:ERROR.MESSAGE.List}}, Properties);
+                this.inherit({type:'select',  dataType:DATATYPE.LIST, validator:{handler:SELF.exists, error:TYPE.ERROR.MESSAGE.List}}, Properties);
                 function init(){
                         if (Properties){
                             if (Properties.list)
@@ -814,7 +814,7 @@ TYPE.HELPER = function(){
                     }
                 }
                 if (text.isEmpty())
-                    ERROR.passForward.invalid(this.field, ERROR.MESSAGE.InvalidItem);
+                    TYPE.ERROR.passForward.invalid(this.field, TYPE.ERROR.MESSAGE.InvalidItem);
             } else if (response && dataExt.isString(response) && !response.isEmpty())
                 this.show(response);
         }
@@ -998,6 +998,49 @@ TYPE.HANDLE = {
         return autotab;
     }
 };
+TYPE.ERROR = function() {
+    let handle =null;
+    function subscribe(message, field){
+        CONFIG.ERROR.SUBSCRIBE.forEach(key=>{
+            if (field[key])
+               message = message.replace(`@{${key}}`, field[key]);
+            else   
+               message = message.replace(`@{${key}}`, '');
+        })
+        return message;
+    }
+    function forward(method, field, msg,clas$){
+        if (field){
+            if (method!="hide")
+               msg=subscribe(msg,field);
+            if (handle && handle[method])
+                handle[method](field, msg,clas$);
+            else
+                TYPE.ERROR[method](field, msg,clas$);
+        }        
+    }    
+    return {  //Retorna a chamado do erro para o proprio campo de onde veio a chamado - vai seguir o comportamento padrao
+	        init:errorHandle=>{handle=errorHandle} // para definir um callback externo que trata as msgs
+        ,  valid:(field,msg)       =>{field.Error.valid(field, msg)}
+        ,invalid:(field,msg)       =>{field.Error.invalid(field, msg)}        
+        ,   show:(field,msg,clas$) =>{field.Error.show(field, msg, clas$)}
+        ,     on:(field,msg,clas$) =>{field.Error.show(field, msg, clas$)} // sinonimo de show        
+        ,    off:(field)           =>{field.Error.hide(field)} // sinonimo de hide
+        ,   hide:(field)           =>{field.Error.hide(field)}
+        ,noMarkIfValid(mark)         {j$.Feedback.noMarkIfValid(mark)} 
+        ,MESSAGE:CONFIG.ERROR.MESSAGE    
+        , passForward:{ // => O componetes do framework fazem essa chamada
+                    // => Se tem um handle externo, serah passado adiante
+                    // => Se nao tem um handle externo, executa os metodos do proprio error
+               valid:(field,msg)      =>{forward('valid', field, msg)}
+            ,invalid:(field,msg)      =>{forward('invalid'  , field, msg)}
+            ,   show:(field,msg,clas$)=>{forward('show'   , field, msg, clas$)}
+            ,     on:(field,msg,clas$)=>{forward('show'   , field, msg, clas$)} // sinonimo de show
+            ,    off:(field)          =>{forward('hide'  , field)} // sinonimo de hide
+            ,   hide:(field)          =>{forward('hide'  , field)}
+        }       
+    };
+}();
 // colaca os textos e estilos quando da validação dos campos
 j$.Feedback =function (){
     let _msg=null

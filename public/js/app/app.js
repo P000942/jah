@@ -50,11 +50,11 @@ $(document).ready(function(){
 
 // => Essa é uma forma de você definir como quer mostrar os erros
 // basta comentar para manter o padrão
-//ERROR.init({callback:function(msg,field){alert(field.label+': '+msg);}});
-ERROR.init({   show(field, msg,clas$){ERROR.invalid(field, msg)} //qualquer msg
-           ,invalid(field, msg)      {ERROR.invalid(field, msg)} //quando deu erro
-           ,  valid(field, msg)      {ERROR.valid  (field, msg)} //quando ok
-           ,   hide(field)           {ERROR.hide   (field)} //para remover o erro           
+//TYPE.ERROR.init({callback:function(msg,field){alert(field.label+': '+msg);}});
+TYPE.ERROR.init({   show(field, msg,clas$){TYPE.ERROR.invalid(field, msg)} //qualquer msg
+           ,invalid(field, msg)      {TYPE.ERROR.invalid(field, msg)} //quando deu erro
+           ,  valid(field, msg)      {TYPE.ERROR.valid  (field, msg)} //quando ok
+           ,   hide(field)           {TYPE.ERROR.hide   (field)} //para remover o erro           
            });
 
 j$.Page.Helper = function(Factory){

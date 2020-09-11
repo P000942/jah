@@ -125,7 +125,7 @@ const dataExt = function(){
 
         let Soma = 0;
         let Mult = 2;
-        for(i=value.length-1; i>=0; i--)      {
+        for(let i=value.length-1; i>=0; i--)      {
             Soma += (Mult * parseInt(value.charAt(i)));
             if(++Mult > LimMult) Mult = 2;
         }
