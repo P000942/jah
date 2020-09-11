@@ -10,34 +10,6 @@ function i$(id) {
 
 
 
-const EXCEPTION = function() {
-    let handle =null;
-    let formatMessage=(exception, text)=>{
-        let message=exception.id +":"+ exception.text;
-        if (text != undefined)
-           message += "\n"+ text;
-    };
-    return {
-	    init: objectHandle =>{handle=objectHandle}
-      , show:(exception,text) => {
-            if (handle)
-               handle.callback(exception,text);
-            else
-               EXCEPTION.on(exception,text);
-        }
-      ,   on: (exception,text)=>{
-            console.log(formatMessage(exception,text));
-        }
-      , format: (exception,text)=>{
-            return formatMessage(exception,text);
-        }
-//        off:function(field){
-//            field.Error.off();
-//        },
-     , ITEM:CONFIG.EXCEPTION
-    };
-}();
-
 const System = function(){
     let result = null
       , _QueryString={}
@@ -267,6 +239,34 @@ const System = function(){
         }
       , result:function(){return result;}
       , api:{prototype:false, jquery:false}
+    };
+}();
+
+System.EXCEPTION = function() {
+    let handle =null;
+    let formatMessage=(exception, text)=>{
+        let message=exception.id +":"+ exception.text;
+        if (text != undefined)
+           message += "\n"+ text;
+    };
+    return {
+	    init: objectHandle =>{handle=objectHandle}
+      , show:(exception,text) => {
+            if (handle)
+               handle.callback(exception,text);
+            else
+               System.EXCEPTION.on(exception,text);
+        }
+      ,   on: (exception,text)=>{
+            console.log(formatMessage(exception,text));
+        }
+      , format: (exception,text)=>{
+            return formatMessage(exception,text);
+        }
+//        off:function(field){
+//            field.Error.off();
+//        },
+     , ITEM:CONFIG.EXCEPTION
     };
 }();
 
@@ -584,4 +584,4 @@ j$.util = function(){
 
 
 
-// export {i$, EXCEPTION, System, j$};
+// export {i$, System, j$};

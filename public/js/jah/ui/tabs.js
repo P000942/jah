@@ -14,7 +14,7 @@ j$.ui.Tabs = function(){
         
             const initialized=function(){
                 if (!idContent){       
-                throw  EXCEPTION.format(EXCEPTION.ITEM.INVALID_ELEMENT, "Impossível montar um objeto tabs sem indicar o 'ID' do elemento html onde será montado");
+                throw  System.EXCEPTION.format(EXCEPTION.ITEM.INVALID_ELEMENT, "Impossível montar um objeto tabs sem indicar o 'ID' do elemento html onde será montado");
                 }else{
                 i$(idContent).insert(`<div id='${idWrap}' class='${CONFIG.TAB.CLASS.CONTAINER}' />`); //wrap geral do tab
                 i$(idWrap).insert(`<div id='${idTab}' class='${CONFIG.TAB.CLASS.BUTTONS}' />`);       //Wrap das tab-link
