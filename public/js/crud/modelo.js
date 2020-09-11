@@ -8,13 +8,13 @@
            }
            , afterInsert: function(UpdateController) {console.log('afterInsert:');}
            , validate(UpdateController, record, isNew){
-                // j$.ui.Alert.show( ['<strong>INFORMAÇÃO!</strong> ATENÇAO? Vai atualizar o objeto!'], CONFIG.ALERT.INFO.CLASS, this.page.Alert.id);
+                // j$.Page.Alert.show( ['<strong>INFORMAÇÃO!</strong> ATENÇAO? Vai atualizar o objeto!'], CONFIG.ALERT.INFO.CLASS, this.page.Alert.id);
                 //this.page.Alert.show('<strong>INFORMAÇÃO!</strong> ATENÇAO? Vai atualizar o objeto!')
                  console.log('validate');
                  return true;
            }
            , onError: function(ACTION){ 
-                j$.ui.Alert.error(ACTION.MESSAGE.ERROR, this.page.Alert.id)
+                j$.Page.Alert.error(ACTION.MESSAGE.ERROR, this.page.Alert.id)
              }
            //, onSuccess: function(ACTION) { console.log('onSuccess:'+ACTION.MESSAGE.SUCCESS);}
            , init:function(idTarget){
