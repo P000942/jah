@@ -8,8 +8,6 @@ function i$(id) {
     return document.getElementById(id);
 }
 
-
-
 const System = function(){
     let result = null
       , _QueryString={}
@@ -288,138 +286,6 @@ j$.$V= key =>{
    }
 }
 
-j$.Dashboard = function(){
-    let idContent=CONFIG.LAYOUT.CONTENT
-     // , idToolbar='toolbar';
-
-    return{
-        init: properties=>{
-            j$.Dashboard.Factory = (properties.designer && properties.designer.factory) 
-                                 ?j$.Dashboard[properties.designer.factory] 
-                                 :j$.Dashboard.Menubar
-            j$.Dashboard.Factory.create();
-            j$.Dashboard.Tabs.create();
-            j$.Dashboard.Factory.bindToTabs(properties.services, properties.designer.options);
-        }
-        , bindItem: item =>{
-            if (!item.url && !item.onCLick){
-                if (item.partial)
-                    item.onClick=j$.Dashboard.Tabs.openPartial;
-                else if (item.modal){
-                    item.onClick=function(menu){
-                        j$.Service.c$[menu.key].init(null, menu.modal);
-                    }
-                } else
-                    item.onClick=j$.Dashboard.Tabs.delegateTo;
-                item.byPass =true;
-            }
-        }
-        , openItem: (item, record) => {
-            if (!item.url && !item.onCLick){
-                if (item.partial)
-                    j$.Dashboard.Tabs.openPartial(item, null, record); //#Todo: passar o record
-                else if (item.modal){
-                    j$.Service.c$[item.key].init(null, item.modal, record);
-                } else
-                    j$.Dashboard.Tabs.delegateTo(item, null, record); //#Todo: passar o record
-            }
-    }
-    , idContent:idContent
-    }
-}();
-
-j$.Dashboard.Tabs=function(){
-    let tabs
-      , idContent='root'
-      , ftmKey = (service) =>{return "tab_"+service.Parent.key+'_'+service.key}
-    return{
-        create: ()=>{ tabs = j$.ui.Tabs.create(j$.Dashboard.Tabs.idContent,j$.Dashboard.idContent) }
-        , open: properties =>{return tabs.open(properties)}
-        , delegateTo: (service, event, record)=>{
-                j$.Dashboard.Tabs.open({key:ftmKey(service)
-                    , caption:service.caption, title: service.title
-                    ,  onLoad: function(tab){
-                                j$.Service.c$[service.key].init(tab.idContent);
-                            }
-                });
-        }
-        , openPartial:(service, event, record)=>{
-                j$.Dashboard.Tabs.open({key:ftmKey(service)
-                    ,caption:service.caption
-                    , onLoad:function(tab){
-                            tab.showURL(service.url, tab.httpComplete); // httpComplete - callback quando acionado apos a carga
-                            }
-                });
-        }
-        , getTab: (menu_key, item_key) =>{ return tabs.C$("tab_"+menu_key+'_'+item_key) }
-        , idContent:idContent
-    };
-}();
-
-j$.Dashboard.Menubar=function(){
-    let menubar, _c$ = CONFIG.MENU.OPTIONS[CONFIG.MENU.PARSER.toUpperCase()];
-    //let idContent=_c$.CONTENT;
-
-    const initialized = function(){
-        i$(j$.Dashboard.idContent).className =_c$.CLASS.CONTENT;
-        i$(_c$.CONTENT).className = _c$.CLASS.MENU;
-        for (let key in CONFIG.MENU.OPTIONS){
-            let option =  CONFIG.MENU.OPTIONS[key]
-            if (key != CONFIG.MENU.PARSER.toUpperCase()){             
-                i$(option.CONTENT).remove();
-            }
-        }
-        return true;
-    };    
-
-    return{
-        //menu={key:'', caption:'', url:'', title:'', items:[]}
-      bindItems: function(menu, Services){
-            let menuBase = menubar.addMenu(menu);
-            for (let idx=0; idx<menu.items.length;  idx++){
-                let item = Services[menu.items[idx]];
-                menuBase.add(item);
-            }
-       }
-    , bindToTabs: function(Services, design){
-                for (let key in design){
-                    let menu = design[key];
-                    if (dataExt.isArray(menu))
-                        menu = {items:design[key]};
-                    Object.preset(menu, {key:key, caption:key});
-                    j$.Dashboard.Menubar.bindItems(menu, Services);
-                }
-        }
-    ,  create:function(){
-               initialized();
-               menubar = j$.ui.Menu.create(_c$.CONTENT)
-            }
-    , addMenu:function(menu){return menubar.addMenu(menu)}
-    , getMenu:function(menu_key){ return menubar.getMenu(menu_key)}
-    ,  render:function(menu){ menubar.render()}
-    , idContent:_c$.CONTENT
-    }
-}();
-
-j$.ui.Open = function(){
-    return{
-        url: (url, idContent)=>{
-            if (idContent)
-                j$.ui.Open.partial(url, idContent);
-            else
-                window.location = url;
-        },
-        partial:(url, idContent, complete)=>{
-            if (!idContent)
-                idContent = CONFIG.LAYOUT.CONTENT;
-             //let pars = '';
-            if (!url.isEmpty()) {
-                let myAjax = new Ajax.Updater( idContent, url, {method: 'get', parameters: '', onComplete:complete});
-            }
-        }
-    };
-}();
-
 System.Node=function(inheritor, properties){
     let _node = this;
     this.length = 0;
@@ -506,7 +372,6 @@ System.Action = ()=>{
     };
 };
 
-
 class Collection {
     constructor() {
         this.Items={};
@@ -581,7 +446,5 @@ j$.util = function(){
         getId:getId
     };
 }();
-
-
 
 // export {i$, System, j$};
