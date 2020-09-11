@@ -12,45 +12,45 @@ j$.Dashboard = function(){
                                  ?j$.Dashboard[properties.designer.factory] 
                                  :j$.Dashboard.Menubar
             j$.Dashboard.Factory.create();
-            j$.Dashboard.Tabs.create();
+            j$.Dashboard.Service.init();
             j$.Dashboard.Factory.bindToTabs(properties.services, properties.designer.options);
         }
         , bindItem: item =>{
             if (!item.url && !item.onCLick){
                 if (item.partial)
-                    item.onClick=j$.Dashboard.Tabs.openPartial;
+                    item.onClick=j$.Dashboard.Service.openPartial;
                 else if (item.modal){
                     item.onClick=function(menu){
                         j$.Service.c$[menu.key].init(null, menu.modal);
                     }
                 } else
-                    item.onClick=j$.Dashboard.Tabs.delegateTo;
+                    item.onClick=j$.Dashboard.Service.delegateTo;
                 item.byPass =true;
             }
         }
         , openItem: (item, record) => {
             if (!item.url && !item.onCLick){
                 if (item.partial)
-                    j$.Dashboard.Tabs.openPartial(item, null, record); //#Todo: passar o record
+                    j$.Dashboard.Service.openPartial(item, null, record); //#Todo: passar o record
                 else if (item.modal){
                     j$.Service.c$[item.key].init(null, item.modal, record);
                 } else
-                    j$.Dashboard.Tabs.delegateTo(item, null, record); //#Todo: passar o record
+                    j$.Dashboard.Service.delegateTo(item, null, record); //#Todo: passar o record
             }
     }
     , idContent:idContent
     }
 }();
 
-j$.Dashboard.Tabs=function(){
+j$.Dashboard.Service=function(){
     let tabs
       , idContent='root'
       , ftmKey = (service) =>{return "tab_"+service.Parent.key+'_'+service.key}
     return{
-        create: ()=>{ tabs = j$.ui.Tabs.create(j$.Dashboard.Tabs.idContent,j$.Dashboard.idContent) }
+          init: ()=>{ tabs = j$.ui.Tabs.create(j$.Dashboard.Service.idContent,j$.Dashboard.idContent) }
         , open: properties =>{return tabs.open(properties)}
         , delegateTo: (service, event, record)=>{
-                j$.Dashboard.Tabs.open({key:ftmKey(service)
+                j$.Dashboard.Service.open({key:ftmKey(service)
                     , caption:service.caption, title: service.title
                     ,  onLoad: function(tab){
                                 j$.Service.c$[service.key].init(tab.idContent);
@@ -58,14 +58,13 @@ j$.Dashboard.Tabs=function(){
                 });
         }
         , openPartial:(service, event, record)=>{
-                j$.Dashboard.Tabs.open({key:ftmKey(service)
+                j$.Dashboard.Service.open({key:ftmKey(service)
                     ,caption:service.caption
                     , onLoad:function(tab){
                             tab.showURL(service.url, tab.httpComplete); // httpComplete - callback quando acionado apos a carga
                             }
                 });
         }
-        , getTab: (menu_key, item_key) =>{ return tabs.C$("tab_"+menu_key+'_'+item_key) }
         , idContent:idContent
     };
 }();
@@ -114,11 +113,11 @@ j$.Dashboard.Menubar=function(){
     }
 }();
 
-j$.ui.Open = function(){
+j$.Dashboard.Open = function(){
     return{
         url: (url, idContent)=>{
             if (idContent)
-                j$.ui.Open.partial(url, idContent);
+                j$.Dashboard.Open.partial(url, idContent);
             else
                 window.location = url;
         },
@@ -286,7 +285,7 @@ j$.ui.Tabs = function(){
                 function showURL(url, complete){
                     if (!url)
                         url=_tab.url;
-                    j$.ui.Open.partial(url,_tab.idContent, complete);
+                    j$.Dashboard.Open.partial(url,_tab.idContent, complete);
                     _tab.loaded = true;  		  
                 } 		  
             } //tab 	
@@ -403,7 +402,7 @@ j$.ui.Menu = function(){ // factory
     , formatLink= properties =>{
         let attLink = '';
         if (properties.url && !properties.byPass){
-            attLink +=  'href=\'javascript:j$.ui.Open.url("'+ properties.url + '"';
+            attLink +=  'href=\'javascript:j$.Dashboard.Open.url("'+ properties.url + '"';
             if (properties.idContainer) // Container é usado para quando for partial
                 attLink += ',"'+ properties.idContainer + '"' ;
             attLink +=');';

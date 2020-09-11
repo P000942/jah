@@ -87,7 +87,7 @@ $(document).ready(function(){
          j$.ui.Tabs.c$.tabs.open({key:"Home", caption:"Home", fixed:true, url: urlPartial});
     }();
     const delagateTab= function (idContent){
-        j$.ui.Open.partial(urlPartial,idContent);
+        j$.Dashboard.Open.partial(urlPartial,idContent);
     };
 
     const sbmenu=j$.ui.Tabs.c$.tabs.add({key:"tab_submenu", caption:'submenu', url:urlPartial, title:'Title Submenu Tab'});

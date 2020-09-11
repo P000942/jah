@@ -78,18 +78,18 @@ j$.Page.Helper = function(Factory){
              _menu.add({caption:'Partial 2', partial:urlPartial_1, title:'Serah insedrido na tba'});
              _menu.add({caption:'Assunto',       title:'Assunto - exemplo colocar um  form na tab',
                   onClick:(menu, event)=>{
-                      j$.Dashboard.Tabs.open({key:menu.key, caption:menu.caption
+                      j$.Dashboard.Service.open({key:menu.key, caption:menu.caption
                           , onLoad: tab=>{
                                Assunto.init(tab.idContent)}
                               });
                   }
               });
              _menu.add({caption:'Partial', byPass:true,      partial:urlPartial
-                    , onClick:j$.Dashboard.Tabs.openPartial
+                    , onClick:j$.Dashboard.Service.openPartial
              });
              _menu.add(); // vai adicionar uma linha
              _menu.add({key:'Tabela', caption:'Tabela', icon:'icon-pencil', title:'Tabela de Exemplo'
-                    , onClick:j$.Dashboard.Tabs.delegateTo
+                    , onClick:j$.Dashboard.Service.delegateTo
              });
 
 //             _menu.add({key:'SituacaoAtividade', caption:'Situação',       title:'Cadastro de Situa��es da Atividade',
@@ -99,7 +99,7 @@ j$.Page.Helper = function(Factory){
     };
 
     const criarTab= function (){
-         j$.Dashboard.Tabs.open({key:"tab_inicial", caption:"Home", fixed:true
+         j$.Dashboard.Service.open({key:"tab_inicial", caption:"Home", fixed:true
            , onLoad      (tab){tab.showURL("sample/partial_1.html", (r)=>{console.log("callback do load complete", r)})}
            , onActivate  (tab){console.log("onActivate."+tab.key)}
            , onDeactivate(tab){console.log("onDeactivate."+tab.key)}
@@ -122,7 +122,7 @@ j$.Page.Helper = function(Factory){
 
 // Didático
 function openPapel(){
-    j$.Dashboard.Tabs.open({key:"Papel", caption:"Papel", onLoad: function(tab){Papel.init(tab.idContent);}});
+    j$.Dashboard.Service.open({key:"Papel", caption:"Papel", onLoad: function(tab){Papel.init(tab.idContent);}});
 }
 
 //@note: Está presente aqui apenas para exemplificar o uso

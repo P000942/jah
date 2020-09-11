@@ -61,7 +61,7 @@
                 menu_partial.add([{caption:'Visão Geral',   partial:'http://localhost:3000/sample/partial.html', hint:'Conheça a história e a caminhada da Comunidade'}
                                 ,{caption:'Semenentinha',  partial:'http://localhost:3000/sample/partial_1.html', hint:'Veja como estamos organizados'}
                                 ,{caption:'Assunto',       hint:'Veja um álbum de nosso trabalho de evagelização!',
-                                    onClick:menu=>{j$.Dashboard.Tabs.open({key:menu.key
+                                    onClick:menu=>{j$.Dashboard.Service.open({key:menu.key
                                                                      , caption:menu.caption
                                                                       , onLoad: tab=>{Assunto.init(tab.idContent)}
                                                                          })}
