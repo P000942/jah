@@ -41,7 +41,7 @@ const adapter={
 };
 System.using("js/crud/modelo.js"); // Didatico para ver como carregar um arquivo javascript ou css
 
-j$.Page.createAdapter(adapter);
+j$.Service.createAdapter(adapter);
 
 $(document).ready(function(){
     j$.Dashboard.init(j$.Page.Adapter);
