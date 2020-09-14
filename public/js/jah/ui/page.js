@@ -677,7 +677,7 @@ j$.Page.Form=function(service, modal) {
         if (externalController)
            service.actionController = externalController
         else
-           service.actionController =  j$.ui.Controller.create(service);
+           service.actionController =  j$.Controller.create(service);
         $i.display();
         if (service.Child)
            service.Child.notify({action:CONFIG.ACTION.INIT});
@@ -955,7 +955,7 @@ j$.Page.Grid=function(page, btn_template=CONFIG.GRID.DEFAULT){
                 page.reset(); // o formulário
                  _grid.Detail.clear();
                 if (pager.Record.count !=  c$.RC.NOT_FOUND){
-                    pager.sweep(function(row, record){
+                    pager.read(function(row, record){
                        _grid.Detail.add(record,true);
                     });
                     _grid.Designer.header();

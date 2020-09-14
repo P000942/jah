@@ -13,13 +13,13 @@
 'use strict';
 // import dataExt from  "../jah/api/dataExt.js"; 
  j$.Requester = function(){ // É  uma instancia única
-     let context = CONFIG.RESOURCE.CONTEXT;
-     function URL(url, responseHandler){
+    let context = CONFIG.RESOURCE.CONTEXT;
+    function URL(url, responseHandler){
        // console.log(`URL==>>${url}`);
         return (url) ?url
                      :responseHandler.Resource.url;
-     };
-     function cacheRequest(url, parameter, responseHandler){
+    };
+    function cacheRequest(url, parameter, responseHandler){
         let response=null;
         //console.log(`cacheRequest==>>${url} / ${parameter}`);
         if (responseHandler.Resource.cache){ // vai no cache se permitido ir no cache, senao sempre vai no servidor
@@ -28,8 +28,8 @@
               response=search(response, parameter, responseHandler.Resource.id);
         }
         return response;
-     }
-     function search(source, parameter, id) {
+    }
+    function search(source, parameter, id) {
         //console.log(`search==>>${source} / ${parameter} / ${id}`);
           let response = null
           if (parameter){ //GET "http://localhost:3000/assunto com boby={idAssunto:1}
@@ -51,8 +51,8 @@
           if (response && response.length==0)
              response=null;
           return response;
-     }
-     function request(http){
+    }
+    function request(http){
          //console.log(`request==>${http}`);
           new Ajax.Request(http.url, {
                 parameters: http.parameters
@@ -65,9 +65,9 @@
           ,    onException: function(a){console.log(a);}
            });
            return http;
-     }
-     return{
-       get:function(url, parameter, responseHandler) {
+    }
+    return{
+          get:function(url, parameter, responseHandler) {
             //console.log(`get==>${url}`);
             const http ={url: URL(url, responseHandler)
                      , method:'GET'
@@ -102,8 +102,8 @@
                   responseHandler.get(cached);
             }
             return http;
-      }
-     ,remove: function(url, id, responseHandler,  recordRow) {
+       }
+    ,  remove:function(url, id, responseHandler,  recordRow) {
           return request({url: URL(url, responseHandler)+"/"+id
                     , method:'DELETE'
                     , onFailure: responseHandler.failure
@@ -111,8 +111,8 @@
                               responseHandler.remove(response, recordRow);
                       }
                   });
-     }
-     ,post: function(url, record, responseHandler) {
+       }
+    ,    post:function(url, record, responseHandler) {
           return request({url: URL(url, responseHandler)
                    , method:'POST'
                    , postBody:JSON.stringify(record)
@@ -122,8 +122,8 @@
                      }
                 });
 
-      }
-      ,put: function(url, id, record, responseHandler, recordRow) {
+       }
+    ,     put:function(url, id, record, responseHandler, recordRow) {
            return request({url: URL(url, responseHandler)+"/"+id
                     , method:'PUT'
                     , postBody:JSON.stringify(record)
@@ -132,11 +132,11 @@
                                 responseHandler.put(response, id, recordRow);
                       }
                    });
-       }
-       ,request:request
-       ,search:search
-       ,cacheRequest:cacheRequest
-       ,url:URL
+        }
+    , request:request
+    ,  search:search
+    , cacheRequest:cacheRequest
+    , url:URL
    }
 }(); //j$.Requester 
 
@@ -144,7 +144,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
     let items = {}
       , properties=['name','context','source','local','cache','key','id','text', 'autoCharge','url']
       , context = CONFIG.RESOURCE.CONTEXT;
-     const DefaultHandler =function (){
+    const DefaultHandler =function (){
        /* Um caminho padrao para tratar as respostas do servidor
           se tem algo comum a fazer, passa por aqui antes e já devolve algo mais elaborado.
        */
@@ -168,33 +168,6 @@ j$.Resource = function(){ // Factory: Criar os recursos
             }
         }
     }();
-    return{
-        getURL(recourseName){return context}
-      ,   init($context){context=$context}
-      , create(resource, externalResponseHandler){
-            let Definition = j$.Resource.parse(resource);        
-            if (!j$.$R[Definition.name]){ // recurso não existe, será criado
-               items[Definition.name] =new Resource(Definition, externalResponseHandler);
-            } else {
-                if (externalResponseHandler) // associa o externalResponseHandler ao recurso (ele pode ter sido criado por fora)
-                   items[Definition.name].bind(externalResponseHandler);
-                //items[Definition.name].externalResponseHandler = externalResponseHandler;
-            }
-            return items[Definition.name];
-        }       
-      , context:context
-      , ResponseHandler:ResponseHandler
-      , Requester:Requester
-      , DefaultHandler:DefaultHandler
-      , parse:parseDefinition
-      , Dataset: Dataset
-      ,  Local:function(){return{Requester:LocalRequester}}()
-      , Parser: function(){return{init:function(){return true}}}()
-      , get(key){return items[key]}
-      , Items:items
-      , c$:items
-      , C$(key){return items[key]}
-    };
     // resoucer:{name:'', [id]:'', [url]:'', [context]:'', unique:"true/false", source:[{record},{record},...]}
     function Resource(resource, external_responseHandler){
         let _r = this;
@@ -311,9 +284,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
            passForward("failure", error);
        }
     } //ResponseHandler
-    /*
-     *   Faz as chamadas ao servidor por AJAX
-     */
+    //  Faz as chamadas ao servidor por AJAX    
     function Requester(responseHandler) {
        this.responseHandler = responseHandler;
        const url = responseHandler.Resource.url;
@@ -331,7 +302,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
        this.put= (id, record, recordRow)=> {
              return j$.Requester.put(url, id, record, responseHandler, recordRow);
        }
-    }
+    } //Requester
 
     function LocalRequester(responseHandler) {
         this.ResponseHandler = responseHandler;
@@ -354,31 +325,31 @@ j$.Resource = function(){ // Factory: Criar os recursos
         this.put= (id,record, recordRow) =>{ responseHandler.put(record,id, recordRow) }
 
         function request(response, callback){callback(response)}
-    }
+    } //LocalRequester
 
     function Dataset(DataSource, Resource){
-       const _ds = this
+        const _ds = this
            , ROW = {FIRST:0, LAST:0, maxId:-1}
-       let originalSource = null;
+        let originalSource = null;
 
-       const initialized= function init(){
-           Object.preset(_ds,{Columns:null, get, update, insert, remove, find, findIndex, exists, id
-            , DataSource, count:-1,position:0
-            , createPager: page =>{return new j$.Resource.Pager(_ds, page)}
+        const initialized= function(){
+            Object.preset(_ds,{Columns:null, get, update, insert, remove, find, findIndex, exists, id
+                , DataSource, count:-1,position:0
+                , createPager: page =>{return new j$.Resource.Pager(_ds, page)}
             });
-           if (DataSource){
+            if (DataSource){
                // Quando soh tem registro na tabela, nao volta uma array e sim um objeto, por isso o tratamento
                if (dataExt.isArray(DataSource))
                    _ds.DataSource = DataSource;
                else
                    _ds.DataSource = [DataSource];
-           }
-           originalSource = _ds.DataSource;
-           refresh();
-           return true;
-       }();
+            }
+            originalSource = _ds.DataSource;
+            refresh();
+            return true;
+        }();
 
-       function refresh(){
+        function refresh(){
            if (_ds.DataSource && _ds.DataSource.length>0){
               _ds.Columns = _ds.DataSource[0];
               _ds.position = ROW.FIRST;
@@ -479,7 +450,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
             return _ds.get(_ds.position);
        };
 
-        this.sweep=function(action){ // varre todo o arquivo sem guardar as posicoes, por isso, nao chama o metodo get()
+        this.read=function(action){ // varre todo o arquivo sem guardar as posicoes, por isso, nao chama o metodo get()
             let record = null;
             for (let row=ROW.FIRST; row<=ROW.LAST; row++){
                 record = _ds.DataSource[row];
@@ -487,14 +458,15 @@ j$.Resource = function(){ // Factory: Criar os recursos
                     action(row, record);
             }
         };
-        this.forEach=function(action){ // varre todo o arquivo sem guardar as posicoes, por isso, nao chama o metodo get()
-            let record = null;
-            for (let row=ROW.FIRST; row<=ROW.LAST; row++){
-                record = _ds.DataSource[row];
-                if (action)
-                    action(record, row);
-            }
-        };
+        this.forEach=this.read;
+        // this.forEach=function(action){ // varre todo o arquivo sem guardar as posicoes, por isso, nao chama o metodo get()
+        //     let record = null;
+        //     for (let row=ROW.FIRST; row<=ROW.LAST; row++){
+        //         record = _ds.DataSource[row];
+        //         if (action)
+        //             action(record, row);
+        //     }
+        // };
 
         function find(validator){//encontrar um registro específico
             let record = null;
@@ -583,42 +555,70 @@ j$.Resource = function(){ // Factory: Criar os recursos
          res.url = res.context + res.name;
 
          return res;
-    }
+    } //parseDefinition
+    return{
+        getURL(recourseName){return context}
+      ,   init($context){context=$context}
+      , create(resource, externalResponseHandler){
+            let Definition = j$.Resource.parse(resource);        
+            if (!j$.$R[Definition.name]){ // recurso não existe, será criado
+               items[Definition.name] =new Resource(Definition, externalResponseHandler);
+            } else {
+                if (externalResponseHandler) // associa o externalResponseHandler ao recurso (ele pode ter sido criado por fora)
+                   items[Definition.name].bind(externalResponseHandler);
+                //items[Definition.name].externalResponseHandler = externalResponseHandler;
+            }
+            return items[Definition.name];
+        }       
+      , context:context
+      , ResponseHandler:ResponseHandler
+      , Requester:Requester
+      , DefaultHandler:DefaultHandler
+      , parse:parseDefinition
+      , Dataset: Dataset
+      , Local:function(){return{Requester:LocalRequester}}()
+     // , Parser: function(){return{init:function(){return true}}}()
+      , get(key){return items[key]}
+      //, Items:items
+      , c$:items
+      , C$(key){return items[key]}
+    };    
 }(); //j$.Resource 
 j$.$R =j$.Resource.c$;
 
 j$.Resource.Pager=function(dataset, page){
    let _me = this;
    dataset.Pager = _me;
-   _me.Dataset = null;
+   _me.Dataset = null;   
    this.restart=restart;
-   this.sweep=sweep;
-   // number  -> Nro da pagina
-   // last    -> qtd de paginas
-   // maxline -> qtd MÁXIMA de linhas na página
-   // maxpage -> qtd MÁXIMA de paginas no navegador
-   // first   -> constante que indica a primeira página
-   this.Control ={number:0, last:0, maxline: CONFIG.GRID.MAXLINE, maxpage: CONFIG.GRID.MAXPAGE, first:1};
-   // count   -> qtde de registros do dataset
-   // first   -> indice do registro INICIAL da página solicitada
-   // last    -> indice do registro FINAL da página solicitada
-   this.Record ={count:0, first:-1, last:0};
+//    this.read=read;
+   this.initialized=function(){
+        // number  -> Nro da pagina
+        // last    -> qtd de paginas
+        // maxline -> qtd MÁXIMA de linhas na página
+        // maxpage -> qtd MÁXIMA de paginas no navegador
+        // first   -> constante que indica a primeira página
+        _me.Control ={number:0, last:0, maxline: CONFIG.GRID.MAXLINE, maxpage: CONFIG.GRID.MAXPAGE, first:1};
+        // count   -> qtde de registros do dataset
+        // first   -> indice do registro INICIAL da página solicitada
+        // last    -> indice do registro FINAL da página solicitada
+        _me.Record ={count:0, first:-1, last:0};       
+        if (page){
+            Object.setIfExist(_me.Control, page,['maxline','maxpage']);
+        }
+        _me.restart(dataset);
+        return true;
+   }();
    this.absolutePosition = position=>{return (_me.Record.first-1)+position}
    this.pagePosition = recordRow=>{
-       let pos={};
-       let row = recordRow+1
+       let pos={}
+         , row = recordRow+1
        pos.page = Math.round(row/_me.Control.maxline);
        if ((pos.page*_me.Control.maxline) < row)
           pos.page++;
        pos.index = ( row - ((pos.page-1)*_me.Control.maxline) -1);
        return pos;
-   }
-
-   if (page){
-       Object.setIfExist(_me.Control, page,['maxline','maxpage']);
-   }
-   this.restart(dataset);
-
+   }   
    function restart(dataset){
        if (dataset)
            _me.Dataset = dataset;
@@ -628,7 +628,7 @@ j$.Resource.Pager=function(dataset, page){
           // Calcula a quantidade de paginas
         _me.Control.last = parseInt(((_me.Record.count -1)  / _me.Control.maxline)) + 1;
    }
-   function sweep(action){
+   this.read=action=>{
         for (let row=_me.Record.first-1; row<_me.Record.last; row++){
             let record = _me.Dataset.get(row);
             if (action)
@@ -699,62 +699,67 @@ j$.Resource.Pager=function(dataset, page){
        }
    };
 } //j$.Resource.Pager
-/*
+
+j$.Resource.Parser=function(){
+    /*
     A proposta eh ter independencia em relacao ao parser dos recursos.
     Caso os recursos venham em XML ou outro formato.
     Tem que contruir um parser que farah a conversao e trocar o Parser do recurso.
     Resource.Parser = new j$.Resource.Parser.Xml(Resource);
     Se quer trocar para todos, troca o default.
     j$.Resource.Parser.Default = j$.Resource.Parser.Xml;
- */
-j$.Resource.Parser.Json= function(Resource){
-      let _me = this;
-      this.toListset=function(response){
-        let Listset={list:{}, count:-1, maxlength:0};
-        let json = j$.Resource.DefaultHandler.handler(response);
-        let dataset =  _me.toDataset(json);
-        Listset.count = dataset.count;
-        dataset.sweep(function(row, record){
-           try {
-               if  (record[Resource.text]==undefined)
-                   throw CONFIG.EXCEPTION.INVALID_COLUMN;
-                let item = record[Resource.text];
-                Listset.list[record[Resource.id]]=item;
-                if (item.length > Listset.maxlength)
-                        Listset.maxlength = item.length;
-           } catch(exception){
-               if (exception==CONFIG.EXCEPTION.INVALID_COLUMN)
-                   console.log(exception.text +" '"+Resource.text+"'");
-               throw exception.id;
-           }
-        });
-        return Listset;
-      };
-      this.toDataset=response=>{
-           //Resource.Dataset = null;
-           //if (response){
-              let data_source = _me.toDatasource(response);
-              Resource.Dataset =   new j$.Resource.Dataset(data_source, Resource);
-              j$.Resource.Store.save(Resource, data_source, Resource.local);
-            //}
-            return Resource.Dataset;
-      };
-      this.toDatasource=parse;
-      function parse(response){
-        let data_source = null;
-        if (response){
-             if (response[Resource.name]){
-                 // RETORNOU UMA LISTA DE REGISTROS
-                 data_source = response[Resource.name];
-             }else{
-                 data_source=response;
-             }
+    */
+    const Parsers={
+        Json: function(Resource){
+            let _me = this;
+            this.toListset=function(response){
+                let Listset={list:{}, count:-1, maxlength:0}
+                , json = j$.Resource.DefaultHandler.handler(response)
+                , dataset =  _me.toDataset(json);
+                Listset.count = dataset.count;
+                dataset.read(function(row, record){
+                    try {
+                        if  (record[Resource.text]==undefined)
+                            throw CONFIG.EXCEPTION.INVALID_COLUMN;
+                        let item = record[Resource.text];
+                        Listset.list[record[Resource.id]]=item;
+                        if (item.length > Listset.maxlength)
+                            Listset.maxlength = item.length;
+                    } catch(exception){
+                        if (exception==CONFIG.EXCEPTION.INVALID_COLUMN)
+                            console.log(exception.text +" '"+Resource.text+"'");
+                        throw exception.id;
+                    }
+                });
+                return Listset;
+            };
+            this.toDataset=response=>{
+                let data_source = _me.toDataSource(response);
+                Resource.Dataset =   new j$.Resource.Dataset(data_source, Resource);
+                j$.Resource.Store.save(Resource, data_source, Resource.local);
+                return Resource.Dataset;
+            };
+            this.toDataSource=parse;
+            function parse(response){
+                let data_source = null;
+                if (response){
+                    if (response[Resource.name]){
+                        // RETORNOU UMA LISTA DE REGISTROS
+                        data_source = response[Resource.name];
+                    }else{
+                        data_source=response;
+                    }
+                    }
+                    return data_source;
+            }
         }
-        return data_source;
-     }
-};
-
-j$.Resource.Parser.Default = j$.Resource.Parser.Json;
+    }        
+    return{
+        Default: Parsers.Json
+        ,    c$:Parsers
+        ,    C$:key=>{return Parsers[key]}
+    }
+}() //j$.Resource.Parser
 
 j$.Resource.Store= function(){
    let store={};
@@ -813,3 +818,5 @@ j$.Resource.Store= function(){
         return null;
    }
 }();
+
+//export {j$.Requester, j$.Resource};
