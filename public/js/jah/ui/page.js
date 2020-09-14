@@ -27,7 +27,33 @@
 
 //@note: Factory - para criar os servicos
 j$.Service = function(){
-   let items = {};
+   let items = {}
+    ,  Adapter = function(adapter){
+            // Este é o adater default do Page
+            // o cliente pode criar um próprio com a mesma assinatura 
+            let $this=this;
+            Object.preset(this, adapter);
+            this.load = ()=>{ // Fazer carga dos JS
+                for (let key in adapter.services){
+                    let item = adapter.services[key];
+                    item.key = key;
+                    if (!item.partial && !item.url){
+                        if (item.crud)
+                            System.using(CONFIG.CRUD.CONTEXT+key+".js");
+                        else if (item.query)
+                            System.using(CONFIG.QUERY.CONTEXT+key+".js");
+                    }
+                }
+            }
+            this.getService=key=>{
+                if ($this.services[key])
+                    return $this.services[key];
+                else
+                    return {key:key};
+            }
+            this.load();
+    };
+
    class CrudBase{
         constructor(adpater, service){
             let $i=this;
@@ -106,7 +132,7 @@ j$.Service = function(){
             if (dataExt.isUndefined(this.modal))
                 this.modal = CONFIG.CHILD.MODAL;
             if (this.crud || this.query)
-                this.service = j$.Service.make(key,this);
+                this.service = j$.Service.build(key,this);
         }    
         open(){
             let record = this.Parent.service.Fieldset.sweep();            
@@ -151,10 +177,10 @@ j$.Service = function(){
             };
         }      
     };  
-
+    
    return {
       get:key=>{return items[key]}
-    , Items:items
+    //, Items:items
     , c$:items
     , C$:key=>{return items[key]}
     , createCrud: function(key, service){
@@ -166,6 +192,10 @@ j$.Service = function(){
     , createChild: function(key, parent, service){
             return new Child(key, parent, service);
        }
+    , createAdapter: (source, adapter=Adapter)=>{ // o cliente pode informador o adapter
+            j$.Page.Adapter = new adapter(source); 
+            return j$.Page.Adapter;
+       }   
     , create:(key, service)=>{
           if (!key)
               throw new TypeError(CONFIG.EXCEPTION.SERVICE_NULL.text);
@@ -176,7 +206,7 @@ j$.Service = function(){
           window[key] = items[key];
           return items[key];
      }
-    , make:function(key, adapter){
+    , build:function(key, adapter){
           let service = items[key];
           if (!service){
              service = (adapter.crud)
@@ -535,46 +565,13 @@ j$.Page = function(){
             , modal:Modal
         };
     }()
-   // Este é o adater default do Page
-   // o cliente pode criar um próprio com a mesma assinatura 
-   //#todo: Talvez fosse interessante colocar esse Adapter fora do Page (System?? Helper?)
-   ,Adapter = function(adapter){
-        let $this=this;
-        Object.preset(this, adapter);
-        this.load = ()=>{ // Fazer carga dos JS
-            for (let key in adapter.services){
-                let item = adapter.services[key];
-                item.key = key;
-                if (!item.partial && !item.url){
-                    if (item.crud)
-                        System.using(CONFIG.CRUD.CONTEXT+key+".js");
-                    else if (item.query)
-                        System.using(CONFIG.QUERY.CONTEXT+key+".js");
-                }
-            }
-        }
-        this.getService=key=>{
-        if ($this.services[key])
-            return $this.services[key];
-        else
-            return {key:key};
-        }
-        this.load();
-    };
-
    return {
        create: function(service, modal){
            items[service.id] = new j$.Page.Form(service, modal);
            return items[service.id];
        }
-     , get:key=>{return items[key]}
-     , Items:items
      , c$:items
      , C$:key=>{return items[key]}
-     , createAdapter: (source, adapter=Adapter)=>{ // o cliente pode informador o adapter
-            j$.Page.Adapter = new adapter(source); 
-            return j$.Page.Adapter;
-        }
      , Designer:designer
      , Frame:frame
    };
@@ -976,11 +973,11 @@ j$.Page.Grid=function(page, btn_template=CONFIG.GRID.DEFAULT){
 }; //j$.Page.Grid
 
 j$.Page.Buttons=function(actionController, buttons, presetFunction){
-    let _btn=this;
-    let wrapButtons;
-    let _wrap;
-    Object.preset(_btn,{Items:getItems()});
-    this.c$ = this.Items;
+    let _btn=this
+      , wrapButtons
+      , _wrap;
+    Object.preset(_btn,{c$:getItems()});
+   // this.c$ = this.Items;
     presetFunction =(presetFunction)?presetFunction:()=>{};
     // Obter o grupos de buttons
     function getItems(){
@@ -1015,8 +1012,8 @@ j$.Page.Buttons=function(actionController, buttons, presetFunction){
     this.create=wrap=>{
         _wrap = wrap;
         wrapButtons=j$.ui.Render.wrap(_wrap, _wrap.id+ '_button', CONFIG.CRUD.BUTTONS.WRAP);
-        for (let key in _btn.Items){
-            _btn.add(key,_btn.Items[key]);
+        for (let key in _btn.c$){
+            _btn.add(key,_btn.c$[key]);
         };
     };
 
@@ -1029,8 +1026,8 @@ j$.Page.Buttons=function(actionController, buttons, presetFunction){
     };
     this.format=parent=>{
         let html='';
-        for (let key in _btn.Items){
-            let button=_btn.Items[key];
+        for (let key in _btn.c$){
+            let button=_btn.c$[key];
             preset(key.toLowerCase(),button, parent);
             html+=j$.ui.Render.formatButton(button);
         };
