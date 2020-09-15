@@ -224,6 +224,20 @@ const CONFIG = {
                       } 
         }                 
 };
+CONFIG.REPORT={
+      COLOR:{ON:'#F8F8FF', OFF:'#FFFFFF'}
+    // Medidas em milimetro 'mm'
+  ,   PAPER:{A4:{PORTRAIT:{height:'287', width:'202'}, LANDSCAPE:{height:'194', width:'289'}}
+        ,LETTER:{PORTRAIT:{height:'269', width:'208'}, LANDSCAPE:{height:'206', width:'271'}}
+        , LEGAL:{PORTRAIT:{height:'345', width:'208'}, LANDSCAPE:{height:'206', width:'347'}}
+      } 
+}  
+CONFIG.REPORT.DEFAULT={
+    DETAIL:{COLUMN:{FONT:{size:10, bold:false}}}
+  , HEADER:{COLUMN:{FONT:{size:10, bold:true }}}
+  ,   PAGE:{PAPER:CONFIG.REPORT.PAPER.A4.PORTRAIT}
+}
+  
 CONFIG.DESIGN={
    CLASSIC:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:CONFIG.WRAP.CLASS.ROW, COLUMN:CONFIG.WRAP.CLASS.COLUMN
             , INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.DEFAULT}  

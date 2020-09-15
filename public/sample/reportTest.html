@@ -29,10 +29,10 @@
             return {
                 init: function(){ 
                     //@note: opção usando o Dataset que foi criado localmente                           
-                    //ley report =  ReportFactory.create(SEFAZ.Report.Page,FieldNovo, dataSource);   
+                    //ley report =  Report.create(SEFAZ.Report.Page,FieldNovo, dataSource);   
 
                     //@note: opção usando o Dataset que está Resource      
-                    const report =  ReportFactory.create(SEFAZ.Report.Page,FieldNovo, j$.$R.pessoa.Dataset);
+                    const report =  Report.create(SEFAZ.Report.Page,FieldNovo, j$.$R.pessoa.Dataset);
                     report.start();
                 }
             };
