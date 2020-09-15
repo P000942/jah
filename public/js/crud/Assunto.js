@@ -42,7 +42,7 @@
                       , Mensagem:{caption:'Ver Mensagem'}
                     }
         }); 
-    with(j$.Service.c$){
+(function(Assunto){        
         Assunto.Interface = {
            container:CONFIG.LAYOUT.CONTENT
               , id:'assunto'
@@ -61,4 +61,4 @@
                                               , evaluate:function(record){ return (record.idCategoriaAssunto==1)?true:false}
                                              })
              });
-     }
+}(j$.Service.c$.Assunto)) 

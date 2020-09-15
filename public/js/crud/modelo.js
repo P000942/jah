@@ -23,24 +23,23 @@
                j$.Page.create(this).init();
             }
         });
-    with(j$.Service.c$.Tabela){
-        Tabela.Interface = {
+    (function(tab){    
+        tab.Interface = {
            container:CONFIG.LAYOUT.CONTENT
            ,      id:Tabela.id.toLowerCase()
            ,   title:'Exemplo de Tabela'
            ,    List:{limit:5, maxpage:5, Buttons:CONFIG.CRUD.GRID.preset()}
            , Buttons:CONFIG.CRUD.preset()
         };
-
-        Tabela.Fieldset= j$.Fieldset.create({
+        tab.Fieldset= j$.Fieldset.create({
                                  idTabela:TYPE.INTEGER(4,{label:'Código', readOnly:true, resource:{name:'categoriaAssunto', local:true}})
                                 ,txTabela:TYPE.CHAR(30,{label:'Tabela', mandatory:true, title:'Informe a descrição para o campo.'})
                                });
-
-        Tabela.resource = {
+        tab.resource = {
               context:CONFIG.RESOURCE.CONTEXT
               , name:Tabela.id.toLowerCase()
               , id:'idTabela'
               , local:true
         };
-   };
+    }(j$.Service.c$.Tabela))       
+
