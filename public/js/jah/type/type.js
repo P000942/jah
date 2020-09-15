@@ -266,7 +266,7 @@ const TYPE = function() {
                     return  (this.mask) ?this.mask.format(p_value) :this.value(p_value);
             };
             this.identify= (wrap, id, key)=>{
-                SELF.id =j$.util.getId(SELF.type, id);
+                SELF.id =System.util.getId(SELF.type, id);
                 SELF.key =(key)?key : SELF.id;
                 //    if (!design) design={};
                 //    SELF.design = design;
@@ -798,9 +798,9 @@ TYPE.HELPER = function(){
                                      :Object.build(this.field.resource.id,value);
         }
     
-        hide=()      =>{j$.Feedback.hide(this.field)}
-        show=text    =>{j$.Feedback.show(this.field, text,CONFIG.FEEDBACK.CLASS.LEGEND)}
-        failure=error=>{j$.Feedback.invalid(this.field, error)}
+        hide=()      =>{TYPE.Feedback.hide(this.field)}
+        show=text    =>{TYPE.Feedback.show(this.field, text,CONFIG.FEEDBACK.CLASS.LEGEND)}
+        failure=error=>{TYPE.Feedback.invalid(this.field, error)}
     
         get =  response => {
             this.hide();
@@ -828,119 +828,119 @@ TYPE.HELPER = function(){
     }; //Legend   
 
     return{
-    getElementIndex:function(obj) {
-        let form = obj.form;
-        for (let i=0; i<form.elements.length; i++) {
-            if (obj.id == form.elements[i].id) 
-                return i;
-        }
-        return -1;
-    }
-    , getLabel: function (inputField){ //Vai procurar no HTML o label que precede o input
-        let labelField = {label:'', mandatory:false}
-          , lbl="";
-        if(inputField.parentNode){
-          if(inputField.parentNode.tagName=='label')
-            lbl=inputField.parentNode.innerHTML;
-        }
-        let labels=document.getElementsByTagName("label"),i;
-        for(let i=0; i<labels.length;i++ ){
-           if(labels[i].htmlFor==inputField.id)
-              lbl=labels[i].innerHTML;
-        }
-        lbl=lbl.replace(' *', "*");
-        lbl=lbl.replace('* ', "*");
-        if (lbl.indexOf('>*<')>-1)
-           labelField.mandatory = true;
-
-        lbl=lbl.replace('<span class="required">*</span>', "");
-        lbl=lbl.replace('<span class="required"></span>', "");
-        labelField.label = lbl.replace(/[:->]/g,"").trim();
-        return labelField;
-   }
-   , setLabel: function (inputField, _input){
-        if (inputField.label.isEmpty() || !inputField.mandatory){
-            let labelField = TYPE.HELPER.getLabel(_input);
-            if (inputField.label.isEmpty()){
-                inputField.label=inputField.id;
-            if (!labelField.label.isEmpty())
-                inputField.label=labelField.label;
+        getElementIndex:function(obj) {
+            let form = obj.form;
+            for (let i=0; i<form.elements.length; i++) {
+                if (obj.id == form.elements[i].id) 
+                    return i;
             }
-            if (!inputField.mandatory)
-               inputField.mandatory = labelField.mandatory;
+            return -1;
         }
-   }
-   , createLabel: function(inputField, wrap, clas$, style){
-        if (inputField.label.isEmpty()) // label é o texto que foi setado no construtor
-            inputField.label=inputField.key;
+        , getLabel: function (inputField){ //Vai procurar no HTML o label que precede o input
+            let labelField = {label:'', mandatory:false}
+            , lbl="";
+            if(inputField.parentNode){
+            if(inputField.parentNode.tagName=='label')
+                lbl=inputField.parentNode.innerHTML;
+            }
+            let labels=document.getElementsByTagName("label"),i;
+            for(let i=0; i<labels.length;i++ ){
+            if(labels[i].htmlFor==inputField.id)
+                lbl=labels[i].innerHTML;
+            }
+            lbl=lbl.replace(' *', "*");
+            lbl=lbl.replace('* ', "*");
+            if (lbl.indexOf('>*<')>-1)
+            labelField.mandatory = true;
 
-        let lbl = j$.ui.Render.label(wrap, inputField.label, inputField.id, clas$ ,inputField.mandatory)
-        lbl.stylize(style);
-        return {label:inputField.label, mandatory:inputField.mandatory}
-   }
-   , setProperties: function(inputField, Type, Properties) {
-        //properties={autotab:false, label:'', mandatory:false, locked:false, defaultValue:'', align:c$.ALIGN.LEFT, size:null, validator:null, mask:null}
-        let mask = null;
-        // Primeiro verifica/seta o que vem do no Type, que são o valores que já vem por padrão
-        if (Type){
-            Object.setIfExist(inputField, Type
-                            , ['align','size','validator','mask','autotab', 'title'
-                              ,'type','label','dataType','list','attributes']);
-            if (Type.mask)
-                mask=Type.mask;
+            lbl=lbl.replace('<span class="required">*</span>', "");
+            lbl=lbl.replace('<span class="required"></span>', "");
+            labelField.label = lbl.replace(/[:->]/g,"").trim();
+            return labelField;
         }
-        // Depois verifica/seta o que vem em Porperties, que é o que vem do usuário;
-        if (Properties){
-            Object.setIfExist(inputField, Properties,
-                            ['evaluate','autotab', 'label','mandatory', 'align', 'parentLegend'
-                            , 'readOnly', 'disabled', 'defaultValue', 'type'
-                            , 'dataType', 'list','attributes', 'resource']);
-            Object.setIfExist(inputField.attributes, Properties,['min', 'max', 'step', 'pattern', 'placeholder']);                            
-            if (Properties.resource)
-                inputField.Resource =  j$.Resource.create(inputField.resource, inputField);
+        , setLabel: function (inputField, _input){
+            if (inputField.label.isEmpty() || !inputField.mandatory){
+                let labelField = TYPE.HELPER.getLabel(_input);
+                if (inputField.label.isEmpty()){
+                    inputField.label=inputField.id;
+                if (!labelField.label.isEmpty())
+                    inputField.label=labelField.label;
+                }
+                if (!inputField.mandatory)
+                inputField.mandatory = labelField.mandatory;
+            }
         }
-        inputField.mask = new Ma$k(mask);
-        if (!inputField.size)
-            inputField.size = inputField.mask.size;
+        , createLabel: function(inputField, wrap, clas$, style){
+            if (inputField.label.isEmpty()) // label é o texto que foi setado no construtor
+                inputField.label=inputField.key;
 
-        inputField.maxlength = (inputField.size>inputField.mask.size) ?inputField.size :inputField.mask.size;
-    }
-    , bindField: function(inputField, _input){
-        inputField.binded=true;
-        inputField.Input=_input;
-        inputField.Input.bind(inputField);
-        inputField.id =_input.id;
-        inputField.Error = j$.Feedback; 
-        
-        TYPE.HELPER.setLabel(inputField, _input); // definir o label
- 
-        Event.observe(_input, 'focus', TYPE.HANDLE.focus, false);
-        if (inputField.validator)
-            Event.observe(_input, 'blur',  (e)=>{TYPE.HANDLE.lostFocus(e,inputField.validate);});
-        else
-            Event.observe(_input, 'blur',  TYPE.HANDLE.lostFocus);
- 
-        switch(inputField.type){
-             case 'text':
-                inputField.Legend = new Legend(inputField);
-                 if (inputField.autotab)
-                     Event.observe(_input, 'keyup', ()=>{TYPE.HANDLE.autotab(_input,inputField.maxlength);});
-                 inputField.mask.render(_input);
-                 if (_input.maxlength)
-                     _input.maxlength = inputField.maxlength;
-                 break;
-             case 'range':
+            let lbl = j$.ui.Render.label(wrap, inputField.label, inputField.id, clas$ ,inputField.mandatory)
+            lbl.stylize(style);
+            return {label:inputField.label, mandatory:inputField.mandatory}
+        }
+        , setProperties: function(inputField, Type, Properties) {
+            //properties={autotab:false, label:'', mandatory:false, locked:false, defaultValue:'', align:c$.ALIGN.LEFT, size:null, validator:null, mask:null}
+            let mask = null;
+            // Primeiro verifica/seta o que vem do no Type, que são o valores que já vem por padrão
+            if (Type){
+                Object.setIfExist(inputField, Type
+                                , ['align','size','validator','mask','autotab', 'title'
+                                ,'type','label','dataType','list','attributes']);
+                if (Type.mask)
+                    mask=Type.mask;
+            }
+            // Depois verifica/seta o que vem em Porperties, que é o que vem do usuário;
+            if (Properties){
+                Object.setIfExist(inputField, Properties,
+                                ['evaluate','autotab', 'label','mandatory', 'align', 'parentLegend'
+                                , 'readOnly', 'disabled', 'defaultValue', 'type'
+                                , 'dataType', 'list','attributes', 'resource']);
+                Object.setIfExist(inputField.attributes, Properties,['min', 'max', 'step', 'pattern', 'placeholder']);                            
+                if (Properties.resource)
+                    inputField.Resource =  j$.Resource.create(inputField.resource, inputField);
+            }
+            inputField.mask = new Ma$k(mask);
+            if (!inputField.size)
+                inputField.size = inputField.mask.size;
+
+            inputField.maxlength = (inputField.size>inputField.mask.size) ?inputField.size :inputField.mask.size;
+        }
+        , bindField: function(inputField, _input){
+            inputField.binded=true;
+            inputField.Input=_input;
+            inputField.Input.bind(inputField);
+            inputField.id =_input.id;
+            inputField.Error = TYPE.Feedback; 
+            
+            TYPE.HELPER.setLabel(inputField, _input); // definir o label
+    
+            Event.observe(_input, 'focus', TYPE.HANDLE.focus, false);
+            if (inputField.validator)
+                Event.observe(_input, 'blur',  (e)=>{TYPE.HANDLE.lostFocus(e,inputField.validate);});
+            else
+                Event.observe(_input, 'blur',  TYPE.HANDLE.lostFocus);
+    
+            switch(inputField.type){
+                case 'text':
                     inputField.Legend = new Legend(inputField);
-                     break;
-             case 'select':
-                 inputField.popule();
-                 break;           
-             default:
-                 break
+                    if (inputField.autotab)
+                        Event.observe(_input, 'keyup', ()=>{TYPE.HANDLE.autotab(_input,inputField.maxlength);});
+                    inputField.mask.render(_input);
+                    if (_input.maxlength)
+                        _input.maxlength = inputField.maxlength;
+                    break;
+                case 'range':
+                        inputField.Legend = new Legend(inputField);
+                        break;
+                case 'select':
+                    inputField.popule();
+                    break;           
+                default:
+                    break
+            }
+            Object.setIfExist(_input, inputField,['readOnly','disabled','defaultValue'])
+            _input.className   = _input.className + " " + inputField.classDefault;
         }
-        Object.setIfExist(_input, inputField,['readOnly','disabled','defaultValue'])
-        _input.className   = _input.className + " " + inputField.classDefault;
-    }
     } // return
 }();  // TYPE.HELPER
 
@@ -955,7 +955,7 @@ TYPE.HANDLE = {
   , error: (obj,event, id)=>{
         let field = i$(id).field;
         //System.Hint.show(field.Error.get(),obj,event,"hint hint-error");
-        j$.Feedback.invalid(field,field.Error.get());
+        TYPE.Feedback.invalid(field,field.Error.get());
     }
   , lostFocus: (e, validate)=>{
        let inputField = Event.element(e)
@@ -1027,7 +1027,7 @@ TYPE.ERROR = function() {
         ,     on:(field,msg,clas$) =>{field.Error.show(field, msg, clas$)} // sinonimo de show        
         ,    off:(field)           =>{field.Error.hide(field)} // sinonimo de hide
         ,   hide:(field)           =>{field.Error.hide(field)}
-        ,noMarkIfValid(mark)         {j$.Feedback.noMarkIfValid(mark)} 
+        ,noMarkIfValid(mark)         {TYPE.Feedback.noMarkIfValid(mark)} 
         ,MESSAGE:CONFIG.ERROR.MESSAGE    
         , passForward:{ // => O componetes do framework fazem essa chamada
                     // => Se tem um handle externo, serah passado adiante
@@ -1042,7 +1042,7 @@ TYPE.ERROR = function() {
     };
 }();
 // colaca os textos e estilos quando da validação dos campos
-j$.Feedback =function (){
+TYPE.Feedback =function (){
     let _msg=null
       , _markIfValid = true;
     function fmtMsg(msg=""){ 
@@ -1090,135 +1090,136 @@ j$.Feedback =function (){
         ,noMarkIfValid(mark=false){_markIfValid=mark}
     }   
 }();
-j$.ui.Render= function(){
-    return {
-        attributes:(attributes, exception)=>{
-            //formata outros atributos de html do formulárioa para renderizar
-            let result = ' ' 
-            , ignore =att=>{
-                let go=false;
-                if (['key','caption','icon'].indexOf(att)>-1){
-                    go= true;
-                } else if (exception){
-                    if ((dataExt.isString(exception) && exception===att)
-                    || (dataExt.isArray(exception) && exception.has(att)))
-                        go= true;
-                }
-                return go;
-            };
-            for (let attribute in attributes){
-                let att = attribute.replace(/[$]/g,'s');
-                if (att.indexOf('data_')>-1)
-                    att = att.replace('data_','data-');
-                else
-                    att = att.replace(/\W|[_]/g,'');
-                if (attributes[attribute] && !ignore(att)){
-                    result += att+"='" +attributes[attribute]+ "' " ;
-                }
-            }
-            return result;
-        }
-    , wrap:(wrap, id, clas$, style)=>{
-            let id$ = j$.util.getId(clas$, id);
-            if (!i$(id$)){
-            wrap.insert(`<div id='${id$}' class='${clas$}'></div>`);
-            i$(id$).stylize(style);
-            }   
-            return i$(id$);
-        }
-    , label: (wrap, label, inputId, clas$=CONFIG.LABEL.CLASS.DEFAULT, mandatory)=>{
-            let att={clas$
-                    ,  id:(inputId) ?inputId+ '_label' :j$.util.getId('Label')
-                    , for:(inputId) ?inputId :null
-                    };
-            label =(label)?label : att.id;
-            if (!i$(att.id)){ // cria se não existir
-            let _att = j$.ui.Render.attributes(att,'label')
-            , required =(mandatory) ?`<span class="${CONFIG.INPUT.CLASS.REQUIRED}">*</span>` :'';
-            $(wrap).append(`<label ${_att} >${label}${required}:</label>`);
-            }
-            return i$(att.id);
-    }
-    , input:(wrap, id, inputType, maxlength, attributes)=>{
-            if (!i$(id)){
-            let size =(maxlength)?" size='" +maxlength+ "'":""
-            ,   type = (inputType)?inputType:'text'
-            ,   _att = j$.ui.Render.attributes(attributes)
-            if (type==='select')
-                wrap.insert(`<${type} id='${id}' name='${id}' ${_att} ></${type}>`);
-            else
-                wrap.insert(`<input type='${type}' id='${id}' name='${id}' ${size} ${_att} />`);
-            }
-            return i$(id);
-        }  
-    , wrapperUl:(wrap, id, wrapStyle)=>{
-            let wrapId =j$.util.getId(wrapStyle, id)
-            , wrapNavId = `${wrapId}_wrap`;
-            $(wrap).append(`<nav class='wrapperUl d-flex flex-row-reverse' id='${wrapNavId}'></nav>`);
-            $(`#${wrapNavId}`).append(`<ul class="${wrapStyle}" id="${wrapId}"></ul>`);
-            return i$(wrapId);
-        }
-    , li:(wrap, properties)=>{
-        wrap.insert('<li><a ' +j$.ui.Render.attributes({id:properties.id, onclick:properties.onclick})+' >' +properties.caption+ '</a></li>');
-        return i$(properties.id);
-    }
-    , menuItem:(wrap, properties)=>{
-        wrap.insert('<a class="dropdown-item" href="#" ' +j$.ui.Render.attributes({id:properties.id, onclick:properties.onclick})+' >' +properties.caption+ '</a>');
-        return i$(properties.id);
-    }         
-    , line:(section, id, wrapStyle, title)=>{
-            let wrapId=j$.util.getId(wrapStyle, id)
-            , legend="", idLegend=`${wrapId}_legend`;
-            if (title!=undefined){
-                if (dataExt.isString(title))
-                legend =`<legend class='${wrapStyle}_legend' id='${idLegend}'>${title}</legend>`;
-                else
-                legend =`<legend class='${wrapStyle}_legend' id='${idLegend}'>${title.text}</legend>`;
-            }
-            section.insert(`<fieldset class='${wrapStyle}' id='${wrapId}'>${legend}</fieldset>`);
-            if (i$(idLegend)!=undefined && title.style!=undefined)
-                i$(idLegend).stylize(title.style);
-            return i$(wrapId);
-        }
-    , button:(wrap, properties)=>{
-        if (!properties.submenu)
-            wrap.insert(j$.ui.Render.formatButton(properties));
-        else
-            wrap.insert(j$.ui.Render.formatButtonDropdown(properties));
-        return i$(properties.id);
-    }
-    , formatButton:(properties)=>{
-        return '<a' +j$.ui.Render.attributes(properties,['value', 'element'])+ '>'+j$.ui.Render.icon(properties)+properties.value+'</a>';
-    }
-    , formatButtonDropdown:(properties)=>{
-        return '<div id="' +properties.id+ '"  class="btn-group" role="group" aria-label="Button group with nested dropdown">'                 
-                +  '<div class="btn-group" role="group">'                   
-                +    '<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" ' +j$.ui.Render.attributes(properties,['value','onclick','submenu','id'])+ '>'+j$.ui.Render.icon(properties)+'</button>'              
-                +    '<div id="'+properties.id+'Menu" class="dropdown-menu"></div>'
-                +    '</div>'
-                +'</div>';
-    }
-    , icon:(properties)=>{
-        let iconClass
-            , key = properties;
-        if (dataExt.isString(properties))
-            iconClass = CONFIG.icon(key);
-        else if(dataExt.isObject(properties)){
-            key = (properties.key)?properties.key:'';
-            iconClass =(properties.icon) ?properties.icon :CONFIG.icon(key)
-        }
-        if (iconClass){
-            let color = CONFIG.color(key);
-            let txColor=(color)?`style="color:${color};" `  :'';
-            return `<i class="${iconClass}" ${txColor}></i>`;
-        }else
-            return '';
-    }
-    , alert:(wrap, msg, clas$)=>{
-        clas$ = (clas$)? `class='alert ${clas$}'`: "class='alert'";
-        wrap.insert(`<div ${clas$}><button type="button" class="close" data-dismiss="alert">×</button>${msg}</div>`);
-    }
-    };
-}();    
 
-// export {j$.Fieldset, TYPE, j$.Feedback, j$.ui};
+// j$.ui.Render= function(){
+//     return {
+//         attributes:(attributes, exception)=>{
+//             //formata outros atributos de html do formulárioa para renderizar
+//             let result = ' ' 
+//             , ignore =att=>{
+//                 let go=false;
+//                 if (['key','caption','icon'].indexOf(att)>-1){
+//                     go= true;
+//                 } else if (exception){
+//                     if ((dataExt.isString(exception) && exception===att)
+//                     || (dataExt.isArray(exception) && exception.has(att)))
+//                         go= true;
+//                 }
+//                 return go;
+//             };
+//             for (let attribute in attributes){
+//                 let att = attribute.replace(/[$]/g,'s');
+//                 if (att.indexOf('data_')>-1)
+//                     att = att.replace('data_','data-');
+//                 else
+//                     att = att.replace(/\W|[_]/g,'');
+//                 if (attributes[attribute] && !ignore(att)){
+//                     result += att+"='" +attributes[attribute]+ "' " ;
+//                 }
+//             }
+//             return result;
+//         }
+//     , wrap:(wrap, id, clas$, style)=>{
+//             let id$ = System.util.getId(clas$, id);
+//             if (!i$(id$)){
+//             wrap.insert(`<div id='${id$}' class='${clas$}'></div>`);
+//             i$(id$).stylize(style);
+//             }   
+//             return i$(id$);
+//         }
+//     , label: (wrap, label, inputId, clas$=CONFIG.LABEL.CLASS.DEFAULT, mandatory)=>{
+//             let att={clas$
+//                     ,  id:(inputId) ?inputId+ '_label' :System.util.getId('Label')
+//                     , for:(inputId) ?inputId :null
+//                     };
+//             label =(label)?label : att.id;
+//             if (!i$(att.id)){ // cria se não existir
+//             let _att = j$.ui.Render.attributes(att,'label')
+//             , required =(mandatory) ?`<span class="${CONFIG.INPUT.CLASS.REQUIRED}">*</span>` :'';
+//             $(wrap).append(`<label ${_att} >${label}${required}:</label>`);
+//             }
+//             return i$(att.id);
+//     }
+//     , input:(wrap, id, inputType, maxlength, attributes)=>{
+//             if (!i$(id)){
+//             let size =(maxlength)?" size='" +maxlength+ "'":""
+//             ,   type = (inputType)?inputType:'text'
+//             ,   _att = j$.ui.Render.attributes(attributes)
+//             if (type==='select')
+//                 wrap.insert(`<${type} id='${id}' name='${id}' ${_att} ></${type}>`);
+//             else
+//                 wrap.insert(`<input type='${type}' id='${id}' name='${id}' ${size} ${_att} />`);
+//             }
+//             return i$(id);
+//         }  
+//     , wrapperUl:(wrap, id, wrapStyle)=>{
+//             let wrapId =System.util.getId(wrapStyle, id)
+//             , wrapNavId = `${wrapId}_wrap`;
+//             $(wrap).append(`<nav class='wrapperUl d-flex flex-row-reverse' id='${wrapNavId}'></nav>`);
+//             $(`#${wrapNavId}`).append(`<ul class="${wrapStyle}" id="${wrapId}"></ul>`);
+//             return i$(wrapId);
+//         }
+//     , li:(wrap, properties)=>{
+//         wrap.insert('<li><a ' +j$.ui.Render.attributes({id:properties.id, onclick:properties.onclick})+' >' +properties.caption+ '</a></li>');
+//         return i$(properties.id);
+//     }
+//     , menuItem:(wrap, properties)=>{
+//         wrap.insert('<a class="dropdown-item" href="#" ' +j$.ui.Render.attributes({id:properties.id, onclick:properties.onclick})+' >' +properties.caption+ '</a>');
+//         return i$(properties.id);
+//     }         
+//     , line:(section, id, wrapStyle, title)=>{
+//             let wrapId=System.util.getId(wrapStyle, id)
+//             , legend="", idLegend=`${wrapId}_legend`;
+//             if (title!=undefined){
+//                 if (dataExt.isString(title))
+//                 legend =`<legend class='${wrapStyle}_legend' id='${idLegend}'>${title}</legend>`;
+//                 else
+//                 legend =`<legend class='${wrapStyle}_legend' id='${idLegend}'>${title.text}</legend>`;
+//             }
+//             section.insert(`<fieldset class='${wrapStyle}' id='${wrapId}'>${legend}</fieldset>`);
+//             if (i$(idLegend)!=undefined && title.style!=undefined)
+//                 i$(idLegend).stylize(title.style);
+//             return i$(wrapId);
+//         }
+//     , button:(wrap, properties)=>{
+//         if (!properties.submenu)
+//             wrap.insert(j$.ui.Render.formatButton(properties));
+//         else
+//             wrap.insert(j$.ui.Render.formatButtonDropdown(properties));
+//         return i$(properties.id);
+//     }
+//     , formatButton:(properties)=>{
+//         return '<a' +j$.ui.Render.attributes(properties,['value', 'element'])+ '>'+j$.ui.Render.icon(properties)+properties.value+'</a>';
+//     }
+//     , formatButtonDropdown:(properties)=>{
+//         return '<div id="' +properties.id+ '"  class="btn-group" role="group" aria-label="Button group with nested dropdown">'                 
+//                 +  '<div class="btn-group" role="group">'                   
+//                 +    '<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" ' +j$.ui.Render.attributes(properties,['value','onclick','submenu','id'])+ '>'+j$.ui.Render.icon(properties)+'</button>'              
+//                 +    '<div id="'+properties.id+'Menu" class="dropdown-menu"></div>'
+//                 +    '</div>'
+//                 +'</div>';
+//     }
+//     , icon:(properties)=>{
+//         let iconClass
+//             , key = properties;
+//         if (dataExt.isString(properties))
+//             iconClass = CONFIG.icon(key);
+//         else if(dataExt.isObject(properties)){
+//             key = (properties.key)?properties.key:'';
+//             iconClass =(properties.icon) ?properties.icon :CONFIG.icon(key)
+//         }
+//         if (iconClass){
+//             let color = CONFIG.color(key);
+//             let txColor=(color)?`style="color:${color};" `  :'';
+//             return `<i class="${iconClass}" ${txColor}></i>`;
+//         }else
+//             return '';
+//     }
+//     , alert:(wrap, msg, clas$)=>{
+//         clas$ = (clas$)? `class='alert ${clas$}'`: "class='alert'";
+//         wrap.insert(`<div ${clas$}><button type="button" class="close" data-dismiss="alert">×</button>${msg}</div>`);
+//     }
+//     };
+// }();    
+
+// export {j$.Fieldset, TYPE, j$.ui};

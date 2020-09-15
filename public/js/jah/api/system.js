@@ -268,24 +268,6 @@ System.EXCEPTION = function() {
     };
 }();
 
-const j$={ui:{},sample:{}};
-//@note: util apenas em dsv para ver os objetos/colecoes e seus respectivos shortcut - que estão instanciados
-//j$.$V() ou j$.$V("$R")
-j$.$V= key =>{
-   let shortCut = {"$C":"Controller:","$P":"Page:","$R":"Resource:","$S":"Service:", "$T":"Tabs:"};
-   for (let id in shortCut){
-      if (j$[id]){
-         if (key){
-            if (id==key)
-               console.log(j$[id]);
-         }else{
-            console.log(shortCut[id]+id);
-            console.log(j$[id]);
-         }
-      }
-   }
-}
-
 System.Node=function(inheritor, properties){
     let _node = this;
     this.length = 0;
@@ -446,5 +428,156 @@ System.util = function(){
         getId:getId
     };
 }();
+
+const j$={ui:{}
+         ,sample:{}
+         ,$V:key =>{ //Exemplo: j$.$V() ou j$.$V("$R")
+            //@note: util apenas em dsv para ver os objetos/colecoes e seus respectivos shortcut - que estão instanciados
+            let shortCut = {"$C":"Controller:","$P":"Page:","$R":"Resource:","$S":"Service:", "$T":"Tabs:"};
+            for (let id in shortCut){
+               if (j$[id]){
+                  if (key){
+                     if (id==key)
+                        console.log(j$[id]);
+                  }else{
+                     console.log(shortCut[id]+id);
+                     console.log(j$[id]);
+                  }
+               }
+            }
+         }
+}
+
+j$.ui.Render= function(){
+    return {
+        attributes:(attributes, exception)=>{
+            //formata outros atributos de html do formulárioa para renderizar
+            let result = ' ' 
+            , ignore =att=>{
+                let go=false;
+                if (['key','caption','icon'].indexOf(att)>-1){
+                    go= true;
+                } else if (exception){
+                    if ((dataExt.isString(exception) && exception===att)
+                    || (dataExt.isArray(exception) && exception.has(att)))
+                        go= true;
+                }
+                return go;
+            };
+            for (let attribute in attributes){
+                let att = attribute.replace(/[$]/g,'s');
+                if (att.indexOf('data_')>-1)
+                    att = att.replace('data_','data-');
+                else
+                    att = att.replace(/\W|[_]/g,'');
+                if (attributes[attribute] && !ignore(att)){
+                    result += att+"='" +attributes[attribute]+ "' " ;
+                }
+            }
+            return result;
+        }
+    , wrap:(wrap, id, clas$, style)=>{
+            let id$ = System.util.getId(clas$, id);
+            if (!i$(id$)){
+            wrap.insert(`<div id='${id$}' class='${clas$}'></div>`);
+            i$(id$).stylize(style);
+            }   
+            return i$(id$);
+        }
+    , label: (wrap, label, inputId, clas$=CONFIG.LABEL.CLASS.DEFAULT, mandatory)=>{
+            let att={clas$
+                    ,  id:(inputId) ?inputId+ '_label' :System.util.getId('Label')
+                    , for:(inputId) ?inputId :null
+                    };
+            label =(label)?label : att.id;
+            if (!i$(att.id)){ // cria se não existir
+            let _att = j$.ui.Render.attributes(att,'label')
+            , required =(mandatory) ?`<span class="${CONFIG.INPUT.CLASS.REQUIRED}">*</span>` :'';
+            $(wrap).append(`<label ${_att} >${label}${required}:</label>`);
+            }
+            return i$(att.id);
+    }
+    , input:(wrap, id, inputType, maxlength, attributes)=>{
+            if (!i$(id)){
+            let size =(maxlength)?" size='" +maxlength+ "'":""
+            ,   type = (inputType)?inputType:'text'
+            ,   _att = j$.ui.Render.attributes(attributes)
+            if (type==='select')
+                wrap.insert(`<${type} id='${id}' name='${id}' ${_att} ></${type}>`);
+            else
+                wrap.insert(`<input type='${type}' id='${id}' name='${id}' ${size} ${_att} />`);
+            }
+            return i$(id);
+        }  
+    , wrapperUl:(wrap, id, wrapStyle)=>{
+            let wrapId =System.util.getId(wrapStyle, id)
+            , wrapNavId = `${wrapId}_wrap`;
+            $(wrap).append(`<nav class='wrapperUl d-flex flex-row-reverse' id='${wrapNavId}'></nav>`);
+            $(`#${wrapNavId}`).append(`<ul class="${wrapStyle}" id="${wrapId}"></ul>`);
+            return i$(wrapId);
+        }
+    , li:(wrap, properties)=>{
+        wrap.insert('<li><a ' +j$.ui.Render.attributes({id:properties.id, onclick:properties.onclick})+' >' +properties.caption+ '</a></li>');
+        return i$(properties.id);
+    }
+    , menuItem:(wrap, properties)=>{
+        wrap.insert('<a class="dropdown-item" href="#" ' +j$.ui.Render.attributes({id:properties.id, onclick:properties.onclick})+' >' +properties.caption+ '</a>');
+        return i$(properties.id);
+    }         
+    , line:(section, id, wrapStyle, title)=>{
+            let wrapId=System.util.getId(wrapStyle, id)
+            , legend="", idLegend=`${wrapId}_legend`;
+            if (title!=undefined){
+                if (dataExt.isString(title))
+                legend =`<legend class='${wrapStyle}_legend' id='${idLegend}'>${title}</legend>`;
+                else
+                legend =`<legend class='${wrapStyle}_legend' id='${idLegend}'>${title.text}</legend>`;
+            }
+            section.insert(`<fieldset class='${wrapStyle}' id='${wrapId}'>${legend}</fieldset>`);
+            if (i$(idLegend)!=undefined && title.style!=undefined)
+                i$(idLegend).stylize(title.style);
+            return i$(wrapId);
+        }
+    , button:(wrap, properties)=>{
+        if (!properties.submenu)
+            wrap.insert(j$.ui.Render.formatButton(properties));
+        else
+            wrap.insert(j$.ui.Render.formatButtonDropdown(properties));
+        return i$(properties.id);
+    }
+    , formatButton:(properties)=>{
+        return '<a' +j$.ui.Render.attributes(properties,['value', 'element'])+ '>'+j$.ui.Render.icon(properties)+properties.value+'</a>';
+    }
+    , formatButtonDropdown:(properties)=>{
+        return '<div id="' +properties.id+ '"  class="btn-group" role="group" aria-label="Button group with nested dropdown">'                 
+                +  '<div class="btn-group" role="group">'                   
+                +    '<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" ' +j$.ui.Render.attributes(properties,['value','onclick','submenu','id'])+ '>'+j$.ui.Render.icon(properties)+'</button>'              
+                +    '<div id="'+properties.id+'Menu" class="dropdown-menu"></div>'
+                +    '</div>'
+                +'</div>';
+    }
+    , icon:(properties)=>{
+        let iconClass
+            , key = properties;
+        if (dataExt.isString(properties))
+            iconClass = CONFIG.icon(key);
+        else if(dataExt.isObject(properties)){
+            key = (properties.key)?properties.key:'';
+            iconClass =(properties.icon) ?properties.icon :CONFIG.icon(key)
+        }
+        if (iconClass){
+            let color = CONFIG.color(key);
+            let txColor=(color)?`style="color:${color};" `  :'';
+            return `<i class="${iconClass}" ${txColor}></i>`;
+        }else
+            return '';
+    }
+    , alert:(wrap, msg, clas$)=>{
+        clas$ = (clas$)? `class='alert ${clas$}'`: "class='alert'";
+        wrap.insert(`<div ${clas$}><button type="button" class="close" data-dismiss="alert">×</button>${msg}</div>`);
+    }
+    };
+}();    
+
 
 // export {i$, System, j$};

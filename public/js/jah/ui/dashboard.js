@@ -580,7 +580,7 @@ j$.Dashboard.Menu = function(){ // factory
       , C$:key=>{return items[key]}      
     };
 }();
-// j$.ui.Dropdown = function(){ // factory
+// j$.Dropdown = function(){ // factory
 //     let items = {};
 //     return{
 //       create(idContent, caption){

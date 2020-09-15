@@ -236,7 +236,7 @@ j$.Page = function(){
         function slidebox(properties){
             let self = this;
             Object.preset(properties, {container:i$('content'), style:'slidebox_show'});
-            properties.id =j$.util.getId(properties.style, properties.id);
+            properties.id =System.util.getId(properties.style, properties.id);
             Object.preset(self, properties);
             let create=function(){
                 let idFieldset =properties.id + "_slidebox";
@@ -262,7 +262,7 @@ j$.Page = function(){
         function framebox(properties){
             let self = this;
             Object.preset(properties, {container:i$('content'), style:'wrap_framebox'});
-            properties.id =j$.util.getId(properties.style, properties.id);
+            properties.id =System.util.getId(properties.style, properties.id);
             Object.preset(self, properties);
             let create=function(){
                 let idFieldset =properties.id + "_framebox";
