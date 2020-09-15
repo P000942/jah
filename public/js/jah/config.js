@@ -3,52 +3,53 @@
  */
 'use strict'
 //import dataExt from  "./api/dataExt.js"; 
-const c$ = {  NOW: new Date()
-           ,   RC:{NOT_FOUND:-1, NONE:-1}
-           ,ALIGN:{LEFT:'left', CENTER:'center', RIGHT:'right', JUSTIFY:'justify', TOP:'top', BOTTOM:'bottom'}
-           ,MOUSE:{BUTTON:{LEFT:0,CENTER:1,RIGHT:2}}
-           ,ORDER:{ASCENDING:'ASC', DESCENDING:'DESC', NONE:'NONE'}
-           ,  KEY:{F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123
-                , TAB:9, ENTER:13, ESC:27, COMMA:44, BACKSPACE:8, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, INS:45, DEL:46, REFRESH:116}
-           ,FILTER:{}
-           ,  MENU:{TYPE:{SIDEBAR:'sidebar', MENUBAR:'menubar'}}
-           ,  MASK:{
-                    FieldDataSeparator : "|"
-                  , Prompt: "_"
-                  , DecimalCharacter : ","
-                  , ThousandsSeparator : "."
-                  , MaskCharacters : {
-                            Numeric : "#90"
-                           , Alpha : "@aA"
-                    }
-                  , AllowInsert : true
-                  , LowerCaseCharacter:'a'
-                  , UpperCaseCharacter:'A'
-                  , DisplayMaskCharacters : false //Display mask characters when default text is not present                 
-                  , DATE :{
-                        "default":      "dd/mm/yyyy"
-                        , shortDate:      "d/m/yy"
-                        , mediumDate:     "mmm d, yyyy"
-                        , longDate:       "mmmm d, yyyy"
-                        , fullDate:       "dddd, mmmm d, yyyy"
-                        , shortTime:      "HH:MM"//"h:MM TT",
-                        , mediumTime:     "h:MM:ss TT"
-                        , longTime:       "h:MM:ss TT Z"
-                        , isoDate:        "yyyy-mm-dd"
-                        , isoTime:        "HH:MM:ss"
-                        , isoDateTime:    "yyyy-mm-dd'T'HH:MM:ss"
-                        , isoUtcDateTime: "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'"
-                }  
+const c$ = {
+       NOW: new Date()
+    ,   RC:{NOT_FOUND:-1, NONE:-1}
+    ,ALIGN:{LEFT:'left', CENTER:'center', RIGHT:'right', JUSTIFY:'justify', TOP:'top', BOTTOM:'bottom'}
+    ,MOUSE:{BUTTON:{LEFT:0,CENTER:1,RIGHT:2}}
+    ,ORDER:{ASCENDING:'ASC', DESCENDING:'DESC', NONE:'NONE'}
+    ,  KEY:{F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123
+        , TAB:9, ENTER:13, ESC:27, COMMA:44, BACKSPACE:8, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, INS:45, DEL:46, REFRESH:116}
+    ,FILTER:{}
+    ,  MENU:{TYPE:{SIDEBAR:'sidebar', MENUBAR:'menubar'}}
+    ,  MASK:{
+            FieldDataSeparator : "|"
+            , Prompt: "_"
+            , DecimalCharacter : ","
+            , ThousandsSeparator : "."
+            , MaskCharacters : {
+                    Numeric : "#90"
+                    , Alpha : "@aA"
             }
-            ,  MASKS: { // serah gerado uma propriedade do html data-mask e data-prompt: 
-                    fax: {format:"(###) ###-####,(   )    -    ", strip:',()'}
-                ,   cpx: "###.###.###-##,___.___.___-__"
-                ,   cpf: {format:'000.000.000-00|___.___.___-__', strip:'.-'}
-                ,  cnpj: {format:'00.000.000/0000-00|__.___.___/____-__', strip:'-/.'}
-                ,   cca: {format:'00.000.000-0|__.___.___-_', strip:'.-'}
-                ,   cep: {format:'00000-000|_____-___', strip:'-'}
-                , placa: {format:'AAA-0000|___-____', strip:'.-'}
-            }
+            , AllowInsert : true
+            , LowerCaseCharacter:'a'
+            , UpperCaseCharacter:'A'
+            , DisplayMaskCharacters : false //Display mask characters when default text is not present                 
+            , DATE :{
+                "default":      "dd/mm/yyyy"
+                , shortDate:      "d/m/yy"
+                , mediumDate:     "mmm d, yyyy"
+                , longDate:       "mmmm d, yyyy"
+                , fullDate:       "dddd, mmmm d, yyyy"
+                , shortTime:      "HH:MM"//"h:MM TT",
+                , mediumTime:     "h:MM:ss TT"
+                , longTime:       "h:MM:ss TT Z"
+                , isoDate:        "yyyy-mm-dd"
+                , isoTime:        "HH:MM:ss"
+                , isoDateTime:    "yyyy-mm-dd'T'HH:MM:ss"
+                , isoUtcDateTime: "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'"
+        }  
+    }
+    ,  MASKS: { // serah gerado uma propriedade do html data-mask e data-prompt: 
+            fax: {format:"(###) ###-####,(   )    -    ", strip:',()'}
+        ,   cpx: "###.###.###-##,___.___.___-__"
+        ,   cpf: {format:'000.000.000-00|___.___.___-__', strip:'.-'}
+        ,  cnpj: {format:'00.000.000/0000-00|__.___.___/____-__', strip:'-/.'}
+        ,   cca: {format:'00.000.000-0|__.___.___-_', strip:'.-'}
+        ,   cep: {format:'00000-000|_____-___', strip:'-'}
+        , placa: {format:'AAA-0000|___-____', strip:'.-'}
+    }
 }
 
 c$.ORDER.CLASS =  order =>{
@@ -97,7 +98,6 @@ const CONFIG = {
                }
           , SUBSCRIBE:['label','key','caption']  // Será substituído na mensagem
       }
-
      ,HTTP:{
              STATUS:{
                      BAD_REQUEST:{VALUE:400 , TEXT: "Requisição inválida"}
@@ -120,12 +120,6 @@ const CONFIG = {
                }
    , RESOURCE:{CONTEXT:'http://localhost:3000/'}
    ,   SERVER:{CONTEXT:'http://localhost:3000/'}
-   // , ADAPTER:{TYPE:{DEFAULT:0
-   //                     LINK:1
-   //                 ,PARTIAL:2
-   //                 ,  MODAL:3
-   //                 }
-   // }
     , BOOLEAN:{'true':{value:true, text:'sim'}, 'false':{value:false, text:'Não'}}
     , LAYOUT:{CONTENT:'content', ALERT_CONTENT:'wrapAlert'}
     , ACTION:{

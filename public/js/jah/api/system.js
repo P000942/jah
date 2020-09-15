@@ -305,7 +305,7 @@ System.Node=function(inheritor, properties){
                   //  key = _node.Parent.key + "_" + properties.caption.toKey();
 
                 if (key.isEmpty())
-                    key=j$.util.getId(_node.Parent.key + "_" + _node.type);
+                    key=System.util.getId(_node.Parent.key + "_" + _node.type);
 
                 if (properties.caption==undefined)
                     properties.caption=key.toCaption();
@@ -428,7 +428,7 @@ class Observer extends System.Collection{
 }
 System.Observer = Observer;
 
-j$.util = function(){
+System.util = function(){
     let sequence = {};
     let getId = function(key, id){
         let _k =(dataExt.isString(key)) ? key.split(" ")[0] :'SequenceId';

@@ -247,7 +247,6 @@ const dataExt = function(){
     //Test$.Integer(''); Test$.Integer('23,59'); Test$.Integer('00,00'); Test$.Integer('24');Test$.Integer('1'); Test$.Integer('A'); Test$.Integer('100000001,1'), Test$.Integer('1,A');Test$.Integer('A,1');
 
     String.prototype.isMoney = function(){
-        //var expReg =/^[0-9]{1,}[,]{0,1}[0-9]{1,2}$/;
         let expReg =/^(\d{1,}[,]{1}\d{1,2}$)|(^\d+$)/;
         return (!this.regexValidate(expReg))?false:true;
     }
@@ -259,17 +258,11 @@ const dataExt = function(){
     }
     //Test$.Date('29/02/2011'); Test$.Date('28/02/2011'); Test$.Date('29/02/2008');Test$.Date('31/04/2011'); Test$.Date('31/05/2011'); Test$.Date('31/08/2008');
 
-    String.prototype.isDateTime = function(){
-        return true;
-    }
+    String.prototype.isDateTime = function(){ return true}
 
-    String.prototype.isColor = function(){
-        return true;
-    }
+    String.prototype.isColor = function(){ return true}
 
-    String.prototype.isRange = function(){
-        return true;
-    }
+    String.prototype.isRange = function(){return true}
 
     String.prototype.isHour = function(){
         let expReg =/^([0-1][0-9]|[2][0-3]):[0-5][0-9]$/;
@@ -297,16 +290,16 @@ const dataExt = function(){
         mask = (mask=='9,99')?'999.999.999.999,99':mask;
         let value=this.stripChar(mask.replace(/\w|[@]/g,"")); // Retira os separadores, caso estejam no valor;
         value=stuff(value.trim(), mask.replace(/\W/g,""));
-        let masks=mask.replace(/\W/g," ").split(' '); // monta um array  com as m�scaras - sem os separadores
-        let separators=$A(mask.replace(/\w/g,"")); // monta um array  com os separadores
-        let startSeparator = (mask[0].match(/\W/))?mask[0]:''; // Pega o separador, quando tem na primeira posi��o
-        let formattedText="";
-        let initPosition = 0;
+        let masks=mask.replace(/\W/g," ").split(' ') // monta um array  com as m�scaras - sem os separadores
+          , separators=$A(mask.replace(/\w/g,"")) // monta um array  com os separadores
+          , startSeparator = (mask[0].match(/\W/))?mask[0]:'' // Pega o separador, quando tem na primeira posi��o
+          , formattedText=""
+          , initPosition = 0;
         for (let i=0;i<masks.length;i++){
-            let separator=separators[i]?separators[i]:'';
-            let maskSplit =  masks[i].trim()// pegar parte da m�scara para a formata��o
-            let part = value.substr(initPosition, maskSplit.length);  // pega a parte que indicada na m�scara, segunda separador
-            let maskedText = '';
+            let separator=separators[i]?separators[i]:''
+              , maskSplit =  masks[i].trim()// pegar parte da m�scara para a formata��o
+              , part = value.substr(initPosition, maskSplit.length)  // pega a parte que indicada na m�scara, segunda separador
+              , maskedText = '';
             for (let k=0;k<part.length;k++){
                 let character = part[k];
                 if (character==' ' && maskSplit[k]=='0')
@@ -328,8 +321,6 @@ const dataExt = function(){
         }
         function $A(iterable) {
             if (!iterable) return [];
-            // var length = iterable.length || 0, results = new Array(length);
-            // while (length--) results[length] = iterable[length];
             return iterable.split("");
         }
     };
@@ -340,12 +331,12 @@ const dataExt = function(){
     String.prototype.isValidInMask = function(mask){
         mask =mask.replace(/[#]/g,'9'); // para adequar as m�scaras usadas na edi��o
         mask =mask.replace(/[@]/g,'X'); // para evitar que retira quando da remo��o de todos os caracteres especiais;
-        let value=this.stripChar(mask.replace(/\w|[@]/g,"")).trim(); // Retira os separadores, caso estejam no valor;
-        let masks=mask.replace(/\W/g,""); // remove os separadores
-        let valid=false;
+        let value=this.stripChar(mask.replace(/\w|[@]/g,"")).trim() // Retira os separadores, caso estejam no valor;
+          , masks=mask.replace(/\W/g,"") // remove os separadores
+          , valid=false;
         for (let i=0;i<masks.length;i++){
-            let character = value[i];
-            let maskChar=masks[i];
+            let character = value[i]
+              , maskChar=masks[i];
 
             if ('09'.indexOf(maskChar)!=-1){ //Valida se eh numero
                 valid = character.isDigit();
@@ -381,13 +372,9 @@ const dataExt = function(){
     // //console.log("123451234512".point(10).width);
     // //console.log("123451234512".point(10).height);
 
-    Boolean.prototype.isEmpty = function(){
-        return false;
-    }
+    Boolean.prototype.isEmpty = function(){ return false}
     // For convenience...
-    Date.prototype.format = function (mask, utc) {
-        return dateFormat(this, mask, utc);
-    };
+    Date.prototype.format = function (mask, utc) {return dateFormat(this, mask, utc)}
     //c$.NOW.format("dd/mm/yyyy")
     //c$.NOW.format("HH:MM:ss")
     //c$.NOW.format(c$.MASK.DATE.default)
@@ -407,7 +394,7 @@ const dataExt = function(){
             }
         }
         return (items.length>0) ?items :null;
-    };
+    }
     // var x = {a:1,b:2,c:1}
     // var y = {a:{value:1},b:{value:2},c:{value:2}}
     // var z = {a:{key:1},b:{key:2},c:{key:2}}
@@ -449,11 +436,11 @@ const dataExt = function(){
     //@note: Junta o objeto provider ao objeto receiver
     Object.join = function(receiver,provider, properties){
         if (properties) { // Um Join apenas com algumas propriedades
-        for(let i=0; i<properties.length; i++)
-            Object.preset(receiver, properties[i], provider[properties[i]]);
+            for(let i=0; i<properties.length; i++)
+                Object.preset(receiver, properties[i], provider[properties[i]]);
         } else {          // Um Join com todas as propriedades
-        for (let key in provider)
-            Object.preset(receiver, key, provider[key]);
+            for (let key in provider)
+                Object.preset(receiver, key, provider[key]);
         }
         return receiver;
     };
@@ -466,14 +453,14 @@ const dataExt = function(){
     Object.merge = function(server,provider, properties){
         let receiver={};
         if (properties) { // Um Merge apenas com algumas propriedades
-        for(let i=0; i<properties.length; i++){
-            Object.preset(receiver, properties[i], server[properties[i]]);
-            Object.preset(receiver, properties[i], provider[properties[i]]);
-        }
+            for(let i=0; i<properties.length; i++){
+                Object.preset(receiver, properties[i], server[properties[i]]);
+                Object.preset(receiver, properties[i], provider[properties[i]]);
+            }
         } else {         // Um Merge com todas as propriedades
-        for (let key in server) // copia todas as propriedades do SERVER para o RECEIVER
-            receiver[key]= server[key];
-        Object.join(receiver,provider);
+            for (let key in server) // copia todas as propriedades do SERVER para o RECEIVER
+                receiver[key]= server[key];
+            Object.join(receiver,provider);
         }
         return receiver;
     };
@@ -485,8 +472,8 @@ const dataExt = function(){
     //@note: SE EXISTIR NO PROVIDER,sobrescreve ou adiciona atributos definidos em Properties no RECEIVER
     Object.setIfExist = function(receiver, provider, properties){
         if (dataExt.isArray(properties)){
-        for (let idx=0; properties.length>idx;idx++)
-            Object.setIfExist(receiver, provider, properties[idx]);
+            for (let idx=0; properties.length>idx;idx++)
+                Object.setIfExist(receiver, provider, properties[idx]);
         }else{
             if (provider[properties]!=undefined && provider[properties]!=null)
                 receiver[properties] = provider[properties];
@@ -506,7 +493,7 @@ const dataExt = function(){
             receiver[key]=provider[key];
         }
         return receiver;
-    };
+    }
     //var aux = {a:1,b:2}
     // console.log(Object.presetValues(aux,{a:5,x:20}))
     // console.log(Object.presetValues(aux,{b:15,x:20}))
@@ -516,20 +503,20 @@ const dataExt = function(){
             //let _t = source[key].constructor.name[0].toLowerCase();
             console.log(`${key}:`,source[key]);
         }
-    };
+    }
     // let aux = {text:"texto", nro: 1, ar:[1,2], obj:{nm:1, nr:2}, fn:()=>"2", dt:c$.NOW, fnc: function(){}}
     // Object.show(aux)
 
     //@note:
     Object.mixin=function(receiver, provider, methods){
         if (methods) { // Um Mixin fornecendo alguns métodos
-        for (let i=0; i<methods.length; i++)
-            receiver.prototype[methods[i]] = provider.prototype[methods[i]];
+            for (let i=0; i<methods.length; i++)
+                receiver.prototype[methods[i]] = provider.prototype[methods[i]];
         } else {       // Um Mixin fornecendo todos os métodos
-        for (let method in provider.prototype) { // verificando se a classe receptora já possui tal método do loop...
-            if (receiver.prototype[method]==undefined)
-            receiver.prototype[method] = provider.prototype[method];
-        }
+            for (let method in provider.prototype) { // verificando se a classe receptora já possui tal método do loop...
+                if (receiver.prototype[method]==undefined)
+                receiver.prototype[method] = provider.prototype[method];
+            }
         }
         return receiver;
     }
@@ -549,12 +536,12 @@ const dataExt = function(){
         let r = true;
         if (key) { // compara por uma chave
             if (dataExt.isString(key)) // a chave de comparação é simples
-            r = (source[key] == target[key])?true:false;
+                r = (source[key] == target[key])?true:false;
             else{ // a chave de comparação é composta por mais de um atributo
-            for(let i=0; i<key.length;i++){
-                if (source[key[i]] != target[key[i]])
-                    return false;
-            }
+                for(let i=0; i<key.length;i++){
+                    if (source[key[i]] != target[key[i]])
+                        return false;
+                }
             }
         } else { // compara com todas as propriedades existente no objeto de comparação(target)
             for (let fld in target){
@@ -615,16 +602,16 @@ const dataExt = function(){
 
     Object.identify = (receicer, keys=['key','id'], labels=["label", "caption"])=>{
         function search(key, values){
-                let vl = Object.synonym(receicer,values);
-                if (vl) // para evitar um null
+            let vl = Object.synonym(receicer,values);
+            if (vl) // para evitar um null
                 receicer[key] = vl.toString().stripChar(" "); 
         }   
         function each(values) {
-                keys.forEach(key=>{
-                    if (!receicer[key])
-                    search(key, values)       
-                })
-                return Object.exists(receicer,keys);
+            keys.forEach(key=>{
+                if (!receicer[key])
+                search(key, values)       
+            })
+            return Object.exists(receicer,keys);
         }
         if (!each(keys))
             each(labels)

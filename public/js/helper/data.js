@@ -1,4 +1,3 @@
-
 Task = j$.Resource.create("tasks");
 Papel = j$.Resource.create("papel");
 Papel.Requester.get();
