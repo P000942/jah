@@ -52,7 +52,7 @@
               //, Buttons:CONFIG.CRUD.BUTTONS // Pode ser feito das duas formas
         };
 
-        Assunto.Fieldset= j$.Fieldset.create({  
+        Assunto.Fieldset= TYPE.Fieldset.create({  
                        idAssunto:TYPE.INTEGER(4,{label:'Código', readOnly:true})
              //,idCategoriaAssunto:TYPE.LIST({label:'Categoria', mandatory:true, list:{'1':'Sistema', '2':'Projeto', '3':'Manutencao'}})
              ,idCategoriaAssunto:TYPE.LIST({label:'Categoria', mandatory:true, resource:{name:'categoriaAssunto'}})

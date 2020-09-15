@@ -109,7 +109,7 @@
       ,    title:'Manter papéis'
     };
 
-    myPage.Fieldset= j$.Fieldset.createt({Dinheiro:TYPE.MONEY(10),
+    myPage.Fieldset= TYPE.Fieldset.create({Dinheiro:TYPE.MONEY(10),
       Integer:TYPE.INTEGER(1,{type:"range", max:9, min:1, step:2}),
                      Digito:TYPE.DIGIT({label:'Dígito'
                                    , attributes:{title:'informe o código aparece a legenda.'}

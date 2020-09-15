@@ -1,232 +1,6 @@
 /* By Geraldo Gomes */
 'use strict';
    
-j$.Fieldset = function(){
-    class Sort{
-        constructor(key, items){ // Sort está no Fieldset e não no field para consumir menos recurso (não precisará uma instancia por field)
-            let $ORT = this;
-            var _sort = this;
-            //let field =  null;
-            this.Items = items;
-           // $ORT.init = init;
-         //  if (key && key != $ORT.key) {
-                this.key =  key;
-                this.field = items[key];
-                this.order =  c$.ORDER.NONE;
-                let field = this.field;
-          //  }
-        }    
-        clear= ()=>{
-            for(let key in this.Items){
-                if (key != this.key)
-                   this.Items[key].Header.clas$ = c$.ORDER.CLASS(c$.ORDER.NONE);
-            }
-        }
-        asc =(currentRow, nextRow)=>{
-            let currentVal = this.field.dataType.parse(currentRow[this.key]);
-            let nextVal =  this.field.dataType.parse(nextRow[this.key]);
-            let r = 0;
-              if (currentVal < nextVal)
-                  r = -1;
-              else if (currentVal > nextVal)
-                  r = 1;
-              return r;
-          }
-        desc=(currentRow, nextRow)=>{
-            let currentVal =  this.field.dataType.parse(currentRow[this.key]);
-            let nextVal =  this.field.dataType.parse(nextRow[this.key]);
-            let r = 0;
-              if (currentVal > nextVal)
-                 r = -1;
-              else if (currentVal < nextVal)
-                 r = 1;
-              return r;
-          }
-        orderBy=(order)=> {
-           if (this.toggle(order) != c$.ORDER.NONE)
-                 return (this.order == c$.ORDER.DESCENDING) ? this.desc : this.asc;
-              else
-                 return null;
-           }
-        toggle (order){
-                 // Quando indicar que não há classificação, passa order=ORDER.NONE
-                 if (!order){
-                    if (this.order == c$.ORDER.NONE || this.order == c$.ORDER.DESCENDING)
-                        order = c$.ORDER.ASCENDING;
-                    else
-                        order = c$.ORDER.DESCENDING;
-                 }
-                 this.order = order;
-                 this.field.Header.clas$ = c$.ORDER.CLASS(order);
-                 return order;
-              }
-    };    
-    class Fieldset{
-        constructor (fields) {
-            function init(){
-                for(let key in _fs.Items){
-                    _fs.Items[key].id=key;
-                    _fs.length++;
-                }
-            }
-            let _fs = this;
-            //this.Items=fields;
-            this.c$=fields;
-            this.length=0;
-            this.filter= function(){
-                let criteria={};
-                return {
-                  clear: ()=>{
-                     for(let key in _fs.c$){
-                        _fs.c$[key].filterToggle(false);
-                     }
-                  }
-                  ,toggle: (key,value) => {
-                      let field= _fs.c$[key];
-                      if (field.onFilter){ // já tem filtro, tem que remover
-                          delete criteria[field.key];
-                      }else{
-                          criteria[field.key]= field.value(value);
-                      }
-                      return ($.isEmptyObject(criteria))
-                            ? null
-                            : criteria;
-                  }
-                };
-            }();
-            init();
-        }
-    
-        C$ = key=>{
-            try {
-                if (this.c$[key]==undefined)
-                    throw CONFIG.EXCEPTION.INVALID_FIELD;
-                else
-                    return this.c$[key];
-            } catch(exception){
-                   if (exception==CONFIG.EXCEPTION.INVALID_FIELD)
-                       console.log(exception.text +" '"+key+"'");
-                   return false;
-            }
-        }
-    
-        // varre fieldset devolve um registro dos campos que estão preenchidos
-        // útil para consultas
-        filled = action=>{
-            let record = {};
-            for(let key in this.c$){
-                let value = this.c$[key].value();
-                let use = !value.toString().isEmpty();
-                if (use && action)
-                    use = action(this.c$[key]);
-                if (use)
-                    record[key]= value;
-            }
-            return record;
-        };
-        // Monta um Record com os campos que vem em Keys
-        RecordBy = keys=>{
-            let record = {};
-            const keyType = dataExt.type(keys);
-            switch (keyType) {
-                case "String": record[keys]= this.c$[keys].value();
-                     break; 
-                case "Array": 
-                    keys.forEach(key => {record[key]= this.c$[key].value()})
-                    break;
-                default:
-                    console.log(`"${keyType}" não é um tipo reconhecido em "Fieldset.RecordBy"`);
-            } 
-            return record;
-        };   
-        // preenche os valores default para os campos
-        setDefaults = provider=>{  
-            for (let key in provider){
-                if (this.c$[key])
-                    this.c$[key].defaultValue=provider[key];
-            }
-        }; 
-         // varre as campos e devolve um registro com o conteúdo dos campos
-        sweep (action){
-            let record = {};
-            for(let key in this.c$){
-                let field = this.c$[key];
-                if (field.persist)
-                   record[key]= field.value();
-                if (action)
-                    action(field);
-            }
-            return record;
-        };
-        createRecord = ()=>{
-           return this.sweep();
-        };
-        each = this.sweep;
-        reset (){
-           this.sweep(field=>{
-                field.reset();
-           });
-        };
-        bindColumns (Columns){
-           this.sweep(field=>{
-               if (Columns[field.key]===undefined)
-                   field.persist=false;
-           });
-        };
-        // recebe um registro e popula conteúdo dos campos no Fieldset
-        populate (record, action){
-            for(let key in this.c$){
-                let field = this.c$[key];
-    
-                if (field.evaluate)
-                   record[key] = field.evaluate(record);
-    
-                if (record[key] != undefined){
-                   field.Record.value=record[key];
-                   field.Record.formattedValue=field.format(field.Record.value.toString());
-                }else{
-                   field.Record.value=null;
-                   field.Record.formattedValue=null;
-                }
-                if (action)
-                    action(field);
-            }
-        };
-        // atualiza no form
-        edit(record){ this.populate(record, field=>{field.edit()})}
-    
-        toQueryString(action){
-            return "?"+jQuery.param(this.filled(action));
-        };
-    
-        orderBy(key){ // forma semantica de criar o Sort
-           if (!this.sort)
-              this.sort = new Sort(key, this.c$)
-            return this.sort;
-        }
-        //varre o Fieldset e executa uma função para cada Field (ver o método show)
-        execute (action){ 
-            for(let key in this.c$){
-               let field = this.c$[key];
-               action(field,key);
-            }
-        };
-    
-        show (){this.execute((field, key)=>{console.log(key); console.log(input);});};
-    };
-     
-    return {
-        create(fields){return new Fieldset(fields)}
-       , build(key){ // Método estático para criar um fieldset a partir da chave
-            let rcd = dataExt.format.record(key)
-              , fieldset = {};            
-            fieldset[rcd.id]=TYPE.INTEGER(4,{label:'Código', readOnly:true});
-            fieldset[rcd.text]=TYPE.CHAR(30,{label:key.toFirstUpper(), mandatory:true});
-            return fieldset;
-          }    
-    }
-}();
-
 const TYPE = function() {
     Element.prototype.bind = function(field) {
         this.field =field;
@@ -719,6 +493,232 @@ const TYPE = function() {
 //TYPE.TEST.assert(TYPE.LIST({list:{'M':'Masculino', 'F':'Feminino'}}),'M');    
 }();
 
+TYPE.Fieldset = function(){
+    class Sort{
+        constructor(key, items){ // Sort está no Fieldset e não no field para consumir menos recurso (não precisará uma instancia por field)
+            let $ORT = this;
+            var _sort = this;
+            //let field =  null;
+            this.Items = items;
+           // $ORT.init = init;
+         //  if (key && key != $ORT.key) {
+                this.key =  key;
+                this.field = items[key];
+                this.order =  c$.ORDER.NONE;
+                let field = this.field;
+          //  }
+        }    
+        clear= ()=>{
+            for(let key in this.Items){
+                if (key != this.key)
+                   this.Items[key].Header.clas$ = c$.ORDER.CLASS(c$.ORDER.NONE);
+            }
+        }
+        asc =(currentRow, nextRow)=>{
+            let currentVal = this.field.dataType.parse(currentRow[this.key]);
+            let nextVal =  this.field.dataType.parse(nextRow[this.key]);
+            let r = 0;
+              if (currentVal < nextVal)
+                  r = -1;
+              else if (currentVal > nextVal)
+                  r = 1;
+              return r;
+          }
+        desc=(currentRow, nextRow)=>{
+            let currentVal =  this.field.dataType.parse(currentRow[this.key]);
+            let nextVal =  this.field.dataType.parse(nextRow[this.key]);
+            let r = 0;
+              if (currentVal > nextVal)
+                 r = -1;
+              else if (currentVal < nextVal)
+                 r = 1;
+              return r;
+          }
+        orderBy=(order)=> {
+           if (this.toggle(order) != c$.ORDER.NONE)
+                 return (this.order == c$.ORDER.DESCENDING) ? this.desc : this.asc;
+              else
+                 return null;
+           }
+        toggle (order){
+                 // Quando indicar que não há classificação, passa order=ORDER.NONE
+                 if (!order){
+                    if (this.order == c$.ORDER.NONE || this.order == c$.ORDER.DESCENDING)
+                        order = c$.ORDER.ASCENDING;
+                    else
+                        order = c$.ORDER.DESCENDING;
+                 }
+                 this.order = order;
+                 this.field.Header.clas$ = c$.ORDER.CLASS(order);
+                 return order;
+              }
+    };    
+    class Fieldset{
+        constructor (fields) {
+            function init(){
+                for(let key in _fs.Items){
+                    _fs.Items[key].id=key;
+                    _fs.length++;
+                }
+            }
+            let _fs = this;
+            //this.Items=fields;
+            this.c$=fields;
+            this.length=0;
+            this.filter= function(){
+                let criteria={};
+                return {
+                  clear: ()=>{
+                     for(let key in _fs.c$){
+                        _fs.c$[key].filterToggle(false);
+                     }
+                  }
+                  ,toggle: (key,value) => {
+                      let field= _fs.c$[key];
+                      if (field.onFilter){ // já tem filtro, tem que remover
+                          delete criteria[field.key];
+                      }else{
+                          criteria[field.key]= field.value(value);
+                      }
+                      return ($.isEmptyObject(criteria))
+                            ? null
+                            : criteria;
+                  }
+                };
+            }();
+            init();
+        }
+    
+        C$ = key=>{
+            try {
+                if (this.c$[key]==undefined)
+                    throw CONFIG.EXCEPTION.INVALID_FIELD;
+                else
+                    return this.c$[key];
+            } catch(exception){
+                   if (exception==CONFIG.EXCEPTION.INVALID_FIELD)
+                       console.log(exception.text +" '"+key+"'");
+                   return false;
+            }
+        }
+    
+        // varre fieldset devolve um registro dos campos que estão preenchidos
+        // útil para consultas
+        filled = action=>{
+            let record = {};
+            for(let key in this.c$){
+                let value = this.c$[key].value();
+                let use = !value.toString().isEmpty();
+                if (use && action)
+                    use = action(this.c$[key]);
+                if (use)
+                    record[key]= value;
+            }
+            return record;
+        };
+        // Monta um Record com os campos que vem em Keys
+        RecordBy = keys=>{
+            let record = {};
+            const keyType = dataExt.type(keys);
+            switch (keyType) {
+                case "String": record[keys]= this.c$[keys].value();
+                     break; 
+                case "Array": 
+                    keys.forEach(key => {record[key]= this.c$[key].value()})
+                    break;
+                default:
+                    console.log(`"${keyType}" não é um tipo reconhecido em "Fieldset.RecordBy"`);
+            } 
+            return record;
+        };   
+        // preenche os valores default para os campos
+        setDefaults = provider=>{  
+            for (let key in provider){
+                if (this.c$[key])
+                    this.c$[key].defaultValue=provider[key];
+            }
+        }; 
+         // varre as campos e devolve um registro com o conteúdo dos campos
+        sweep (action){
+            let record = {};
+            for(let key in this.c$){
+                let field = this.c$[key];
+                if (field.persist)
+                   record[key]= field.value();
+                if (action)
+                    action(field);
+            }
+            return record;
+        };
+        createRecord = ()=>{
+           return this.sweep();
+        };
+        each = this.sweep;
+        reset (){
+           this.sweep(field=>{
+                field.reset();
+           });
+        };
+        bindColumns (Columns){
+           this.sweep(field=>{
+               if (Columns[field.key]===undefined)
+                   field.persist=false;
+           });
+        };
+        // recebe um registro e popula conteúdo dos campos no Fieldset
+        populate (record, action){
+            for(let key in this.c$){
+                let field = this.c$[key];
+    
+                if (field.evaluate)
+                   record[key] = field.evaluate(record);
+    
+                if (record[key] != undefined){
+                   field.Record.value=record[key];
+                   field.Record.formattedValue=field.format(field.Record.value.toString());
+                }else{
+                   field.Record.value=null;
+                   field.Record.formattedValue=null;
+                }
+                if (action)
+                    action(field);
+            }
+        };
+        // atualiza no form
+        edit(record){ this.populate(record, field=>{field.edit()})}
+    
+        toQueryString(action){
+            return "?"+jQuery.param(this.filled(action));
+        };
+    
+        orderBy(key){ // forma semantica de criar o Sort
+           if (!this.sort)
+              this.sort = new Sort(key, this.c$)
+            return this.sort;
+        }
+        //varre o Fieldset e executa uma função para cada Field (ver o método show)
+        execute (action){ 
+            for(let key in this.c$){
+               let field = this.c$[key];
+               action(field,key);
+            }
+        };
+    
+        show (){this.execute((field, key)=>{console.log(key); console.log(input);});};
+    };
+     
+    return {
+        create(fields){return new Fieldset(fields)}
+       , build(key){ // Método para criar um fieldset a partir da chave
+            let rcd = dataExt.format.record(key)
+              , fieldset = {};            
+            fieldset[rcd.id]=TYPE.INTEGER(4,{label:'Código', readOnly:true});
+            fieldset[rcd.text]=TYPE.CHAR(30,{label:key.toFirstUpper(), mandatory:true});
+            return fieldset;
+          }    
+    }
+}();
+
 TYPE.HELPER = function(){
     class Ma$k{
         constructor(mask){
@@ -1091,135 +1091,4 @@ TYPE.Feedback =function (){
     }   
 }();
 
-// j$.ui.Render= function(){
-//     return {
-//         attributes:(attributes, exception)=>{
-//             //formata outros atributos de html do formulárioa para renderizar
-//             let result = ' ' 
-//             , ignore =att=>{
-//                 let go=false;
-//                 if (['key','caption','icon'].indexOf(att)>-1){
-//                     go= true;
-//                 } else if (exception){
-//                     if ((dataExt.isString(exception) && exception===att)
-//                     || (dataExt.isArray(exception) && exception.has(att)))
-//                         go= true;
-//                 }
-//                 return go;
-//             };
-//             for (let attribute in attributes){
-//                 let att = attribute.replace(/[$]/g,'s');
-//                 if (att.indexOf('data_')>-1)
-//                     att = att.replace('data_','data-');
-//                 else
-//                     att = att.replace(/\W|[_]/g,'');
-//                 if (attributes[attribute] && !ignore(att)){
-//                     result += att+"='" +attributes[attribute]+ "' " ;
-//                 }
-//             }
-//             return result;
-//         }
-//     , wrap:(wrap, id, clas$, style)=>{
-//             let id$ = System.util.getId(clas$, id);
-//             if (!i$(id$)){
-//             wrap.insert(`<div id='${id$}' class='${clas$}'></div>`);
-//             i$(id$).stylize(style);
-//             }   
-//             return i$(id$);
-//         }
-//     , label: (wrap, label, inputId, clas$=CONFIG.LABEL.CLASS.DEFAULT, mandatory)=>{
-//             let att={clas$
-//                     ,  id:(inputId) ?inputId+ '_label' :System.util.getId('Label')
-//                     , for:(inputId) ?inputId :null
-//                     };
-//             label =(label)?label : att.id;
-//             if (!i$(att.id)){ // cria se não existir
-//             let _att = j$.ui.Render.attributes(att,'label')
-//             , required =(mandatory) ?`<span class="${CONFIG.INPUT.CLASS.REQUIRED}">*</span>` :'';
-//             $(wrap).append(`<label ${_att} >${label}${required}:</label>`);
-//             }
-//             return i$(att.id);
-//     }
-//     , input:(wrap, id, inputType, maxlength, attributes)=>{
-//             if (!i$(id)){
-//             let size =(maxlength)?" size='" +maxlength+ "'":""
-//             ,   type = (inputType)?inputType:'text'
-//             ,   _att = j$.ui.Render.attributes(attributes)
-//             if (type==='select')
-//                 wrap.insert(`<${type} id='${id}' name='${id}' ${_att} ></${type}>`);
-//             else
-//                 wrap.insert(`<input type='${type}' id='${id}' name='${id}' ${size} ${_att} />`);
-//             }
-//             return i$(id);
-//         }  
-//     , wrapperUl:(wrap, id, wrapStyle)=>{
-//             let wrapId =System.util.getId(wrapStyle, id)
-//             , wrapNavId = `${wrapId}_wrap`;
-//             $(wrap).append(`<nav class='wrapperUl d-flex flex-row-reverse' id='${wrapNavId}'></nav>`);
-//             $(`#${wrapNavId}`).append(`<ul class="${wrapStyle}" id="${wrapId}"></ul>`);
-//             return i$(wrapId);
-//         }
-//     , li:(wrap, properties)=>{
-//         wrap.insert('<li><a ' +j$.ui.Render.attributes({id:properties.id, onclick:properties.onclick})+' >' +properties.caption+ '</a></li>');
-//         return i$(properties.id);
-//     }
-//     , menuItem:(wrap, properties)=>{
-//         wrap.insert('<a class="dropdown-item" href="#" ' +j$.ui.Render.attributes({id:properties.id, onclick:properties.onclick})+' >' +properties.caption+ '</a>');
-//         return i$(properties.id);
-//     }         
-//     , line:(section, id, wrapStyle, title)=>{
-//             let wrapId=System.util.getId(wrapStyle, id)
-//             , legend="", idLegend=`${wrapId}_legend`;
-//             if (title!=undefined){
-//                 if (dataExt.isString(title))
-//                 legend =`<legend class='${wrapStyle}_legend' id='${idLegend}'>${title}</legend>`;
-//                 else
-//                 legend =`<legend class='${wrapStyle}_legend' id='${idLegend}'>${title.text}</legend>`;
-//             }
-//             section.insert(`<fieldset class='${wrapStyle}' id='${wrapId}'>${legend}</fieldset>`);
-//             if (i$(idLegend)!=undefined && title.style!=undefined)
-//                 i$(idLegend).stylize(title.style);
-//             return i$(wrapId);
-//         }
-//     , button:(wrap, properties)=>{
-//         if (!properties.submenu)
-//             wrap.insert(j$.ui.Render.formatButton(properties));
-//         else
-//             wrap.insert(j$.ui.Render.formatButtonDropdown(properties));
-//         return i$(properties.id);
-//     }
-//     , formatButton:(properties)=>{
-//         return '<a' +j$.ui.Render.attributes(properties,['value', 'element'])+ '>'+j$.ui.Render.icon(properties)+properties.value+'</a>';
-//     }
-//     , formatButtonDropdown:(properties)=>{
-//         return '<div id="' +properties.id+ '"  class="btn-group" role="group" aria-label="Button group with nested dropdown">'                 
-//                 +  '<div class="btn-group" role="group">'                   
-//                 +    '<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" ' +j$.ui.Render.attributes(properties,['value','onclick','submenu','id'])+ '>'+j$.ui.Render.icon(properties)+'</button>'              
-//                 +    '<div id="'+properties.id+'Menu" class="dropdown-menu"></div>'
-//                 +    '</div>'
-//                 +'</div>';
-//     }
-//     , icon:(properties)=>{
-//         let iconClass
-//             , key = properties;
-//         if (dataExt.isString(properties))
-//             iconClass = CONFIG.icon(key);
-//         else if(dataExt.isObject(properties)){
-//             key = (properties.key)?properties.key:'';
-//             iconClass =(properties.icon) ?properties.icon :CONFIG.icon(key)
-//         }
-//         if (iconClass){
-//             let color = CONFIG.color(key);
-//             let txColor=(color)?`style="color:${color};" `  :'';
-//             return `<i class="${iconClass}" ${txColor}></i>`;
-//         }else
-//             return '';
-//     }
-//     , alert:(wrap, msg, clas$)=>{
-//         clas$ = (clas$)? `class='alert ${clas$}'`: "class='alert'";
-//         wrap.insert(`<div ${clas$}><button type="button" class="close" data-dismiss="alert">×</button>${msg}</div>`);
-//     }
-//     };
-// }();    
-
-// export {j$.Fieldset, TYPE, j$.ui};
+// export {TYPE};
