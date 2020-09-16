@@ -667,7 +667,7 @@ j$.Page.Form=function(service, modal) {
         $i.Buttons.create(wrapButtons);   // cria os buttoes html  
         // if (service.Child || service.Interface.List) // cria um tab para comportar o list e|ou child
         //     $i.tabs = j$.Dashboard.Tabs.create(`${$i.form.id}Tabs`, $i.footer.id); 
-        // Typecast.Init(service.Interface);              // inicializa as máscaras (já é inicializado qdo a mask é redenrizado em cada input)
+        // TYPE.Formatter.Init(service.Interface);              // inicializa as máscaras (já é inicializado qdo a mask é redenrizado em cada input)
         if (service.Interface.List){
            if (service.Interface.List===true){service.Interface.List={};}
            $i.List = new j$.Page.Grid($i); // cria o grid

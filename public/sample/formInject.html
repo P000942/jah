@@ -24,7 +24,7 @@
     <script src="../js/jah/api/dataExt.js"></script>
     <script src="../js/jah/config.js"></script>
     <script src="../js/jah/api/system.js"></script>
-    <script src="../js/jah/type/typecast.js"></script>
+    <!-- <script src="../js/jah/type/typecast.js"></script> -->
     <script src="../js/jah/type/type.js"></script>
     <script type="text/javascript">
         function addField(){
@@ -83,7 +83,7 @@
                       i$('lista').bind(TYPE.LIST({list:{'1':'Sistema', '2':'Projeto', '3':'Manutenção'}}));
                       TYPE.MASK('(@@)###-9',{validator:{error:'Campo com valor inválido', handler:function(value){return false;}}}).bind(i$('mask2'));
                       TYPE.MASK('(@@)###-9').bind(i$('mask'));
-		                  Typecast.Init();
+		                  TYPE.Formatter.Init();
                    //   i$('cpf').bind('Alfa')
                    //  alert( i$('cpf').field);
                 }
