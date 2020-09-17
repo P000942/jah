@@ -955,7 +955,7 @@ j$.Page.Grid=function(page, btn_template=CONFIG.GRID.DEFAULT){
                 page.reset(); // o formulário
                  _grid.Detail.clear();
                 if (pager.Record.count !=  c$.RC.NOT_FOUND){
-                    pager.read(function(row, record){
+                    pager.read(function(record, row){
                        _grid.Detail.add(record,true);
                     });
                     _grid.Designer.header();

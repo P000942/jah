@@ -141,7 +141,7 @@ const Report = function(){
                     }
                     this.writeLines= function() {
                        let off = true;
-                       SELF.Page.Pager.read(function(row, record){
+                       SELF.Page.Pager.read(function(record, row){
                            let id = SELF.id + "L" + (row+1)
                            , html = 	"<div class='detail-column-wrap' id='" + id + "'><ul></ul></div>"           
                            i$(SELF.id).insert(html);

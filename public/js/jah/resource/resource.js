@@ -455,10 +455,10 @@ j$.Resource = function(){ // Factory: Criar os recursos
             for (let row=ROW.FIRST; row<=ROW.LAST; row++){
                 record = _ds.DataSource[row];
                 if (action)
-                    action(row, record);
+                    action(record, row);
             }
         };
-        this.forEach=this.read;
+        //this.forEach=this.read;
         // this.forEach=function(action){ // varre todo o arquivo sem guardar as posicoes, por isso, nao chama o metodo get()
         //     let record = null;
         //     for (let row=ROW.FIRST; row<=ROW.LAST; row++){
@@ -503,7 +503,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
             let maxId = -99999999
               , key = Resource.id;
             if (Resource.local && record[key].isEmpty){
-                _ds.forEach(rc=>{
+                _ds.read(rc=>{
                     if (rc[key].isNumeric() && Number.parseInt(rc[key]) > maxId)
                        maxId=rc[key];
                 })
@@ -632,7 +632,7 @@ j$.Resource.Pager=function(dataset, page){
         for (let row=_me.Record.first-1; row<_me.Record.last; row++){
             let record = _me.Dataset.get(row);
             if (action)
-                action(row, record);
+                action(record, row);
         }
    }
    this.first = ()=>{
@@ -717,7 +717,7 @@ j$.Resource.Parser=function(){
                 , json = j$.Resource.DefaultHandler.handler(response)
                 , dataset =  _me.toDataset(json);
                 Listset.count = dataset.count;
-                dataset.read(function(row, record){
+                dataset.read(function(record, row){
                     try {
                         if  (record[Resource.text]==undefined)
                             throw CONFIG.EXCEPTION.INVALID_COLUMN;
