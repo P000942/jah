@@ -429,25 +429,6 @@ System.util = function(){
     };
 }();
 
-// const j$={ui:{}
-//          ,sample:{}
-//          ,$V:key =>{ //Exemplo: j$.$V() ou j$.$V("$R")
-//             //@note: util apenas em dsv para ver os objetos/colecoes e seus respectivos shortcut - que estão instanciados
-//             let shortCut = {"$C":"Controller:","$P":"Page:","$R":"Resource:","$S":"Service:", "$T":"Tabs:"};
-//             for (let id in shortCut){
-//                if (j$[id]){
-//                   if (key){
-//                      if (id==key)
-//                         console.log(j$[id]);
-//                   }else{
-//                      console.log(shortCut[id]+id);
-//                      console.log(j$[id]);
-//                   }
-//                }
-//             }
-//          }
-// }
-
 j$.ui.Render= function(){
     return {
         attributes:(attributes, exception)=>{
@@ -579,5 +560,4 @@ j$.ui.Render= function(){
     };
 }();    
 
-
-// export {i$, System, j$};
+// export {i$, System};

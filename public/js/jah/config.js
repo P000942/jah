@@ -2,7 +2,6 @@
  by Geraldo Gomes
  */
 'use strict'
-// import j$.Ext from  "./api/dataExt.js"; 
 const c$ = {
        NOW: new Date()
     ,   RC:{NOT_FOUND:-1, NONE:-1}
@@ -283,23 +282,15 @@ CONFIG.QUERY.GRID.BUTTONS={
 //QUESTION: Será que o ideal não fazer 'mixin' ou 'inheritsFrom'?
 CONFIG.preset=(PRESET, keys, actionController)=>{
     let values={};
-    if (j$.Ext.isString(keys))
-       values[keys.toUpperCase()]=set(keys);
-    else if (j$.Ext.isArray(keys)){
-       for(let i=0; i<keys.length;i++)
-           values[keys[i].toUpperCase()]=set(keys[i]);
-    }else{
-        for (let key in PRESET) // Carrega tds as actions do preset
-            values[key]=set(key);
-    }
-
+    for (let key in PRESET) // Carrega tds as actions do preset
+        values[key]=set(key);
     return values;
 
     function set(key){
         key = key.toUpperCase();
         if (PRESET[key]){
-            let properties=PRESET[key];
-            let property={};
+            let properties=PRESET[key]
+              , property={};
             Object.preset(property,properties);
             if (actionController)
                 Object.preset(property,{onclick:'javascript:'+actionController+'.' +key.toLowerCase()+'(this);'});
