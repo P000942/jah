@@ -3,7 +3,7 @@
  */
 'use strict';
 // import {CONFIG, c$} from  "../config.js";
-// import dataExt from  "../api/dataExt.js"; 
+// import j$.Ext from  "../api/dataExt.js"; 
 function i$(id) {
     return document.getElementById(id);
 }
@@ -48,7 +48,7 @@ const System = function(){
             }
             Element.prototype.insert = function(content, idInner) {
                 let id = "#" + this.id;
-                if (dataExt.isString(content)){
+                if (j$.Ext.isString(content)){
                     $(id).append(content);
                 }else{
                     if (content.after)
@@ -84,7 +84,7 @@ const System = function(){
             }
             Event.observe = function(node, event, callback) {
                 let element = null;
-                if (dataExt.isString(node))
+                if (j$.Ext.isString(node))
                     element = $("#" + node);
                 else
                     element = $("#" + node.id);
@@ -136,7 +136,7 @@ const System = function(){
         /* pega o valor de um elemento */
             Element.prototype.get= function(){
                 let value = '';
-                switch(dataExt.type(this)){
+                switch(j$.Ext.type(this)){
                     case 'HTMLSelectElement':
                         if (this.selectedIndex > -1)
                             value = this.options[this.selectedIndex];
@@ -152,7 +152,7 @@ const System = function(){
             Element.prototype.content= function(value){
                 if (value == undefined){
                 let value = '';
-                switch(dataExt.type(this)){
+                switch(j$.Ext.type(this)){
                     case 'HTMLSelectElement':
                         value = this.selectedIndex;
                         break;
@@ -167,7 +167,7 @@ const System = function(){
                 }
                 return value;
                 }else{
-                    switch(dataExt.type(this)){
+                    switch(j$.Ext.type(this)){
                         case 'HTMLSelectElement':
                             this.value = value;
                             break;
@@ -184,7 +184,7 @@ const System = function(){
             }
     
             Element.prototype.reset= function(){
-                switch(dataExt.type(this)){
+                switch(j$.Ext.type(this)){
                     case 'HTMLSelectElement':
                         this.selectedIndex=-1;
                         break;
@@ -278,7 +278,7 @@ System.Node=function(inheritor, properties){
         return{
             formatKey:function(){
                 let key='';
-                if (dataExt.type(properties)=='String')
+                if (j$.Ext.type(properties)=='String')
                     key=properties.toKey();
                 else if (properties.key)
                     key= properties.key;
@@ -301,7 +301,7 @@ System.Node=function(inheritor, properties){
         };
     }();
     this.id = function(){
-        if (dataExt.isString(properties)){ // veio apenas o caption
+        if (j$.Ext.isString(properties)){ // veio apenas o caption
             Object.preset(_node, {caption:properties, key:util.formatKey()});
         } else {
             if (!properties){properties={}};
@@ -413,7 +413,7 @@ System.Observer = Observer;
 System.util = function(){
     let sequence = {};
     let getId = function(key, id){
-        let _k =(dataExt.isString(key)) ? key.split(" ")[0] :'SequenceId';
+        let _k =(j$.Ext.isString(key)) ? key.split(" ")[0] :'SequenceId';
         if (id!=undefined){
             if (!id.isEmpty())
                 return id;
@@ -429,24 +429,24 @@ System.util = function(){
     };
 }();
 
-const j$={ui:{}
-         ,sample:{}
-         ,$V:key =>{ //Exemplo: j$.$V() ou j$.$V("$R")
-            //@note: util apenas em dsv para ver os objetos/colecoes e seus respectivos shortcut - que estão instanciados
-            let shortCut = {"$C":"Controller:","$P":"Page:","$R":"Resource:","$S":"Service:", "$T":"Tabs:"};
-            for (let id in shortCut){
-               if (j$[id]){
-                  if (key){
-                     if (id==key)
-                        console.log(j$[id]);
-                  }else{
-                     console.log(shortCut[id]+id);
-                     console.log(j$[id]);
-                  }
-               }
-            }
-         }
-}
+// const j$={ui:{}
+//          ,sample:{}
+//          ,$V:key =>{ //Exemplo: j$.$V() ou j$.$V("$R")
+//             //@note: util apenas em dsv para ver os objetos/colecoes e seus respectivos shortcut - que estão instanciados
+//             let shortCut = {"$C":"Controller:","$P":"Page:","$R":"Resource:","$S":"Service:", "$T":"Tabs:"};
+//             for (let id in shortCut){
+//                if (j$[id]){
+//                   if (key){
+//                      if (id==key)
+//                         console.log(j$[id]);
+//                   }else{
+//                      console.log(shortCut[id]+id);
+//                      console.log(j$[id]);
+//                   }
+//                }
+//             }
+//          }
+// }
 
 j$.ui.Render= function(){
     return {
@@ -458,8 +458,8 @@ j$.ui.Render= function(){
                 if (['key','caption','icon'].indexOf(att)>-1){
                     go= true;
                 } else if (exception){
-                    if ((dataExt.isString(exception) && exception===att)
-                    || (dataExt.isArray(exception) && exception.has(att)))
+                    if ((j$.Ext.isString(exception) && exception===att)
+                    || (j$.Ext.isArray(exception) && exception.has(att)))
                         go= true;
                 }
                 return go;
@@ -528,7 +528,7 @@ j$.ui.Render= function(){
             let wrapId=System.util.getId(wrapStyle, id)
             , legend="", idLegend=`${wrapId}_legend`;
             if (title!=undefined){
-                if (dataExt.isString(title))
+                if (j$.Ext.isString(title))
                 legend =`<legend class='${wrapStyle}_legend' id='${idLegend}'>${title}</legend>`;
                 else
                 legend =`<legend class='${wrapStyle}_legend' id='${idLegend}'>${title.text}</legend>`;
@@ -559,9 +559,9 @@ j$.ui.Render= function(){
     , icon:(properties)=>{
         let iconClass
             , key = properties;
-        if (dataExt.isString(properties))
+        if (j$.Ext.isString(properties))
             iconClass = CONFIG.icon(key);
-        else if(dataExt.isObject(properties)){
+        else if(j$.Ext.isObject(properties)){
             key = (properties.key)?properties.key:'';
             iconClass =(properties.icon) ?properties.icon :CONFIG.icon(key)
         }

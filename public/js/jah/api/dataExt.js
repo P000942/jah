@@ -1,5 +1,5 @@
 'use strict'
-const dataExt = function(){
+const j$ = function(){
     //console.log(['name','key'].indexOf('keys'));
     //console.log(" Geraldo Gomes ".split(/\s/gi))
     String.prototype.trim = function(){
@@ -49,7 +49,7 @@ const dataExt = function(){
     };
     String.prototype.toSeparate = function (delimiters){
         let text='';
-        if (dataExt.isArray(delimiters)){
+        if (j$.Ext.isArray(delimiters)){
             for (let i=0; delimiters.length > i;i++)
                 text += delimiters[i];
         } else {
@@ -82,7 +82,7 @@ const dataExt = function(){
 
     String.prototype.stripChar = function (delimiters){
         let r =this, text='', er='';
-        if (dataExt.isArray(delimiters)){
+        if (j$.Ext.isArray(delimiters)){
             for (let i=0; delimiters.length > i;i++)
                 text += delimiters[i];
         } else {
@@ -383,7 +383,7 @@ const dataExt = function(){
     Object.getByValue = function(object, value, attribute="value"){
         let items=[]
         for (let key in object){
-            if (dataExt.isObject(object[key])){
+            if (j$.Ext.isObject(object[key])){
                 if (object[key][attribute]){// objeto tem uma propriedade value
                     if (object[key][attribute] == value)
                         items.push(key);
@@ -407,14 +407,14 @@ const dataExt = function(){
     //@note: definir um valor para uma propriedade de um método, caso a mesma nao seja informada;
     // é uma forma de garantir que certa propriedade estará presente no objeto
     Object.preset = (receiver, propertie, defaultvalue)=>{
-        if (dataExt.isObject(propertie)){ // copia propriedades do objeto
+        if (j$.Ext.isObject(propertie)){ // copia propriedades do objeto
         for (let key in propertie)
             Object.preset(receiver, key, propertie[key]);
         }else{
-            if (dataExt.isDefined(receiver[propertie]) == false){ // cria caso não exista
+            if (j$.Ext.isDefined(receiver[propertie]) == false){ // cria caso não exista
                 receiver[propertie] = defaultvalue;
             }else{
-            if (dataExt.isString(receiver[propertie]) && receiver[propertie].isEmpty())
+            if (j$.Ext.isString(receiver[propertie]) && receiver[propertie].isEmpty())
                 receiver[propertie] = defaultvalue; // garante o valor caso exista a propriedade sem valor
             }
         }
@@ -422,7 +422,7 @@ const dataExt = function(){
     };
     Object.toLowerCase = (propertie)=>{
         let receiver ={};
-        if (dataExt.isObject(propertie)){ // copia propriedades do objeto
+        if (j$.Ext.isObject(propertie)){ // copia propriedades do objeto
         for (let key in propertie)
             receiver[key.toLowerCase()] = propertie[key]
         }
@@ -471,7 +471,7 @@ const dataExt = function(){
 
     //@note: SE EXISTIR NO PROVIDER,sobrescreve ou adiciona atributos definidos em Properties no RECEIVER
     Object.setIfExist = function(receiver, provider, properties){
-        if (dataExt.isArray(properties)){
+        if (j$.Ext.isArray(properties)){
             for (let idx=0; properties.length>idx;idx++)
                 Object.setIfExist(receiver, provider, properties[idx]);
         }else{
@@ -535,7 +535,7 @@ const dataExt = function(){
     // compara se conteúdo do literal target existe em source
         let r = true;
         if (key) { // compara por uma chave
-            if (dataExt.isString(key)) // a chave de comparação é simples
+            if (j$.Ext.isString(key)) // a chave de comparação é simples
                 r = (source[key] == target[key])?true:false;
             else{ // a chave de comparação é composta por mais de um atributo
                 for(let i=0; i<key.length;i++){
@@ -560,13 +560,13 @@ const dataExt = function(){
     //@note: verifica se source contains criteria
     Object.contains = function(source, criteria, key){
         let r = true;
-        if (dataExt.isObject(criteria)) {
+        if (j$.Ext.isObject(criteria)) {
             for (let key in criteria){
-                if (!dataExt.isDefined(source[key]) || source[key]!=criteria[key])
+                if (!j$.Ext.isDefined(source[key]) || source[key]!=criteria[key])
                     return false;
             }
         }else{ // a chave de comparação é composta por mais de um atributo
-            return (dataExt.isDefined(source[key]) && source[key] == criteria)?true:false;
+            return (j$.Ext.isDefined(source[key]) && source[key] == criteria)?true:false;
         }
         return r;
     };
@@ -688,8 +688,29 @@ const dataExt = function(){
             }
         }
         return results;
-    };
+    }; 
+    return {
+         ui:{}
+        ,sample:{}
+        ,$V:key =>{ //Exemplo: j$.$V() ou j$.$V("$R")
+            //@note: util apenas em dsv para ver os objetos/colecoes e seus respectivos shortcut - que estão instanciados
+            let shortCut = {"$C":"Controller:","$P":"Page:","$R":"Resource:","$S":"Service:", "$T":"Tabs:"};
+            for (let id in shortCut){
+                if (j$[id]){
+                    if (key){
+                        if (id==key)
+                        console.log(j$[id]);
+                    }else{
+                        console.log(shortCut[id]+id);
+                        console.log(j$[id]);
+                    }
+                }
+            }
+        }
+    }
+}();
 
+j$.Ext = function(){
     /*Função que padroniza valor*/
     const numberFormat = function ( value, decimals=2, dec=c$.MASK.DecimalCharacter, sep=c$.MASK.ThousandsSeparator ) {
         // %        nota 1: Para 1000.55 retorna com precisão 1
@@ -809,8 +830,8 @@ const dataExt = function(){
             });
         };
     }();
-// console.log("dataExt.format.money(12): "   , dataExt.format.money(12))
-// console.log("dataExt.format.money("12,1"): "   , dataExt.format.money(12))
+// console.log("j$.Ext.format.money(12): "   , j$.Ext.format.money(12))
+// console.log("j$.Ext.format.money("12,1"): "   , j$.Ext.format.money(12))
 
     // Internationalization strings
     dateFormat.i18n = {
@@ -841,45 +862,44 @@ const dataExt = function(){
               }
             }
         };
-    }();    
-
+    }();       
     return{
         dateFormat
       , numberFormat 
       , format
       ,       init:()=>true
       ,       type:obj=>{return Object.prototype.toString.call(obj).match(/^\[object (.*)\]$/)[1]}
-      ,    isArray:obj=>{return (dataExt.type(obj)==='Array')}
-      ,   isString:obj=>{return (dataExt.type(obj)==='String')}
-      ,    isValue:obj=>{return (dataExt.type(obj)==='String' || dataExt.type(obj)==='Number')}
-      ,   isNumber:obj=>{return (dataExt.type(obj)==='Number')}
-      ,   isObject:obj=>{return (dataExt.type(obj)==='Object')}
-      ,     isCrud:obj=>{return (dataExt.isDefined(obj)) ?(obj.constructor.name==='Crud') :false}
-      , isFunction:obj=>{return (dataExt.type(obj)==='Function')}
-      ,isUndefined:obj=>{return !dataExt.isDefined(obj)}
+      ,    isArray:obj=>{return (j$.Ext.type(obj)==='Array')}
+      ,   isString:obj=>{return (j$.Ext.type(obj)==='String')}
+      ,    isValue:obj=>{return (j$.Ext.type(obj)==='String' || j$.Ext.type(obj)==='Number')}
+      ,   isNumber:obj=>{return (j$.Ext.type(obj)==='Number')}
+      ,   isObject:obj=>{return (j$.Ext.type(obj)==='Object')}
+      ,     isCrud:obj=>{return (j$.Ext.isDefined(obj)) ?(obj.constructor.name==='Crud') :false}
+      , isFunction:obj=>{return (j$.Ext.type(obj)==='Function')}
+      ,isUndefined:obj=>{return !j$.Ext.isDefined(obj)}
       ,  isDefined:obj=>{return (obj==null || obj==undefined) ?false :true}
     }
 }();
 
-// console.log("dataExt.type('resource'): "    , dataExt.type('resource'))
-// console.log("dataExt.type(1): "             , dataExt.type(1))
-// console.log("dataExt.type({a:'1', b:'2'}): ", dataExt.type({a:'1', b:'2'}))
-// console.log("dataExt.type({a:1, b:2}): "    , dataExt.type({a:1, b:2}))
-// console.log("dataExt.type(['1','2']): "     , dataExt.type(['1','2']))
-// console.log("dataExt.type(()=>false): "     , dataExt.type(()=>false))
-// console.log("dataExt.isString('resource'): ", dataExt.isString('resource'))
-// console.log("dataExt.isNumber(1): "         , dataExt.isNumber(1))
-// console.log("dataExt.isArray([1, 2]): ", dataExt.isArray([1, 2]))
-// console.log("dataExt.isArray(1): "  , dataExt.isArray(1))
-// console.log("dataExt.isObject({a:'1', b:'2'}): ", dataExt.isObject({a:'1', b:'2'}))
-// console.log("dataExt.isObject({a:1, b:2}): ", dataExt.isObject({a:1, b:2}))
-// console.log("dataExt.isObject(1): "         , dataExt.isObject(1))
-// console.log("dataExt.isFunction(()=>false): ", dataExt.isFunction(()=>false))
-// console.log("dataExt.isValue(1): "          , dataExt.isValue(1)) 
-// console.log("dataExt.isValue('resource'): " , dataExt.isValue("resource"))
-// console.log("dataExt.isValue([1,2]): ", dataExt.isValue([1,2]))
-// console.log("dataExt.isDefined('resource'): ", dataExt.isDefined('resource'))
-// console.log("dataExt.isDefined(): "         , dataExt.isDefined())
+// console.log("j$.Ext.type('resource'): "    , j$.Ext.type('resource'))
+// console.log("j$.Ext.type(1): "             , j$.Ext.type(1))
+// console.log("j$.Ext.type({a:'1', b:'2'}): ", j$.Ext.type({a:'1', b:'2'}))
+// console.log("j$.Ext.type({a:1, b:2}): "    , j$.Ext.type({a:1, b:2}))
+// console.log("j$.Ext.type(['1','2']): "     , j$.Ext.type(['1','2']))
+// console.log("j$.Ext.type(()=>false): "     , j$.Ext.type(()=>false))
+// console.log("j$.Ext.isString('resource'): ", j$.Ext.isString('resource'))
+// console.log("j$.Ext.isNumber(1): "         , j$.Ext.isNumber(1))
+// console.log("j$.Ext.isArray([1, 2]): ", j$.Ext.isArray([1, 2]))
+// console.log("j$.Ext.isArray(1): "  , j$.Ext.isArray(1))
+// console.log("j$.Ext.isObject({a:'1', b:'2'}): ", j$.Ext.isObject({a:'1', b:'2'}))
+// console.log("j$.Ext.isObject({a:1, b:2}): ", j$.Ext.isObject({a:1, b:2}))
+// console.log("j$.Ext.isObject(1): "         , j$.Ext.isObject(1))
+// console.log("j$.Ext.isFunction(()=>false): ", j$.Ext.isFunction(()=>false))
+// console.log("j$.Ext.isValue(1): "          , j$.Ext.isValue(1)) 
+// console.log("j$.Ext.isValue('resource'): " , j$.Ext.isValue("resource"))
+// console.log("j$.Ext.isValue([1,2]): ", j$.Ext.isValue([1,2]))
+// console.log("j$.Ext.isDefined('resource'): ", j$.Ext.isDefined('resource'))
+// console.log("j$.Ext.isDefined(): "         , j$.Ext.isDefined())
 
 var Test$ = function(){
     return{Date:value=>{console.log("isDate('"    +value+ "'):"+ value.isDate())},
@@ -917,13 +937,13 @@ digitoModule11:(value,dig,lim)=>{console.log('Module11('   +value+ '):'+ value.m
 String.prototype.gsub=function(pattern, replacement) {
     let result = '', source = this, match;
     function prepareReplacement(replacement) {
-        if (dataExt.isFunction(replacement)) return replacement;
+        if (j$.Ext.isFunction(replacement)) return replacement;
         let template = new Template(replacement);
         return function(match) { return template.evaluate(match) };
     }
     replacement = prepareReplacement(replacement);
 
-    if (dataExt.isString(pattern))
+    if (j$.Ext.isString(pattern))
         pattern = RegExp.escape(pattern);
 
     if (!(pattern.length || pattern.source)) {
@@ -978,4 +998,4 @@ function Template(template, pattern) {
     // var myDiv = new Template("<div class='page' id='#{id}'></div>"); ou var myDiv = new Template("<div class='page' id='#[id]'></div>",/(^|.|\r|\n)($\[(.*?)\])/);
     // myDiv.evaluate({id:'id.999'});
 
-// export default dataExt;
+// export default j$.Ext;

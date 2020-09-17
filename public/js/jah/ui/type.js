@@ -1,7 +1,7 @@
 /* By Geraldo Gomes */
 'use strict';
 
-// import dataExt      from  "../api/dataExt.js"; 
+// import j$.Ext      from  "../api/dataExt.js"; 
 // import {CONFIG, c$} from  "../config.js";
 // import {CONFIG, c$} from  "../api/system.js";
 
@@ -126,7 +126,7 @@ const TYPE = function() {
             this.bind = (_input)=>{TYPE.Helper.bindField(SELF,_input)}
             
             this.filterToggle=showFilter=>{
-                    SELF.onFilter = (dataExt.isDefined(showFilter))
+                    SELF.onFilter = (j$.Ext.isDefined(showFilter))
                                 ?showFilter
                                 :!SELF.onFilter
                     SELF.Header.clas$ = c$.FILTER.CLASS(SELF.onFilter);
@@ -163,7 +163,7 @@ const TYPE = function() {
                 let mask = '9'.repeat(size-3)+'0'+decimalChar+'00';
                 this.inherit({size:size+1, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isDecimal(2);}, error:TYPE.Error.MESSAGE.Money}
                             , mask:{format:mask+"|"+mask.replace(/[0|9]/g,"_"), strip:decimalChar, empty:decimalChar, align:c$.ALIGN.RIGHT}}, Properties);
-                this.format= value=> {return dataExt.format.money(value); };
+                this.format= value=> {return j$.Ext.format.money(value); };
             }
         ,    Char:function(size, Properties){
                 this.inherit = superType;
@@ -623,7 +623,7 @@ TYPE.Fieldset = function(){
         // Monta um Record com os campos que vem em Keys
         RecordBy = keys=>{
             let record = {};
-            const keyType = dataExt.type(keys);
+            const keyType = j$.Ext.type(keys);
             switch (keyType) {
                 case "String": record[keys]= this.c$[keys].value();
                      break; 
@@ -714,7 +714,7 @@ TYPE.Fieldset = function(){
     return {
         create(fields){return new Fieldset(fields)}
        , build(key){ // Método para criar um fieldset a partir da chave
-            let rcd = dataExt.format.record(key)
+            let rcd = j$.Ext.format.record(key)
               , fieldset = {};            
             fieldset[rcd.id]=TYPE.INTEGER(4,{label:'Código', readOnly:true});
             fieldset[rcd.text]=TYPE.CHAR(30,{label:key.toFirstUpper(), mandatory:true});
@@ -732,7 +732,7 @@ TYPE.Helper = function(){
         parse(parm){
             function interpret(mask){ 
                 let _mask=mask;
-                if (dataExt.isString(mask)){ // sendo strig, vai verificar se na calecao masks padrao
+                if (j$.Ext.isString(mask)){ // sendo strig, vai verificar se na calecao masks padrao
                     if (c$.MASKS[mask]) 
                     _mask = c$.MASKS[mask]; 
                 }    
@@ -741,9 +741,9 @@ TYPE.Helper = function(){
             let split = mask=>{ // separa as partes da definicao da mascara (format e prompt)
                 let fmt=(mask && mask.format) ?mask.format :mask
                 , values;
-                if (dataExt.isArray(fmt))        
+                if (j$.Ext.isArray(fmt))        
                     values= mask;               
-                else if (dataExt.isString(fmt))  
+                else if (j$.Ext.isString(fmt))  
                     values= fmt.split(c$.MASK.FieldDataSeparator);  
                 this.mask   = values[0];                    // [0] é o formato da mascara
                 this.prompt = (values.length>1) ?values[1] :null; // [1] é o prompt  da mascara
@@ -757,7 +757,7 @@ TYPE.Helper = function(){
                 let mask=interpret(parm);            
                 split(mask);
 
-                if (dataExt.isObject(mask))        // copia as propriedades 
+                if (j$.Ext.isObject(mask))        // copia as propriedades 
                     Object.setIfExist(this,mask,['strip','empty','align']);
             }    
         }
@@ -819,12 +819,12 @@ TYPE.Helper = function(){
                 }
                 if (text.isEmpty())
                     TYPE.Error.passForward.invalid(this.field, TYPE.Error.MESSAGE.InvalidItem);
-            } else if (response && dataExt.isString(response) && !response.isEmpty())
+            } else if (response && j$.Ext.isString(response) && !response.isEmpty())
                 this.show(response);
         }
         request=value =>{
             let fields = this.prepareToRequest(value);
-            if (this.Resource && dataExt.isDefined(fields)){
+            if (this.Resource && j$.Ext.isDefined(fields)){
                 if (this.field.type=='text')
                    this.Resource.get(fields, this); // 'this' é o 'callback'
             }
@@ -1046,7 +1046,7 @@ TYPE.Feedback =function (){
     let _msg=null
       , _markIfValid = true;
     function fmtMsg(msg=""){ 
-        return dataExt.isString(msg) ?msg :msg.statusText;
+        return j$.Ext.isString(msg) ?msg :msg.statusText;
     }      
     function fmtId(field, msg=""){ 
         let fb = i$(`${field.id}_legend`);
@@ -1094,8 +1094,8 @@ TYPE.Feedback =function (){
 TYPE.Formatter = function(){
    //let InitMask = false;
    let Format = function(field, maskProperties){ //inicializa as máscaras dos elemntos
-            if(field.type=="text" && dataExt.isDefined(field.getAttribute("data-mask"))  
-                                && dataExt.isDefined(field.Mask)==false){
+            if(field.type=="text" && j$.Ext.isDefined(field.getAttribute("data-mask"))  
+                                && j$.Ext.isDefined(field.Mask)==false){
                 if(!field.id) Utils.GenerateID(field);
                         
                 //let behaviour     = TYPE.Formatter.Mask;  

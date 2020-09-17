@@ -99,8 +99,8 @@ j$.Controller = function(){
         const initialized = function(){
              _me.service = $service;
              _me.ResponseHandler = new ResponseHandler(_me);
-             if (dataExt.isDefined(_me.service.resource)){
-                 if (dataExt.isString(_me.service.resource))
+             if (j$.Ext.isDefined(_me.service.resource)){
+                 if (j$.Ext.isString(_me.service.resource))
                      _me.service.resource ={name: _me.service.resource.toFirstLower() };
              }else
                  _me.service.resource ={name: _me.service.id.toFirstLower()};
@@ -186,7 +186,7 @@ j$.Controller = function(){
        };
        function ResponseHandler(parent){
            this.get = function(response) { // os recursos serao criados no primeiro GET
-             if (!dataExt.isDefined(parent.UpdateController))
+             if (!j$.Ext.isDefined(parent.UpdateController))
                 parent.UpdateController = new UpdateController(parent.service);
      
              if (parent.service.initialize)

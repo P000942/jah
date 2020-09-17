@@ -11,7 +11,7 @@
      .store            => É o repositório onde ficam os dados
  */
 'use strict';
-// import dataExt from  "../jah/api/dataExt.js"; 
+// import j$.Ext from  "../jah/api/j$.Ext.js"; 
  j$.Requester = function(){ // É  uma instancia única
     let context = CONFIG.RESOURCE.CONTEXT;
     function URL(url, responseHandler){
@@ -33,7 +33,7 @@
         //console.log(`search==>>${source} / ${parameter} / ${id}`);
           let response = null
           if (parameter){ //GET "http://localhost:3000/assunto com boby={idAssunto:1}
-             if (dataExt.isObject(parameter)){
+             if (j$.Ext.isObject(parameter)){
                 response = source.select( record =>{
                       for (let key in parameter){
                           if (record[key]!=parameter[key])
@@ -88,7 +88,7 @@
                   );
                }else{
                   if (parameter){
-                      if (dataExt.isObject(parameter))
+                      if (j$.Ext.isObject(parameter))
                          http.parameters = JSON.stringify(parameter);
                       else
                          http.url += "/"+parameter;
@@ -270,8 +270,8 @@ j$.Resource = function(){ // Factory: Criar os recursos
 
        function put(response, id, recordRow) {
            let record = j$.Resource.DefaultHandler.handler(response);
-           if (!dataExt.isDefined(recordRow)){
-              recordRow=(dataExt.isDefined(id))
+           if (!j$.Ext.isDefined(recordRow)){
+              recordRow=(j$.Ext.isDefined(id))
                            ?Resource.findIndex(id)
                            :Resource.Dataset.position;
            }
@@ -339,7 +339,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
             });
             if (DataSource){
                // Quando soh tem registro na tabela, nao volta uma array e sim um objeto, por isso o tratamento
-               if (dataExt.isArray(DataSource))
+               if (j$.Ext.isArray(DataSource))
                    _ds.DataSource = DataSource;
                else
                    _ds.DataSource = [DataSource];
@@ -531,7 +531,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
                  res.context = context;
              }
          }
-         if (dataExt.isString(resource)){
+         if (j$.Ext.isString(resource)){
             parseUrl(resource);
          }else{
              Object.setIfExist(res,resource,properties)
@@ -544,13 +544,13 @@ j$.Resource = function(){ // Factory: Criar os recursos
                      res.source=resource[key];
                  }
              }
-             if (res.source && !dataExt.isDefined(res.local))
+             if (res.source && !j$.Ext.isDefined(res.local))
                  res.local  = true;
          }
          if (!res.context)
                res.context=context;
 
-         Object.preset(res, dataExt.format.record(res.name), ['id','text']);
+         Object.preset(res, j$.Ext.format.record(res.name), ['id','text']);
          Object.preset(res,{key:res.id});
          res.url = res.context + res.name;
 
@@ -769,7 +769,7 @@ j$.Resource.Store= function(){
       add(resource, keep){j$.Resource.create(resource)}
     , save(Resource, source, keep){      // Keep -> para manter o conteúdo já existente
          assertContext(Resource.context)
-         if (source && dataExt.isArray(source)) { // tem um recurso informado
+         if (source && j$.Ext.isArray(source)) { // tem um recurso informado
             if (!keep || !store[Resource.context][Resource.name])
                store[Resource.context][Resource.name]=source;
          }

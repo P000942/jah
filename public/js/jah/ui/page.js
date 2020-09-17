@@ -100,7 +100,7 @@ j$.Service = function(){
                     j$.Page.create($i, modal).init();
                 };
             }
-            if ($i.autoRequest==undefined  && dataExt.isCrud($i)){
+            if ($i.autoRequest==undefined  && j$.Ext.isCrud($i)){
                 $i.autoRequest=function(parms){
                     $i.Resource.get(parms);
                 };
@@ -129,7 +129,7 @@ j$.Service = function(){
             this.id = idService +''+key.toFirstUpper();
             Object.preset(this,j$.Service.adapter.get(key)) // Vai copiar todas as propriedades do adapter.services que não exite no service
             this.onclick = this.Parent.actionController+'.child("'+key+'",' + txGetValue+ ')';
-            if (dataExt.isUndefined(this.modal))
+            if (j$.Ext.isUndefined(this.modal))
                 this.modal = CONFIG.CHILD.MODAL;
             if (this.crud || this.query)
                 this.service = j$.Service.build(key,this);
@@ -342,10 +342,10 @@ j$.Page = function(){
                     , _section;                      
                 function setValue(section, prop){
                     let value;
-                    if (dataExt.isObject(section)){
+                    if (j$.Ext.isObject(section)){
                         if (section[prop])              // existe o atributo
                             value = section[prop];                
-                    }else if (dataExt.isString(section) && prop=="clas$") // é o atributo default para o caso de vir string
+                    }else if (j$.Ext.isString(section) && prop=="clas$") // é o atributo default para o caso de vir string
                         value = section;
                     return value;    
                 }                                                         
@@ -354,7 +354,7 @@ j$.Page = function(){
                     for (let prop in att){
                         _section[prop] =att[prop]; // garantir a existes dos atributos de att em cada section
                         if (reposit[key]){
-                            if (dataExt.isArray(reposit[key])) // existe a secao e a ocorrencia
+                            if (j$.Ext.isArray(reposit[key])) // existe a secao e a ocorrencia
                                 _section[prop] = setValue(reposit[key][idx], prop)
                             else
                                 _section[prop] = setValue(reposit[key], prop)      
@@ -366,7 +366,7 @@ j$.Page = function(){
                 sections.labelInTheSameWrap=design.labelInTheSameWrap;   
                 return sections;      
             }                
-            if (dataExt.isArray(fields)){
+            if (j$.Ext.isArray(fields)){
             let wrapRow, key, mixed;
             fields.forEach((key,i)=>{                                              
                 mixed = blendSection(reposit, i);   
@@ -397,8 +397,8 @@ j$.Page = function(){
                     design.column = design.coupled;
                 }
                 function parse(section, key){
-                    if (dataExt.isArray(section)){ 
-                        if (dataExt.isArray(section[row])) // para section=[[],...,[]]
+                    if (j$.Ext.isArray(section)){ 
+                        if (j$.Ext.isArray(section[row])) // para section=[[],...,[]]
                             reposit[key] = section[row];
                         else
                             reposit[key] = section;        // para section=[]
@@ -410,7 +410,7 @@ j$.Page = function(){
                             parse(design[key], key);
                 })
             }                             
-            if (dataExt.isArray(design.fields[0])){
+            if (j$.Ext.isArray(design.fields[0])){
                 design.fields.forEach((fieldS,idx)=>{
                     parseSection(fieldS, idx);
                     addRow(page, wrapSection, fieldset, design, reposit);
@@ -585,9 +585,9 @@ j$.Page.Alert= function(){
     return {
     show:function(msg, alertClass, wrap=i$(_wrap)){
         this.hide(wrap);
-        if (dataExt.isString(msg))
+        if (j$.Ext.isString(msg))
             j$.ui.Render.alert(wrap, msg, alertClass);
-        else if (dataExt.isArray(msg) && msg.length === 1){
+        else if (j$.Ext.isArray(msg) && msg.length === 1){
             j$.ui.Render.alert(wrap, msg[0], alertClass);
         }else{
             let html='<lu>'
@@ -724,7 +724,7 @@ j$.Page.Form=function(service, modal) {
           , idTitle = `${$i.form.id}Title`
           , idMenu  = `${$i.form.id}Menu`;
         function title(text){
-           if (text && dataExt.isString(text)) 
+           if (text && j$.Ext.isString(text)) 
               i$(idTitle).innerHTML=text;
            else
               element.hide();    
@@ -990,7 +990,7 @@ j$.Page.Buttons=function(actionController, buttons, presetFunction){
         if (parent && parent.id)
             Object.preset(button, {id: parent.id +'_'+ key});
         Object.preset(button,{key:key, value, clas$:CONFIG.BUTTON.CLASS.DEFAULT});
-        if (!button.onclick && actionController && dataExt.isString(actionController))
+        if (!button.onclick && actionController && j$.Ext.isString(actionController))
            button.onclick = actionController+'.' +key.toLowerCase()+'(this);';
         return button;
     };
@@ -1020,7 +1020,7 @@ j$.Page.Buttons=function(actionController, buttons, presetFunction){
     this.add=(key, button)=>{
          preset(key,button, _wrap);
          button.element = j$.ui.Render.button(wrapButtons, button);
-         if (actionController && dataExt.isObject(actionController) && actionController[button.key])
+         if (actionController && j$.Ext.isObject(actionController) && actionController[button.key])
              $(button.element).click(actionController[button.key]);
          submenu(button);
     };
@@ -1045,7 +1045,7 @@ j$.Page.Navigator=function(parent, pager , actionController){
     Object.preset(_pager,{clas$:CONFIG.PAGER.CLASS, pager:pager});
     function parse(values){
         let properties = values;
-         if (dataExt.isString(properties))
+         if (j$.Ext.isString(properties))
              properties = {value:properties, key:properties};
          Object.preset(properties, {key:properties.value});
 

@@ -1,6 +1,6 @@
 'use strict';
 // import {CONFIG, c$} from  "../config.js";
-// import dataExt      from  "../api/dataExt.js"; 
+// import j$.Ext      from  "../api/dataExt.js"; 
 // import System        from  "../api/system.js"; 
 j$.Dashboard = function(){
     let idContent=CONFIG.LAYOUT.CONTENT
@@ -96,7 +96,7 @@ j$.Dashboard.Menubar=function(){
     , bindToTabs: function(Services, design){
                 for (let key in design){
                     let menu = design[key];
-                    if (dataExt.isArray(menu))
+                    if (j$.Ext.isArray(menu))
                         menu = {items:design[key]};
                     Object.preset(menu, {key:key, caption:key});
                     j$.Dashboard.Menubar.bindItems(menu, Services);
@@ -440,7 +440,7 @@ j$.Dashboard.Menu = function(){ // factory
         }();
     
         let initialized = function(){
-                if (dataExt.isString(properties)){ // veio apenas o caption
+                if (j$.Ext.isString(properties)){ // veio apenas o caption
                     Object.preset(_base, {idContainer:CONFIG.LAYOUT.CONTENT});
                 } else {
                     if (!properties){properties={}};
@@ -456,13 +456,13 @@ j$.Dashboard.Menu = function(){ // factory
         this.submenu = function(){
             return{
                 add:items=>{
-                    if (dataExt.isObject(items) || (dataExt.isString(items) && !items.isEmpty())){
+                    if (j$.Ext.isObject(items) || (j$.Ext.isString(items) && !items.isEmpty())){
                         if (items.items)
                         return _base.submenu.addMenu(items)   //adiciona o menu
                                             .add(items.items);//adiciona o submenu
                         else
                         return _base.submenu.addMenu(items);                  
-                    }else if (dataExt.isArray(items)){
+                    }else if (j$.Ext.isArray(items)){
                         let _items=[]
                         for (let idx=0; idx<items.length;idx++)
                         //items.forEach((item,idx)=>{
@@ -473,7 +473,7 @@ j$.Dashboard.Menu = function(){ // factory
                         return _base.divider.add(items);         
                 }
                 , addMenu(items){
-                    if (dataExt.isObject(items))
+                    if (j$.Ext.isObject(items))
                         j$.Dashboard.bindItem(items); // fazer a ligacao com o caminho de abertudo do item (tab, url)
                     let lastItem = new Subitem(_base, items);
                     _base.put(lastItem.key, lastItem);
