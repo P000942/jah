@@ -882,26 +882,6 @@ const dataExt = function(){
 // console.log("dataExt.isDefined('resource'): ", dataExt.isDefined('resource'))
 // console.log("dataExt.isDefined(): "         , dataExt.isDefined())
 
-// dataExt.format = function(){
-//     return {
-//         money:value=>{
-//            value = value.toString().replace(",",'.');
-//            return numberFormat(value, 2);
-//         }
-//       ,record:(name, parent)=>{
-//           if (parent){
-//              parent.id   = 'id' +name.toFirstUpper();
-//              parent.text = 'tx' +name.toFirstUpper();
-//              return parent;
-//           } else {
-//              return {id: 'id'+name.toFirstUpper()
-//                  , text: 'tx'+name.toFirstUpper()};
-//           }
-//         }
-//     };
-// }();
-
-
 var Test$ = function(){
     return{Date:value=>{console.log("isDate('"    +value+ "'):"+ value.isDate())},
           Digit:value=>{console.log("isDigit('"   +value+ "'):"+ value.isDigit())},
@@ -934,8 +914,6 @@ digitoModule11:(value,dig,lim)=>{console.log('Module11('   +value+ '):'+ value.m
      digitoCca:(value,dig,lim)=>{console.log('digitoCca('   +value+ '):'+ value.digitoCca())}
     }
 }();
-
-
 
 String.prototype.gsub=function(pattern, replacement) {
     let result = '', source = this, match;
