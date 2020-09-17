@@ -2,7 +2,7 @@
  by Geraldo Gomes
  */
 'use strict'
-//import dataExt from  "./api/dataExt.js"; 
+// import dataExt from  "./api/dataExt.js"; 
 const c$ = {
        NOW: new Date()
     ,   RC:{NOT_FOUND:-1, NONE:-1}
@@ -383,4 +383,4 @@ CONFIG.action= vl_key =>{
     return (key)?action:null;
 };
 
-//export {CONFIG, c$};
+// export {CONFIG, c$};

@@ -1,6 +1,10 @@
 /* By Geraldo Gomes */
 'use strict';
-   
+
+// import dataExt      from  "../api/dataExt.js"; 
+// import {CONFIG, c$} from  "../config.js";
+// import {CONFIG, c$} from  "../api/system.js";
+
 const TYPE = function() {
     Element.prototype.bind = function(field) {
         this.field =field;

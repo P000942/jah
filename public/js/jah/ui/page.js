@@ -1,19 +1,19 @@
 /* j$.Service - Eh o template do serviço, comtém as informações a respeito de um serviço desejado
- *              pode ser do tipo: 'crud', 'query' ou 'user'(criado pelo usuário)
- * j$.Page: Cria a página que expõe o serviço (os elementos html)
- *              pode ser do tipo: 'form' ou 'modal'
- * Adapter   : Contém informações declaradas na aplicaçaõ que são usadas no 'Menu', 'Tabs' e 'j$.Service'. Útil para evitar redundância nas declarações
- *             Exmeplo: 'title', 'resouce' e outras informações serão aproveitadas em ambos.
- *
- * 1.Através de j$.Service é criado o template do serviço
- * 2.Em algum ponto da interface(geralmente pelo menu) é solicitado a exposição desse serviço.
- * 3.O método '.init(idContainer, modal)' do serviço deve ser chamado
- * 4.Neste método (.init) é solicitado j$.Page que cria a página através do método '.create(service,modal)'
- * 5.Atavés do paramametro 'modal' o método sabe se é para criar um form ou um modal. A página será criada segundo as informações do 'service'
- * 6.Na criação página também é criado o 'actionController' para receber as ações da página(ver o fluxo no controller.js)
- * service(crud, query,user) -> page(crud, modal) -> controller(external, standard)
- *
- design=[{type:'standard' , fields:[] [, id:'']}
+                pode ser do tipo: 'crud', 'query' ou 'user'(criado pelo usuário)
+   j$.Page: Cria a página que expõe o serviço (os elementos html)
+                pode ser do tipo: 'form' ou 'modal'
+   Adapter   : Contém informações declaradas na aplicaçaõ que são usadas no 'Menu', 'Tabs' e 'j$.Service'. Útil para evitar redundância nas declarações
+               Exmeplo: 'title', 'resouce' e outras informações serão aproveitadas em ambos.
+ 
+   1.Através de j$.Service é criado o template do serviço
+   2.Em algum ponto da interface(geralmente pelo menu) é solicitado a exposição desse serviço.
+   3.O método '.init(idContainer, modal)' do serviço deve ser chamado
+   4.Neste método (.init) é solicitado j$.Page que cria a página através do método '.create(service,modal)'
+   5.Atavés do paramametro 'modal' o método sabe se é para criar um form ou um modal. A página será criada segundo as informações do 'service'
+   6.Na criação página também é criado o 'actionController' para receber as ações da página(ver o fluxo no controller.js)
+   service(crud, query,user) -> page(crud, modal) -> controller(external, standard)
+ 
+   design=[{type:'standard' , fields:[] [, id:'']}
        , {type:'column'   , fields:[[],[]]}
        , {type:'grid'     , fields:[[],[]]}
        , {type:'table'    , fields:[[],[]]}

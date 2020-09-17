@@ -861,7 +861,6 @@ const dataExt = function(){
     }
 }();
 
-
 // console.log("dataExt.type('resource'): "    , dataExt.type('resource'))
 // console.log("dataExt.type(1): "             , dataExt.type(1))
 // console.log("dataExt.type({a:'1', b:'2'}): ", dataExt.type({a:'1', b:'2'}))
@@ -979,4 +978,4 @@ function Template(template, pattern) {
     // var myDiv = new Template("<div class='page' id='#{id}'></div>"); ou var myDiv = new Template("<div class='page' id='#[id]'></div>",/(^|.|\r|\n)($\[(.*?)\])/);
     // myDiv.evaluate({id:'id.999'});
 
-//export default dataExt;
+// export default dataExt;

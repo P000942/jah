@@ -1,21 +1,21 @@
 /*
- * ActionController: faz a chamada aos métodos do recurso (RESOURCE)
- * ResponseController:
- *                    -> Recebe as respostats do servidor (callback dos métodos http enviados ao recurso)
- *                    -> Recebe os eventos para atualizar interface do usuário (filtro, sort, edit, etc...)
- *                    -> Controla o fluxo de saída para atualizar interface do usuário (repassa para -> UpdateController)
- * ResourceRequest: Faz requisição de serviços do servidor
- *                ResourceRequest: Chama uma URL
- *                LocalResourceRequest: Simula chamada remota
- * UpdateController:
- *                - Faz as interações entre o objetos FIELDSET, DATASET E INTERFACE.LIST para efetuar as atualizações dos mesmos.
- * Dataset: Mantém os dados do lado cliente
- *
- * Ponto de enrtada para a interface do usuário
- * FLUXO
- * UI -> ActionController ->
- *       :Se precisa fazer atualizações-> ResourceRequest -> ResponseController -> UpdateController
- *       :Se não precisa -> ResponseController -> UpdateController
+    ActionController: faz a chamada aos métodos do recurso (RESOURCE)
+    ResponseController:
+                       -> Recebe as respostats do servidor (callback dos métodos http enviados ao recurso)
+                       -> Recebe os eventos para atualizar interface do usuário (filtro, sort, edit, etc...)
+                       -> Controla o fluxo de saída para atualizar interface do usuário (repassa para -> UpdateController)
+    ResourceRequest: Faz requisição de serviços do servidor
+                   ResourceRequest: Chama uma URL
+                   LocalResourceRequest: Simula chamada remota
+    UpdateController:
+                   - Faz as interações entre o objetos FIELDSET, DATASET E INTERFACE.LIST para efetuar as atualizações dos mesmos.
+    Dataset: Mantém os dados do lado cliente
+ 
+    Ponto de enrtada para a interface do usuário
+    FLUXO
+    UI -> ActionController ->
+          :Se precisa fazer atualizações-> ResourceRequest -> ResponseController -> UpdateController
+          :Se não precisa -> ResponseController -> UpdateController
  */
 'use strict';
 j$.Controller = function(){
