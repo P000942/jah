@@ -1,18 +1,14 @@
 'use strict'
 const j$ = function(){
-    //console.log(['name','key'].indexOf('keys'));
-    //console.log(" Geraldo Gomes ".split(/\s/gi))
     String.prototype.trim = function(){
         return this.replace(/^\s*/, "").replace(/\s*$/, "");
     }
-    // TESTE: '   tete  '.trim()
 
     String.prototype.isEmpty = function(){
         if(this==null){return true;};
         if(this.trim().length==0){return true;};
         return false;
     }
-    //Test$.isEmpty(' ');Test$.isEmpty(''); Test$.isEmpty('_');
 
     String.prototype.repeat = function (n){
         let r="";
@@ -21,8 +17,6 @@ const j$ = function(){
             r+=s;
         return r;
     }
-    // TESTE: 'X'.repeat(10)
-
     String.prototype.noAccent = function (){
         let r=this; var hash={a:'áàã', e:'éê', i:'í', o:'ÓÔ', u:'úü', c:'ç', n:'ñ'};
         for (let key in hash){
@@ -32,7 +26,6 @@ const j$ = function(){
         }
         return r;
     };
-    // TESTE: 'X'.repeat(10)
 
     String.prototype.toCapitalize = function (){
         let r=this.split(/\s/gi); var text='';
@@ -58,8 +51,6 @@ const j$ = function(){
         return this.split(eval('(/['+ text +']/gi)'));
         // return r.join(' ');
     };
-    //"jose_geraldo.gomes-final".r.toSeparate("_.-");
-
     String.prototype.toCaption = function (delimiters){
         if (delimiters==undefined)
             delimiters = '_.-';
@@ -67,9 +58,7 @@ const j$ = function(){
         for (let i=0; ar.length>i;i++)
             ar[i]=ar[i].stripChar('_.<>*!$&;:"\'@+#-%^)(').trim(); // Remove Caracteres
         return ar.join(' ').toCapitalize().trim();
-    };
-    //"jose_geraldo.gomes-final".r.toCaption("_.-");
-
+    };    
     String.prototype.toKey = function (){
         let r=this;
         r = r.stripChar('_.<>*!$&;:"\'@+#%^)(-'); //Remove Caracteres
@@ -77,9 +66,7 @@ const j$ = function(){
         r = r.replace(/\s/gi,''); // Remove espaços
         r = r.noAccent();  // Troca as Letras acentuadas
         return r;
-    };
-    //"id_nome&mt.for-da$xxx&".toKey()
-
+    };    
     String.prototype.stripChar = function (delimiters){
         let r =this, text='', er='';
         if (j$.Ext.isArray(delimiters)){
@@ -96,24 +83,16 @@ const j$ = function(){
         r = r.replace(eval(er),'');
         return r;
     };
-    //console.log('04.150.945-5'.stripChar(['.','-'])); console.log('04 150.945-5'.stripChar(['.','-', ' ']));
-    //console.log('04.150.945-5'.stripChar('.-')); console.log('04 150.94 55/0001-5'.stripChar('/. -'));
     //console.log('04 150.945-5'.replace(/\s|[.-]/gi, ''));
     //console.log("José Geraldo Ferreira Gomes".replace(/\s|[' ']/gi, ''));
 
     String.prototype.startsWith=function(pattern) {
         return this.lastIndexOf(pattern, 0) === 0;
     }
-    //"Jose".startsWith("J"); "Jose".startsWith("j")
-
-    String.preset= function(value, vlDefault='') {
-        return value == null ? vlDefault : String(value);
-    }
-    //let aux=null; String.preset(aux)
-    //zen = vl => String.preset(vl); zen(null); zen()
 
     String.prototype.regexValidate = function(regularExpression){
-        if (this.isEmpty()){return false;}
+        if (this.isEmpty())
+            return false;
         return (!this.match(regularExpression))?false:true;
     }
 
@@ -135,7 +114,6 @@ const j$ = function(){
 
         return dig;
     }
-    //Testa.digitoModule11('417660402',2,12); Testa.digitoModule11('04150945');Testa.digitoModule11('073114610001',2,9);
 
     String.prototype.digitoCpf = function()  {
         return this.module11(2,12);
@@ -154,28 +132,23 @@ const j$ = function(){
         let digito_ok = num.digitoCpf();
         return (digito_ok == digito )?true:false;
     }
-    //Testa.CPF('41766040268'); Testa.CPF('41766040267');
     String.prototype.ehCnpj = function()  {
         let digito = this.substr(this.length-2,2);
         let num = this.substr(0,this.length-2);
         let digito_ok = num.digitoCnpj();
         return (digito_ok == digito )?true:false;
     }
-    //Testa.CNPJ('07311461000125'); Testa.CNPJ('07311461000124');
     String.prototype.ehCca = function()  {
         let digito = this.substr(this.length-1,1);
         let num = this.substr(0,this.length-1);
         let digito_ok = num.digitoCca();
         return (digito_ok == digito )?true:false;
     }
-    //Testa.CCA('041509455'); Testa.CCA('041509456');
 
     String.prototype.ehCep = function(){
         let expReg =/^[0-9]{5}[-]{0,1}[0-9]{3}$/;
         return (!this.regexValidate(expReg))?false:true;
     }
-    //Testa.CEP('69029-080'); Testa.CEP('6902-080'); Testa.CEP('69029-0801'); Testa.CEP('69029-80'); Testa.CEP('690219-080');
-
 
     String.prototype.ehPlaca = function(){
         let expReg =/^[A-Z]{3}[-]{0,1}[0-9]{4}$/;
@@ -183,8 +156,6 @@ const j$ = function(){
     //        expReg = /^[A-Z]{3}{0,1}[0-9]{4}$/;
         return (!this.regexValidate(expReg))?false:true;
     }
-    //Testa.Placa('JXX-9999'); Testa.Placa('GG-1111'); Testa.Placa('JXG-10801'); Testa.Placa('JG1-1000'); Testa.Placa('JGG-G080');
-
 
     // Esse � o script
     String.prototype.isName = function(){
@@ -200,19 +171,10 @@ const j$ = function(){
         return nameIsValid;
     };
 
-    //// Aqui estão os testes
-    //// Observer que n�o estah considerando espacos em branco
-    //Test$.isName(" Geraldo Gomes ");
-    //Test$.isName(" Geraldo F. Gomes ");
-    //Test$.isName(" Joseh Geraldo Gomes ");
-    //Test$.isName(" Geraldo  ");
-    //Test$.isName(" Geraldo A ");
-    //Test$.isName(" A Gomes ");
-
     String.prototype.isLetter = function(){
     //    return (!this.regexValidate(/^[:alpha:]/))?false:true;
         if (this.isEmpty()){return false;}
-        let alfabeto = "ABCDEFGHIJKLWMNOPQRSTUVXYZ�ÁÉÍÓÚÃÕÊÔ ";
+        let alfabeto = "ABCDEFGHIJKLWMNOPQRSTUVXYZÁÉÍÓÚÃÕÊÔ ";
         let campo_maiusculo = this.toUpperCase();
         for (let cont = 0; cont < campo_maiusculo.length; cont++ ){
                 let parte_campo = campo_maiusculo.charAt(cont);
@@ -221,42 +183,34 @@ const j$ = function(){
         }
         return true;
     }
-    //Test$.Letter('A'); Test$.Letter('1'); Test$.Letter('a'); Test$.Letter('�'); Test$.Letter('�');
-
 
     String.prototype.isDigit = function(){
         return (!this.regexValidate(/^[0-9]{1,1}$/))?false:true;
-    }
-    //Test$.Digit(''); Test$.Digit('23,59'); Test$.Digit('00,00'); Test$.Digit('24');Test$.Digit('1'); Test$.Digit('A'); Test$.Digit('100000001,1'), Test$.Digit('1,A');Test$.Digit('A,1');
+    }   
 
     String.prototype.isNumeric = function(decimal=0){
         let expReg =/(\d{1,}[,]{1}\d{1,})|(^\d+$)/;
         return (!this.regexValidate(expReg))?false:true;
     }
-    //Test$.Numeric('23,59'); Test$.Numeric('00,00'); Test$.Numeric('24'); Test$.Numeric('1');Test$.Numeric('12,132'); Test$.Numeric('A'); Test$.Numeric('100000001,1'), Test$.Numeric('1,A');Test$.Numeric('A,1');
+   
     String.prototype.isDecimal = function(decimal=0){
         let expReg =/(\d{1,}[,]{1}\d{1,})|(^\d+$)/;
         return (!this.regexValidate(expReg))?false:true;
     }
-    //Test$.Numeric('23,59'); Test$.Numeric('00,00'); Test$.Numeric('24'); Test$.Numeric('1');Test$.Numeric('12,132'); Test$.Numeric('A'); Test$.Numeric('100000001,1'), Test$.Numeric('1,A');Test$.Numeric('A,1');
-
 
     String.prototype.isInteger = function(){
         return (!this.regexValidate(/^[0-9]{1,}$/))?false:true;
     }
-    //Test$.Integer(''); Test$.Integer('23,59'); Test$.Integer('00,00'); Test$.Integer('24');Test$.Integer('1'); Test$.Integer('A'); Test$.Integer('100000001,1'), Test$.Integer('1,A');Test$.Integer('A,1');
 
     String.prototype.isMoney = function(){
         let expReg =/^(\d{1,}[,]{1}\d{1,2}$)|(^\d+$)/;
         return (!this.regexValidate(expReg))?false:true;
     }
-    //Test$.Money('23,59'); Test$.Money('00,00'); Test$.Money('24');Test$.Money('12,132'); Test$.Money('A'); Test$.Money('100000001,1'), Test$.Money('1,A');Test$.Money('A,1');
-
+    
     String.prototype.isDate = function(){
         let expReg = /^((((0?[1-9]|[12]\d|3[01])[\.\-\/](0?[13578]|1[02])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|[12]\d|30)[\.\-\/](0?[13456789]|1[012])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|1\d|2[0-8])[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|(29[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00)))|(((0[1-9]|[12]\d|3[01])(0[13578]|1[02])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|[12]\d|30)(0[13456789]|1[012])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|1\d|2[0-8])02((1[6-9]|[2-9]\d)?\d{2}))|(2902((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00))))$/;
         return (!this.regexValidate(expReg))?false:true;
     }
-    //Test$.Date('29/02/2011'); Test$.Date('28/02/2011'); Test$.Date('29/02/2008');Test$.Date('31/04/2011'); Test$.Date('31/05/2011'); Test$.Date('31/08/2008');
 
     String.prototype.isDateTime = function(){ return true}
 
@@ -268,7 +222,6 @@ const j$ = function(){
         let expReg =/^([0-1][0-9]|[2][0-3]):[0-5][0-9]$/;
         return (!this.regexValidate(expReg))?false:true;
     }
-    //Test$.Hour('23:59'); Test$.Hour('00:00'); Test$.Hour('24:00');Test$.Hour('12:00'); Test$.Hour('25:00'); Test$.Hour('12:60');
 
     String.prototype.isPhone = function(withoutMask){
         let expReg =/\(?\d{3}\)?\d{4}-\d{4}/;
@@ -276,13 +229,11 @@ const j$ = function(){
             expReg = /\d{11}/;
         return (!this.regexValidate(expReg))?false:true;
     }
-    //Test$.Phone('(092)8122-0911'); Test$.Phone('(092)81220911'); Test$.Phone('(092) 8122-0911');Test$.Phone('(92)8122-0911'); Test$.Phone('8122-0911'); Test$.Phone('12:60');
 
     String.prototype.isEmail = function(){
         let expReg = /^[A-Za-z0-9_\-\.]+@[A-Za-z0-9_\-\.]{2,}\.[A-Za-z0-9]{2,}(\.[A-Za-z0-9])?/;
         return (!this.regexValidate(expReg))?false:true;
     }
-    //Test$.Email('abc@xiba.com'); Test$.Email('abc@xiba'); Test$.Email('abc_xiba');
 
     String.prototype.mask = function(mask){
         mask =mask.replace(/[#]/g,'9'); // para adequar as m�scaras usadas na edi��o
@@ -324,10 +275,6 @@ const j$ = function(){
             return iterable.split("");
         }
     };
-    //Test$.Mask("1111222","9,99"); Test$.Mask("11112011","##/##/####"); Test$.Mask("11222","99.990,00"); Test$.Mask("1","000.000");Test$.Mask("9281220911","(000)0000-0000");
-    //Test$.Mask("jgg1111","AAA-0000"); Test$.Mask("JGG1111","aaa-0000");Test$.Mask("jgG1111","@@@-0000");
-    //Test$.Mask("jgg1111","AaA-0000");
-
     String.prototype.isValidInMask = function(mask){
         mask =mask.replace(/[#]/g,'9'); // para adequar as m�scaras usadas na edi��o
         mask =mask.replace(/[@]/g,'X'); // para evitar que retira quando da remo��o de todos os caracteres especiais;
@@ -351,58 +298,31 @@ const j$ = function(){
         }
         return valid;
     };
-    //Test$.isValidInMask("1111","####");
-    //Test$.isValidInMask("(92)111-abc","(99)999-aaa"); Test$.isValidInMask("92111abc","(99)999-aaa"); Test$.isValidInMask("(92)111-a1c","(99)999-aaa");
-    //Test$.isValidInMask("1111","@###");
-    //Test$.isValidInMask("A111","@###");
 
-
-    // String.prototype.pixel = function(fontSize){
-    //        i$('w_len').style.fontSize=fontSize + "px";
-    //        i$('w_len').innerHTML = "X".repeat(this.length + 1);
-    //        return {width:i$('w_len').getWidth(), height:i$('w_len').getHeight()};
-    // }
-    // //console.log("123451234512".pixel(10).width);
-    // //console.log("123451234512".pixel(10).height);
-    // String.prototype.point = function(fontSize){
-    // 	   i$('w_len').style.fontSize=fontSize + "pt";
-    //        i$('w_len').innerHTML = "X".repeat(this.length + 1);
-    //        return {width:i$('w_len').getWidth(), height:i$('w_len').getHeight()};
-    // }
-    // //console.log("123451234512".point(10).width);
-    // //console.log("123451234512".point(10).height);
+    String.preset= function(value, vlDefault='') {
+        return (value == null) ?vlDefault :String(value);
+    }
 
     Boolean.prototype.isEmpty = function(){ return false}
     // For convenience...
-    Date.prototype.format = function (mask, utc) {return dateFormat(this, mask, utc)}
-    //c$.NOW.format("dd/mm/yyyy")
-    //c$.NOW.format("HH:MM:ss")
-    //c$.NOW.format(c$.MASK.DATE.default)
+    Date.prototype.format = function (mask, utc) {return j$.Ext.dateFormat(this, mask, utc)}
 
     //@note: procura por valor no objeto e retorna array com as propriedades que contem o valor
-    Object.getByValue = function(object, value, attribute="value"){
+    Object.getByValue = function(source, value, attribute="value"){
         let items=[]
-        for (let key in object){
-            if (j$.Ext.isObject(object[key])){
-                if (object[key][attribute]){// objeto tem uma propriedade value
-                    if (object[key][attribute] == value)
+        for (let key in source){
+            if (j$.Ext.isObject(source[key])){
+                if (source[key][attribute]){// objeto tem uma propriedade value
+                    if (source[key][attribute] == value)
                         items.push(key);
                 }
             }else{
-                if (object[key] == value)
+                if (source[key] == value)
                     items.push(key);
             }
         }
         return (items.length>0) ?items :null;
     }
-    // var x = {a:1,b:2,c:1}
-    // var y = {a:{value:1},b:{value:2},c:{value:2}}
-    // var z = {a:{key:1},b:{key:2},c:{key:2}}
-    // console.log("   Object.getByValue(x,1) ->:"       +  Object.getByValue(x,1));
-    // console.log("   Object.getByValue(y,1) ->:"       +  Object.getByValue(y,2));
-    // console.log("   Object.getByValue(z,2) ->:"       +  Object.getByValue(z,2));
-    // console.log("   Object.getByValue(z,2,'key') ->:" +  Object.getByValue(z,2,"key"));
-    // console.log("   Object.getByValue(z,3,'key') ->:" +  Object.getByValue(z,3,"key"));
 
     //@note: definir um valor para uma propriedade de um método, caso a mesma nao seja informada;
     // é uma forma de garantir que certa propriedade estará presente no objeto
@@ -423,16 +343,11 @@ const j$ = function(){
     Object.toLowerCase = (propertie)=>{
         let receiver ={};
         if (j$.Ext.isObject(propertie)){ // copia propriedades do objeto
-        for (let key in propertie)
-            receiver[key.toLowerCase()] = propertie[key]
+            for (let key in propertie)
+                receiver[key.toLowerCase()] = propertie[key]
         }
         return receiver;
     };
-    // var aux = {a:1,b:2}
-    // console.log(Object.preset(aux,'c',{x:1, y:2}));
-    // aux = Object.preset({a:1,b:2},{x:1, y:2});
-    // aux = Object.preset({a:1,b:2,x:null,y:''},{x:1, y:2});
-
     //@note: Junta o objeto provider ao objeto receiver
     Object.join = function(receiver,provider, properties){
         if (properties) { // Um Join apenas com algumas propriedades
@@ -444,10 +359,6 @@ const j$ = function(){
         }
         return receiver;
     };
-    //var aux = {a:1,b:2}
-    //Object.join(aux,{x:1, y:2},['x'])
-    //aux = Object.join({a:1,b:2},{x:1, y:2});
-    //aux = Object.join({a:1,b:2,x:null,y:''},{x:1, y:2});
 
     //@note: Junta o objeto server e provider em objeto receiver(novo objeto)
     Object.merge = function(server,provider, properties){
@@ -464,39 +375,21 @@ const j$ = function(){
         }
         return receiver;
     };
-    //var aux = {a:1,b:2}
-    //Object.merge(aux,{x:1, y:2},['x'])
-    //aux = Object.merge({a:1,b:2},{x:1, y:2});
-    //aux = Object.merge({a:1,b:2,x:null,y:''},{x:1, y:2});
 
     //@note: SE EXISTIR NO PROVIDER,sobrescreve ou adiciona atributos definidos em Properties no RECEIVER
     Object.setIfExist = function(receiver, provider, properties){
-        if (j$.Ext.isArray(properties)){
-            for (let idx=0; properties.length>idx;idx++)
-                Object.setIfExist(receiver, provider, properties[idx]);
-        }else{
-            if (provider[properties]!=undefined && provider[properties]!=null)
-                receiver[properties] = provider[properties];
-        }
+        if (properties){
+            if (j$.Ext.isArray(properties)){
+                for (let idx=0; properties.length>idx;idx++)
+                    Object.setIfExist(receiver, provider, properties[idx]);
+            }else{
+                if (provider[properties]!=undefined && provider[properties]!=null)
+                    receiver[properties] = provider[properties];
+            }
+        }else // irá copiar tudo o que existe no provider
+            Object.setIfExist(receiver, provider, Object.keys(provider));
         return receiver;
     };
-    //var aux = {a:1,b:2}
-    //Object.setIfExist(aux,{c:4,d:'abc'},['c','d'])
-    //Object.setIfExist(aux,{c:4,d:'abc'},'c')
-    //Object.setIfExist(aux,{c:4,d:'abc'},['c','d','g'])
-    //Object.setIfExist(aux,{c:4,d:'abc'},'z')
-
-    Object.presetValues = (receiver, provider)=>{
-        //SE EXISTIR NO RECEIVER, sobrescreve atributos definidos  PROVIDER
-        for (let key in provider){
-            if (receiver[key])
-            receiver[key]=provider[key];
-        }
-        return receiver;
-    }
-    //var aux = {a:1,b:2}
-    // console.log(Object.presetValues(aux,{a:5,x:20}))
-    // console.log(Object.presetValues(aux,{b:15,x:20}))
 
     Object.show = source=>{
         for (let key in source){
@@ -520,16 +413,6 @@ const j$ = function(){
         }
         return receiver;
     }
-    // var Car = function(modelo, cor){this.modelo = modelo || 'Ford';  this.cor = cor || 'Yello'; };
-    // var carMixin = function(){};
-    // carMixin.prototype = {
-    //   acelerar: function(){console.log('acelera.'); }
-    //  ,parar: function(){console.log('parando o carro.');}
-    //  };
-    // Object.mixin(Car,carMixin,['acelerar']);
-    // Object.mixin(Car,carMixin);
-    // var fiat = new Car('Fiat','azul');
-    // fiat.acelerar();fiat.parar();
 
     Object.compare = function(source, target, key){
     // compara se conteúdo do literal target existe em source
@@ -551,31 +434,20 @@ const j$ = function(){
         }
         return r;
     };
-    // Object.compare({a:1, b:3, x:'A'}, {a:1, b:3, x:'A'},['a','b'])
-    // Object.compare({a:1, b:3, x:'A'}, {a:1, b:2, x:'A'},'a')
-    // Object.compare({a:1, b:3, x:'A'}, {a:1, b:3, x:'A'})
-    // Object.compare({a:1, b:3, x:'A'}, {a:1, b:3, y:'B'})
-    // Object.compare({a:1, b:3, x:'A'}, {a:1, b:3})
 
-    //@note: verifica se source contains criteria
-    Object.contains = function(source, criteria, key){
+    //@note: verifica se source contains target
+    Object.contains = function(source, target, key){
         let r = true;
-        if (j$.Ext.isObject(criteria)) {
-            for (let key in criteria){
-                if (!j$.Ext.isDefined(source[key]) || source[key]!=criteria[key])
+        if (j$.Ext.isObject(target)) {
+            for (let key in target){
+                if (!j$.Ext.isDefined(source[key]) || source[key]!=target[key])
                     return false;
             }
         }else{ // a chave de comparação é composta por mais de um atributo
-            return (j$.Ext.isDefined(source[key]) && source[key] == criteria)?true:false;
+            return (j$.Ext.isDefined(source[key]) && source[key] == target)?true:false;
         }
         return r;
     };
-    // Object.contains({a:1, b:3, x:'A'}, {a:1, b:3, x:'A'})
-    // Object.contains({a:1, b:3, x:'A'}, {a:1, b:3, y:'A'})
-    // Object.contains({a:1, b:3, x:'A'}, {a:1, b:3, x:'B'})
-    // Object.contains({a:1, b:3, x:'A'}, {a:1, b:3})
-    // Object.contains({a:1, b:3, x:'A'}, {a:1, b:2})
-    // Object.contains({a:1, b:3, x:'A'}, 1,'a')
 
     Object.build = (key, value)=>{
         let obj ={}
@@ -590,15 +462,12 @@ const j$ = function(){
         let key = keys.find(key => {return (source[key])});
         return (key) ?source[key] :null;
     }
-    //Object.synonym({id:1, key:"a"}, ["key","id"])
-    //Object.synonym({id:1, key:"a"}, ["id", "key"]) 
 
     // retorna true proprieda se encontrar uma das propriedades no objeto 
     Object.exists = function(source, keys){
         let key = keys.find(key => {return (source[key])});
         return (key) ?true :false;
     }
-    //Object.exists({title:"titulo", key:"a"},["id","key"])
 
     Object.identify = (receicer, keys=['key','id'], labels=["label", "caption"])=>{
         function search(key, values){
@@ -617,9 +486,6 @@ const j$ = function(){
             each(labels)
         return receicer;
     }
-    //Object.identify({label:"a b"})
-    //Object.identify({id:"1"})
-    //Object.identify({id:1, key:"a"})
 
     // label serah o default e que deve ser garantido
     // se tem caption nao tem label, serah criado label=caption
@@ -640,7 +506,6 @@ const j$ = function(){
     //Object.label({caption:"titulo"})
     //Object.label({label:"titulo"})
     //Object.label({title:"titulo"},["label","title"])
-
 
     Function.prototype.inheritsFrom = function(parentClassOrObject){
         if ( parentClassOrObject.constructor == Function ) 	{
@@ -667,11 +532,12 @@ const j$ = function(){
     // var felix = new Gato( "Felix" );
     // felix.grite();
 
-    Array.prototype.each = Array.prototype.forEach;
+    //Array.prototype.each = Array.prototype.forEach;
 
     Array.prototype.has = Array.prototype.includes;
     // var aux = [1,'test',2]; aux.has(1);aux.has('test');aux.has(4)
     // Alias para o each
+    // #todo: remover sweep de todo o framework
     Array.prototype.sweep = Array.prototype.forEach;
 
     //var aux=[{a:1, b:2},{a:2, b:2},{a:3, b:2},{a:4, b:2}]
@@ -711,6 +577,46 @@ const j$ = function(){
 }();
 
 j$.Ext = function(){
+    const maskFormat = function(value,mask){
+        mask =mask.replace(/[#]/g,'9'); // para adequar as mascaras usadas na edicao
+        mask =mask.replace(/[@]/g,'X'); // para evitar que retira quando da remocao de todos os caracteres especiais;
+        mask = (mask=='9,99')?'999.999.999.999,99':mask;
+        value=value.stripChar(mask.replace(/\w|[@]/g,"")); // Retira os separadores, caso estejam no valor;
+        value=stuff(value.trim(), mask.replace(/\W/g,""));
+        let masks=mask.replace(/\W/g," ").split(' ') // monta um array  com as mascaras - sem os separadores
+          , separators=$A(mask.replace(/\w/g,"")) // monta um array  com os separadores
+          , startSeparator = (mask[0].match(/\W/))?mask[0]:'' // Pega o separador, quando tem na primeira posicao
+          , formattedText=""
+          , initPosition = 0;
+        for (let i=0;i<masks.length;i++){
+            let separator=separators[i]?separators[i]:''
+              , maskSplit =  masks[i].trim()// pegar parte da mascara para a formatacao
+              , part = value.substr(initPosition, maskSplit.length)  // pega a parte que indicada na mascara, segunda separador
+              , maskedText = '';
+            for (let k=0;k<part.length;k++){
+                let character = part[k];
+                if (character==' ' && maskSplit[k]=='0')
+                    character=character.replace(character,'0');
+                else if (maskSplit[k]=='A')
+                    character=character.toUpperCase();
+                else if (maskSplit[k]=='a')
+                    character=character.toLowerCase();
+                maskedText += character;
+            }
+            formattedText +=  maskedText + ((maskedText.isEmpty())?'':separator);
+            initPosition += maskSplit.length;
+        }        
+        // Completa com zeros a esquerda o valor informado;
+        function stuff(value, mask){
+            let rest = mask.trim().length - value.length;
+            return " ".repeat(rest) + value;
+        }
+        function $A(iterable) {
+            if (!iterable) return [];
+            return iterable.split("");
+        }
+        return startSeparator + formattedText;
+    }
     /*Função que padroniza valor*/
     const numberFormat = function ( value, decimals=2, dec=c$.MASK.DecimalCharacter, sep=c$.MASK.ThousandsSeparator ) {
         // %        nota 1: Para 1000.55 retorna com precisão 1
@@ -841,7 +747,7 @@ j$.Ext = function(){
         ],
         monthNames: [
             "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dec",
-            "Janeiro", "Fevereiro", "Mar�o", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
         ]
     };    
 
@@ -871,6 +777,7 @@ j$.Ext = function(){
       ,       type:obj=>{return Object.prototype.toString.call(obj).match(/^\[object (.*)\]$/)[1]}
       ,    isArray:obj=>{return (j$.Ext.type(obj)==='Array')}
       ,   isString:obj=>{return (j$.Ext.type(obj)==='String')}
+      ,     isDate:obj=>{return (j$.Ext.type(obj)==='Date')}
       ,    isValue:obj=>{return (j$.Ext.type(obj)==='String' || j$.Ext.type(obj)==='Number')}
       ,   isNumber:obj=>{return (j$.Ext.type(obj)==='Number')}
       ,   isObject:obj=>{return (j$.Ext.type(obj)==='Object')}
@@ -878,59 +785,6 @@ j$.Ext = function(){
       , isFunction:obj=>{return (j$.Ext.type(obj)==='Function')}
       ,isUndefined:obj=>{return !j$.Ext.isDefined(obj)}
       ,  isDefined:obj=>{return (obj==null || obj==undefined) ?false :true}
-    }
-}();
-
-// console.log("j$.Ext.type('resource'): "    , j$.Ext.type('resource'))
-// console.log("j$.Ext.type(1): "             , j$.Ext.type(1))
-// console.log("j$.Ext.type({a:'1', b:'2'}): ", j$.Ext.type({a:'1', b:'2'}))
-// console.log("j$.Ext.type({a:1, b:2}): "    , j$.Ext.type({a:1, b:2}))
-// console.log("j$.Ext.type(['1','2']): "     , j$.Ext.type(['1','2']))
-// console.log("j$.Ext.type(()=>false): "     , j$.Ext.type(()=>false))
-// console.log("j$.Ext.isString('resource'): ", j$.Ext.isString('resource'))
-// console.log("j$.Ext.isNumber(1): "         , j$.Ext.isNumber(1))
-// console.log("j$.Ext.isArray([1, 2]): ", j$.Ext.isArray([1, 2]))
-// console.log("j$.Ext.isArray(1): "  , j$.Ext.isArray(1))
-// console.log("j$.Ext.isObject({a:'1', b:'2'}): ", j$.Ext.isObject({a:'1', b:'2'}))
-// console.log("j$.Ext.isObject({a:1, b:2}): ", j$.Ext.isObject({a:1, b:2}))
-// console.log("j$.Ext.isObject(1): "         , j$.Ext.isObject(1))
-// console.log("j$.Ext.isFunction(()=>false): ", j$.Ext.isFunction(()=>false))
-// console.log("j$.Ext.isValue(1): "          , j$.Ext.isValue(1)) 
-// console.log("j$.Ext.isValue('resource'): " , j$.Ext.isValue("resource"))
-// console.log("j$.Ext.isValue([1,2]): ", j$.Ext.isValue([1,2]))
-// console.log("j$.Ext.isDefined('resource'): ", j$.Ext.isDefined('resource'))
-// console.log("j$.Ext.isDefined(): "         , j$.Ext.isDefined())
-
-var Test$ = function(){
-    return{Date:value=>{console.log("isDate('"    +value+ "'):"+ value.isDate())},
-          Digit:value=>{console.log("isDigit('"   +value+ "'):"+ value.isDigit())},
-         Letter:value=>{console.log("isLetter('"  +value+ "'):"+ value.isLetter())},
-        Integer:value=>{console.log("isInteger('" +value+ "'):"+ value.isInteger())},
-        Numeric:value=>{console.log("isNumeric('" +value+ "'):"+ value.isNumeric())},
-          Money:value=>{console.log("isMoney('"   +value+ "'):"+ value.isMoney())},
-          Email:value=>{console.log("isMail('"    +value+ "'):"+ value.isEmail())},
-           Hour:value=>{console.log("isHour('"    +value+ "'):"+ value.isHour())},
-         isName:value=>{console.log('"' +value+ '".isName() -> '+ value.isName())},
-          Phone:value=>{console.log("Phone('"     +value+ "'):"+ value.isPhone())},
-           Mask:(value,mask)=>{console.log("'"+value+"'.mask("+mask+"):"+ value.mask(mask))},
-  isValidInMask:(value,mask)=>{console.log("'"+value+"'.isValidInMask("+mask+"):"+ value.isValidInMask(mask))},
-          Empty:value=>{console.log("isEmpty('"   +value+ "'):"+ value.isEmpty())}
-    }
-}();
-
-var Testa = function(){
-    return{CPF:value=>{console.log('ehCpf('     +value+ '):'+ value.ehCpf())},
-          CNPJ:value=>{console.log('ehCnpj('    +value+ '):'+ value.ehCnpj())},
-           CCA:value=>{console.log('ehCca('     +value+ '):'+ value.ehCca())},
-           CEP:value=>{console.log('ehCep('     +value+ '):'+ value.ehCep())},
-         Placa:value=>{console.log('ehPlaca('    +value+ '):'+ value.ehPlaca())},
-          AIDF:value=>{console.log('ehAidf('    +value+ '):'+ value.ehAidf())},
-          CNAE:value=>{console.log('ehCNAE('    +value+ '):'+ value.ehCNAE())},
-      Processo:value=>{console.log('ehProcesso('+value+ '):'+ value.ehProcesso())},
-digitoModule11:(value,dig,lim)=>{console.log('Module11('   +value+ '):'+ value.module11(dig,lim))},
-     digitoCpf:(value,dig,lim)=>{console.log('digitoCpf('  +value+ '):'+ value.digitoCpf())},
-    digitoCnpj:(value,dig,lim)=>{console.log('digitoCnpj(' +value+ '):'+ value.digitoCnpj())},
-     digitoCca:(value,dig,lim)=>{console.log('digitoCca('   +value+ '):'+ value.digitoCca())}
     }
 }();
 

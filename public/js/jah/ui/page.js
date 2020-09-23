@@ -591,7 +591,7 @@ j$.Page.Alert= function(){
             j$.ui.Render.alert(wrap, msg[0], alertClass);
         }else{
             let html='<lu>'
-            msg.each(function(text){html+=`<li>${text}</li>`});
+            msg.forEach(function(text){html+=`<li>${text}</li>`});
             html+='</lu>'
             j$.ui.Render.alert(wrap, html , alertClass);
         }
