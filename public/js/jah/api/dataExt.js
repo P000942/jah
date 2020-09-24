@@ -83,8 +83,6 @@ const j$ = function(){
         r = r.replace(eval(er),'');
         return r;
     };
-    //console.log('04 150.945-5'.replace(/\s|[.-]/gi, ''));
-    //console.log("José Geraldo Ferreira Gomes".replace(/\s|[' ']/gi, ''));
 
     String.prototype.startsWith=function(pattern) {
         return this.lastIndexOf(pattern, 0) === 0;
@@ -124,7 +122,6 @@ const j$ = function(){
     String.prototype.digitoCca = function()  {
         return this.module11();
     }
-    //Testa.digitoCpf('417660402'); Testa.digitoCca('04150945');Testa.digitoCnpj('073114610001');
 
     String.prototype.ehCpf = function()  {
         let digito = this.substr(this.length-2,2);
@@ -234,46 +231,9 @@ const j$ = function(){
         let expReg = /^[A-Za-z0-9_\-\.]+@[A-Za-z0-9_\-\.]{2,}\.[A-Za-z0-9]{2,}(\.[A-Za-z0-9])?/;
         return (!this.regexValidate(expReg))?false:true;
     }
-
+    //#todo: trocar para format
     String.prototype.mask = function(mask){
-        mask =mask.replace(/[#]/g,'9'); // para adequar as m�scaras usadas na edi��o
-        mask =mask.replace(/[@]/g,'X'); // para evitar que retira quando da remo��o de todos os caracteres especiais;
-        mask = (mask=='9,99')?'999.999.999.999,99':mask;
-        let value=this.stripChar(mask.replace(/\w|[@]/g,"")); // Retira os separadores, caso estejam no valor;
-        value=stuff(value.trim(), mask.replace(/\W/g,""));
-        let masks=mask.replace(/\W/g," ").split(' ') // monta um array  com as m�scaras - sem os separadores
-          , separators=$A(mask.replace(/\w/g,"")) // monta um array  com os separadores
-          , startSeparator = (mask[0].match(/\W/))?mask[0]:'' // Pega o separador, quando tem na primeira posi��o
-          , formattedText=""
-          , initPosition = 0;
-        for (let i=0;i<masks.length;i++){
-            let separator=separators[i]?separators[i]:''
-              , maskSplit =  masks[i].trim()// pegar parte da m�scara para a formata��o
-              , part = value.substr(initPosition, maskSplit.length)  // pega a parte que indicada na m�scara, segunda separador
-              , maskedText = '';
-            for (let k=0;k<part.length;k++){
-                let character = part[k];
-                if (character==' ' && maskSplit[k]=='0')
-                    character=character.replace(character,'0');
-                else if (maskSplit[k]=='A')
-                    character=character.toUpperCase();
-                else if (maskSplit[k]=='a')
-                    character=character.toLowerCase();
-                maskedText += character;
-            }
-            formattedText +=  maskedText + ((maskedText.isEmpty())?'':separator);
-            initPosition += maskSplit.length;
-        }
-        return startSeparator + formattedText;
-        // Completa com zeros a esquerda o valor informado;
-        function stuff(value, mask){
-            let rest = mask.trim().length - value.length;
-            return " ".repeat(rest) + value;
-        }
-        function $A(iterable) {
-            if (!iterable) return [];
-            return iterable.split("");
-        }
+        return j$.Ext.format(this, mask);       
     };
     String.prototype.isValidInMask = function(mask){
         mask =mask.replace(/[#]/g,'9'); // para adequar as m�scaras usadas na edi��o
@@ -299,14 +259,26 @@ const j$ = function(){
         return valid;
     };
 
+    String.prototype.toMoney=function(decimals){
+        let value = this.toString().replace(",",'.');
+        return j$.Ext.moneyFormat(value,decimals);
+     } 
+
     String.preset= function(value, vlDefault='') {
         return (value == null) ?vlDefault :String(value);
     }
 
     Boolean.prototype.isEmpty = function(){ return false}
+    Boolean.prototype.format = function(){
+        return j$.Ext.format(this);       
+    };
     // For convenience...
     Date.prototype.format = function (mask, utc) {return j$.Ext.dateFormat(this, mask, utc)}
 
+    // Number.prototype.format = function(decimals, decimals_char, sep){
+    //     return j$.Ext.format(this, decimals, decimals_char, sep);       
+    // };
+    
     //@note: procura por valor no objeto e retorna array com as propriedades que contem o valor
     Object.getByValue = function(source, value, attribute="value"){
         let items=[]
@@ -577,10 +549,25 @@ const j$ = function(){
 }();
 
 j$.Ext = function(){
+    const toRecord=(name, parent)=>{
+        if (parent){
+            parent.id   = 'id' +name.toFirstUpper();
+            parent.text = 'tx' +name.toFirstUpper();
+            return parent;
+        } else {
+            return {id: 'id'+name.toFirstUpper()
+                , text: 'tx'+name.toFirstUpper()}
+        }
+    }
+    //, toMoney=value=>{}
+        // value = value.toString().replace(",",'.');
+        // return moneyFormat(value, 2);
+     
     const maskFormat = function(value,mask){
         mask =mask.replace(/[#]/g,'9'); // para adequar as mascaras usadas na edicao
         mask =mask.replace(/[@]/g,'X'); // para evitar que retira quando da remocao de todos os caracteres especiais;
         mask = (mask=='9,99')?'999.999.999.999,99':mask;
+        //if (!value.isNumeric())
         value=value.stripChar(mask.replace(/\w|[@]/g,"")); // Retira os separadores, caso estejam no valor;
         value=stuff(value.trim(), mask.replace(/\W/g,""));
         let masks=mask.replace(/\W/g," ").split(' ') // monta um array  com as mascaras - sem os separadores
@@ -618,31 +605,13 @@ j$.Ext = function(){
         return startSeparator + formattedText;
     }
     /*Função que padroniza valor*/
-    const numberFormat = function ( value, decimals=2, dec=c$.MASK.DecimalCharacter, sep=c$.MASK.ThousandsSeparator ) {
-        // %        nota 1: Para 1000.55 retorna com precisão 1
-        //                 no FF/Opera é 1,000.5, mas no IE é 1,000.6
-        // *     exemplo 1: number_format(1234.56);
-        // *     retorno 1: '1,235'
-        // *     exemplo 2: number_format(1234.56, 2, ',', ' ');
-        // *     retorno 2: '1 234,56'
-        // *     exemplo 3: number_format(1234.5678, 2, '.', '');
-        // *     retorno 3: '1234.57'
-        // *     exemplo 4: number_format(67, 2, ',', '.');
-        // *     retorno 4: '67,00'
-        // *     exemplo 5: number_format(1000);
-        // *     retorno 5: '1,000'
-        // *     exemplo 6: number_format(67.311, 2);
-        // *     retorno 6: '67.31'
-
-        //let n = number //, prec = decimals;
+    const moneyFormat = function ( value, decimals=2, dec=c$.MASK.DecimalCharacter, sep=c$.MASK.ThousandsSeparator ) {    
         value = !isFinite(+value) ? 0 : +value;
         decimals = !isFinite(+decimals) ? 0 : Math.abs(decimals);
 
-        let s = (decimals > 0) ? value.toFixed(decimals) : Math.round(value).toFixed(decimals);
-        //fix for IE parseFloat(0.55).toFixed(0) = 0;
-
-        let abs = Math.abs(value).toFixed(decimals);
-        let _, i;
+        let s = (decimals > 0) ? value.toFixed(decimals) : Math.round(value).toFixed(decimals)
+        , abs = Math.abs(value).toFixed(decimals)
+        , _, i;
 
         if (abs >= 1000) {
             _ = abs.split(/\D/);
@@ -736,8 +705,6 @@ j$.Ext = function(){
             });
         };
     }();
-// console.log("j$.Ext.format.money(12): "   , j$.Ext.format.money(12))
-// console.log("j$.Ext.format.money("12,1"): "   , j$.Ext.format.money(12))
 
     // Internationalization strings
     dateFormat.i18n = {
@@ -751,28 +718,35 @@ j$.Ext = function(){
         ]
     };    
 
-    const format = function(){
-        return {
-            money:value=>{
-               value = value.toString().replace(",",'.');
-               return numberFormat(value, 2);
-            }
-          ,record:(name, parent)=>{
-              if (parent){
-                 parent.id   = 'id' +name.toFirstUpper();
-                 parent.text = 'tx' +name.toFirstUpper();
-                 return parent;
-              } else {
-                 return {id: 'id'+name.toFirstUpper()
-                     , text: 'tx'+name.toFirstUpper()};
-              }
-            }
-        };
-    }();       
+    const format = function(value, mask, utc_decChar, sep){
+        let result;
+        switch (j$.Ext.type(value)) {
+            case 'String':
+                result=maskFormat(value,mask);
+                break;
+            case 'Number':
+                //result=maskFormat(String(value),mask);
+                result=moneyFormat(value, mask, utc_decChar, sep); // mask = decimals
+                break;
+            case 'Date':              
+                result=j$.Ext.dateFormat(value, mask, utc_decChar) // decChar or utc
+                break;
+            case 'Boolean':      
+                result = CONFIG.BOOLEAN[String(value)].text;        
+                break;
+            case 'Array':                            
+                break;    
+            default:
+              console.log(`O que fazer com o tipo ${j$.Ext.type(value)}?`);
+          }
+        return result;  
+    };       
     return{
         dateFormat
-      , numberFormat 
+      , moneyFormat 
       , format
+      , toRecord
+      //, toMoney
       ,       init:()=>true
       ,       type:obj=>{return Object.prototype.toString.call(obj).match(/^\[object (.*)\]$/)[1]}
       ,    isArray:obj=>{return (j$.Ext.type(obj)==='Array')}

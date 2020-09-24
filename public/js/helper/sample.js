@@ -23,7 +23,7 @@ const t$ = function(){
         else
             console.log(value);
     }
-     , v$=(value, fn, context="j$.Ext")=>{ 
+    , v$=(value, fn, context="j$.Ext")=>{ 
             let text="";
             if (context=="j$.Ext")
                 text =  `j$.Ext.${fn}(${vlr(value)})=> `.padStart(40,' ') + j$.Ext[fn](value)
@@ -79,7 +79,7 @@ const t$ = function(){
     ,     isDefined:value=>{v$(value,"isDefined")} 
     ,   isUndefined:value=>{v$(value,"isUndefined")} 
     , isValidInMask:(value,mask)=>{ve(value,"isValidInMask", value.isValidInMask(mask),[mask])}
-    ,          Mask:(value,mask)=>{console.log("'"+value+"'.mask("+mask+") => "+ value.mask(mask))}
+    ,          Mask:(value,mask)=>{ve(value,"mask", value.mask(mask))}
     ,      module11:(value,dig,lim)=>{ve(value,"module11", value.module11(dig,lim),((dig) ?[dig,lim].join() :""), true)}
     ,     digitoCpf:(value)=>{ve(value,"digitoCpf", value.digitoCpf())}
     ,    digitoCnpj:(value)=>{ve(value,"digitoCnpj", value.digitoCnpj())}
@@ -119,22 +119,36 @@ const t$ = function(){
     }
 }();
 
-t$.Format = function(){             
-return{
-        all(){
-            t$.ve(" "); t$.Array.preset();        
-            return "";
-        }  
-        , preset(){ 
-            t$.ve('<<< Object.preset(receiver, properties, defaultvalue) >>>') 
-            t$.ve('Garantir a existencia dos atributos de properties no objeto receiver') 
-            t$.Obj.preset({a:1,b:2},'c',{x:1, y:2});    
-            t$.Obj.preset({a:1,b:2},{x:1, y:2}); t$.Obj.preset({a:1,b:2,x:null,y:''},{x:1, y:2});                 
-        }
-}}();
-    //t$.Mask("1111222","9,99"); t$.Mask("11112011","##/##/####"); t$.Mask("11222","99.990,00"); t$.Mask("1","000.000");t$.Mask("9281220911","(000)0000-0000");
-    //t$.Mask("jgg1111","AAA-0000"); t$.Mask("JGG1111","aaa-0000");t$.Mask("jgG1111","@@@-0000");
-    //t$.Mask("jgg1111","AaA-0000");
+t$.Format = function(){              
+    t$.ve('<<< Format: Date.format(mask) or String.format(mask) or j$.Ext.format(value, mask)>>');
+    t$.Mask("1111222","9,99"); t$.Mask("11222","99.990,00"); t$.Mask("9281220911","(000)0000-0000");
+    t$.Mask("jgg1111","AAA-0000"); t$.Mask("JGG1111","aaa-0000");t$.Mask("jgG1111","@@@-0000");
+    t$.Mask("11112011","##/##/####");  t$.Mask("1","000.000");
+    t$.Mask("jgg1111","AaA-0000");
+    t$.ve();
+    let _Date = c$.NOW;
+    t$.ve('<<< DATE: Date.format() OR j$.Ext.format(date, mask)>>>');
+    t$.v('Date.format()'            , _Date.format());
+    t$.v('Date.format("dd/mm/yyyy")', _Date.format("dd/mm/yyyy"));
+    t$.v('Date.format("yyyymmdd")'  , _Date.format("yyyymmdd"));
+    t$.v('Date.format("HH:MM:ss")'  , _Date.format("HH:MM:ss"));  
+    t$.ve();
+    t$.ve('<<< BOOLEAN: Boolean.format() >>>');
+    t$.v('true.format()'            , true.format());
+    t$.ve();
+    t$.ve('<<<  NUMBER: j$.Ext.format(value, decimals, , decimals_char, sep) >>>');
+    t$.v('j$.Ext.format(1234.56)'              , j$.Ext.format(1234.56)); 
+    t$.v("j$.Ext.format(1234.56, 2, ',', ' ')" , j$.Ext.format(1234.56, 2, ',', ' '));   
+    t$.v("j$.Ext.format(1234.56, 2, ',', '')"  , j$.Ext.format(1234.56, 2, ',', ''));   
+    t$.v("j$.Ext.format(1234.56, 2, ',', '.')" , j$.Ext.format(1234.56, 2, '.', ','));    
+    t$.v('j$.Ext.format(1000)'                 , j$.Ext.format(1000));   
+    t$.v('j$.Ext.format(1000,0)'               , j$.Ext.format(1000,0)); 
+    t$.v('j$.Ext.format(1000,0,"","")'         , j$.Ext.format(1000,0,"",""));   
+    t$.v('j$.Ext.format(67.311)'               , j$.Ext.format(67.311));    
+    t$.ve("12","toMoney", "12".toMoney());
+    t$.ve("12.1","toMoney", "12.1".toMoney());       
+    return "";
+}
 
 t$.Object = function(){
 return{

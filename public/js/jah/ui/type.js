@@ -15,7 +15,7 @@ const TYPE = function() {
     const DATATYPE = {NUMBER:{parse:value=>{return parseFloat(value);}},
                         DATE:{parse:value=>{return new Date(value);}},
                         CHAR:{parse:value=>{return value;}},
-                    BOOLEAN:{parse:value=>{return value;}},
+                     BOOLEAN:{parse:value=>{return value;}},
                         LIST:{parse:value=>{return value;}}
                     };                         
     let type = function(){         
@@ -163,7 +163,7 @@ const TYPE = function() {
                 let mask = '9'.repeat(size-3)+'0'+decimalChar+'00';
                 this.inherit({size:size+1, align:c$.ALIGN.RIGHT, validator:{handler:value=>{return value.isDecimal(2);}, error:TYPE.Error.MESSAGE.Money}
                             , mask:{format:mask+"|"+mask.replace(/[0|9]/g,"_"), strip:decimalChar, empty:decimalChar, align:c$.ALIGN.RIGHT}}, Properties);
-                this.format= value=> {return j$.Ext.format.money(value); };
+                this.format= value=> {return value.toMoney() };
             }
         ,    Char:function(size, Properties){
                 this.inherit = superType;
@@ -714,7 +714,7 @@ TYPE.Fieldset = function(){
     return {
         create(fields){return new Fieldset(fields)}
        , build(key){ // Método para criar um fieldset a partir da chave
-            let rcd = j$.Ext.format.record(key)
+            let rcd = j$.Ext.toRecord(key)
               , fieldset = {};            
             fieldset[rcd.id]=TYPE.INTEGER(4,{label:'Código', readOnly:true});
             fieldset[rcd.text]=TYPE.CHAR(30,{label:key.toFirstUpper(), mandatory:true});

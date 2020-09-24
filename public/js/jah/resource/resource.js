@@ -550,7 +550,7 @@ j$.Resource = function(){ // Factory: Criar os recursos
          if (!res.context)
                res.context=context;
 
-         Object.preset(res, j$.Ext.format.record(res.name), ['id','text']);
+         Object.preset(res, j$.Ext.toRecord(res.name), ['id','text']);
          Object.preset(res,{key:res.id});
          res.url = res.context + res.name;
 
