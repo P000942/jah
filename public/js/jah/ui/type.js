@@ -738,12 +738,12 @@ TYPE.Helper = function(){
             }
             let split = mask=>{ // separa as partes da definicao da mascara (format e prompt)
                 let fmt=(mask && mask.format) ?mask.format :mask
-                , values;
+                 , values;
                 if (j$.Ext.isArray(fmt))        
                     values= mask;               
                 else if (j$.Ext.isString(fmt))  
                     values= fmt.split(c$.MASK.FieldDataSeparator);  
-                this.mask   = values[0];                    // [0] é o formato da mascara
+                this.mask   = values[0];                          // [0] é o formato da mascara
                 this.prompt = (values.length>1) ?values[1] :null; // [1] é o prompt  da mascara
                                             
                 this.strip = (values.length>2)  ?values[2] :null; // [2] são os caracters de strip
@@ -1090,7 +1090,8 @@ TYPE.Feedback =function (){
 }();
 
 TYPE.Formatter = function(){
-   let maskCharacters = Object.values(c$.MASK.MaskCharacters).join("") // juntas os caracteres de mascara em uma string
+   let maskCharacters = c$.MASK.CHARS // juntas os caracteres de mascara em uma string
+   //Object.values(c$.MASK.Chars).join("") // juntas os caracteres de mascara em uma string
     , Format = function(field, maskProperties){ //inicializa as máscaras dos elemntos
             if(field.type=="text" && j$.Ext.isDefined(field.getAttribute("data-mask"))  
                                 && j$.Ext.isDefined(field.Mask)==false){
@@ -1206,17 +1207,15 @@ TYPE.Formatter = function(){
                 let maskCurrent=Parser.MaskManager.CurrentMaskCharacter(this);				
 
                 //Numeric Characters
-                if (((c$.MASK.MaskCharacters.Numeric.includes(maskCurrent)) && key.isDigit) ||
+                if (((c$.MASK.NUMBER.exists(maskCurrent)) && key.isDigit) ||
                     ((key.isDecimalCharacter) && this.value.includes(c$.MASK.DecimalCharacter)==false && 
                     this.value.trim().length>0 && this.hasDecimalCharInMask)) {                                        
                     render=true;
-                }
-                //Alpha Characters 65 - 90
-                else if(key.isLetter){
-                    if (c$.MASK.MaskCharacters.Alpha.includes(maskCurrent)){
-                        if (maskCurrent==c$.MASK.LowerCaseCharacter)
+                }else if(key.isLetter){ //Alpha Characters 65 - 90
+                    if (c$.MASK.ALPHA.exists(maskCurrent)){
+                        if (maskCurrent==c$.MASK.ALPHA.LOWER)//.LowerCaseChar)
                             key.char=key.char.toLowerCase()
-                        else if (maskCurrent==c$.MASK.UpperCaseCharacter)
+                        else if (maskCurrent==c$.MASK.ALPHA.UPPER)//.UpperCaseChar)
                             key.char=key.char.toUpperCase()                                                      
                         render=true;
                     } else if (this.isAlignRight)

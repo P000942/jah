@@ -567,11 +567,10 @@ j$.Ext = function(){
         mask =mask.replace(/[#]/g,'9'); // para adequar as mascaras usadas na edicao
         mask =mask.replace(/[@]/g,'X'); // para evitar que retira quando da remocao de todos os caracteres especiais;
         mask = (mask=='9,99')?'999.999.999.999,99':mask;
-        //if (!value.isNumeric())
-        value=value.stripChar(mask.replace(/\w|[@]/g,"")); // Retira os separadores, caso estejam no valor;
+        value=value.stripChar(mask.replace(/\w|[@]/g,""));    // Retira os separadores, caso estejam no valor;
         value=stuff(value.trim(), mask.replace(/\W/g,""));
-        let masks=mask.replace(/\W/g," ").split(' ') // monta um array  com as mascaras - sem os separadores
-          , separators=$A(mask.replace(/\w/g,"")) // monta um array  com os separadores
+        let masks=mask.replace(/\W/g," ").split(' ')          // monta um array  com as mascaras - sem os separadores
+          , separators=$A(mask.replace(/\w/g,""))             // monta um array  com os separadores
           , startSeparator = (mask[0].match(/\W/))?mask[0]:'' // Pega o separador, quando tem na primeira posicao
           , formattedText=""
           , initPosition = 0;
@@ -582,8 +581,8 @@ j$.Ext = function(){
               , maskedText = '';
             for (let k=0;k<part.length;k++){
                 let character = part[k];
-                if (character==' ' && maskSplit[k]=='0')
-                    character=character.replace(character,'0');
+                if (character==' ' && maskSplit[k]==c$.MASK.NUMBER.FIXED)
+                    character=character.replace(character,c$.MASK.NUMBER.FIXED);
                 else if (maskSplit[k]=='A')
                     character=character.toUpperCase();
                 else if (maskSplit[k]=='a')

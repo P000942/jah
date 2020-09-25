@@ -17,14 +17,14 @@ const c$ = {
             , Prompt: "_"
             , DecimalCharacter : ","
             , ThousandsSeparator : "."
-            , MaskCharacters : {
-                    Numeric : "#90"
-                    , Alpha : "@aA"
-            }
-            , AllowInsert : true
-            , LowerCaseCharacter:'a'
-            , UpperCaseCharacter:'A'
-            , DisplayMaskCharacters : false //Display mask characters when default text is not present                 
+            , NUMBER:{FIXED:"0" // para manter o zero na formatação quando tem zeros a esquerda (exemplo: data)
+                  ,   VALUE:"9"
+                  , GENERIC:"#"}
+            , ALPHA:{UPPER:"A"  
+                ,   LOWER:"a"
+                , GENERIC:"@"}                    
+            //, AllowInsert : true
+            //, DisplayMaskCharacters : false //Display mask characters when default text is not present                 
             , DATE :{
                 "default":      "dd/mm/yyyy"
                 , shortDate:      "d/m/yy"
@@ -374,4 +374,14 @@ CONFIG.action= vl_key =>{
     return (key)?action:null;
 };
 
+c$.MASK.ALPHA.CHARS=Object.values(c$.MASK.ALPHA).join().replaceAll(",","");
+c$.MASK.ALPHA.exists=function(value){
+    return c$.MASK.ALPHA.CHARS.includes(value);
+}
+
+c$.MASK.NUMBER.CHARS=Object.values(c$.MASK.NUMBER).join().replaceAll(",","");
+c$.MASK.NUMBER.exists=function(value){
+    return c$.MASK.NUMBER.CHARS.includes(value);
+}
+c$.MASK.CHARS = c$.MASK.NUMBER.CHARS + c$.MASK.ALPHA.CHARS;
 // export {CONFIG, c$};
