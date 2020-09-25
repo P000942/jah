@@ -12,11 +12,11 @@ const TYPE = function() {
             field.bind(this);
         }
     };    
-    const DATATYPE = {NUMBER:{parse:value=>{return parseFloat(value);}},
-                        DATE:{parse:value=>{return new Date(value);}},
-                        CHAR:{parse:value=>{return value;}},
-                     BOOLEAN:{parse:value=>{return value;}},
-                        LIST:{parse:value=>{return value;}}
+    const DATATYPE = {NUMBER:{parse:value=>{return parseFloat(value)}},
+                        DATE:{parse:value=>{return new Date(value)}},
+                        CHAR:{parse:value=>{return value}},
+                     BOOLEAN:{parse:value=>{return value}},
+                        LIST:{parse:value=>{return value}}
                     };                         
     let type = function(){         
         function superType(Type, Properties) {
@@ -26,7 +26,7 @@ const TYPE = function() {
                                 , id:'', key:null, list:null, readOnly:false
                                 , binded:false, order:c$.ORDER.NONE, disabled:false, onFilter:false
                                 , inputField:false, dataType:DATATYPE.NUMBER, size:null
-                                , maxlength:0, validator:null, mask:null
+                                , maxlength:0, validator:null, masker:null
                                 , Header:{clas$:null, id:null}
                                 , Report:{}, Record:{value:'', formattedValue:''}, attributes:{}});
             /*   this.id  - Eh o identificador no form.
@@ -41,13 +41,11 @@ const TYPE = function() {
                     i$(this.id).className = SELF.classDefault  
             };
             this.format= p_value=> {
-                    return  (this.mask) ?this.mask.format(p_value) :this.value(p_value);
+                    return  (this.masker) ?this.masker.format(p_value) :this.value(p_value);
             };
             this.identify= (wrap, id, key)=>{
                 SELF.id =System.util.getId(SELF.type, id);
                 SELF.key =(key)?key : SELF.id;
-                //    if (!design) design={};
-                //    SELF.design = design;
             }
             function parseDesign(design){
                 if (!design){
@@ -91,7 +89,7 @@ const TYPE = function() {
                         if (SELF.Input)
                             value = SELF.Input.value;
                     }
-                    if (SELF.mask){value = SELF.mask.unformat(value);}
+                    if (SELF.masker){value = SELF.masker.unformat(value);}
                     return value.trim();
             };
             this.validate= p_value=>{
@@ -709,7 +707,7 @@ TYPE.Fieldset = function(){
         };
     
         show (){this.execute((field, key)=>{console.log(key); console.log(input);});};
-    };
+    }
      
     return {
         create(fields){return new Fieldset(fields)}
@@ -724,7 +722,7 @@ TYPE.Fieldset = function(){
 }();
 
 TYPE.Helper = function(){
-    class Ma$k{
+    class Masker{
         constructor(mask){
             Object.preset(this,{fmt:null, prompt:null, strip:null, mask:null, size:1, align:c$.ALIGN.LEFT});        
             this.parse(mask);
@@ -732,9 +730,9 @@ TYPE.Helper = function(){
         parse(parm){
             function interpret(mask){ 
                 let _mask=mask;
-                if (j$.Ext.isString(mask)){ // sendo strig, vai verificar se na calecao masks padrao
-                    if (c$.MASKS[mask]) 
-                    _mask = c$.MASKS[mask]; 
+                if (j$.Ext.isString(mask)){ 
+                    if (c$.MASKS[mask])     // sendo string, vai verificar se estah na calecao de masks padrao
+                        _mask = c$.MASKS[mask]; 
                 }    
                 return _mask;
             }
@@ -774,7 +772,7 @@ TYPE.Helper = function(){
                 if (this.mask){
                     inputField.setAttribute("data-mask", this.mask); 
                     if (this.prompt)
-                    inputField.setAttribute("data-prompt", this.prompt);           
+                        inputField.setAttribute("data-prompt", this.prompt);           
                     TYPE.Formatter.Format(inputField, this);
                     return true;
                 }             
@@ -903,11 +901,11 @@ TYPE.Helper = function(){
                 if (Properties.resource)
                     inputField.Resource =  j$.Resource.create(inputField.resource, inputField);
             }
-            inputField.mask = new Ma$k(mask);
+            inputField.masker = new Masker(mask);
             if (!inputField.size)
-                inputField.size = inputField.mask.size;
+                inputField.size = inputField.masker.size;
 
-            inputField.maxlength = (inputField.size>inputField.mask.size) ?inputField.size :inputField.mask.size;
+            inputField.maxlength = (inputField.size>inputField.masker.size) ?inputField.size :inputField.masker.size;
         }
         , bindField: function(inputField, _input){
             inputField.binded=true;
@@ -929,7 +927,7 @@ TYPE.Helper = function(){
                     inputField.Legend = new Legend(inputField);
                     if (inputField.autotab)
                         Event.observe(_input, 'keyup', ()=>{TYPE.Handle.autotab(_input,inputField.maxlength);});
-                    inputField.mask.render(_input);
+                    inputField.masker.render(_input);
                     if (_input.maxlength)
                         _input.maxlength = inputField.maxlength;
                     break;
@@ -1092,14 +1090,12 @@ TYPE.Feedback =function (){
 }();
 
 TYPE.Formatter = function(){
-   //let InitMask = false;
-   let Format = function(field, maskProperties){ //inicializa as máscaras dos elemntos
+   let maskCharacters = Object.values(c$.MASK.MaskCharacters).join("") // juntas os caracteres de mascara em uma string
+    , Format = function(field, maskProperties){ //inicializa as máscaras dos elemntos
             if(field.type=="text" && j$.Ext.isDefined(field.getAttribute("data-mask"))  
                                 && j$.Ext.isDefined(field.Mask)==false){
                 if(!field.id) Utils.GenerateID(field);
                         
-                //let behaviour     = TYPE.Formatter.Mask;  
-                //InitMask = true;
                 Parser.initField(field, maskProperties);
 
                 field.onfocus    = Handle.onFocus;
@@ -1119,8 +1115,8 @@ TYPE.Formatter = function(){
             dt = new Date();
             obj.id = "GenID" + dt.getTime();
             return obj
-        },
-        PartialSelect : function(field, startIdx, endIdx){
+        }
+        ,PartialSelect : function(field, startIdx, endIdx){
             if(field.createTextRange){
                 let fld= field.createTextRange();
                 fld.moveStart("character", startIdx);
@@ -1129,22 +1125,30 @@ TYPE.Formatter = function(){
             }else if(field.setSelectionRange){
                 field.setSelectionRange(startIdx, endIdx);
             }
-        },
-        getKey: e=>{
-            let code=(window.event)?parseInt(e.keyCode):e.which
-            code=(code==0)?parseInt(e.which):code;
+        }
+        ,getKey: e=>{
+            let code=(window.event)?parseInt(e.keyCode) :e.which
+            code=(code==0) ?parseInt(e.which) :code;            
             let char= String.fromCharCode(code)
-            , isDigit = false
-            , isLetter = false
-            , isDecimalCharacter = false
-            , isHandleKey = false
-            if (char.isDigit()) isDigit	=true
-            else if (char.isLetter()) isLetter=true 
-            else if (char==c$.MASK.DecimalCharacter) 
-                isDecimalCharacter=true;
-            if ([c$.KEY.INS, c$.KEY.DEL, c$.KEY.BACKSPACE, c$.KEY.END, c$.KEY.HOME, c$.KEY.UP, c$.KEY.DOWN, c$.KEY.LEFT, c$.KEY.RIGHT].includes(code)) 
+              , isChar= (e.charCode==0) ?true :false
+              , isDigit = false
+              , isLetter = false
+              , isDecimalCharacter = false
+              , isHandleKey = false;
+
+            if (isChar){
+                if ([c$.KEY.INS, c$.KEY.DEL, c$.KEY.BACKSPACE, c$.KEY.END
+                   , c$.KEY.HOME, c$.KEY.UP, c$.KEY.DOWN, c$.KEY.LEFT, c$.KEY.RIGHT].includes(code)) 
                 isHandleKey = true;
-            return {code, char, isDigit, isLetter, isDecimalCharacter, isHandleKey, isValidChar: (isDigit || isLetter || isDecimalCharacter)}
+                char = null;
+            }else{
+                if (char.isDigit())       isDigit =true
+                else if (char.isLetter()) isLetter=true 
+                else if (char==c$.MASK.DecimalCharacter) 
+                    isDecimalCharacter=true;
+            }
+            return {code, char, isChar, isDigit, isLetter, isDecimalCharacter, isHandleKey
+                  , isValidChar: (isDigit || isLetter || isDecimalCharacter)}
         }	
     } 
     , Handle={
@@ -1157,9 +1161,6 @@ TYPE.Formatter = function(){
         
         keyUp : function(e=window.event){
             let key = Utils.getKey(e);
-            //, Parser = Parser;
-            // else if(key.code==c$.KEY.ESC){}
-            // else{}
             if (!key.isHandleKey) return;
 
             if(key.code==c$.KEY.DEL){
@@ -1189,38 +1190,41 @@ TYPE.Formatter = function(){
             }else if(key.code==c$.KEY.HOME){
                 Parser.CursorManager.SetPosition(this, this.MaskIndex[0]);
             }else if(key.code==c$.KEY.LEFT || (key.code==c$.KEY.UP && this.isAlignRight==false)){
-                mask.CursorManager.Move(this, -1);
+                Parser.CursorManager.Move(this, -1);
             }else if(key.code==c$.KEY.UP && this.isAlignRight){
-                mask.CursorManager.Reposition(this);
+                Parser.CursorManager.Reposition(this);
             }else if(key.code==c$.KEY.RIGHT  || key.code==c$.KEY.DOWN){
-                mask.CursorManager.Move(this, 1);
+                Parser.CursorManager.Move(this, 1);
             }else if(key.code==c$.KEY.INS && this.AllowInsert)
-                mask.CursorManager.ToggleInsert(this);
+                Parser.CursorManager.ToggleInsert(this);
             return false;
         },
         keyPress : function(e= window.event){
-            let key = Utils.getKey(e);
-            if (!key.isValidChar) {return}
-            let render=false;
-            Parser.CursorManager.TabbedInSetPosition(this);
-            let maskCurrent=Parser.MaskManager.CurrentMaskCharacter(this);				
+            let render=false, key = Utils.getKey(e);
+            if (key.isValidChar) {             
+                Parser.CursorManager.TabbedInSetPosition(this);
+                let maskCurrent=Parser.MaskManager.CurrentMaskCharacter(this);				
 
-            //Numeric Characters
-            if ( ((c$.MASK.MaskCharacters.Numeric.includes(maskCurrent)) && key.isDigit) ||
-                ((key.isDecimalCharacter) && this.value.includes(c$.MASK.DecimalCharacter)==false && this.value.trim().length>0 && this.hasDecimalCharInMask)) {                                        
+                //Numeric Characters
+                if (((c$.MASK.MaskCharacters.Numeric.includes(maskCurrent)) && key.isDigit) ||
+                    ((key.isDecimalCharacter) && this.value.includes(c$.MASK.DecimalCharacter)==false && 
+                    this.value.trim().length>0 && this.hasDecimalCharInMask)) {                                        
                     render=true;
-            }
-            //Alpha Characters 65 - 90
-            else if(key.isLetter){
-                if (c$.MASK.MaskCharacters.Alpha.includes(maskCurrent)){
-                    if (maskCurrent==c$.MASK.LowerCaseCharacter){
-                        key.char=key.char.toLowerCase()
-                    }else if (maskCurrent==c$.MASK.UpperCaseCharacter){
-                        key.char=key.char.toUpperCase()
-                    }                                       
-                    render=true;
-                } else if (this.isAlignRight)
-                    Parser.CursorManager.Reposition(this);
+                }
+                //Alpha Characters 65 - 90
+                else if(key.isLetter){
+                    if (c$.MASK.MaskCharacters.Alpha.includes(maskCurrent)){
+                        if (maskCurrent==c$.MASK.LowerCaseCharacter)
+                            key.char=key.char.toLowerCase()
+                        else if (maskCurrent==c$.MASK.UpperCaseCharacter)
+                            key.char=key.char.toUpperCase()                                                      
+                        render=true;
+                    } else if (this.isAlignRight)
+                        Parser.CursorManager.Reposition(this);
+                }
+            } else if (key.isChar){
+                Parser.Render(this);
+                Parser.CursorManager.Reposition(this);
             }
             if (render){
                 Parser.DataManager.AddData(this, key.char);
@@ -1271,30 +1275,27 @@ TYPE.Formatter = function(){
         MaskManager : {
             ParseMask : function(field){                                        
                 let arr =[]
-                , mask=field.getAttribute("data-mask")
-                , maskCharacters = Object.values(c$.MASK.MaskCharacters).join(""); // juntas os caracteres de mascara em uma string
+                  , mask=field.getAttribute("data-mask")         
                 mask.split("").forEach((item,idx)=>{
                                                     if (maskCharacters.includes(item)) 
-                                                    arr[idx]=item;
+                                                        arr[idx]=item;
                                                 })
                 field.hasDecimalCharInMask=mask.includes(c$.MASK.DecimalCharacter);
                 return arr;
-            },
-            
-            ParseMaskIndex : function(mask){
+            }            
+            , ParseMaskIndex : function(mask){
                 let arr = [];
                 for(let i=0; i<mask.length; i++){
-                    if(mask[i] != null) arr[arr.length] = i;
+                    if(mask[i] != null) 
+                        arr[arr.length] = i;
                 }
                 return arr;
-            },
-            
-            CurrentMaskCharacter : function(field){
+            }
+            ,CurrentMaskCharacter : function(field){
                 let cursorPosition = Parser.CursorManager.GetPosition(field)[0];
                 return field.Mask[cursorPosition];
-            },
-            
-            FindNearestMaskCharacter : function(field, cursorPosition, dir){
+            }
+            ,FindNearestMaskCharacter : function(field, cursorPosition, dir){
                 let nearestMaskCharacter = (field.DataIndex.length > 0) ? cursorPosition : field.MaskIndex[0];
                 
                 switch(dir){
@@ -1328,16 +1329,16 @@ TYPE.Formatter = function(){
                     break;
                 }
                 return nearestMaskCharacter
-            },
-            //Quando a mask contem tipos diferentes de caracteres - não deceverá permitir insert;
-            IsComplexMask : function(field){
-                let previousChar= "";
-                let isComplex = field.MaskIndex.some((cur,i)=>{
-                    const currentChar = field.Mask[cur];
-                    const res =  (currentChar != previousChar && previousChar != "")
-                    previousChar = currentChar;
-                    return 	res;
-                });
+            }
+            ,IsComplexMask : function(field){
+                //Quando a mask contem tipos diferentes de caracteres - não deceverá permitir insert;
+                let previousChar= ""
+                  , isComplex = field.MaskIndex.some((cur,i)=>{
+                        const currentChar = field.Mask[cur];
+                        const res =  (currentChar != previousChar && previousChar != "")
+                        previousChar = currentChar;
+                        return 	res;
+                    });
                 return isComplex;
             }
         },
@@ -1429,29 +1430,29 @@ TYPE.Formatter = function(){
                         this.OverwriteCharacter(field, char, cursorPosition);
                 }
                 this.UpdateDataIndex(field);
-            },
-            shiftLeft: (field) =>{ // move todos para esquerda uma posicao
+            }
+            ,shiftLeft: (field) =>{ // move todos para esquerda uma posicao
                 if (field.Data.length>0){
                     for(let i=0;i<field.MaskIndex.length;i++){
                         field.Data[field.MaskIndex[i]] = field.Data[field.MaskIndex[i+1]];
                     }
                 }
-            },
-            shift: (field,start=0, ct=1) =>{ // move todos para direita uma posicao
+            }
+            ,shift: (field,start=0, ct=1) =>{ // move todos para direita uma posicao
                 if (field.Data.length>0){
                     for(let i=start; i<start-ct; i--){
                         field.Data[field.MaskIndex[i+1]] = field.Data[field.MaskIndex[i]];
                     }
                 }
-            },
-            shiftRight: (field,start=field.MaskIndex.length-1) =>{ // move todos para direita uma posicao
+            }
+            ,shiftRight: (field,start=field.MaskIndex.length-1) =>{ // move todos para direita uma posicao
                 if (field.Data.length>0){
                     for(let i=start; i>-1; i--){
                         field.Data[field.MaskIndex[i]] = field.Data[field.MaskIndex[i-1]];
                     }
                 }
-            },
-            InsertCharacter :function(field, char){
+            }
+            ,InsertCharacter :function(field, char){
                 let lastCharacterPosition = field.MaskIndex[field.MaskIndex.length-1]
                   , currentCharacterPosition = this.CurrentDataIndexPosition(field);
                 if (field.isAlignRight)
@@ -1459,11 +1460,11 @@ TYPE.Formatter = function(){
                 else
                     this.shift(field,lastCharacterPosition, (lastCharacterPosition-currentCharacterPosition));			
                 field.Data[field.MaskIndex[currentCharacterPosition]] = char;
-            },
-            OverwriteCharacter : function(field, char, cursorPosition){
+            }
+            ,OverwriteCharacter : function(field, char, cursorPosition){
                 field.Data[cursorPosition] = char;
-            },
-            RemoveCharacterByOverwrite : function(field){
+            }
+            ,RemoveCharacterByOverwrite : function(field){
                 let currentCharacterPosition = this.CurrentDataIndexPosition(field);
                 if(currentCharacterPosition != null){
                     if (field.isAlignRight)
@@ -1471,8 +1472,8 @@ TYPE.Formatter = function(){
                     else
                     field.Data[field.DataIndex[currentCharacterPosition]] = "";
                 }
-            },
-            RemoveCharacterByShiftLeft : function(field, pos=0){
+            }
+            ,RemoveCharacterByShiftLeft : function(field, pos=0){
                 let lastCharacterPosition = field.DataIndex[field.DataIndex.length-1]
                 , currentCharacterPosition = this.CurrentDataIndexPosition(field)
                 , cursorPosition = Parser.CursorManager.GetPosition(field)[0];
@@ -1488,14 +1489,14 @@ TYPE.Formatter = function(){
                     field.Data.length = field.Data.length-1;
                     this.UpdateDataIndex(field);
                 }
-            },
-            UpdateDataIndex : function(field){
+            }
+            ,UpdateDataIndex : function(field){
                 field.DataIndex.length = 0;
                 for(let i=0; i<field.Data.length; i++){
                     if(field.Data[i] != undefined) field.DataIndex[field.DataIndex.length] = i;
                 }
-            },
-            CurrentDataIndexPosition : function(field){
+            }
+            ,CurrentDataIndexPosition : function(field){
                 let cursorPosition = Parser.CursorManager.GetPosition(field)[0]
                   , currentDataIndexPosition = null;
                 for(let i=0; i<field.MaskIndex.length; i++){
@@ -1535,7 +1536,6 @@ TYPE.Formatter = function(){
         Init : function(formId){
             let inputs = (formId) ?$(`#${formId}`).find("input") :$("input") ;
             Parse(inputs);
-            this.Mask.Init();
         }
         , Format
      }    

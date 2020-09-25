@@ -236,22 +236,22 @@ const j$ = function(){
         return j$.Ext.format(this, mask);       
     };
     String.prototype.isValidInMask = function(mask){
-        mask =mask.replace(/[#]/g,'9'); // para adequar as m�scaras usadas na edi��o
-        mask =mask.replace(/[@]/g,'X'); // para evitar que retira quando da remo��o de todos os caracteres especiais;
+        mask =mask.replace(/[#]/g,'9'); // para adequar as mascaras usadas na edicaoo
+        mask =mask.replace(/[@]/g,'X'); // para evitar que retira quando da remoca de todos os caracteres especiais;
         let value=this.stripChar(mask.replace(/\w|[@]/g,"")).trim() // Retira os separadores, caso estejam no valor;
           , masks=mask.replace(/\W/g,"") // remove os separadores
           , valid=false;
         for (let i=0;i<masks.length;i++){
             let character = value[i]
               , maskChar=masks[i];
-
+            //#todo: Usar os valores de  config
             if ('09'.indexOf(maskChar)!=-1){ //Valida se eh numero
                 valid = character.isDigit();
             }else if('XAa'.indexOf(maskChar)!=-1){ //Valida letras
                 valid = character.isLetter();
                 if (valid){
                     if ((maskChar=='A' && character!=character.toUpperCase())
-                    ||  (maskChar=='a' && character!=character.toLowerCase())){valida=false}
+                    ||  (maskChar=='a' && character!=character.toLowerCase())){valid=false}
                 }
             }
             if (!valid){return false}
@@ -746,7 +746,6 @@ j$.Ext = function(){
       , moneyFormat 
       , format
       , toRecord
-      //, toMoney
       ,       init:()=>true
       ,       type:obj=>{return Object.prototype.toString.call(obj).match(/^\[object (.*)\]$/)[1]}
       ,    isArray:obj=>{return (j$.Ext.type(obj)==='Array')}
