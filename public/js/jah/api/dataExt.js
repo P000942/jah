@@ -231,10 +231,9 @@ const j$ = function(){
         let expReg = /^[A-Za-z0-9_\-\.]+@[A-Za-z0-9_\-\.]{2,}\.[A-Za-z0-9]{2,}(\.[A-Za-z0-9])?/;
         return (!this.regexValidate(expReg))?false:true;
     }
-    //#todo: trocar para format
-    String.prototype.mask = function(mask){
+    String.prototype.format = function(mask){
         return j$.Ext.format(this, mask);       
-    };
+    };    
     String.prototype.isValidInMask = function(mask){
         mask =mask.replace(/[#]/g,'9'); // para adequar as mascaras usadas na edicaoo
         mask =mask.replace(/[@]/g,'X'); // para evitar que retira quando da remoca de todos os caracteres especiais;

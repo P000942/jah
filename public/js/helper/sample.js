@@ -79,7 +79,7 @@ const t$ = function(){
     ,     isDefined:value=>{v$(value,"isDefined")} 
     ,   isUndefined:value=>{v$(value,"isUndefined")} 
     , isValidInMask:(value,mask)=>{ve(value,"isValidInMask", value.isValidInMask(mask),[mask])}
-    ,          Mask:(value,mask)=>{ve(value,"mask", value.mask(mask))}
+    ,          Mask:(value,mask)=>{ve(value,"mask", value.format(mask))}
     ,      module11:(value,dig,lim)=>{ve(value,"module11", value.module11(dig,lim),((dig) ?[dig,lim].join() :""), true)}
     ,     digitoCpf:(value)=>{ve(value,"digitoCpf", value.digitoCpf())}
     ,    digitoCnpj:(value)=>{ve(value,"digitoCnpj", value.digitoCnpj())}
@@ -367,7 +367,7 @@ return{
         t$.ehPlaca('JG1-1000'); t$.ehPlaca('JGG-G080');
     }  
     , mask(){  
-        t$.ve('MASK: t$.Type.mask() >>>')                        
+        t$.ve('MASK: t$.Type.isValidInMask() >>>')                        
         t$.ve('<<< isValidInMask >>>');t$.isValidInMask("1111","####");t$.isValidInMask("(92)111-abc","(99)999-aaa"); 
         t$.isValidInMask("92111abc","(99)999-aaa");t$.isValidInMask("(92)111-a1c","(99)999-aaa");
         t$.isValidInMask("1111","@###");t$.isValidInMask("A111","@###");         

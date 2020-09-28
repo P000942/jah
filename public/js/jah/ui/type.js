@@ -759,7 +759,7 @@ TYPE.Helper = function(){
                     Object.setIfExist(this,mask,['strip','empty','align']);
             }    
         }
-        format (value){return (this.mask)?value.mask(this.mask) :value}
+        format (value){return (this.mask)?value.format(this.mask) :value}
         unformat (value){
             let vl = (this.strip) ?value.stripChar(this.strip) :value.trim();
             vl = vl.stripChar(c$.MASK.Prompt); // Remover o caracter de prompt
