@@ -26,7 +26,7 @@ const TYPE = function() {
                                 , id:'', key:null, list:null, readOnly:false
                                 , binded:false, order:c$.ORDER.NONE, disabled:false, onFilter:false
                                 , inputField:false, dataType:DATATYPE.NUMBER, size:null
-                                , maxlength:0, validator:null, masker:null
+                                , maxlength:0, validator:null, maskAdapter:null
                                 , Header:{clas$:null, id:null}
                                 , Report:{}, Record:{value:'', formattedValue:''}, attributes:{}});
             /*   this.id  - Eh o identificador no form.
@@ -41,7 +41,7 @@ const TYPE = function() {
                     i$(this.id).className = SELF.classDefault  
             };
             this.format= p_value=> {
-                    return  (this.masker) ?this.masker.format(p_value) :this.value(p_value);
+                    return  (this.maskAdapter) ?this.maskAdapter.format(p_value) :this.value(p_value);
             };
             this.identify= (wrap, id, key)=>{
                 SELF.id =System.util.getId(SELF.type, id);
@@ -89,7 +89,7 @@ const TYPE = function() {
                         if (SELF.Input)
                             value = SELF.Input.value;
                     }
-                    if (SELF.masker){value = SELF.masker.unformat(value);}
+                    if (SELF.maskAdapter){value = SELF.maskAdapter.unformat(value)}
                     return value.trim();
             };
             this.validate= p_value=>{
@@ -722,73 +722,6 @@ TYPE.Fieldset = function(){
 }();
 
 TYPE.Helper = function(){
-    class Masker{
-        constructor(mask){
-            Object.preset(this,{fmt:null, prompt:null, strip:null, mask:null, size:1, align:c$.ALIGN.LEFT});        
-            this.parse(mask);
-        };
-        parse(parm){
-            function interpret(mask){ 
-                let _mask=mask;
-                if (j$.Ext.isString(mask)){ 
-                    if (c$.MASKS[mask])     // sendo string, vai verificar se estah na calecao de masks padrao
-                        _mask = c$.MASKS[mask]; 
-                }    
-                return _mask;
-            }
-            let split = mask=>{ // separa as partes da definicao da mascara (format e prompt)
-                let fmt=(mask && mask.format) ?mask.format :mask
-                 , values;
-                if (j$.Ext.isArray(fmt))        
-                    values= mask;               
-                else if (j$.Ext.isString(fmt))  
-                    values= fmt.split(c$.MASK.FieldDataSeparator);  
-                this.mask   = values[0];                          // [0] é o formato da mascara
-                this.prompt = (values.length>1) ?values[1] :null; // [1] é o prompt  da mascara
-                                            
-                this.strip = (values.length>2)  ?values[2] :null; // [2] são os caracters de strip
-                                                                                            
-                this.size   = this.mask.length;                
-                return values;            
-            }
-            if (parm){             
-                let mask=interpret(parm);            
-                split(mask);
-
-                if (j$.Ext.isObject(mask))        // copia as propriedades 
-                    Object.setIfExist(this,mask,['strip','empty','align']);
-            }    
-        }
-        format (value){return (this.mask)?value.format(this.mask) :value}
-        unformat (value){
-            let vl = (this.strip) ?value.stripChar(this.strip) :value.trim();
-            vl = vl.stripChar(c$.MASK.Prompt); // Remover o caracter de prompt
-            if (this.empty && vl==this.empty)
-            vl =''
-            return vl;
-        };
-        render (inputField){
-            let bind=()=>{
-                if (this.mask){
-                    inputField.setAttribute("data-mask", this.mask); 
-                    if (this.prompt)
-                        inputField.setAttribute("data-prompt", this.prompt);           
-                    TYPE.Formatter.Format(inputField, this);
-                    return true;
-                }             
-                return false;
-            }
-            if (!bind()){
-                // situacao que acontecerah qdo colocar data-mask='' direto no html e fizer o bind depois
-                // seria ate incomum, visto que pode fazer direto pelo type.mask
-                if (inputField.getAttribute("data-mask") && !this.mask){
-                    this.parse(inputField.getAttribute("data-mask"));
-                    bind();
-                }    
-            }       
-        }
-    } // ma$k
-
     class Legend{
         constructor(field){
             this.field = field;
@@ -901,11 +834,11 @@ TYPE.Helper = function(){
                 if (Properties.resource)
                     inputField.Resource =  j$.Resource.create(inputField.resource, inputField);
             }
-            inputField.masker = new Masker(mask);
+            inputField.maskAdapter = TYPE.Formatter.createAdapter(mask);
             if (!inputField.size)
-                inputField.size = inputField.masker.size;
+                inputField.size = inputField.maskAdapter.size;
 
-            inputField.maxlength = (inputField.size>inputField.masker.size) ?inputField.size :inputField.masker.size;
+            inputField.maxlength = (inputField.size>inputField.maskAdapter.size) ?inputField.size :inputField.maskAdapter.size;
         }
         , bindField: function(inputField, _input){
             inputField.binded=true;
@@ -927,7 +860,7 @@ TYPE.Helper = function(){
                     inputField.Legend = new Legend(inputField);
                     if (inputField.autotab)
                         Event.observe(_input, 'keyup', ()=>{TYPE.Handle.autotab(_input,inputField.maxlength);});
-                    inputField.masker.render(_input);
+                    inputField.maskAdapter.bind(_input);
                     if (_input.maxlength)
                         _input.maxlength = inputField.maxlength;
                     break;
@@ -1092,12 +1025,12 @@ TYPE.Feedback =function (){
 TYPE.Formatter = function(){
    let maskCharacters = c$.MASK.CHARS // juntas os caracteres de mascara em uma string
    //Object.values(c$.MASK.Chars).join("") // juntas os caracteres de mascara em uma string
-    , Format = function(field, maskProperties){ //inicializa as máscaras dos elemntos
+    , bind = function(field){ //inicializa as máscaras dos inputs
             if(field.type=="text" && j$.Ext.isDefined(field.getAttribute("data-mask"))  
-                                && j$.Ext.isDefined(field.Mask)==false){
+                                  && j$.Ext.isDefined(field.Mask)==false){
                 if(!field.id) Utils.GenerateID(field);
                         
-                Parser.initField(field, maskProperties);
+                Parser.initField(field);
 
                 field.onfocus    = Handle.onFocus;
                 field.onkeyup    = Handle.keyUp;
@@ -1106,11 +1039,6 @@ TYPE.Formatter = function(){
                 field.onmouseup  = Handle.mouseUp;
             }            
         }
-    , Parse = function(inputs){ // ler e inicializar todos os inputs ou todos dentro de um elemento
-        for(let i=0; i<inputs.length; i++){
-            Format(inputs[i]);	
-        }
-     }
     , Utils= {
         GenerateID : function(obj){
             dt = new Date();
@@ -1247,14 +1175,11 @@ TYPE.Formatter = function(){
         }
     }
     , Parser={
-        initField : (field, maskProperties)=>{ //inicializa as máscaras
+        initField : (field)=>{ //inicializa as máscaras
             Parser.ParseFieldData(field);
-            field.value = (field.DefaultText.length>0) ?field.DefaultText.join("") :field.DefaultText;
-            if (!maskProperties) {
-                if (!field.isAlignRight)
-                    field.isAlignRight = false;
-            }else
-                field.isAlignRight = (maskProperties.align==c$.ALIGN.RIGHT) ?true :false;
+            field.value = (field.DefaultText.length>0) ?field.DefaultText.join("") :field.DefaultText;           
+            if (!field.isAlignRight)
+                field.isAlignRight = false;
         },
         ParseFieldData : function(field, fieldData){ //inicializa os valores de dados
             field.CursorPosition= [];
@@ -1269,8 +1194,7 @@ TYPE.Formatter = function(){
             field.InsertActive  = (IsComplexMask) ? false : true;
             field.HighlightChar = (IsComplexMask) ? true  : false;
             field.AllowInsert   = (IsComplexMask) ? false : true;
-        },
-        
+        },      
         MaskManager : {
             ParseMask : function(field){                                        
                 let arr =[]
@@ -1340,8 +1264,7 @@ TYPE.Formatter = function(){
                     });
                 return isComplex;
             }
-        },
-        
+        },   
         CursorManager : {
             Move : function(field, dir){
                 let cursorPosition = this.GetPosition(field)[0];
@@ -1412,7 +1335,6 @@ TYPE.Formatter = function(){
                 this.SetPosition(field, startIdx);
             }
         },
-        
         DataManager : {
             AddData : function(field, char){
                 //(field.alignToReposiotion==c$.ALIGN.RIGHT)
@@ -1507,7 +1429,6 @@ TYPE.Formatter = function(){
                 return currentDataIndexPosition
             }				
         },
-        
         Render : function(field){
             this.CursorManager.PersistPosition(field);
             let composite = [];
@@ -1531,12 +1452,84 @@ TYPE.Formatter = function(){
             this.CursorManager.RestorePosition(field);
         }
     }
-   return{ 	
-        Init : function(formId){
-            let inputs = (formId) ?$(`#${formId}`).find("input") :$("input") ;
-            Parse(inputs);
+    class Adapter{
+        constructor(mask){
+            Object.preset(this,{fmt:null, prompt:null, strip:null, mask:null, size:1, align:c$.ALIGN.LEFT});        
+            this.parse(mask);
+        };
+        parse(parm){
+            function interpret(mask){ // obter a mascara
+                let _mask=mask;
+                if (j$.Ext.isString(mask)){ 
+                    if (c$.MASKS[mask])     // sendo string, vai verificar se estah na calecao de masks padrao
+                        _mask = c$.MASKS[mask]; 
+                }    
+                return _mask;
+            }
+            let split = mask=>{       // separa as partes da definicao da mascara (format e prompt)
+                let fmt=(mask && mask.format) ?mask.format :mask
+                 , values;
+                if (j$.Ext.isArray(fmt))        
+                    values= mask;               
+                else if (j$.Ext.isString(fmt))  
+                    values= fmt.split(c$.MASK.FieldDataSeparator);  
+                this.mask   = values[0];                          // [0] é o formato da mascara
+                this.prompt = (values.length>1) ?values[1] :null; // [1] é o prompt  da mascara
+                                            
+                this.strip = (values.length>2)  ?values[2] :null; // [2] são os caracters de strip
+                                                                                            
+                this.size   = this.mask.length;                
+                return values;            
+            }
+            if (parm){             
+                let mask=interpret(parm);            
+                split(mask);
+
+                if (j$.Ext.isObject(mask))        // copia as propriedades 
+                    Object.setIfExist(this,mask,['strip','empty','align']);
+            }    
         }
-        , Format
+        format (value){return (this.mask)?value.format(this.mask) :value}
+        unformat (value){
+            let vl = (this.strip) ?value.stripChar(this.strip) :value.trim();
+            vl = vl.stripChar(c$.MASK.Prompt); // Remover o caracter de prompt
+            if (this.empty && vl==this.empty)
+            vl =''
+            return vl;
+        };
+        bind (inputField){
+            let bind=()=>{
+                if (this.mask){
+                    inputField.setAttribute("data-mask", this.mask); 
+                    if (this.prompt)
+                        inputField.setAttribute("data-prompt", this.prompt);      
+                    inputField.isAlignRight = (this.align==c$.ALIGN.RIGHT) ?true :false;         
+                    TYPE.Formatter.bind(inputField, this);
+                    return true;
+                }             
+                return false;
+            }
+            if (!bind()){
+                // situacao que acontecerah qdo colocar data-mask='' direto no html e fizer o bind depois
+                // seria ate incomum, visto que pode fazer direto pelo type.mask
+                if (inputField.getAttribute("data-mask") && !this.mask){
+                    this.parse(inputField.getAttribute("data-mask"));
+                    bind();
+                }    
+            }       
+        }
+    } // Adapter   
+   return{ 	
+        init(formId){
+            let inputs = (formId) ?$(`#${formId}`).find("input") :$("input") ;
+            for(let i=0; i<inputs.length; i++){
+                bind(inputs[i]);	
+            }
+        }
+        , bind
+        , createAdapter(mask){
+            return new Adapter(mask);
+        }
      }    
 }()   
 // export {TYPE};

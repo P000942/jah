@@ -109,6 +109,7 @@ const t$ = function(){
               , synonym(receiver, keys){vo("synonym", receiver, keys)} 
               , exists(receiver, keys){vo("exists", receiver, keys)} 
               , identify(receiver, keys, labels){vo("identify", receiver, keys, labels)} 
+              , label(receiver, labels, keys){vo("label", receiver, labels, keys)} 
             }
     ,       Arr:{
                 preset(receiver, provider, keys){vo("preset", receiver, provider, keys)}
@@ -162,7 +163,9 @@ return{
         t$.ve(" "); t$.Object.contains();
         t$.ve(" "); t$.Object.synonym();
         t$.ve(" "); t$.Object.exists();
-        t$.ve(" "); t$.Object.identify();       
+        t$.ve(" "); t$.Object.identify();   
+        t$.ve(" "); t$.Object.label();  
+        t$.ve(" ");   
         t$.ve("Object.mixin() => execute t$.Object.mixin()  e veja melhor");
         return "";
     }  
@@ -249,6 +252,14 @@ return{
         t$.Obj.identify({title:"new titulo"},["id"],["key",'title']);       
         t$.Obj.identify({title:"new titulo",key:'ab'},["id"],["key",'title']);       
     }   
+    , label(){
+        t$.ve('<<< Object.label = (receicer, labels=["label", "caption"], keys=["key","id"]) >>>') 
+        t$.ve('Formatar|garantir  as propriedades em labels') 
+        t$.Obj.label({caption:"titulo"});  
+        t$.Obj.label({label:"titulo"}); 
+        t$.Obj.label({title:"titulo"},["label","title"]);       
+        t$.Obj.label({title:"new titulo",key:'my_key'});  
+    }      
     , mixin(){
         t$.ve('<<< Object.mixin(receiver, provider, methods) >>>') 
         t$.ve('Formatar|garantir identificador definidos em keys');t$.ve("");
