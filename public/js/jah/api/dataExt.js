@@ -83,17 +83,14 @@ const j$ = function(){
         r = r.replace(eval(er),'');
         return r;
     };
-
     String.prototype.startsWith=function(pattern) {
         return this.lastIndexOf(pattern, 0) === 0;
     }
-
     String.prototype.regexValidate = function(regularExpression){
         if (this.isEmpty())
             return false;
         return (!this.match(regularExpression))?false:true;
     }
-
     String.prototype.module11 = function(nrDigit, limiteMult)  {
         let dig;
         let NumDig = (nrDigit)?nrDigit:1;
@@ -112,7 +109,6 @@ const j$ = function(){
 
         return dig;
     }
-
     String.prototype.digitoCpf = function()  {
         return this.module11(2,12);
     }
@@ -122,7 +118,6 @@ const j$ = function(){
     String.prototype.digitoCca = function()  {
         return this.module11();
     }
-
     String.prototype.ehCpf = function()  {
         let digito = this.substr(this.length-2,2);
         let num = this.substr(0,this.length-2);
@@ -136,28 +131,25 @@ const j$ = function(){
         return (digito_ok == digito )?true:false;
     }
     String.prototype.ehCca = function()  {
-        let digito = this.substr(this.length-1,1);
-        let num = this.substr(0,this.length-1);
-        let digito_ok = num.digitoCca();
+        let digito = this.substr(this.length-1,1)
+          , num = this.substr(0,this.length-1)
+          , digito_ok = num.digitoCca();
         return (digito_ok == digito )?true:false;
     }
-
     String.prototype.ehCep = function(){
         let expReg =/^[0-9]{5}[-]{0,1}[0-9]{3}$/;
         return (!this.regexValidate(expReg))?false:true;
     }
-
     String.prototype.ehPlaca = function(){
         let expReg =/^[A-Z]{3}[-]{0,1}[0-9]{4}$/;
     //    if (withoutMask)
     //        expReg = /^[A-Z]{3}{0,1}[0-9]{4}$/;
         return (!this.regexValidate(expReg))?false:true;
     }
-
     // Esse � o script
     String.prototype.isName = function(){
-        let words = this.replace(/^\s*/, "").replace(/\s*$/, "").split(/\s/gi);
-        let nameIsValid = (words.length>1);
+        let words = this.replace(/^\s*/, "").replace(/\s*$/, "").split(/\s/gi)
+          , nameIsValid = (words.length>1);
         if (nameIsValid){
             for (let i=0; i<words.length; i++){
                 nameIsValid = (words[i].length>1);
@@ -167,7 +159,6 @@ const j$ = function(){
         }
         return nameIsValid;
     };
-
     String.prototype.isLetter = function(){
     //    return (!this.regexValidate(/^[:alpha:]/))?false:true;
         if (this.isEmpty()){return false;}
@@ -180,53 +171,41 @@ const j$ = function(){
         }
         return true;
     }
-
     String.prototype.isDigit = function(){
         return (!this.regexValidate(/^[0-9]{1,1}$/))?false:true;
     }   
-
     String.prototype.isNumeric = function(decimal=0){
         let expReg =/(\d{1,}[,]{1}\d{1,})|(^\d+$)/;
         return (!this.regexValidate(expReg))?false:true;
     }
-   
     String.prototype.isDecimal = function(decimal=0){
         let expReg =/(\d{1,}[,]{1}\d{1,})|(^\d+$)/;
         return (!this.regexValidate(expReg))?false:true;
     }
-
     String.prototype.isInteger = function(){
         return (!this.regexValidate(/^[0-9]{1,}$/))?false:true;
     }
-
     String.prototype.isMoney = function(){
         let expReg =/^(\d{1,}[,]{1}\d{1,2}$)|(^\d+$)/;
         return (!this.regexValidate(expReg))?false:true;
     }
-    
     String.prototype.isDate = function(){
         let expReg = /^((((0?[1-9]|[12]\d|3[01])[\.\-\/](0?[13578]|1[02])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|[12]\d|30)[\.\-\/](0?[13456789]|1[012])[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|((0?[1-9]|1\d|2[0-8])[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?\d{2}))|(29[\.\-\/]0?2[\.\-\/]((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00)))|(((0[1-9]|[12]\d|3[01])(0[13578]|1[02])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|[12]\d|30)(0[13456789]|1[012])((1[6-9]|[2-9]\d)?\d{2}))|((0[1-9]|1\d|2[0-8])02((1[6-9]|[2-9]\d)?\d{2}))|(2902((1[6-9]|[2-9]\d)?(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)|00))))$/;
         return (!this.regexValidate(expReg))?false:true;
     }
-
     String.prototype.isDateTime = function(){ return true}
-
     String.prototype.isColor = function(){ return true}
-
     String.prototype.isRange = function(){return true}
-
     String.prototype.isHour = function(){
         let expReg =/^([0-1][0-9]|[2][0-3]):[0-5][0-9]$/;
         return (!this.regexValidate(expReg))?false:true;
     }
-
     String.prototype.isPhone = function(withoutMask){
         let expReg =/\(?\d{3}\)?\d{4}-\d{4}/;
         if (withoutMask)
             expReg = /\d{11}/;
         return (!this.regexValidate(expReg))?false:true;
     }
-
     String.prototype.isEmail = function(){
         let expReg = /^[A-Za-z0-9_\-\.]+@[A-Za-z0-9_\-\.]{2,}\.[A-Za-z0-9]{2,}(\.[A-Za-z0-9])?/;
         return (!this.regexValidate(expReg))?false:true;
@@ -257,16 +236,13 @@ const j$ = function(){
         }
         return valid;
     };
-
     String.prototype.toMoney=function(decimals){
         let value = this.toString().replace(",",'.');
         return j$.Ext.moneyFormat(value,decimals);
      } 
-
     String.preset= function(value, vlDefault='') {
         return (value == null) ?vlDefault :String(value);
     }
-
     Boolean.prototype.isEmpty = function(){ return false}
     Boolean.prototype.format = function(){
         return j$.Ext.format(this);       
@@ -274,10 +250,6 @@ const j$ = function(){
     // For convenience...
     Date.prototype.format = function (mask, utc) {return j$.Ext.dateFormat(this, mask, utc)}
 
-    // Number.prototype.format = function(decimals, decimals_char, sep){
-    //     return j$.Ext.format(this, decimals, decimals_char, sep);       
-    // };
-    
     //@note: procura por valor no objeto e retorna array com as propriedades que contem o valor
     Object.getByValue = function(source, value, attribute="value"){
         let items=[]
@@ -474,9 +446,6 @@ const j$ = function(){
         }
         return receicer;
     }
-    //Object.label({caption:"titulo"})
-    //Object.label({label:"titulo"})
-    //Object.label({title:"titulo"},["label","title"])
 
     Function.prototype.inheritsFrom = function(parentClassOrObject){
         if ( parentClassOrObject.constructor == Function ) 	{

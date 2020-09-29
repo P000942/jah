@@ -13,8 +13,8 @@ const c$ = {
     ,FILTER:{}
     ,  MENU:{TYPE:{SIDEBAR:'sidebar', MENUBAR:'menubar'}}
     ,  MASK:{
-            FieldDataSeparator : "|"
-            , Prompt: "_"
+              SEPARATOR : "|"
+            , PROMPT: "_"
             , DecimalCharacter : ","
             , ThousandsSeparator : "."
             , NUMBER:{FIXED:"0" // para manter o zero na formatação quando tem zeros a esquerda (exemplo: data)

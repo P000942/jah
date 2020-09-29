@@ -79,7 +79,7 @@
                     }
               , {type:'line'
                      , style:{marginLeft:'width:100%', marginBottom:'5px', borderColor:'green'}, title:"Caracteres Especiais"}
-              , {type:'column'  , fields:[['Nome', 'Letra'],['Maiuscula','Minuscula']]
+              , {type:'column'  , fields:[['Nome', 'Texto'],['Maiuscula','Minuscula', 'Letra']]
                                 , style:{marginLeft:'34px'}
                             }
               , {type:'line'    , style:{marginBottom:'1px', borderColor:'green'}
@@ -121,7 +121,8 @@
                        Data:TYPE.DATE(),
                        Hora:TYPE.HOUR(),
                       Email:TYPE.EMAIL(50),
-                       Nome:TYPE.CHAR(25),
+                       Nome:TYPE.NAME(25),
+                      Texto:TYPE.CHAR(15),
                    Telefone:TYPE.PHONE(),
                         CPF:TYPE.CPF(),
                        CNPJ:TYPE.CNPJ(),
