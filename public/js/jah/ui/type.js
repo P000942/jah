@@ -251,7 +251,7 @@ const TYPE = function() {
             }
         ,  Phone:function(Properties){
                 this.inherit = superType;
-                this.inherit({size:11, validator:{handler:value=>{withoutMask=true;return value.isPhone(withoutMask);}, error:TYPE.Error.MESSAGE.Phone}, mask:{format:'(000)0000-0000|(___)____-____', strip:'()-'}}, Properties);
+                this.inherit({size:11, validator:{handler:value=>{let withoutMask=true;return value.isPhone(withoutMask)}, error:TYPE.Error.MESSAGE.Phone}, mask:{format:'(000)0000-0000|(___)____-____', strip:'()-'}}, Properties);
             }
         ,  Range:function(size, Properties){
                 let _me = this;
@@ -1024,19 +1024,19 @@ TYPE.Feedback =function (){
 
 TYPE.Formatter = function(){
    let maskCharacters = c$.MASK.CHARS // juntas os caracteres de mascara em uma string
-   //Object.values(c$.MASK.Chars).join("") // juntas os caracteres de mascara em uma string
-    , bind = function(field){ //inicializa as máscaras dos inputs
-            if(field.type=="text" && j$.Ext.isDefined(field.getAttribute("data-mask"))  
-                                  && j$.Ext.isDefined(field.Mask)==false){
-                if(!field.id) Utils.GenerateID(field);
+    , getAdapter =input=>{
+        if (!input.field.maskAdapter)
+            input.field.maskAdapter = TYPE.Formatter.createAdapter(input);
+        return input.field.maskAdapter           
+    }
+    , bind = function(input){ //inicializa as máscaras dos inputs
+            let adapter=getAdapter(input);        
+            if(input.type=="text" && j$.Ext.isDefined(input.getAttribute("data-mask")) && !adapter.binded){
+                if (!input.id) 
+                    Utils.GenerateID(input);
                         
-                Parser.initField(field);
-
-                field.onfocus    = Handle.onFocus;
-                field.onkeyup    = Handle.keyUp;
-                field.onkeypress = Handle.keyPress;
-                field.onblur     = Handle.lostFocus;
-                field.onmouseup  = Handle.mouseUp;
+                Parser.bind(input, adapter);
+                Handle.bind(input);
             }            
         }
     , Utils= {
@@ -1045,14 +1045,14 @@ TYPE.Formatter = function(){
             obj.id = "GenID" + dt.getTime();
             return obj
         }
-        ,PartialSelect : function(field, startIdx, endIdx){
-            if(field.createTextRange){
-                let fld= field.createTextRange();
+        ,PartialSelect : function(input, startIdx, endIdx){
+            if(input.createTextRange){
+                let fld= input.createTextRange();
                 fld.moveStart("character", startIdx);
-                fld.moveEnd("character", endIdx - field.value.length);
+                fld.moveEnd("character", endIdx - input.value.length);
                 fld.select();
-            }else if(field.setSelectionRange){
-                field.setSelectionRange(startIdx, endIdx);
+            }else if(input.setSelectionRange){
+                input.setSelectionRange(startIdx, endIdx);
             }
         }
         ,getKey: e=>{
@@ -1078,66 +1078,71 @@ TYPE.Formatter = function(){
             }
             return {code, char, isChar, isDigit, isLetter, isDecimalCharacter, isHandleKey
                   , isValidChar: (isDigit || isLetter || isDecimalCharacter)}
-        }	
+        }	        
     } 
     , Handle={
+        bind : input=>{
+            input.onfocus    = Handle.onFocus;
+            input.onkeyup    = Handle.keyUp;
+            input.onkeypress = Handle.keyPress;
+            input.onblur     = Handle.lostFocus;
+            input.onmouseup  = Handle.mouseUp;
+        },
         onFocus : (e=window.event)=>{
-            if (e.target.isAlignRight)
-            Parser.CursorManager.Reposition(e.target);
+            let input = e.target
+             , adapter=getAdapter(input); 
+            if (adapter.isAlignRight)
+                Parser.CursorManager.Reposition(input);
         },
         
         lostFocus : ()=>{},
         
         keyUp : function(e=window.event){
-            let key = Utils.getKey(e);
+            let key = Utils.getKey(e)
+               ,adapter=getAdapter(this);
             if (!key.isHandleKey) return;
 
             if(key.code==c$.KEY.DEL){
-                if(this.InsertActive)
-                    Parser.DataManager.RemoveCharacterByShiftLeft(this);
-                else
-                    Parser.DataManager.RemoveCharacterByOverwrite(this);
-                Parser.Render(this);
-                if(this.isAlignRight)
-                    Parser.CursorManager.Reposition(this);
-            } else if (key.code==c$.KEY.BACKSPACE && (this.AllowInsert || this.isAlignRight)){
-                if (this.isAlignRight){
-                    Parser.DataManager.shiftRight(this);
-                }else if (this.AllowInsert){
+                Parser.DataManager.delChar(this, adapter)
+            } else if (key.code==c$.KEY.BACKSPACE && (adapter.AllowInsert || adapter.isAlignRight)){
+                if (adapter.isAlignRight){
+                    Parser.DataManager.shiftRight(adapter);
+                }else if (adapter.AllowInsert){
                     let preBackspaceCursorPosition = Parser.CursorManager.GetPosition(this)[0];
                     Parser.CursorManager.Move(this, -1);
                     let postBackspaceCursorPosition = Parser.CursorManager.GetPosition(this)[0]-1;
 
                     if(preBackspaceCursorPosition != postBackspaceCursorPosition) 
-                        Parser.DataManager.RemoveCharacterByShiftLeft(this,1);
+                        Parser.DataManager.delCharByShiftLeft(this,1);
                 }
                 Parser.Render(this);
                 Parser.CursorManager.Reposition(this);
             }else if(key.code==c$.KEY.END){
-                let startIdx = Parser.MaskManager.FindNearestMaskCharacter(this, this.DataIndex[this.DataIndex.length-1], 1);
+                let startIdx = Parser.CursorManager.findStartPosition(adapter, adapter.DataIndex[adapter.DataIndex.length-1], 1);
                 Parser.CursorManager.SetPosition(this, startIdx);
             }else if(key.code==c$.KEY.HOME){
-                Parser.CursorManager.SetPosition(this, this.MaskIndex[0]);
-            }else if(key.code==c$.KEY.LEFT || (key.code==c$.KEY.UP && this.isAlignRight==false)){
+                Parser.CursorManager.SetPosition(this, adapter.MaskIndex[0]);
+            }else if(key.code==c$.KEY.LEFT || (key.code==c$.KEY.UP && adapter.isAlignRight==false)){
                 Parser.CursorManager.Move(this, -1);
-            }else if(key.code==c$.KEY.UP && this.isAlignRight){
+            }else if(key.code==c$.KEY.UP && adapter.isAlignRight){
                 Parser.CursorManager.Reposition(this);
             }else if(key.code==c$.KEY.RIGHT  || key.code==c$.KEY.DOWN){
                 Parser.CursorManager.Move(this, 1);
-            }else if(key.code==c$.KEY.INS && this.AllowInsert)
+            }else if(key.code==c$.KEY.INS && adapter.AllowInsert)
                 Parser.CursorManager.ToggleInsert(this);
             return false;
         },
         keyPress : function(e= window.event){
-            let render=false, key = Utils.getKey(e);
+            let render=false, key = Utils.getKey(e)
+              , adapter=getAdapter(this);
             if (key.isValidChar) {             
                 Parser.CursorManager.TabbedInSetPosition(this);
-                let maskCurrent=Parser.MaskManager.CurrentMaskCharacter(this);				
+                let maskCurrent=Parser.DataManager.currentCharInMask(this);				
 
                 //Numeric Characters
                 if (((c$.MASK.NUMBER.exists(maskCurrent)) && key.isDigit) ||
                     ((key.isDecimalCharacter) && this.value.includes(c$.MASK.DecimalCharacter)==false && 
-                    this.value.trim().length>0 && this.hasDecimalCharInMask)) {                                        
+                    this.value.trim().length>0 && adapter.hasDecimalCharInMask)) {                                        
                     render=true;
                 }else if(key.isLetter){ //Alpha Characters 65 - 90
                     if (c$.MASK.ALPHA.exists(maskCurrent)){
@@ -1146,7 +1151,7 @@ TYPE.Formatter = function(){
                         else if (maskCurrent==c$.MASK.ALPHA.UPPER)//.UpperCaseChar)
                             key.char=key.char.toUpperCase()                                                      
                         render=true;
-                    } else if (this.isAlignRight)
+                    } else if (adapter.isAlignRight)
                         Parser.CursorManager.Reposition(this);
                 }
             } else if (key.isChar){
@@ -1154,7 +1159,7 @@ TYPE.Formatter = function(){
                 Parser.CursorManager.Reposition(this);
             }
             if (render){
-                Parser.DataManager.AddData(this, key.char);
+                Parser.DataManager.addChar(this, key.char);
                 Parser.Render(this);
                 Parser.CursorManager.Reposition(this);
             }
@@ -1165,123 +1170,63 @@ TYPE.Formatter = function(){
             return false;
         },
         mouseUp : function(e=window.event){
-            if (this.isAlignRight)
+            let adapter=getAdapter(this);
+            if (adapter.isAlignRight)
                 Parser.CursorManager.Reposition(this);
             else{
-                let cursorPosition = Parser.CursorManager.GetPosition(this)[0];
-                let startIdx = Parser.MaskManager.FindNearestMaskCharacter(this, cursorPosition, 0);
+                let cursorPosition = Parser.CursorManager.GetPosition(this)[0]
+                  , startIdx = Parser.CursorManager.findStartPosition(adapter, cursorPosition, 0);
                 Parser.CursorManager.SetPosition(this, startIdx);
             }	
         }
     }
     , Parser={
-        initField : (input)=>{ //inicializa as máscaras
-            Parser.ParseFieldData(input);
-            input.value = (input.DefaultText.length>0) ?input.DefaultText.join("") :input.DefaultText;           
-            if (!input.isAlignRight)
-                input.isAlignRight = false;
+        bind : (input, adapter)=>{           
+            Parser.parseMask(input, adapter);
+            Parser.DataManager.create(adapter); 
+            Parser.parseComplexMask(adapter);           
+            input.value = (adapter.DefaultText.length>0) ?adapter.DefaultText.join("") :adapter.DefaultText;                         
+            adapter.binded=true;
         },
-        ParseFieldData : function(input){ //inicializa os valores de dados
-            let adapter= input.field.maskAdapter;
-            input.CursorPosition= [];
-            input.Data          = [];
-            input.DataIndex     = [];
-            input.DefaultText   = (input.getAttribute("data-prompt")) ?input.getAttribute("data-prompt").split("") :"";
-
-            input.Mask          = this.MaskManager.ParseMask(input);
-            input.MaskIndex     = this.MaskManager.ParseMaskIndex(input.Mask);
-            
-            let IsComplexMask   = this.MaskManager.IsComplexMask(input);
-            input.InsertActive  = (IsComplexMask) ? false : true;
-            input.HighlightChar = (IsComplexMask) ? true  : false;
-            input.AllowInsert   = (IsComplexMask) ? false : true;
-        },      
-        MaskManager : {
-            ParseMask : function(input){                                        
-                let arr =[]
-                  , mask=input.getAttribute("data-mask")         
-                mask.split("").forEach((item,idx)=>{
-                                                    if (maskCharacters.includes(item)) 
-                                                        arr[idx]=item;
-                                                })
-                input.hasDecimalCharInMask=mask.includes(c$.MASK.DecimalCharacter);
-                return arr;
-            }            
-            , ParseMaskIndex : function(mask){
-                let arr = [];
-                for(let i=0; i<mask.length; i++){
-                    if(mask[i] != null) 
-                        arr[arr.length] = i;
-                }
-                return arr;
-            }
-            ,CurrentMaskCharacter : function(input){
-                let adapter= input.field.maskAdapter
-                  , cursorPosition = Parser.CursorManager.GetPosition(input)[0];
-                return input.Mask[cursorPosition];
-            }
-            ,FindNearestMaskCharacter : function(input, cursorPosition, dir){
-                let adapter= input.field.maskAdapter
-                  , nearestMaskCharacter = (input.DataIndex.length > 0) ? cursorPosition : input.MaskIndex[0];                
-                switch(dir){
-                    case -1:
-                        for(let i=input.DataIndex.length-1; i>-1; i--){
-                            if(input.DataIndex[i] < cursorPosition){
-                                nearestMaskCharacter = input.DataIndex[i];
-                                break;
-                            }
-                        }
-                    break;
-                    case 0:
-                        for(let i=0; i<input.DataIndex.length; i++){
-                            if(input.MaskIndex[i] >= cursorPosition){
-                                nearestMaskCharacter = input.MaskIndex[i];
-                                break;
-                            }else{
-                                nearestMaskCharacter = input.MaskIndex[input.DataIndex.length];
-                            }
-                        }							
-                    break;
-                    case 1:
-                        for(let i=0; i<input.DataIndex.length; i++){
-                            if(input.DataIndex[i] > cursorPosition){
-                                nearestMaskCharacter = input.DataIndex[i];
-                                break;
-                            }
-                        }
-                        if(cursorPosition == input.MaskIndex[input.MaskIndex.length-1]) nearestMaskCharacter = cursorPosition + 1;
-                        else if(cursorPosition == input.DataIndex[input.DataIndex.length-1]) nearestMaskCharacter = input.MaskIndex[input.DataIndex.length];
-                    break;
-                }
-                return nearestMaskCharacter
-            }
-            ,IsComplexMask : function(input){
-                //Quando a mask contem tipos diferentes de caracteres - não deceverá permitir insert;
-                let adapter= input.field.maskAdapter
-                  , previousChar= ""
-                  , isComplex = input.MaskIndex.some((cur,i)=>{
-                        const currentChar = input.Mask[cur];
-                        const res =  (currentChar != previousChar && previousChar != "")
-                        previousChar = currentChar;
-                        return 	res;
-                    });
-                return isComplex;
-            }
-        },   
+        parseMask:(input, adapter)=>{ //adaptar a definicao da máscaras do html para o Adapter
+            if (!adapter.mask)
+                adapter.mask= input.getAttribute("data-mask")            
+            if (!adapter.prompt)
+                adapter.prompt= input.getAttribute("data-prompt");
+            if (!adapter.isAlignRight)  
+                adapter.isAlignRight = false;
+            adapter.hasDecimalCharInMask=adapter.mask.includes(c$.MASK.DecimalCharacter);            
+        },  
+        parseComplexMask(adapter){
+            let IsComplexMask     = Parser.isComplexMask(adapter);
+            adapter.InsertActive  = (IsComplexMask) ? false : true;
+            adapter.HighlightChar = (IsComplexMask) ? true  : false;
+            adapter.AllowInsert   = (IsComplexMask) ? false : true;
+        },  
+        isComplexMask: function(adapter){
+            //Quando a mask contem tipos diferentes de caracteres - não deceverá permitir insert;
+            let previousChar= ""
+              , isComplex = adapter.MaskIndex.some((cur,i)=>{
+                    const currentChar = adapter.Mask[cur]
+                        , res =  (currentChar != previousChar && previousChar != "")
+                    previousChar = currentChar;
+                    return 	res;
+                });
+            return isComplex;
+        },           
         CursorManager : {
             Move : function(input, dir){
-                let adapter= input.field.maskAdapter
+                let adapter=getAdapter(input)
                   , cursorPosition = this.GetPosition(input)[0];
-                if (!input.isAlignRight || (input.isAlignRight && input.Data.length>0)){
-                    let startIdx = Parser.MaskManager.FindNearestMaskCharacter(input, cursorPosition, dir);
+                if (!adapter.isAlignRight || (adapter.isAlignRight && adapter.DataIndex.length>0)){
+                    let startIdx = Parser.CursorManager.findStartPosition(adapter, cursorPosition, dir);
                     this.SetPosition(input, startIdx);
                 }else{
                     this.SetPosition(input, cursorPosition);
                 }
             },
             GetPosition : function(input){
-                let adapter= input.field.maskAdapter
-                  , arr = [0,0];
+                let arr = [0,0];
                 if(input.selectionStart && input.selectionEnd){
                     arr[0] = input.selectionStart;
                     arr[1] = input.selectionEnd;
@@ -1295,173 +1240,288 @@ TYPE.Formatter = function(){
                 return arr
             },
             SetPosition : function(input, startIdx){
-                let endIdx = startIdx + ((input.HighlightChar) ? 1 : 0);
+                let adapter=getAdapter(input)
+                  , endIdx = startIdx + ((adapter.HighlightChar) ? 1 : 0);
                 Utils.PartialSelect(input, startIdx, endIdx);
             },
-            TabbedInSetPosition : function(input){//onde será posicionado o cursor para inserir o valor
-                if(Parser.MaskManager.CurrentMaskCharacter(input) == undefined){
-                    let startIdx=0
-                      , adapter= input.field.maskAdapter;
-                    if (input.isAlignRight){
-                        startIdx =input.MaskIndex.length;
-                    }else{
-                        if(input.DataIndex.length > 0 && input.DataIndex.length != input.MaskIndex.length){
-                            startIdx = input.MaskIndex[input.DataIndex.length];
+            getTypeablePosition(adapter, position, dir){
+                if (dir==0) dir=1;
+                if (adapter.Mask[position] || position >= adapter.Data.length) 
+                    return position;
+                else    
+                    return Parser.CursorManager.getTypeablePosition(adapter, (position+dir), dir);   
+            },
+            getNextEmptyPosition(adapter, position, dir){                                
+                let pos = (dir==0) ?position-1 : position+dir;
+                if (!adapter.Data[pos] && adapter.Mask[pos]) 
+                    return Parser.CursorManager.getNextEmptyPosition(adapter, (pos), dir);   
+                else    
+                    return position;                    
+            },            
+            findStartPosition : function(adapter, cursorPosition, dir){
+                let nearestMaskCharacter = (adapter.DataIndex.length > 0) 
+                                         ? Parser.CursorManager.getTypeablePosition(adapter, cursorPosition, dir) 
+                                         : adapter.MaskIndex[0];                              
+                switch(dir){
+                    case -1:
+                        if (!adapter.Data[nearestMaskCharacter] || adapter.isAlignRight){
+                            for(let i=adapter.DataIndex.length-1; i>-1; i--){
+                                if(adapter.DataIndex[i] < cursorPosition){
+                                    nearestMaskCharacter = adapter.DataIndex[i];
+                                    break;
+                                }
+                            }
                         }
-                        else if(input.DataIndex.length == input.MaskIndex.length){
-                            startIdx = input.DataIndex[input.DataIndex.length-1] + 1;
+                    break;
+                    case 0:
+                        for(let i=0; i<adapter.DataIndex.length; i++){
+                            if(adapter.MaskIndex[i] >= cursorPosition){
+                                nearestMaskCharacter = adapter.MaskIndex[i];
+                                break;
+                            }else
+                                nearestMaskCharacter = adapter.MaskIndex[adapter.DataIndex.length];                            
+                        }							
+                    break;
+                    case 1:
+                        if (!adapter.Data[nearestMaskCharacter]){
+                            for(let i=0; i<adapter.DataIndex.length; i++){
+                                if(adapter.DataIndex[i] > cursorPosition){
+                                    nearestMaskCharacter = adapter.DataIndex[i];
+                                    break;
+                                }
+                            }
+                            nearestMaskCharacter = Parser.CursorManager.getNextEmptyPosition(adapter, nearestMaskCharacter, (dir*-1))
+                        }
+                        if(cursorPosition == adapter.MaskIndex[adapter.MaskIndex.length-1]) 
+                            nearestMaskCharacter = cursorPosition + 1;
+                        else 
+                            if(cursorPosition == adapter.DataIndex[adapter.DataIndex.length-1]) 
+                                nearestMaskCharacter = adapter.MaskIndex[adapter.DataIndex.length];
+                    break;
+                }
+                console.log("nearestMaskCharacter>", nearestMaskCharacter
+                          , "value:", adapter.Data[nearestMaskCharacter]
+                          , "mask:", adapter.Mask[nearestMaskCharacter]);
+                return nearestMaskCharacter
+            },
+            TabbedInSetPosition : function(input){//onde será posicionado o cursor para inserir o valor
+                let adapter=getAdapter(input);
+                if(Parser.DataManager.currentCharInMask(input) == undefined){
+                    let startIdx=0;
+                    if (adapter.isAlignRight){
+                        startIdx =adapter.MaskIndex.length;
+                    }else{
+                        if(adapter.DataIndex.length > 0 && adapter.DataIndex.length != adapter.MaskIndex.length){
+                            startIdx = adapter.MaskIndex[adapter.DataIndex.length];
+                        }
+                        else if(adapter.DataIndex.length == adapter.MaskIndex.length){
+                            startIdx = adapter.DataIndex[adapter.DataIndex.length-1] + 1;
                         }
                     }
                     this.SetPosition(input, startIdx);
                 }
             },
             PersistPosition : function(input){
-                input.CursorPosition = this.GetPosition(input);
+                let adapter=getAdapter(input);
+                adapter.CursorPosition = this.GetPosition(input);
             },
             RestorePosition : function(input){
-                this.SetPosition(input, input.CursorPosition[0]);
+                let adapter=getAdapter(input);
+                this.SetPosition(input, adapter.CursorPosition[0]);
             },
             Reposition: function(input){
-                let adapter= input.field.maskAdapter;
-                if (input.isAlignRight){
-                    let pos = (input.Mask.length);//(input.Data.join("").length +(input.hasDecimalCharInMask ?1 :0))
+                let adapter=getAdapter(input);
+                if (adapter.isAlignRight){
+                    let pos = (adapter.Mask.length);//(input.Data.join("").length +(input.hasDecimalCharInMask ?1 :0))
                     this.SetPosition(input, pos);
                 }else{
                     this.Move(input, 1);
                 }
             },
             ToggleInsert : function(input){
-                if(input.InsertActive){
-                    input.InsertActive = false;
-                    input.HighlightChar = true;
+                let adapter=getAdapter(input);
+                if(adapter.InsertActive){
+                    adapter.InsertActive = false;
+                    adapter.HighlightChar = true;
                 }else{
-                    input.InsertActive = true;
-                    input.HighlightChar = false;
+                    adapter.InsertActive = true;
+                    adapter.HighlightChar = false;
                 }
                 let startIdx = this.GetPosition(input)[0];
                 this.SetPosition(input, startIdx);
             }
         },
         DataManager : {
-            AddData : function(input, char){
-                //(input.alignToReposiotion==c$.ALIGN.RIGHT)
-                let cursorPosition = Parser.CursorManager.GetPosition(input)[0];
-                if (input.isAlignRight){
-                    if (cursorPosition ==input.MaskIndex.length)
-                    this.InsertCharacter(input, char);
-                    else
-                    this.OverwriteCharacter(input, char, cursorPosition);
-                }else{
-                    if(input.InsertActive)
-                        this.InsertCharacter(input, char);
-                    else
-                        this.OverwriteCharacter(input, char, cursorPosition);
-                }
-                this.UpdateDataIndex(input);
+            create: function(adapter){ //inicializa os valores de dados
+                adapter.CursorPosition= [];
+                adapter.Data          = [];
+                adapter.DataIndex     = [];
+                adapter.DefaultText   = (adapter.prompt) ? adapter.prompt.split("") :"";
+    
+                adapter.Mask          = this.createDataMask(adapter);            
+                adapter.MaskIndex     = this.createDataIndex(adapter.Mask);                
+            }            
+            , createDataMask(adapter){  
+                let arr =[];
+                 adapter.mask.split("").forEach((item,idx)=>{
+                                                    if (maskCharacters.includes(item)) 
+                                                        arr[idx]=item;
+                                                })                           
+                return arr;              
             }
-            ,shiftLeft: (input) =>{ // move todos para esquerda uma posicao
-                if (input.Data.length>0){
-                    for(let i=0;i<input.MaskIndex.length;i++){
-                        input.Data[input.MaskIndex[i]] = input.Data[input.MaskIndex[i+1]];
-                    }
-                }
+            , createDataIndex(mask){  
+                let arr = [];
+                for(let i=0; i<mask.length; i++){
+                    if(mask[i] != null) 
+                        arr[arr.length] = i;
+                }                
+                return arr;              
             }
-            ,shift: (input,start=0, ct=1) =>{ // move todos para direita uma posicao
-                if (input.Data.length>0){
-                    for(let i=start; i<start-ct; i--){
-                        input.Data[input.MaskIndex[i+1]] = input.Data[input.MaskIndex[i]];
-                    }
-                }
-            }
-            ,shiftRight: (input,start=input.MaskIndex.length-1) =>{ // move todos para direita uma posicao
-                if (input.Data.length>0){
-                    for(let i=start; i>-1; i--){
-                        input.Data[input.MaskIndex[i]] = input.Data[input.MaskIndex[i-1]];
-                    }
-                }
-            }
-            ,InsertCharacter :function(input, char){
-                let lastCharacterPosition = input.MaskIndex[input.MaskIndex.length-1]
-                  , currentCharacterPosition = this.CurrentDataIndexPosition(input);
-                if (input.isAlignRight)
-                    this.shiftLeft(input);
-                else
-                    this.shift(input,lastCharacterPosition, (lastCharacterPosition-currentCharacterPosition));			
-                input.Data[input.MaskIndex[currentCharacterPosition]] = char;
-            }
-            ,OverwriteCharacter : function(input, char, cursorPosition){
-                input.Data[cursorPosition] = char;
-            }
-            ,RemoveCharacterByOverwrite : function(input){
-                let currentCharacterPosition = this.CurrentDataIndexPosition(input);
-                if(currentCharacterPosition != null){
-                    if (input.isAlignRight)
-                        this.shiftRight(input,currentCharacterPosition)
-                    else
-                    input.Data[input.DataIndex[currentCharacterPosition]] = "";
-                }
-            }
-            ,RemoveCharacterByShiftLeft : function(input, pos=0){
-                let lastCharacterPosition = input.DataIndex[input.DataIndex.length-1]
-                , currentCharacterPosition = this.CurrentDataIndexPosition(input)
-                , cursorPosition = Parser.CursorManager.GetPosition(input)[0];
-                
-                if(currentCharacterPosition != null && (lastCharacterPosition >= cursorPosition || (lastCharacterPosition ==0  && lastCharacterPosition == cursorPosition))){
-                    if (lastCharacterPosition ==0)
-                        input.Data[input.DataIndex[0]] = input.Data[input.DataIndex[1]];
-                    else{
-                        for(let i=(currentCharacterPosition+pos); i<=lastCharacterPosition; i++){
-                            input.Data[input.DataIndex[i]] = input.Data[input.DataIndex[i+1]];
-                        }
-                    }	
-                    input.Data.length = input.Data.length-1;
-                    this.UpdateDataIndex(input);
-                }
-            }
-            ,UpdateDataIndex : function(input){
-                input.DataIndex.length = 0;
-                for(let i=0; i<input.Data.length; i++){
-                    if(input.Data[i] != undefined) input.DataIndex[input.DataIndex.length] = i;
-                }
-            }
-            ,CurrentDataIndexPosition : function(input){
+            ,addChar : function(input, char){                
                 let cursorPosition = Parser.CursorManager.GetPosition(input)[0]
-                  , currentDataIndexPosition = null;
-                for(let i=0; i<input.MaskIndex.length; i++){
-                    if(input.MaskIndex[i] == cursorPosition){
+                  , adapter=getAdapter(input);
+                if (adapter.isAlignRight){
+                    if (cursorPosition ==adapter.MaskIndex.length)
+                        this.insertChar(input, char);
+                    else
+                        this.overwriteChar(adapter, char, cursorPosition);
+                }else{
+                    if(adapter.InsertActive)
+                        this.insertChar(input, char);
+                    else
+                        this.overwriteChar(adapter, char, cursorPosition);
+                }
+                this.updateDataIndex(adapter);
+            }
+            ,shiftLeft: (adapter, start=0, last=adapter.MaskIndex.length) =>{ // move todos para esquerda uma posicao                
+                if (adapter.Data.length>0){
+                    for(let i=start;i<last;i++){
+                        adapter.Data[adapter.MaskIndex[i]] = adapter.Data[adapter.MaskIndex[i+1]];                        
+                    }
+                }
+            }
+            ,del: (adapter, start=0, last=adapter.MaskIndex.length) =>{ // move todos para esquerda uma posicao                
+                if (adapter.Data.length>0){
+                    for(let i=start;i<last;i++){
+                        adapter.Data[adapter.MaskIndex[i]] = "";  
+                    }
+                }
+            }            
+            ,shift: (adapter,start=0, ct=1) =>{ // move todos para direita uma posicao
+                if (adapter.Data.length>0){
+                    for(let i=start; i<start-ct; i--){
+                        adapter.Data[adapter.MaskIndex[i+1]] = adapter.Data[adapter.MaskIndex[i]];
+                    }
+                }
+            }
+            ,shiftRight: (adapter,start=adapter.MaskIndex.length-1) =>{ // move todos para direita uma posicao
+                if (adapter.Data.length>0){
+                    for(let i=start; i>-1; i--){
+                        adapter.Data[adapter.MaskIndex[i]] = adapter.Data[adapter.MaskIndex[i-1]];
+                    }
+                }
+            }            
+            ,insertChar :function(input, char){
+                let adapter=getAdapter(input)
+                  , lastCharPosition = adapter.MaskIndex[adapter.MaskIndex.length-1]
+                  , currentCharPosition = this.currentPosition(input);
+                if (adapter.isAlignRight)
+                    this.shiftLeft(adapter);
+                else
+                    this.shift(adapter,lastCharPosition, (lastCharPosition-currentCharPosition));			
+                adapter.Data[adapter.MaskIndex[currentCharPosition]] = char;
+            }
+            ,overwriteChar : function(adapter, char, cursorPosition){
+                adapter.Data[cursorPosition] = char;
+            }
+            ,delChar(input, adapter){
+                if(adapter.InsertActive)
+                    Parser.DataManager.delCharByShiftLeft(input);
+                else
+                    Parser.DataManager.delCharByOverwrite(input);
+                Parser.Render(input);
+                if(adapter.isAlignRight)
+                    Parser.CursorManager.Reposition(input);
+            }                       
+            ,delCharByOverwrite : function(input){
+                let currentCharacterPosition = this.currentPosition(input)
+                  , adapter=getAdapter(input);
+                if(currentCharacterPosition != null){
+                    if (adapter.isAlignRight)
+                        this.shiftRight(adapter,currentCharacterPosition)
+                    else
+                        adapter.Data[adapter.DataIndex[currentCharacterPosition]] = "";
+                }
+            }
+            ,delCharByShiftLeft : function(input, pos=0){
+                let adapter=getAdapter(input)
+                  , lastCharPosition = adapter.DataIndex[adapter.DataIndex.length-1]
+                  , currentCharPosition = this.currentPosition(input)
+                  , cursorPosition = Parser.CursorManager.GetPosition(input)[0];                  
+                
+                if(currentCharPosition != null && (lastCharPosition >= cursorPosition || (lastCharPosition ==0  && lastCharPosition == cursorPosition))){
+                    if (lastCharPosition ==0)
+                        adapter.Data[adapter.DataIndex[0]] = adapter.Data[adapter.DataIndex[1]];
+                    else{
+                        // if (lastCharPosition = adapter.MaskIndex.length)
+                        //     Parser.DataManager.del(adapter, (currentCharPosition+pos), (lastCharPosition+1));              
+                        // else
+                            Parser.DataManager.shiftLeft(adapter, (currentCharPosition+pos), (lastCharPosition+1));
+                    }	
+                    adapter.Data.length = adapter.Data.length-1;
+                    this.updateDataIndex(adapter);
+                }
+            }
+            ,updateDataIndex : function(adapter){
+                adapter.DataIndex.length = 0;
+                for(let i=0; i<adapter.Data.length; i++){
+                    if(adapter.Data[i] != undefined) 
+                        adapter.DataIndex[adapter.DataIndex.length] = i;
+                }
+            }
+            ,currentPosition : function(input){
+                let cursorPosition = Parser.CursorManager.GetPosition(input)[0]
+                  , currentDataIndexPosition = null
+                  , adapter=getAdapter(input);
+                for(let i=0; i<adapter.MaskIndex.length; i++){
+                    if(adapter.MaskIndex[i] == cursorPosition){
                         currentDataIndexPosition = i;
                         break;
                     }
                 }
                 return currentDataIndexPosition
-            }				
+            }
+            ,currentCharInMask : function(input){
+                let adapter=getAdapter(input)
+                  , cursorPosition = Parser.CursorManager.GetPosition(input)[0];
+                return adapter.Mask[cursorPosition];
+            }  				
         },
-        Render : function(input){
-            this.CursorManager.PersistPosition(input);
-            let composite = [];
+        Render : function(input){            
+            let composite = []
+              , adapter=getAdapter(input);            
             const Pos = index =>({
                 index
                 , get:()=> ++index					    
-            })
-            const pos=Pos(-1);
-            for(let i=0; i<input.Mask.length; i++){
+            })            
+                , pos=Pos(-1);
+            this.CursorManager.PersistPosition(input);
+            for(let i=0; i<adapter.Mask.length; i++){
                 let k = pos.get();
-                if (input.DefaultText.length>0){
-                    composite[i] = input.Mask[i];
-                    if (input.DefaultText[i]) 
-                        composite[i] = input.DefaultText[i];
+                if (adapter.DefaultText.length>0){
+                    composite[i] = adapter.Mask[i];
+                    if (adapter.DefaultText[i]) 
+                        composite[i] = adapter.DefaultText[i];
                 }
-                if (input.Data[k]) 
-                composite[i] = input.Data[k];
+                if (adapter.Data[k]) 
+                    composite[i] = adapter.Data[k];
             }
-            input.value = composite.join("")
-            
+            input.value = composite.join("");            
             this.CursorManager.RestorePosition(input);
         }
     }
-    class Adapter{
-        constructor(field, mask){
-            //Object.preset(this,{prompt:null, strip:null, mask:null, size:1, align:c$.ALIGN.LEFT});        
+    class MaskAdapter{
+        constructor(field, mask){  
             this.parse(field, mask);
         };
         parse(field, parm){
@@ -1527,17 +1587,18 @@ TYPE.Formatter = function(){
                 }    
             }       
         }
-    } // Adapter   
+    } // MaskAdapter   
    return{ 	
         init(formId){
-            let inputs = (formId) ?$(`#${formId}`).find("input") :$("input") ;
+            let inputs = (formId) ?$(`#${formId}`).find("input") :$("input");
             for(let i=0; i<inputs.length; i++){
-                bind(inputs[i]);	
+                if (inputs[i].field)
+                    bind(inputs[i]);	
             }
         }
         , bind
         , createAdapter(field, mask){
-            return new Adapter(field, mask);
+            return new MaskAdapter(field, mask);
         }
      }    
 }()   
