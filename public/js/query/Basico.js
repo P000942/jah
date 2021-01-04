@@ -1,4 +1,4 @@
-j$.service.createQuery("Basico"
+j$.Service.createQuery("Basico"
            ,{fieldset:{
                            id:TYPE.INTEGER(4,{label:'Código'})
                       ,  data:TYPE.DATE({label:'Data'})

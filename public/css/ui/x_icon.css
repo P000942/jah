@@ -30,19 +30,15 @@ margin: 0;
 padding:3px 0px 0px 12px;
 }*/
 
-.ikon-hint {
+/* .ikon-hint {
     background-position: 1% 40%;    
     background-repeat: no-repeat;
     margin: 0 0 0 2px;
     padding:0 0 0 16px;    
     vertical-align: top;
-}
+} */
 
-.list-ikon {
-    background-position: right center;    
-    background-repeat: no-repeat;
-    padding: 0;
-}
+
 
 /*.icon-edit     { background-image: url(../../images/icon/edit.png); }*/
 /*.icon-del      { background-image: url(../../images/icon/delete.gif); }*/
@@ -50,12 +46,9 @@ padding:3px 0px 0px 12px;
 /* .icon-save     { background-image: url(../../images/icon/save.png); }
 .icon-cancel   { background-image: url(../../images/icon/cancel.png); } */
 /*.icon-print    { background-image: url(../../images/icon/print.gif); }*/
-.ikon-info     { background-image: url(../../images/icon/hint-info.png); }
-.ikon-error    { background-image: url(../../images/icon/hint-error.png); }
+/* .ikon-info     { background-image: url(../../images/icon/hint-info.png); }
+.ikon-error    { background-image: url(../../images/icon/hint-error.png); } */
 
-.ikon-filter   { background-image: url(../../images/icon/filter.gif); }
-.ikon-sort-asc { background-image: url(../../images/icon/sort-asc.png); }
-.ikon-sort-desc{background-image: url(../../images/icon/sort-desc.png); }
 
 /*.icon-navigator-first{background-image: url(../../images/icon/navigator-first.png); }
 .icon-navigator-back {background-image: url(../../images/icon/navigator-back.png); }

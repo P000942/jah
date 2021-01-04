@@ -5,67 +5,77 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="description" content="">
-    <!-- <meta name="viewport" content="width=device-width"> -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- <link rel="stylesheet" href="../css/bootstrap.css"> -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
                       integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-                    crossorigin="anonymous">
+                    crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
+                      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" 
+                      crossorigin="anonymous">                
     <link rel="stylesheet" href="../css/font-awesome.css">
-    <link rel="stylesheet" href="../css/bootstrap-responsive.min.css">
+    <!-- <link rel="stylesheet" href="../css/bootstrap-responsive.min.css"> -->
 
     <link rel="stylesheet" href="../css/layout.css" />
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- <script src="../js/vendor/bootstrap.min.js"></script> -->
-    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="../js/jah/type/dataExt.js"></script>
+    <!-- <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>    
     <script src="../js/jah/config.js"></script>
-    <script src="../js/jah/system.js"></script>
-    <script src="../js/jah/type/typecast.js"></script>
-    <script src="../js/jah/type/type.js"></script>
+    <script src="../js/jah/api/dataExt.js"></script>    
+    <script src="../js/jah/api/system.js"></script>
+    <script src="../js/jah/ui/type.js"></script>
     <!-- Para montar o form, não precisa do resource.
          Só está aqui o caso de um input fazer referência a algum resource    -->
-    <script src="../js/jah/resource.js"></script>
+    <script src="../js/jah/resource/resource.js"></script>
+    <script src="../js/helper/data.js"></script>
+    <script src="../js/helper/sample.js"></script>  
     <script src="../js/jah/ui/page.js"></script>
 
 <script type="text/javascript">
      $(document).ready(function(){
-       //ERROR.init({callback:function(msg,oType){alert(oType.label+': '+msg);}});
-       ERROR.init({callback:function(msg,field){ERROR.on(msg, field);}});
+        TYPE.Error.init({   show(field, msg,clas$){TYPE.Error.invalid(field, msg)} //qualquer msg
+           ,invalid(field, msg)      {TYPE.Error.invalid(field, msg)} //quando deu erro
+           ,  valid(field, msg)      {TYPE.Error.valid  (field, msg)} //quando ok
+           ,   hide(field)           {TYPE.Error.hide   (field)} //para remover o erro
+           });
+        TYPE.Error.noMarkIfValid();
     //   myPage.init();
      });
-    //ERROR.init({callback:function(msg,oType){alert(oType.label+': '+msg);}});
+    //TYPE.Error.init({callback:function(msg,oType){alert(oType.label+': '+msg);}});
     const init =()=>{
-        $("#content").removeClass("lookThis");
+        $("#content").removeClass("lookThis"); // isso é apenas para fazer demonstraçao
         myPage.init();
     }
     const actionController =function (){
         return{
-            edit:()=>{alert('edite')},
-          insert:()=>{alert('criar')},
-            back:()=>{alert('voltar')},
-          remove:()=>{alert('remover')},
-          update:()=>{alert('alterar')},
-            sort:()=>{alert('sort')},
-           print:()=>{alert('print')},
-          filter:()=>{alert('filtrar')},
-             get:()=>{alert('consultar')},
-       pesquisar:()=>{alert('pesquisar')},
-            novo:()=>{alert('novo')},
-            save:(e)=>{alert(e.text)},
-            teste:(e)=>{alert(e.text)},
-            simples:(e)=>{alert(e.text)},
-            pornome:(e)=>{alert(e.text)},
-            porcpf:(e)=>{alert(e.text)},
+                 edit(){alert('edite')}
+        ,      insert(){alert('criar')}
+        ,        back(){alert('voltar')}
+        ,      remove(){alert('remover')}
+        ,      update(){alert('alterar')}
+        ,        sort(){alert('sort')}
+        ,       print(){alert('print')}
+        ,      filter(){alert('filtrar')}
+        ,         get(){alert('consultar')}
+        ,   pesquisar(){alert('pesquisar')}
+        ,        novo(){alert('novo')}
+        ,       save(e){alert(e.text)}
+        ,      teste(e){alert(e.text)}
+        ,    simples(e){alert(e.text)}
+        ,    pornome(e){alert(e.text)}
+        ,     porcpf(e){alert(e.text)}
         };
     }();
 
-    j$.service.create("myPage",
+    j$.Service.create("myPage",
          {
             init:function(idTarget){
-                 let page = j$.ui.Page.create(myPage);
+                 let page = j$.Page.create(myPage);
                  const {BUTTONS} = CONFIG.CRUD
                  // Modificando os presets dos botões de comando
                  BUTTONS.INSERT.value='Novo'; //Muda o título - Mas muda global
@@ -99,11 +109,14 @@
       ,    title:'Manter papéis'
     };
 
-    myPage.Fieldset= j$.ui.createFieldset({Dinheiro:TYPE.MONEY(10),
+    myPage.Fieldset= TYPE.Fieldset.create({Dinheiro:TYPE.MONEY(10),
       Integer:TYPE.INTEGER(1,{type:"range", max:9, min:1, step:2}),
-                     Digito:TYPE.DIGIT({label:'Dígito', resource:{name:'estadoCivil', local:true, id:"idEstadoCivil"}, hint:'informe o código aparece a legenda.'}),
+                     Digito:TYPE.DIGIT({label:'Dígito'
+                                   , attributes:{title:'informe o código aparece a legenda.'}
+                                   , resource:{name:'estadoCivil', local:true, id:"idEstadoCivil"}  
+                                    }),
                   ufLegenda:TYPE.UPPERCASE(2,{label:'UF com Legenda', resource:{name:'uf', local:true, id:'sgUf', text:'txEstado'}}),
-                    Numerico:TYPE.NUMERIC(4,2,{label:'Numérico', mandatory:true}),
+                   Numerico:TYPE.NUMERIC(4,2,{label:'Numérico', mandatory:true}),
                    Dinheiro:TYPE.MONEY(10),
                       Range:TYPE.RANGE(1,{max:9, min:1, step:2}),
                       Letra:TYPE.LETTER(4),
@@ -133,30 +146,18 @@
 
 </head>
 <body>
-    <div id="page" class='page'>
+
         <header>
-           <div class="header-top">
-               <div  class="top-left"></div>
-           </div>
-           <nav class="navbar navbar-default" id="menubar">
+ 
+           <nav class="navbar navbar-expand-lg navbar-light bg-light" id="menubar">
                <a class="btn" href='javascript:alert("teste")'><i class="icon-print"></i>Teste</a>
                <a class="btn" href="#" onclick="init()"><i class="icon-edit"></i>Execute</a>
-               <button type="button" class="close" data-dismiss="alert">×</button>
            </nav>
         </header>
 
-        <nav id="nav-left"><div  id="sidebar"></div></nav>
-
-        <section id="content_section">
-            <div id='content' class="lookThis">
-            </div>
+        <section id="content_section" class="container-fluid">
+            <div id='content' class="lookThis"></div>
         </section>
 
-        <aside id="nav-right"></aside>
-
-        <footer class="navbar-fixed-bottom">
-            <div class="footer" id="Sefaz">© 2009 - Secretaria de Estado da Fazenda</div>
-        </footer>
-    </div>
 </body>
 </html>

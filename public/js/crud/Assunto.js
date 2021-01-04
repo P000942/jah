@@ -1,5 +1,5 @@
 
-    j$.service.create("Assunto",
+    j$.Service.create("Assunto",
           {
               initialize: function(UpdateController) {console.log('initialize Assunto');}
             , onOpen: function(UpdateController) {
@@ -7,23 +7,23 @@
                    j$.$R.assunto.Requester.get();
                  }
             , beforeDelete: function(UpdateController) {console.log('beforeDelete: Não vai prosseguir'); return true;}
-            , afterActionInsert: function(UpdateController) {console.log('afterActionInsert:');}
+            , afterInsert: function(UpdateController) {console.log('afterInsert:');}
             // , onError: function(ACTION) {
             //      console.log('onError Assunto:'+ACTION.MESSAGE.ERROR);
-            //      j$.ui.Alert.error(ACTION.MESSAGE.ERROR, this.Interface.Designer.alert)
+            //      j$.Page.Alert.error(ACTION.MESSAGE.ERROR, this.Interface.Designer.alert)
             // }
             // , onSuccess: function(ACTION) {
             //      console.log('onSuccess Assunto:'+ACTION.MESSAGE.SUCCESS);
-            //     // j$.ui.Alert.success(ACTION.MESSAGE.SUCCESS, this.Interface.Designer.alert)
+            //     // j$.Page.Alert.success(ACTION.MESSAGE.SUCCESS, this.Interface.Designer.alert)
             // }
-            , validate: function(UpdateController) {
+            , validate: function(UpdateController, record, isNew) {
                  console.log('validate Assunto');
                  return true;
             }
             , init:function(idTarget, modal){
                 if (idTarget)
                     this.Interface.container=idTarget;
-                j$.ui.Page.create(this, modal).init();
+                j$.Page.create(this, modal).init();
             }
             , autoRequest:false // padrão é fazer o carregamento automático do recurso
             , resource:{name:'assunto'
@@ -33,15 +33,16 @@
                    }
             , child:{   Tarefa:{caption:'Ver Tarefa'
                              , bindBy:"idAssunto"
+                             //, modal:true
                              , fieldset:{idAssunto:TYPE.INTEGER(4,{label:'Assunto', readOnly:true, parentLegend:"txTitulo"})
                                         , idTarefa:TYPE.INTEGER(4,{label:'Código', readOnly:true})
                                         , txTarefa:TYPE.CHAR(30,{label:'Tarefa', mandatory:true})
                                         }
                         }
-                      //, Mensagem:{caption:'Ver Mensagem'}
+                      , Mensagem:{caption:'Ver Mensagem'}
                     }
         }); 
-    with(j$.service.c$){
+(function(Assunto){        
         Assunto.Interface = {
            container:CONFIG.LAYOUT.CONTENT
               , id:'assunto'
@@ -51,7 +52,7 @@
               //, Buttons:CONFIG.CRUD.BUTTONS // Pode ser feito das duas formas
         };
 
-        Assunto.Fieldset= j$.ui.createFieldset({
+        Assunto.Fieldset= TYPE.Fieldset.create({  
                        idAssunto:TYPE.INTEGER(4,{label:'Código', readOnly:true})
              //,idCategoriaAssunto:TYPE.LIST({label:'Categoria', mandatory:true, list:{'1':'Sistema', '2':'Projeto', '3':'Manutencao'}})
              ,idCategoriaAssunto:TYPE.LIST({label:'Categoria', mandatory:true, resource:{name:'categoriaAssunto'}})
@@ -60,4 +61,4 @@
                                               , evaluate:function(record){ return (record.idCategoriaAssunto==1)?true:false}
                                              })
              });
-     }
+}(j$.Service.c$.Assunto)) 

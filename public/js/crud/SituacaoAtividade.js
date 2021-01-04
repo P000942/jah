@@ -1,5 +1,5 @@
 
-j$.service.create("SituacaoAtividade",
+j$.Service.create("SituacaoAtividade",
      {  resource:{name:'situacaoAtividade', id:'idSituacaoAtividade'}
      , Interface:{
            container:CONFIG.LAYOUT.CONTENT
@@ -9,6 +9,6 @@ j$.service.create("SituacaoAtividade",
       }
       , fieldset: {
                 idSituacaoAtividade:TYPE.INTEGER(4,{label:'Código', readOnly:true}),
-                txSituacaoAtividade:TYPE.CHAR(30,{label:'Situação', mandatory:true, hint:'Informe a descrição para o campo.'})
+                txSituacaoAtividade:TYPE.CHAR(30,{label:'Situação', mandatory:true, title:'Informe a descrição para o campo.'})
         }
     });

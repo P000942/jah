@@ -43,12 +43,12 @@ div.debug {
 	font-size: 12px;
 }*/
 
-.hint{ /*CSS for pop up hint box */
+/* .hint{  
         position:absolute;
         top: 0;
         background-color: lightyellow;
         background-color: rgba(255,255,230,0.94);
-        width: 250px; /*Default width of hint.*/ 
+        width: 250px;  
         padding: 6px 2px 2px 2px;
         border:1px solid black;
         font:normal 11px Verdana;
@@ -61,9 +61,9 @@ div.debug {
         text-align: left;
         border-radius:10px;    
 }
+ */
 
-
-.hint-info {  
+/* .hint-info {  
 	color:darkolivegreen;
 	border-color:yellowgreen;
         box-shadow: 4px 8px 8px -6px darkolivegreen;   
@@ -75,9 +75,9 @@ div.debug {
 	border-color:red;
         box-shadow: 4px 8px 8px -6px red;   
         background-image: url(../../images/icon/hint-error-balloon.png);
-}   
+}   */ 
 
-.tip_erro {
+/* .tip_erro {
 	position: absolute;
 	background-color: #FFC1C1;
 	color: black;
@@ -87,7 +87,7 @@ div.debug {
 	border-left: 3px solid red;
 	padding: 3px;
 	font-size: 12px;
-}
+} */
 
 /*==================== Mensagens ========================*/
 

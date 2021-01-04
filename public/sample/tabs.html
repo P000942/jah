@@ -5,107 +5,91 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="../css/bootstrap.css">
     <link rel="stylesheet" href="../css/font-awesome.css">
 
-    <link rel="stylesheet" href="../css/bootstrap-responsive.min.css">
+    <!-- <link rel="stylesheet" href="../css/bootstrap-responsive.min.css"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" 
+    crossorigin="anonymous">  
     <link rel="stylesheet" href="../css/layout.css" />
 
     <script src="../js/vendor/jquery-3.5.1.js"></script>
-    <script src="../js/vendor/bootstrap.min.js"></script>
-    <script src="../js/jah/type/dataExt.js"></script>
-    <script src="../js/jah/config.js"></script>
-    <script src="../js/jah/system.js"></script>
-    <script src="../js/jah/ui/tabs.js"></script>
-    <script src="../js/jah/ui/menu.js"></script>
 
+    <!-- <script src="../js/vendor/bootstrap.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script> 
+    <script src="../js/jah/config.js"></script>
+    <script src="../js/jah/api/dataExt.js"></script>
+    <script src="../js/jah/api/system.js"></script>
+    <script src="../js/jah/ui/page.js"></script>    
 </head>
 <body>
-    <div id="page" class='page'>
-        <header>
-           <div class="header-top">
-              <div  class="top-left"></div>
-           </div>
+        <header class="navbar navbar-expand navbar-light bg-light sticky-top flex-md-nowrap p-0 shadow">
+           <div class="top-left navbar-brand col-md-2 col-lg-2"></div>
+           <input class="form-control form-control-dark w-100 col-md-6" type="text" placeholder="Pesquisar" aria-label="Search">
            <nav class="navbar" id="menubar"></nav>
         </header>
 
-        <nav id="nav-left"><div  id="sidebar"></div></nav>
-
-        <section id="content_section"><div id='content'></div></section>
-
-        <aside id="nav-right"></aside>
-
-        <footer class="navbar-fixed-bottom">
-            <div class="footer" id="Sefaz">© 2013 - Secretaria de Estado da Fazenda</div>
-        </footer>
-
-    </div>
+         <section id="content_section" class="container-fluid"><div id='content'></div></section>
 </body>
 </html>
 <script type="text/javascript">
 $(document).ready(function(){
-    const partialUrl = CONFIG.SERVER.CONTEXT + 'partial.html'
-    const tabs = j$.ui.Tabs.create('tabs','content');
+    const urlPartial = CONFIG.SERVER.CONTEXT + 'sample/partial.html'
+        , urlPartial2 = CONFIG.SERVER.CONTEXT + 'sample/partial_1.html'
+        , tabs = j$.Dashboard.Tabs.create('tabs','content') // cria o tab no container "content" 
+                                                     // 'tabs' é a chave de referencia a essa tab > j$.Dashboard.Tabs.c$.tabs
+                                                     // sendo a primeira tab, tb pode ser j$.Dashboard.Tabs.root
+        , tabPartial={key:"tab_Partial", caption:'Partial', url:urlPartial, title:'Title Partial Tab'}
+        , menu = j$.Dashboard.Menu.create("menubar")        // cria o menu no container "menubar" 
 
-    const menu = j$.ui.Menu.create("menubar");
-    const tabPartial={key:"tab_Partial", caption:'Partial', url:partialUrl, title:'Title Partial Tab'};
     menu.addMenu({caption:"Home", active:true});
-    const menu_link = menu.addMenu("Tabs");
-             menu_link.add({caption:'Link',  url:partialUrl});
-             menu_link.divider.add();
-             menu_link.add({caption:'Menu Partial', byPass:true, url:partialUrl,
-                 onClick:function(menu, event){
-                      tabs.open(
-                             {key:"tab_"+menu.id,
-                          caption:menu.caption,
-                           onLoad:function(tab){
-                               tab.showURL(menu.url);
-                           }
-                      });
+    menu.addMenu("Tabs")
+        .add([{caption:'Link Externo',  url:urlPartial}
+              ,  // sep
+              ,{caption:'Menu Partial', byPass:true, url:urlPartial,
+                 onClick(opt_sel, event){
+                     tabs.open(
+                            {key:"tab_"+opt_sel.id
+                        , caption:opt_sel.caption
+                        ,  onLoad(tab){tab.showURL(opt_sel.url)}
+                     });
                  }
-             });
-             menu_link.add({caption:'Delegar abertura', byPass:true, url:partialUrl,
-                 onClick:function(menu, event){
-                      tabs.open(
-                             {key:"tab_"+menu.id,
-                          caption:menu.caption,
-                           onLoad:function(tab){
-                              delagateTab(tab.idContent);
-                           }
-                      });
+              }
+             ,{caption:'Delegar abertura', byPass:true, url:urlPartial2,
+                 onClick(opt_sel, event){
+                    tabs.open({key:"tab_"+opt_sel.id
+                         , caption:opt_sel.caption
+                         ,  onLoad(tab){delagateTab(tab.idContent)}
+                    });
                  }
-             });
-             menu_link.add({caption:'Menu Partial Simples', byPass:true, url:partialUrl,
-                 onClick:function(menu, event){
-                      tabs.open({key:'tab_'+menu.key, caption:menu.caption, url:menu.url});
-                 }
-             });
-             menu_link.add({caption:'Partial'
-                , onClick:function(menu, event){
-                      tabs.open(tabPartial);
-                 }
-             });
-             menu_link.add({caption:'Eventos', onClick:criarTab});
+              }
+            ,{caption:'Menu Partial Simples', byPass:true, url:urlPartial,
+                onClick(opt_sel, event){tabs.open({key:'tab_'+opt_sel.key, caption:opt_sel.caption, url:opt_sel.url})}
+             }
+            ,{caption:'Partial', onClick(opt_sel, event){tabs.open(tabPartial_1)}}
+            ,{caption:'Eventos', onClick:criarTab}
+        ]);
     menu.render();
     function criarTab(menu, event){
          tabs.open({key:"tab_eventos", caption:"Evento"
-           , onLoad      :function(tab){tab.showURL(partialUrl);}
-           , onActivate  :function(tab){console.log("onActivate."+tab.key);}
-           , onDeactivate:function(tab){console.log("onDeactivate."+tab.key);}
-           , onClose:function(tab){console.log("onClose."+tab.key);}
+           ,       onLoad(tab){tab.showURL(urlPartial)}
+           ,   onActivate(tab){console.log("onActivate."+tab.key)}
+           , onDeactivate(tab){console.log("onDeactivate."+tab.key)}
+           ,      onClose(tab){console.log("onClose."+tab.key)}
              });
     };
     // Cria a tab FIXA - 'Home'
     const criarHome= function (){
-         j$.ui.Tabs.c$.tabs.open({key:"Home", caption:"Home", fixed:true, url: partialUrl});
+         j$.Dashboard.Tabs.c$.tabs.open({key:"Home", caption:"Home", fixed:true, url: urlPartial});
     }();
     const delagateTab= function (idContent){
-        j$.ui.Open.partial('http://localhost:8383/jah/partial.html',idContent);
+        j$.Dashboard.Open.partial(urlPartial,idContent);
     };
 
-    const sbmenu=j$.ui.Tabs.c$.tabs.add({key:"tab_submenu", caption:'submenu', url:partialUrl, title:'Title Submenu Tab'});
+    const sbmenu=j$.Dashboard.Tabs.c$.tabs.add({key:"tab_submenu", caption:'submenu', url:urlPartial, title:'Title Submenu Tab'});
     sbmenu.Menu.add("Álbun",["Album 1","Album 2", "Album 3"]);
     sbmenu.Menu.render();
 });

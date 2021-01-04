@@ -1,56 +1,55 @@
 /*
- * To change this template, choose Tools 
- * and open the template in the editor.
+ by Geraldo Gomes
  */
-const c$ = {  NOW: new Date()
-           ,   RC:{NOT_FOUND:-1, NONE:-1}
-           ,ALIGN:{LEFT:'left', CENTER:'center', RIGHT:'right', JUSTIFY:'justify'}
-           ,MOUSE:{BUTTON:{LEFT:0,CENTER:1,RIGHT:2}}
-           ,ORDER:{ASCENDING:'ASC', DESCENDING:'DESC', NONE:'NONE'}
-           ,  KEY:{F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123
-                , TAB:9, ENTER:13, ESC:27, COMMA:44, BACKSPACE:8, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, INS:45, DEL:46, REFRESH:116}
-           ,FILTER:{}
-           ,  MASK:{
-                    FieldDataSeparator : "|"
-                  , Prompt: "_"
-                  , DecimalCharacter : ","
-                  , ThousandsSeparator : "."
-                  , MaskCharacters : {
-                            Numeric : "#90"
-                           , Alpha : "@aA"
-                    }
-                  , AllowInsert : true
-                  , LowerCaseCharacter:'a'
-                  , UpperCaseCharacter:'A'
-                  , DisplayMaskCharacters : false //Display mask characters when default text is not present
-                  , MASKS : { // o Typecast identifica por uma propriedade do html #todo: Qual?
-                            fax: "(###) ###-####,(   )    -    "
-                          , cpx: "###.###.###-##,___.___.___-__"
-                    }
-                  , DATE :{
-                        "default":      "dd/mm/yyyy"
-                        , shortDate:      "d/m/yy"
-                        , mediumDate:     "mmm d, yyyy"
-                        , longDate:       "mmmm d, yyyy"
-                        , fullDate:       "dddd, mmmm d, yyyy"
-                        , shortTime:      "HH:MM"//"h:MM TT",
-                        , mediumTime:     "h:MM:ss TT"
-                        , longTime:       "h:MM:ss TT Z"
-                        , isoDate:        "yyyy-mm-dd"
-                        , isoTime:        "HH:MM:ss"
-                        , isoDateTime:    "yyyy-mm-dd'T'HH:MM:ss"
-                        , isoUtcDateTime: "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'"
-                }  
-     }
+'use strict'
+const c$ = {
+       NOW: new Date()
+    ,   RC:{NOT_FOUND:-1, NONE:-1}
+    ,ALIGN:{LEFT:'left', CENTER:'center', RIGHT:'right', JUSTIFY:'justify', TOP:'top', BOTTOM:'bottom'}
+    ,MOUSE:{BUTTON:{LEFT:0,CENTER:1,RIGHT:2}}
+    ,ORDER:{ASCENDING:'ASC', DESCENDING:'DESC', NONE:'NONE'}
+    ,  KEY:{F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123
+        , TAB:9, ENTER:13, ESC:27, COMMA:44, BACKSPACE:8, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, INS:45, DEL:46, REFRESH:116}
+    ,FILTER:{}
+    ,  MENU:{TYPE:{SIDEBAR:'sidebar', MENUBAR:'menubar'}}
+    ,  MASK:{
+              SEPARATOR : "|"
+            , PROMPT: "_"
+            , DecimalCharacter : ","
+            , ThousandsSeparator : "."
+            , NUMBER:{FIXED:"0" // para manter o zero na formatação quando tem zeros a esquerda (exemplo: data)
+                  ,   VALUE:"9"
+                  , GENERIC:"#"}
+            , ALPHA:{UPPER:"A"  
+                ,   LOWER:"a"
+                , GENERIC:"@"}                    
+            //, AllowInsert : true
+            //, DisplayMaskCharacters : false //Display mask characters when default text is not present                 
+            , DATE :{
+                "default":      "dd/mm/yyyy"
+                , shortDate:      "d/m/yy"
+                , mediumDate:     "mmm d, yyyy"
+                , longDate:       "mmmm d, yyyy"
+                , fullDate:       "dddd, mmmm d, yyyy"
+                , shortTime:      "HH:MM"//"h:MM TT",
+                , mediumTime:     "h:MM:ss TT"
+                , longTime:       "h:MM:ss TT Z"
+                , isoDate:        "yyyy-mm-dd"
+                , isoTime:        "HH:MM:ss"
+                , isoDateTime:    "yyyy-mm-dd'T'HH:MM:ss"
+                , isoUtcDateTime: "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'"
+        }  
+    }
+    ,  MASKS: { // serah gerado uma propriedade do html data-mask e data-prompt: 
+            fax: {format:"(###) ###-####,(   )    -    ", strip:',()'}
+        ,   cpx: "###.###.###-##,___.___.___-__"
+        ,   cpf: {format:'000.000.000-00|___.___.___-__', strip:'.-'}
+        ,  cnpj: {format:'00.000.000/0000-00|__.___.___/____-__', strip:'-/.'}
+        ,   cca: {format:'00.000.000-0|__.___.___-_', strip:'.-'}
+        ,   cep: {format:'00000-000|_____-___', strip:'-'}
+        , placa: {format:'AAA-0000|___-____', strip:'.-'}
+    }
 }
-// c$.NOW = new Date();
-// c$.KEY = {F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123,
-//        ENTER:13, ESC:27, COMMA:44, BACKSPACE:8, TAB:9, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, INS:45, DEL:46, REFRESH:116};
-// c$.ALIGN = {LEFT:'left', CENTER:'center', RIGHT:'right', JUSTIFY:'justify'};
-
-// c$.MOUSE = {BUTTON:{LEFT:0,CENTER:1,RIGHT:2}};
-
-// c$.ORDER = {ASCENDING:'ASC', DESCENDING:'DESC', NONE:'NONE'};
 
 c$.ORDER.CLASS =  order =>{
     let _class = "";
@@ -67,7 +66,7 @@ c$.ORDER.CLASS =  order =>{
     }
     return _class;
 };
-// c$.FILTER ={};
+
 c$.FILTER.CLASS =  filter =>{
     return (filter)?'list-ikon ikon-filter':null;
 };
@@ -75,7 +74,7 @@ c$.FILTER.CLASS =  filter =>{
 const CONFIG = {
     ERROR:{
            MESSAGE:{
-                 Mandatory: "Campo de preenchimento obrigatório"
+                 Mandatory: "'@{label}:' Campo de preenchimento obrigatório"
             ,        Digit: "Entre somente com número"
             ,      Numeric: "Entre somente com números"
             ,        Money: "Entre somente com valores numéricos"
@@ -96,9 +95,8 @@ const CONFIG = {
             ,        Placa: "Placa inválida"
             ,  InvalidItem: "'@label' inválido."
                }
-          , SUBSCRIBE:['label','key']  // Será substituído na mensagem
+          , SUBSCRIBE:['label','key','caption']  // Será substituído na mensagem
       }
-
      ,HTTP:{
              STATUS:{
                      BAD_REQUEST:{VALUE:400 , TEXT: "Requisição inválida"}
@@ -120,20 +118,13 @@ const CONFIG = {
               ,     SERVICE_NULL:{id:'SERVICE_NULL'        , text:"Serviço não informado(key)."}
                }
    , RESOURCE:{CONTEXT:'http://localhost:3000/'}
-    //, RESOURCE:{CONTEXT:'http://localhost/jah/resources/'}
    ,   SERVER:{CONTEXT:'http://localhost:3000/'}
-   // , ADAPTER:{TYPE:{DEFAULT:0
-   //                     LINK:1
-   //                 ,PARTIAL:2
-   //                 ,  MODAL:3
-   //                 }
-   // }
     , BOOLEAN:{'true':{value:true, text:'sim'}, 'false':{value:false, text:'Não'}}
     , LAYOUT:{CONTENT:'content', ALERT_CONTENT:'wrapAlert'}
     , ACTION:{
            BACK:{KEY:'back',   VALUE:'Voltar'   , ICON:'icon-circle-arrow-left' , COLOR:'#51A351'}
-       , SEARCH:{KEY:'search', VALUE:'Pesquisar', ICON:'icon-search'    , COLOR:'#51A351'}
-       ,    NEW:{KEY:'new',    VALUE:'Incluir'  , ICON:'icon-plus-sign' , COLOR:'#51A351'
+       , SEARCH:{KEY:'search', VALUE:'Pesquisar', ICON:'icon-search'            , COLOR:'#51A351'}
+       ,    NEW:{KEY:'new',    VALUE:'Incluir'  , ICON:'icon-plus-sign'         , COLOR:'#51A351'
                 , MESSAGE:{
                   SUCCESS:'Inclusão realizada com sucesso.'
                   , ERROR:'<strong>ERRO NA INCLUSÃO!</strong>Verifique os erros assinalados e faça as correções'}
@@ -156,46 +147,98 @@ const CONFIG = {
        ,   SORT:{KEY:'sort',   VALUE:'Ordenar'  , ICON:''}
        ,     OK:{KEY:'ok',     VALUE:'OK'       , ICON:'icon-ok-circle'        , COLOR:'#51A351'}
        , CANCEL:{KEY:'cancel', VALUE:'Cancelar' , ICON:'icon-circle-arrow-left', COLOR:'#BD362F'}
-       ,  ERROR:{KEY:'error',  VALUE:'Erro'     , ICON:'ikon-error'}
-       ,   INFO:{KEY:'info',   VALUE:'Nota'     , ICON:'ikon-info' }
-       ,   HELP:{KEY:'help',   VALUE:'Ajuda'    , ICON:'icon-question-sign'  , COLOR:'#51A351'}
+       ,  ERROR:{KEY:'error',  VALUE:'Erro'     , ICON:'icon-info-sign'        , COLOR:'#BD362F'}
+       ,   INFO:{KEY:'info',   VALUE:'Nota'     , ICON:'icon-info-sign'        , COLOR:'#51A351'}
+       ,   HELP:{KEY:'help',   VALUE:'Ajuda'    , ICON:'icon-question-sign'    , COLOR:'#51A351'}
        ,    YES:{KEY:'yes',    VALUE:'Sim'      , ICON:'icon-check'     , COLOR:'#51A351'}
        ,     NO:{KEY:'no',     VALUE:'Não'      , ICON:'icon-arrow-left', COLOR:'#BD362F'}
        ,  INIT:{KEY:'init',    VALUE:'Iniciar'  , ICON:''}
        ,SUBVISION:{KEY:'subvision', VALUE:'Detalhes', ICON:'icon-list'}
     }
-    , CRUD:{BUTTONS:{}
+    , CRUD:{BUTTONS:{WRAP:'wrap_command', ALIGN: c$.ALIGN.BOTTOM}
           , GRID:{BUTTONS:{}}
-          , CONTEXT: 'js/crud/'
+          , CLASS:{HEADER:"tab_header"  
+                  , TITLE:"tab_header_title"
+                  ,  MENU:"tab_header_menu" }
+          , CONTEXT: 'js/crud/'          
       }
+    , CHILD:{MODAL: true}  
     , GRID:{
             MAXLINE:10        // Quantidade de registros na página
           , MAXPAGE:5         // Quantidade de páginas na barra de navegação
           , DEFAULT: 'CRUD'   // O template de GRID default
+          ,   CLASS:{TABLE:"list"
+                    , WRAP:"wrap_list"
+                    }
     }
     , QUERY:{BUTTONS:{}
           , GRID:{BUTTONS:{}}
           , CONTEXT: 'js/query/'
             }
-    , HINT:{
-          ERROR:{CLASS:'hint-error'}
-         , INFO:{CLASS:'hint-info'}
-    }
     , ALERT:{
           ERROR:{CLASS:'alert-danger'}
       , SUCCESS:{CLASS:'alert-success'}
       ,    INFO:{CLASS:'alert-info'}
     }
-    , LEGEND:{CLASS:'text-legend'}
-    ,  INPUT:{CLASS:{DEFAULT:'input_text', ERROR:'input_error',FOCUS:'input_focus'}}
-    , BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
-    ,  PAGER:{CLASS:'pagination pagination-sm'}
+    ,FEEDBACK:{CLASS:{VALID:'valid-feedback', INVALID:'invalid-feedback', LEGEND:''}}
+    ,   INPUT:{CLASS:{DEFAULT:'form-control form-control-sm space', FOCUS:'input_focus'
+                    , INVALID:'form-control form-control-sm is-invalid'
+                    ,   VALID:'form-control form-control-sm is-valid'
+                    ,REQUIRED:'required'
+                    }
+              }     
+    ,   LABEL:{CLASS:{DEFAULT:"col-form-label col-form-label-sm col-3 col-sm-2 col-md-2 col-xl-2 inLine space"
+                     , INLINE:"col-form-label col-form-label-sm col-auto inLine"
+                     , COLUMN:"col-auto space"
+                     }}    
+    ,   TAB:{CLASS:{ CLOSE:"link_tab_close"  
+                  ,  TITLE:"link_tab"  
+                  , ACTIVE:"active_link_tab" 
+                  , HOVER:"link_tab_hover"              
+                  , HOVER_ACTIVE:"active_link_tab_hover"
+                  ,   WRAP:"tab_wrap"
+                  ,CONTENT:"tab_content"
+                  ,BUTTONS:"tabs_buttons"
+                ,CONTAINER:"tabs_wrap"
+                     }}    
+                     
+    ,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row space", COLUMN:"col-auto space"}}                           
+    ,   CHECK:{CLASS:{DEFAULT:'form-check-input', COLUMN:"form-check",  LABEL:"form-check-label"
+                      , ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
+    ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
+    ,   PAGER:{CLASS:'pagination pagination-sm'}
+    ,    MENU:{PARSER:c$.MENU.TYPE.SIDEBAR // "MENUBAR" ou 'SIDEBAR'
+            , OPTIONS:{SIDEBAR:{CLASS:{CONTENT:"col-md-10 ml-sm-auto col-lg-10 px-md-2"
+                                        , MENU:"col-md-2 col-lg-2 d-md-block nav-side-menu"}
+                            , CONTENT:"sidebar"}
+                     , MENUBAR:{CLASS:{CONTENT:"col-md-12 ml-sm-auto col-lg-12 px-md-2"
+                                        , MENU:"navbar navbar-expand-lg navbar-light bg-light menubar_space"}
+                            , CONTENT:"menubar"}
+                      } 
+        }                 
 };
-//
-//CONFIG.ICON ={new:'icon-o-plus' , search:'icon-search',   edit:'icon-edit'  , save:'icon-o-check'
-//          , print:'icon-print'    ,  trash:'icon-trash' , filter:'icon-filter', back:'icon-o-arrow-left', next:'icon-o-arrow-right'
-//          ,    ok:'icon-o-check',  close:'icon-o-x',    home:'icon-home', undo:'icon-undo'};
-
+CONFIG.REPORT={
+      COLOR:{ON:'#F8F8FF', OFF:'#FFFFFF'}
+    // Medidas em milimetro 'mm'
+  ,   PAPER:{A4:{PORTRAIT:{height:'287', width:'202'}, LANDSCAPE:{height:'194', width:'289'}}
+        ,LETTER:{PORTRAIT:{height:'269', width:'208'}, LANDSCAPE:{height:'206', width:'271'}}
+        , LEGAL:{PORTRAIT:{height:'345', width:'208'}, LANDSCAPE:{height:'206', width:'347'}}
+      } 
+}  
+CONFIG.REPORT.DEFAULT={
+    DETAIL:{COLUMN:{FONT:{size:10, bold:false}}}
+  , HEADER:{COLUMN:{FONT:{size:10, bold:true }}}
+  ,   PAGE:{PAPER:CONFIG.REPORT.PAPER.A4.PORTRAIT}
+}
+  
+CONFIG.DESIGN={
+   CLASSIC:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:CONFIG.WRAP.CLASS.ROW, COLUMN:CONFIG.WRAP.CLASS.COLUMN
+            , INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.DEFAULT}  
+,   COLUMN:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:"form-row space"           , COLUMN:"form-group space"
+            , INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.COLUMN} 
+,   INLINE:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:CONFIG.WRAP.CLASS.ROW, COLUMN:CONFIG.WRAP.CLASS.COLUMN
+            , INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.INLINE}                                          
+} 
 //@note: Retorna o objeto com o status http
 CONFIG.HTTP.STATUS.get = status =>{
           let res = Object.getByValue(CONFIG.HTTP.STATUS, status,'VALUE');
@@ -239,23 +282,15 @@ CONFIG.QUERY.GRID.BUTTONS={
 //QUESTION: Será que o ideal não fazer 'mixin' ou 'inheritsFrom'?
 CONFIG.preset=(PRESET, keys, actionController)=>{
     let values={};
-    if (dataExt.isString(keys))
-       values[keys.toUpperCase()]=set(keys);
-    else if (dataExt.isArray(keys)){
-       for(let i=0; i<keys.length;i++)
-           values[keys[i].toUpperCase()]=set(keys[i]);
-    }else{
-        for (let key in PRESET) // Carrega tds as actions do preset
-            values[key]=set(key);
-    }
-
+    for (let key in PRESET) // Carrega tds as actions do preset
+        values[key]=set(key);
     return values;
 
     function set(key){
         key = key.toUpperCase();
         if (PRESET[key]){
-            let properties=PRESET[key];
-            let property={};
+            let properties=PRESET[key]
+              , property={};
             Object.preset(property,properties);
             if (actionController)
                 Object.preset(property,{onclick:'javascript:'+actionController+'.' +key.toLowerCase()+'(this);'});
@@ -338,10 +373,15 @@ CONFIG.action= vl_key =>{
 
     return (key)?action:null;
 };
-//CONFIG.action(CONFIG.ACTION.SAVE.KEY);
-CONFIG.hint= vl_key =>{
-    return {icon:CONFIG.icon(vl_key), hint:CONFIG.class(vl_key,'hint')}
-};
-//CONFIG.hint(CONFIG.ACTION.INFO.KEY);
-//CONFIG.hint(CONFIG.ACTION.ERROR.KEY);
 
+c$.MASK.ALPHA.CHARS=Object.values(c$.MASK.ALPHA).join().replaceAll(",","");
+c$.MASK.ALPHA.exists=function(value){
+    return c$.MASK.ALPHA.CHARS.includes(value);
+}
+
+c$.MASK.NUMBER.CHARS=Object.values(c$.MASK.NUMBER).join().replaceAll(",","");
+c$.MASK.NUMBER.exists=function(value){
+    return c$.MASK.NUMBER.CHARS.includes(value);
+}
+c$.MASK.CHARS = c$.MASK.NUMBER.CHARS + c$.MASK.ALPHA.CHARS;
+// export {CONFIG, c$};

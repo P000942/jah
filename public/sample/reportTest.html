@@ -9,34 +9,35 @@
     <meta name="viewport" content="width=device-width">
     <!-- <link rel="stylesheet" href="css/bootstrap.css"> -->
 
-    <link type="text/css" rel="stylesheet" href="css/layout.css" />    
-    <link type="text/css" rel="stylesheet" href="css/report/report.css" />
+    <link type="text/css" rel="stylesheet" href="../css/layout.css" />    
+    <link type="text/css" rel="stylesheet" href="../css/report/report.css" />
     
-    <script src="js/vendor/jquery-3.5.1.js"></script>
-    <!-- <script src="js/vendor/bootstrap.min.js"></script> -->
+    <script src="../js/vendor/jquery-3.5.1.js"></script>
+    <!-- <script src="../js/vendor/bootstrap.min.js"></script> -->
 
-    <script type="text/javascript" src="js/jah/type/dataExt.js"></script> 
-    <script type="text/javascript" src="js/jah/config.js"></script>    
-    <script type="text/javascript" src="js/jah/system.js"></script>
-    <script type="text/javascript" src="js/jah/type/type.js"></script>
-    <script type="text/javascript" src="js/jah/resource.js"></script> 
+    <script type="text/javascript" src="../js/jah/api/dataExt.js"></script> 
+    <script type="text/javascript" src="../js/jah/config.js"></script>    
+    <script type="text/javascript" src="../js/jah/api/system.js"></script>
+    <script type="text/javascript" src="../js/jah/ui/type.js"></script>
+    <script type="text/javascript" src="../js/jah/resource/resource.js"></script>
+    <script type="text/javascript" src="../js/helper/data.js"></script> 
 
-     <script type="text/javascript" src="js/jah/report/report.js"   ></script>
-     <script type="text/javascript" src="js/jah/helper/sefaz.js"    ></script>
+     <script type="text/javascript" src="../js/jah/report/report.js"   ></script>
+     <script type="text/javascript" src="../js/helper/sefaz.js"    ></script>
      <script type="text/javascript">
         const app=function(){
             return {
                 init: function(){ 
                     //@note: opção usando o Dataset que foi criado localmente                           
-                    //ley report =  ReportFactory.create(SEFAZ.Report.Page,FieldNovo, dataSource);   
+                    //ley report =  Report.create(SEFAZ.Report.Page,FieldNovo, dataSource);   
 
                     //@note: opção usando o Dataset que está Resource      
-                    const report =  ReportFactory.create(SEFAZ.Report.Page,FieldNovo, j$.$R.pessoa.Dataset);
+                    const report =  Report.create(SEFAZ.Report.Page,FieldNovo, j$.$R.pessoa.Dataset);
                     report.start();
                 }
             };
         }();   
-        const FieldNovo=j$.ui.createFieldset({
+        const FieldNovo=TYPE.Fieldset.create({
                              id:TYPE.INTEGER(4,{label:'Codigo'}),
                            data:TYPE.DATE({label:'Data'}),
                            nome:TYPE.CHAR(20,{label:'Nome'}),                                        

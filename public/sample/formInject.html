@@ -5,21 +5,26 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="../css/bootstrap.css">
     <link rel="stylesheet" href="../css/font-awesome.css">
 
-    <link rel="stylesheet" href="../css/bootstrap-responsive.min.css">
+    <!-- <link rel="stylesheet" href="../css/bootstrap-responsive.min.css"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" 
+    crossorigin="anonymous">  
     <link rel="stylesheet" href="../css/layout.css" />
 
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="../js/vendor/jquery-3.5.1.js"></script>
 
-    <script src="../js/jah/type/dataExt.js"></script>
+    <!-- <script src="../js/vendor/bootstrap.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script> 
     <script src="../js/jah/config.js"></script>
-    <script src="../js/jah/system.js"></script>
-    <script src="../js/jah/type/typecast.js"></script>
-    <script src="../js/jah/type/type.js"></script>
+    <script src="../js/jah/api/dataExt.js"></script>
+    <script src="../js/jah/api/system.js"></script>
+    <script src="../js/jah/ui/type.js"></script>
+    <script src="../js/helper/sample.js"></script>  
     <script type="text/javascript">
         function addField(){
              const cpf=TYPE.CPF({label:'CPF NOVO'});
@@ -29,17 +34,14 @@
              const cpf=TYPE.CNPJ({label:'CNPJ NOVO'});
              cpf.create(i$('myForm'), 'newCNPJ','newCNPJ');
         }
-        function addHintIcon(){
-           new j$.ui.type.HintIcon(i$('nome'), 'nome_info', CONFIG.ACTION.INFO.KEY, "Informe os nome iniciando com MAISCULAS e se separados por espaço");
-        }
         function addLabel(){
            j$.ui.Render.label(i$('wrapNome'), 'Nome' ,i$('nome').id);
         }
         function addAlert(){
-           //j$.ui.Alert.show(i$('wrapAlert'), '<strong>Advertência!</strong></br><lu><li>Mensagem de alerta.</li><li>Segunda Linha.</li></li><li>Terceira Linha.</li></lu>');
-        //   j$.ui.Alert.show(i$('wrapAlert'), ['<strong>SUCESSO!</strong> Mensagem de alerta com sucesso!'], CONFIG.ALERT.SUCCESS.CLASS);
-           j$.ui.Alert.show( ['<strong>INFORMAÇÃO!</strong> Mensagem de alerta com informação!'], CONFIG.ALERT.INFO.CLASS, i$('wrapAlert'),);
-           //j$.ui.Alert.show(i$('wrapAlert'), ['Mensagem de alerta','Segunda Linha','Terceira Linha'], CONFIG.ALERT.ERROR.CLASS);
+           //j$.Page.Alert.show(i$('wrapAlert'), '<strong>Advertência!</strong></br><lu><li>Mensagem de alerta.</li><li>Segunda Linha.</li></li><li>Terceira Linha.</li></lu>');
+        //   j$.Page.Alert.show(i$('wrapAlert'), ['<strong>SUCESSO!</strong> Mensagem de alerta com sucesso!'], CONFIG.ALERT.SUCCESS.CLASS);
+           j$.Page.Alert.show( ['<strong>INFORMAÇÃO!</strong> Mensagem de alerta com informação!'], CONFIG.ALERT.INFO.CLASS, i$('wrapAlert'),);
+           //j$.Page.Alert.show(i$('wrapAlert'), ['Mensagem de alerta','Segunda Linha','Terceira Linha'], CONFIG.ALERT.ERROR.CLASS);
         }
         const myPage = function() {
             // variável private
@@ -57,7 +59,7 @@
             return {
                 // método público
                 init: function() {
-                      //ERROR.init({callback:function(o,oType){alert(oType.label+': '+o);}});
+                      //TYPE.Error.init({callback:function(o,oType){alert(oType.label+': '+o);}});
                       numerico.mandatory=true;
                       numerico.autotab=true;
                       numerico.bind(i$('numerico'));
@@ -70,7 +72,7 @@
                       TYPE.HOUR().bind(i$('hora'));
                       TYPE.EMAIL().bind(i$('email'));
                       TYPE.PHONE().bind(i$('phone'));
-                      TYPE.CHAR(10,{mandatory:true, hint:'informe o nome.'}).bind(i$('nome'));
+                      TYPE.CHAR(10,{mandatory:true, title:'informe o nome.'}).bind(i$('nome'));
                       TYPE.CPF().bind(i$('cpf'));
                       TYPE.CNPJ().bind(i$('cnpj'));
                       TYPE.CCA().bind(i$('cca'));
@@ -80,7 +82,7 @@
                       i$('lista').bind(TYPE.LIST({list:{'1':'Sistema', '2':'Projeto', '3':'Manutenção'}}));
                       TYPE.MASK('(@@)###-9',{validator:{error:'Campo com valor inválido', handler:function(value){return false;}}}).bind(i$('mask2'));
                       TYPE.MASK('(@@)###-9').bind(i$('mask'));
-		                  Typecast.Init();
+		                  TYPE.Formatter.init();
                    //   i$('cpf').bind('Alfa')
                    //  alert( i$('cpf').field);
                 }
@@ -89,15 +91,12 @@
 </script>
 </head>
 <body onload="">
-    <div id="page" class='page'>
-        <header>
-           <div class="header-top">
-              <div  class="top-left"></div>
-           </div>
+        <header class="navbar navbar-expand navbar-light bg-light sticky-top flex-md-nowrap p-0 shadow">
+           <div class="top-left navbar-brand col-md-2 col-lg-2"></div>
+           <input class="form-control form-control-dark w-100 col-md-6" type="text" placeholder="Pesquisar" aria-label="Search">
            <nav class="navbar" id="menubar"></nav>
         </header>
 
-        <nav id="nav-left"><div  id="sidebar"></div></nav>
 
         <section id="content_section">
             <div id='content'>
@@ -108,7 +107,6 @@
                         <a class="btn btn-default" id="btn1" onclick="myPage.init();">Injetar</a>
                         <a class="btn btn-default"  onclick="addField();">Novo campo</a>
                         <a class="btn btn-default"  onclick="addInForm();">No Form</a>
-                        <a class="btn btn-default"  onclick="addHintIcon();">Hint Icon</a>
                         <a class="btn btn-default"  onclick="addLabel();">Label</a>
                         <a class="btn btn-default"  onclick="addAlert();">Alert</a>
                     </legend>
@@ -117,12 +115,12 @@
                     <div class="wrap_field_br" id='novo_campo'></div>
 
                     <div class="wrap_field_br"><label for="letra"    >Letra:    </label>
-                        <input type="text" id="letra"     /><a href="#" onMouseover="System.Hint.show('Please choose a username. Should consist of alphanumeric characters only.', this, event);">[?]</a>
+                        <input type="text" id="letra"     /> 
                     </div>
                     <input id="startdate" name="startdate" min="2012-01-01" max="2050-01-01" type="date">
                     <div class="wrap_field_br"><label  for="maiuscula">maiúscula:</label><input type="text" id="maiuscula" /></div>
                     <div class="wrap_field_br"><label for="minuscula">minúscula:</label><input type="text" id="minuscula" /></div>
-                    <div class="wrap_field_br" id="wrapNome"> <input type="text" id="nome"/></div>
+                    <div class="wrap_field_br" id="wrapNome"> <input type="text" id="nome" data-mask="@@@@@@@@@@@@@@@@@@@@|____________________" /></div>
                     <div class="wrap_field_br"><label for="email"    >Email:    </label><input type="text" id="email"     /></div>
                     <div class="wrap_field_br"><label for="digito"   >Dígito:   </label><input type="text" id="digito"    /></div>
                     <div class="wrap_field_br"><label for="numerico" >Numérico: </label><input type="text" id="numerico"  /></div>
@@ -142,12 +140,5 @@
             </form>
 
             </div></section>
-
-        <aside id="nav-right"></aside>
-
-        <footer class="navbar-fixed-bottom">
-            <div class="footer" id="Sefaz">© 2009 - Secretaria de Estado da Fazenda</div>
-        </footer>
-    </div>
 </body>
 </html>

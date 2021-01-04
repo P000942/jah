@@ -9,82 +9,63 @@ and open the template in the editor.
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="css/bootstrap.css">
+    <!-- <link rel="stylesheet" href="css/bootstrap.css"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
+                      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" 
+                      crossorigin="anonymous">      
     <link rel="stylesheet" href="css/font-awesome.css">
 
-    <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
-    <!-- <link rel="stylesheet" href="css/main.css"> -->
+    <!-- <link rel="stylesheet" href="css/bootstrap-responsive.min.css"> -->
     <link type="text/css" rel="stylesheet" href="css/layout.css" />
-
-    <!-- <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script> -->
 
     <script src="js/vendor/jquery-3.5.1.js"></script>
 
-    <script src="js/vendor/bootstrap.min.js"></script>
-
-    <script type="text/javascript" src="js/jah/type/dataExt.js"></script>
+    <!-- <script src="js/vendor/bootstrap.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script> 
     <script type="text/javascript" src="js/jah/config.js"></script>
-    <script type="text/javascript" src="js/jah/system.js"></script>
-    <script type="text/javascript" src="js/jah/resource.js"></script>
-    <script type="text/javascript" src="js/jah/ui/tabs.js"></script>
-    <script type="text/javascript" src="js/jah/ui/menu.js"></script>
-    <script type="text/javascript" src="js/jah/type/typecast.js"></script>
-    <script type="text/javascript" src="js/jah/type/type.js"></script>
-    <script type="text/javascript" src="js/jah/ui/page.js"></script>
-    <script type="text/javascript" src="js/jah/ui/controller.js"></script>
-    <script type="text/javascript" src="js/jah/app/app.js"></script>
+    <script type="text/javascript" src="js/jah/api/dataExt.js"></script>   
+    <script type="text/javascript" src="js/jah/api/system.js"></script>
+    <script type="text/javascript" src="js/jah/ui/type.js"></script>   
+    <script type="text/javascript" src="js/jah/ui/page.js"></script>    
+    <script type="text/javascript" src="js/jah/resource/resource.js"></script>
+    <script type="text/javascript" src="js/helper/data.js"></script>    
+    <script type="text/javascript" src="js/helper/sample.js"></script>  
+    <script type="text/javascript" src="js/app/app.js"></script>
 </head>
 <body>
-    <div id="page" class='page'>
-        <header>
-           <div class="header-top">
-              <div class="top-left" ></div>
-              <div class="top-center">
-                 <form>
-                    <div class="input-group">
-                       <input id="email" type="text" class="form-control" name="Pesquisar" placeholder="Pesquisar">
-                       <a class="input-group-addon"><i class="glyphicon glyphicon-search"></i></a>
-                    </div>
-                 </form>
-              </div>
-              <div class="top-right" >
-                  <form>
-                     <div class="input-group">
-                           <div class="dropdown input-group-addon">
-                              <a class="dropdown-toggle" data-toggle="dropdown" style="text-decoration: none;">
-                                 <i class="glyphicon glyphicon-user"></i>
-                                 <b class="caret"></b>
-                              </a>
-                              <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-                                 <li><a tabindex="-1" href="#"><i class="icon-cogs" style="color: #F89406"></i>Configurar</a></li>
-                                 <li><a tabindex="-1" href="#"><i class="icon-user" style="color: #999999"></i>Perfil</a></li>
-                                 <li class="divider"></li>
-                                 <li><a tabindex="-1" href="#"><i class="icon-off" style="color: #BD362F"></i>Sair</a></li>
-                              </ul>
-                              </div>
-                              <label id="email" type="text" class="form-control" >jgeraldo@sefaz.am.gov.br</label>
-                     </div>
-                </form>
-              </div>
-           </div>
-           <nav class="navbar navbar-default" id="menubar"></nav>
+        <header class="navbar navbar-expand navbar-light bg-light sticky-top flex-md-nowrap p-0 shadow">
+              <div class="top-left navbar-brand col-md-2 col-lg-2"></div>
+              <!-- <div class="col-md-6"> -->
+                <input class="form-control form-control-dark w-100 col-md-6" type="text" placeholder="Pesquisar" aria-label="Search">
+              <!-- </div> -->
+              <div class="navbar-collapse collapse" >
+                <ul class="navbar-nav ml-auto">                                                            
+                    <li class="nav-item dropdown">        
+                          <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-toggle="dropdown" aria-expanded="false">
+                            <span class="text-dark">jgeraldo@sefaz.am.gov.br</span>
+                          </a>                       
+                         <div class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu">
+                            <a class="dropdown-item btn-default" href="#"><i class="icon-cogs" style="color: #F89406"></i>Configurar</a>
+                            <a class="dropdown-item btn-default" href="#"><i class="icon-user" style="color: #999999"></i>Perfil</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item btn-default" href="#"><i class="icon-off" style="color: #BD362F"></i>Sair</a>
+                          </div>           
+                    </li>
+                </ul>
+            </div>                       
         </header>
-        <div id='wrapAlert'></div>
-        <nav id="nav-left"><div  id="sidebar"></div></nav>
+        <nav class="" id="menubar"></nav>
 
-        <section id="content_section">
-           <div id='content'></div>
+        <div id='wrapAlert'></div>        
+
+        <section id="content_section" class="container-fluid">
+            <div class="row no-gutters">
+                <nav id="sidebar"></nav>
+                <div id="content" role="main"></div>                
+            </div>
         </section>
-
-        <aside id="nav-right"></aside>
-
-        <footer class="navbar-fixed-bottom">
-            <div class="footer" id="Sefaz">© 2013 - Secretaria de Estado da Fazenda</div>
-        </footer>
-
-    </div>
-
 </body>
 </html>

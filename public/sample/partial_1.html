@@ -2,97 +2,102 @@
   <div id="partial_1">
       <form id='mypage' name='mypage'>
         <fieldset class="crud"><legend>TESTE</legend>
-		        <div class="wrap_column_section">
-              <div class="wrap_column_row">
-			          <div class="wrap_column_field">
-					          <label class='input_column_label' >Tipo</label>
-                      <select id="" style="width:140px;">
-                          <option>SELECIONE</option>
-                          <option>Fisica</option>
-                          <option>Juridica</option>
-                      </select>
-                </div>
-                <div class='wrap_column_field'>
-                    <label class='input_column_label' for='cpf' title='Informe o CPF' >CPF</label>
-                    <input type="text" id="cpf1" title='Informe o CPF text' />
-                </div>
-                <div class='wrap_column_field'>
-                    <label class='input_column_label'>N&ordm; Inscri&ccedil;&atilde;o</label>
-                    <input type="text" id="cca" />
-                </div>
-              </div>
-              <div class="wrap_row">
-                <div class='wrap_column'>
-                    <label class='input_label_column' for='cpf' title='Informe o CPF' >CPF</label>
-                    <input type="text" id="cpf2" title='Informe o CPF text' size="10" />
-                </div>
-                <div class='wrap_column'>
-                    <label class='input_label_column'>N&ordm; Inscri&ccedil;&atilde;o</label>
-                    <input type="text" id="cca2" />
-                </div>
-              </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="inputEmail4">Email</label>
+              <input type="email" class="form-control" id="inputEmail4">
             </div>
-		        <div class="wrap_table">
-              <div class="wrap_row">
-                <div class='wrap_column'>
-                  <label class='input_label_column' for='cpf' title='Informe o CPF' >CPF</label>
-                  <input type="text" id="cpf3" title='Informe o CPF text' size="10" />
-		   	        </div>
-                <div class='wrap_column'>
-                  <label class='input_label_column'>N&ordm; Inscri&ccedil;&atilde;o</label>
-                  <input type="text" id="cca3" />
-                </div>
-              </div>
+            <div class="form-group col-md-6">
+              <label for="inputPassword4">Password</label>
+              <input type="password" class="form-control" id="inputPassword4">
             </div>
-            <div>
-              <label style='text-align: top;' for='cpf' title='Informe o CPF' >CPF</label>
-              <input type="text" id="cpf4" title='Informe o CPF text' size="10" />
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+                <label for="validationCustom04">Tipo</label>
+                <select class="custom-select" id="validationCustom04" required>
+                    <option>SELECIONE</option>
+                    <option>Fisica</option>
+                    <option>Juridica</option>
+                </select>
             </div>
+            <div class="col-md-3 mb-3">
+              <label for="cpf1">CPF</label>
+              <input type="text" class="form-control" id="cpf1" title='Informe o CPF text' />
+            </div>
+            <div class="col-md-3 mb-3">
+              <label for="cca">Inscricao</label>
+              <input type="text" class="form-control" id="cca" />
+            </div>            
+          </div>
+
+          <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+            <div class="col-sm-10">
+              <input type="email" class="form-control" id="inputEmail3">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
+            <div class="col-sm-10">
+              <input type="password" class="form-control" id="inputPassword3">
+            </div>
+          </div>
+          <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+            <label class="form-check-label" for="exampleCheck1">Check me out</label>
+          </div>
         </fieldset>
       </form>
       <div class="dropdown">
-          <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown">
-            <i class="glyphicon glyphicon-user"></i><b class="caret"></b>
+          <a class="btn dropdown-toggle" href="javascript:" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="icon-user"></i><b class="caret"></b>
           </a>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-            <li><a tabindex="-1" href="#"><i class="icon-cogs" style="color: #F89406"></i>Configurar</a></li>
-            <li><a tabindex="-1" href="#"><i class="icon-user" style="color: #999999"></i>Perfil</a></li>
-            <li class="divider"></li>
-            <li><a tabindex="-1" href="#"><i class="icon-off" style="color: #BD362F"></i>Sair</a></li>
-          </ul>
+          <div class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+            <a class="dropdown-item btn-default" href="#"><i class="icon-cogs" style="color: #F89406"></i>Configurar</a>
+            <a class="dropdown-item btn-default" href="#"><i class="icon-user" style="color: #999999"></i>Perfil</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item btn-default" href="#"><i class="icon-off" style="color: #BD362F"></i>Sair</a>
+          </div>
       </div>
       <div class="dropdown">
-          <a class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+          <button class="btn btn-default dropdown-toggle"  id="menu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Tutorials
-          <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">HTML</a></li>
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">CSS</a></li>
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">JavaScript</a></li>
-            <li role="presentation" class="divider"></li>
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">About Us</a></li>
-          </ul>
+          <!-- <span class="caret"></span> -->
+          </button>
+          <div  class="dropdown-menu" role="menu" aria-labelledby="menu1">
+            <button class="dropdown-item" type="button">HTML</button>
+            <button class="dropdown-item" type="button">CSS</button>
+            <button class="dropdown-item" type="button">JavaScript</button>
+            <div role="presentation" class="dropdown-divider"></div>
+            <button class="dropdown-item" type="button">About Us</button>
+          </div >
       </div>
+
       <form>
-          <div class="input-group">
+          <div class="input-group input-group-sm mb-3">
               <label id="email" type="text" class="form-control" >jgeraldo@sefaz.am.gov.br</label>
-                  <div class="dropdown input-group-addon">
-                    <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown">
-                        <i class="glyphicon glyphicon-user"></i>
-                        <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-                        <li><a tabindex="-1" href="#"><i class="icon-cogs" style="color: #F89406"></i>Configurar</a></li>
-                        <li><a tabindex="-1" href="#"><i class="icon-user" style="color: #999999"></i>Perfil</a></li>
-                        <li class="divider"></li>
-                        <li><a tabindex="-1" href="#"><i class="icon-off" style="color: #BD362F"></i>Sair</a></li>
-                    </ul>
+              <div class="input-group-append" style="height: 31px;"><span class="input-group-text" style="padding: 0px;">
+                  <div class="dropdown">
+                      <a class="btn dropdown-toggle" href="javascript:" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="icon-user"></i><b class="caret"></b>
+                      </a>
+                      <div class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                        <a class="dropdown-item btn-default" href="#"><i class="icon-cogs" style="color: #F89406"></i>Configurar</a>
+                        <a class="dropdown-item btn-default" href="#"><i class="icon-user" style="color: #999999"></i>Perfil</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item btn-default" href="#"><i class="icon-off" style="color: #BD362F"></i>Sair</a>
+                      </div>
                   </div>
+                </span></div>  
           </div>
-          <div class="input-group">
-              <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-              <input id="password" type="password" class="form-control" name="password" placeholder="Password">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="icon-download"></i></span>              
+            </div>  
+            <input id="password" type="password" class="form-control" name="password" placeholder="Password">
           </div>
       </form>
   </div>

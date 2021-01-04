@@ -1,6 +1,6 @@
 
-//j$.service.create("Usuario",
-j$.service.createCrud("Usuario",
+//j$.Service.create("Usuario",
+j$.Service.createCrud("Usuario",
    { resource:{name:'Users', id:'id'}
       // , Interface:{
       //      container:CONFIG.LAYOUT.CONTENT
