@@ -12,7 +12,7 @@ j$.$V() => Atalho para mostrar no log j$.$C, j$.$P, j$.$R, j$.$S
 const urlPartial   = CONFIG.SERVER.CONTEXT+ 'sample/partial.html';
 const urlPartial_1 = CONFIG.SERVER.CONTEXT+ 'sample/partial_1.html';
 const adapter={
-    services:{
+    services:{ // Desclaração dos serviços
                  Papel:{caption:'Papel'    ,   crud:true, title:'Cadastro de Papel', onClick:openPapel}
           ,    Usuario:{caption:'Usuário'  ,   crud:true, title:'Cadastro de Usuário'}
           ,  Documento:{caption:'Documento',   crud:true, title:'Cadastro de Documento'}
@@ -21,7 +21,8 @@ const adapter={
           ,    Partial:{partial:urlPartial ,              title:'Partial - Qual a razao disso aqui'}
           ,     Pessoa:{caption:'Pessoa'   ,  query:true, title:'Exemplo de consulta'}
           ,     Basico:{caption:'Básico'   ,  query:true, title:'Consulta Básica', resource:'pessoa'}
-          ,     Tarefa:{caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa'}
+                // local:true é apenas para evitar a tentativa de carregar a URL (o que vai gerar um erro)
+          ,     Tarefa:{caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa', local:true}
           ,   Mensagem:{caption:'Mensagem' ,   crud:true, title:'Mensagem' , modal:true}//      , resource:'mensagem', modal:true}
        //   ,         Uf:{caption:'UF'       ,   crud:true, title:'Unidades da federacao', resource:'uf'}
         }
@@ -52,12 +53,12 @@ $(document).ready(function(){
 // basta comentar para manter o padrão
 //TYPE.Error.init({callback:function(msg,field){alert(field.label+': '+msg);}});
 TYPE.Error.init({   show(field, msg,clas$){TYPE.Error.invalid(field, msg)} //qualquer msg
-           ,invalid(field, msg)      {TYPE.Error.invalid(field, msg)} //quando deu erro
-           ,  valid(field, msg)      {TYPE.Error.valid  (field, msg)} //quando ok
-           ,   hide(field)           {TYPE.Error.hide   (field)} //para remover o erro           
+           ,invalid(field, msg)      {TYPE.Error.invalid(field, msg)}      //quando deu erro
+           ,  valid(field, msg)      {TYPE.Error.valid  (field, msg)}      //quando ok
+           ,   hide(field)           {TYPE.Error.hide   (field)}           //para remover o erro           
            });
 
-j$.Page.Helper = function(Factory){
+j$.Page.Helper = function(Factory){ // Para adicionar mais menus e submenus
      const criarMenu = function(Factory){
              let _path = CONFIG.SERVER.CONTEXT
                //, Factory = Factory
@@ -98,13 +99,13 @@ j$.Page.Helper = function(Factory){
              j$.Dashboard.Factory.render();
     };
 
-    const criarTab= function (){
+    const criarTab= function (){ // Criar uma tab inicial que já aperece quando inicia o dashboard
          j$.Dashboard.Service.open({key:"tab_inicial", caption:"Home", fixed:true
            , onLoad      (tab){tab.showURL("sample/partial_1.html", (r)=>{console.log("callback do load complete", r)})}
            , onActivate  (tab){console.log("onActivate."+tab.key)}
            , onDeactivate(tab){console.log("onDeactivate."+tab.key)}
              });
-    // DID�TICO: Apenas para saber como para colocar num tab
+    // DIDÁTICO: Apenas para saber como para colocar num tab
     //     tabs.add({key:"tab_Assunto", caption:"Assunto",
     //                               onLoad: function(tab){ Assunto.init("tab_Assunto");},
     //                               onActivate:function(tab){console.log("onActivate."+tab.key);},
@@ -121,7 +122,7 @@ j$.Page.Helper = function(Factory){
 }();
 
 // Didático
-function openPapel(){
+function openPapel(){ 
     j$.Dashboard.Service.open({key:"Papel", caption:"Papel", onLoad: function(tab){Papel.init(tab.idContent);}});
 }
 
