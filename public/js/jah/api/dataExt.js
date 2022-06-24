@@ -333,6 +333,13 @@ const j$ = function(){
             Object.setIfExist(receiver, provider, Object.keys(provider));
         return receiver;
     };
+    Object.map = function(provider,  mapTo){
+        let receiver = {};       
+        for (let key in mapTo)           
+            receiver[mapTo[key]] = provider[key];       
+        return receiver;
+    };
+    // let aux = Object.map({a:1, b:2, c:"Eu", d:4},{a:"a1", b:"b", c:"nome"})
 
     Object.show = source=>{
         for (let key in source){
