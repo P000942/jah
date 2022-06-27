@@ -1,3 +1,17 @@
+const [cep, optCep] 
+    = [69036800
+    , {method:'GET'}];
+const urlCep = `https://viacep.com.br/ws/${cep}/json`;
+
+/* fetch(urlCep, optCep)
+     .then(response=> {
+         response.json()
+         .then(data=> console.log(data))
+     })
+     .catch(err    => 
+        console.log('erro:'+err,messge)
+        )
+;     */ 
 Task = j$.Resource.create("tasks");
 Papel = j$.Resource.create("papel");
 Papel.Requester.get();

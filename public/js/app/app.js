@@ -100,8 +100,9 @@ j$.Page.Helper = function(Factory){ // Para adicionar mais menus e submenus
     };
 
     const criarTab= function (){ // Criar uma tab inicial que já aperece quando inicia o dashboard
+         let whenComplete = (htmlPartial, url)=>{console.log(`callback do load complete tab.showURL('${url}')`)};
          j$.Dashboard.Service.open({key:"tab_inicial", caption:"Home", fixed:true
-           , onLoad      (tab){tab.showURL("sample/partial_1.html", (r)=>{console.log("callback do load complete", r)})}
+           , onLoad      (tab){tab.showURL("sample/partial_1.html", whenComplete)}
            , onActivate  (tab){console.log("onActivate."+tab.key)}
            , onDeactivate(tab){console.log("onDeactivate."+tab.key)}
              });

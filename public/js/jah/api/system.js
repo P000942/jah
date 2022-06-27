@@ -94,42 +94,71 @@ const System = function(){
         
             window['Ajax']={
                 Request:function(url, properties){
-                    let options={url:url};
-                    if (properties.parameters)
-                        options.data = properties.parameters;
-                    if (properties.method)
-                        options.type = properties.method.toUpperCase();
-                    else
-                        options.type = 'GET';
-                    if (properties.asynchronous)
-                        options.async = properties.asynchronous;
-                    if (properties.encoding)
-                        options.scriptCharset = properties.encoding;
-                    if (properties.evalJSON)
-                        options.dataType = 'json';
-                    if (properties.contentType)
-                            options.contentType = properties.contentType;
-                    if (properties.onSuccess)
-                        options.success = properties.onSuccess;
-                    if (properties.onFailure)
-                        options.error = properties.onFailure;
-                    if (properties.onComplete)
-                        options.complete = properties.onComplete;
-                    if (properties.postBody && (options.type == 'POST' || options.type == 'PUT')){
-                        options.processData = false;
-                        options.data = properties.postBody;
-                    }
-                    $.ajax(options);
+                    properties.method = properties.method ?properties.method.toUpperCase()
+                                                              :properties.method = 'GET';
+                    if (properties.postBody && (properties.method == 'POST' || properties.method == 'PUT')){
+                        properties.processData = false;
+                        properties.data = properties.postBody; 
+                    }else     
+                        properties.data = properties.parameters;
+                                                                                      
+                    //let options=Ajax.Adapter.jquery(url, properties);
+                    let options=Ajax.Adapter.native(url, properties);
                 }
-            , Updater:function(idContent, url, parm){
-                    $.ajax({
-                    url: url,
-                    cache: false,
-                    data: parm.parameters,
-                    complete:parm.onComplete
-                    }).done(function( html ) {
-                        $("#"+idContent).append(html);
-                    });
+            , Updater:function(idContent, url, parm){                   
+                    fetch(url)
+                        .then(response =>{return response.text()})
+                            .then(html=>{
+                                if (parm.onComplete)
+                                    parm.onComplete(html, url);
+                                $("#"+idContent).append(html);
+                            })
+                        .catch(err => 
+                            console.log('ERRO>> Ajax.Updater:' + err.message)
+                        )     
+                }
+            , Adapter:{
+                     jquery:(url,properties) => {                                            
+                        let options = Object.map(properties
+                                    , {data        :"data"
+                                      ,processData :"processData" 
+                                      ,method      :"type" 
+                                      ,asynchronous:"async"
+                                      ,encoding    :"scriptCharset"
+                                      ,contentType :"contentType"
+                                      ,onSuccess   :"success"
+                                      ,onFailure   :"error"
+                                      ,onComplete  :"complete"                                      
+                                    });
+                        options.url = url; 
+                        $.ajax(options);                                  
+                        return options;                        
+                     }    
+                   , native:(url,properties)=>{
+                        let options = Object.map(properties
+                        , {data        :"body"                          
+                          ,method      :"method"                                                            
+                        });
+                        options.headers = {'content-type':properties.contentType};    
+                        options.mode = "cors";     
+                        fetch(url, options)
+                            .then(response=> {
+                                if (!response.ok){                        
+                                    if (properties.onFailure)
+                                        propertiesonFailure(data); 
+                                }else
+                                    response.json()
+                                    .then(data=> {
+                                        if (properties.onSuccess)
+                                            properties.onSuccess(data);
+                                    })
+                            })
+                            .catch((err)    => 
+                                console.log('erro:'+err.message)
+                                )   
+                        return options; 
+                        //'content-type': 'application/json; charset=utf-8'
+                   }  
                 }
             };
     
