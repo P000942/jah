@@ -333,13 +333,17 @@ const j$ = function(){
             Object.setIfExist(receiver, provider, Object.keys(provider));
         return receiver;
     };
+    //@note: retorna um objeto mapeado(de-para) conforme o objeto mapTo com os campos que existem no primeiro objeto
+    // Se exitir no provider, mapeia com o novo nome, se não existir, não irá no objeto
     Object.map = function(provider,  mapTo){
         let receiver = {};       
-        for (let key in mapTo)           
-            receiver[mapTo[key]] = provider[key];       
+        for (let key in mapTo){           
+            if (provider[key]!=undefined)
+                receiver[mapTo[key]] = provider[key];       
+        }    
         return receiver;
     };
-    // let aux = Object.map({a:1, b:2, c:"Eu", d:4},{a:"a1", b:"b", c:"nome"})
+    // let aux = Object.map({a:1, b:2, c:"Eu", d:4},{a:"a1", b:"b", c:"nome", f:"f"})
 
     Object.show = source=>{
         for (let key in source){
