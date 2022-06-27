@@ -103,7 +103,25 @@ const System = function(){
                         properties.data = properties.parameters;
                                                                                       
                     //let options=Ajax.Adapter.jquery(url, properties);
-                    let options=Ajax.Adapter.native(url, properties);
+                   // let options=Ajax.Adapter.native(url, properties);
+                    let options = Object.map(properties, {data:"body", method :"method"});
+                    options.headers = {'content-type':properties.contentType};    
+                    options.mode = "cors";     
+                    fetch(url, options)
+                        .then(response=> {
+                            if (!response.ok){                        
+                                if (properties.onFailure)
+                                    propertiesonFailure(data); 
+                            }else
+                                response.json()
+                                .then(data=> {
+                                    if (properties.onSuccess)
+                                        properties.onSuccess(data);
+                                })
+                        })
+                        .catch((err)    => 
+                            console.log('erro:'+err.message)
+                            )
                 }
             , Updater:function(idContent, url, parm){                   
                     fetch(url)
@@ -116,49 +134,6 @@ const System = function(){
                         .catch(err => 
                             console.log('ERRO>> Ajax.Updater:' + err.message)
                         )     
-                }
-            , Adapter:{
-                     jquery:(url,properties) => {                                            
-                        let options = Object.map(properties
-                                    , {data        :"data"
-                                      ,processData :"processData" 
-                                      ,method      :"type" 
-                                      ,asynchronous:"async"
-                                      ,encoding    :"scriptCharset"
-                                      ,contentType :"contentType"
-                                      ,onSuccess   :"success"
-                                      ,onFailure   :"error"
-                                      ,onComplete  :"complete"                                      
-                                    });
-                        options.url = url; 
-                        $.ajax(options);                                  
-                        return options;                        
-                     }    
-                   , native:(url,properties)=>{
-                        let options = Object.map(properties
-                        , {data        :"body"                          
-                          ,method      :"method"                                                            
-                        });
-                        options.headers = {'content-type':properties.contentType};    
-                        options.mode = "cors";     
-                        fetch(url, options)
-                            .then(response=> {
-                                if (!response.ok){                        
-                                    if (properties.onFailure)
-                                        propertiesonFailure(data); 
-                                }else
-                                    response.json()
-                                    .then(data=> {
-                                        if (properties.onSuccess)
-                                            properties.onSuccess(data);
-                                    })
-                            })
-                            .catch((err)    => 
-                                console.log('erro:'+err.message)
-                                )   
-                        return options; 
-                        //'content-type': 'application/json; charset=utf-8'
-                   }  
                 }
             };
     
