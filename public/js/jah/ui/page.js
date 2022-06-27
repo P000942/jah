@@ -1606,7 +1606,7 @@
                         idContent = CONFIG.LAYOUT.CONTENT;
                      //let pars = '';
                     if (!url.isEmpty()) {
-                        let myAjax = new Ajax.Updater( idContent, url, {method: 'get', parameters: '', onComplete:complete});
+                        Ajax.Updater( idContent, url, {method: 'get', parameters: '', onComplete:complete});
                     }
                 }
             };
