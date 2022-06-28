@@ -1856,25 +1856,29 @@
                                     attIcon='<i class="'+properties.icon+'"></i>';
                                 
                                 if (properties.length>0){ //menu      
-                                    return `<li data-bs-toggle="collapse" class="${attClass}" data-bs-target="#${properties.id}" ${attHint}>`
-                                        +'<a ' +formatLink(properties)+'>'
+                                    return `<li class="${attClass}"  ${attHint}>`
+                                        +`<button class="btn btn-toggle align-items-center rounded collapsed" ` 
+                                        + formatLink(properties)
+                                        +` data-bs-toggle="collapse" data-bs-target="#${properties.id}_target" aria-expanded="false">`
                                         +    attIcon+properties.caption
-                                        +    '<span class="arrow"></span>'
-                                        +'</a></li>'
-                                        +`<div id="${properties.id}_collapse class="collapse" style=""><ul id="${properties.id}"  class="btn-toggle-nav list-unstyled fw-normal pb-1 small"></ul></div>`; //sub-menu collapse
+                                       // +    '<span class="arrow"></span>'
+                                        +'</button>'
+                                        +`<div id="${properties.id}_target" class="collapse" style=""><ul id="${properties.id}"  class="btn-toggle-nav list-unstyled fw-normal pb-1 small"></ul></div>` //sub-menu collapse
+                                        + '</li>';
                                 } else{ // as opcoes do menu entram aqui        
-                                    return `<li><a id="${properties.id}" ${attHint} ${formatLink(properties)}>`
+                                    return `<li><a id="${properties.id}" class="link-dark rounded text-decoration-none" ${attHint} ${formatLink(properties)}>`
                                                 +attIcon+properties.caption
                                         + '</a></li>';
                                 }                
                         }
                         , createContainer(idContent){
                             let id = idContent+'Root';
-                            $(`#${idContent}`).append(`<div class="brand">Sistema
+                            $(`#${idContent}`).append(`<a class="link-dark text-decoration-none"><span class="fs-5 fw-semibold">Sistema</span>
                                                         <i class="icon-reorder icon-large toggle-btn" data-bs-toggle="collapse" data-bs-target="#${id}"></i>
-                                                    </div>`);  
-                            $(`#${idContent}`).append(`<div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"></div>`);           //"menu-list"                                   
-                            $(`#${idContent} > .d-flex`).append(`<ul id='${id}' class="list-unstyled ps-0">`);    // menu-content collapse out    
+                                                    </a>`);  
+                            /* $(`#${idContent}`).append(`<div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"></div>`);           //"menu-list"                                   
+                             */$(`#${idContent} > .d-flex`).append(`<ul id='${id}' class="list-unstyled ps-0">`);    // menu-content collapse out    
+                            $(`#${idContent}`).append(`<ul id='${id}' class="list-unstyled ps-0">`);
                             return id;
                         }  
                         } //return
@@ -1887,8 +1891,8 @@
                     if (properties.idContainer) // Container é usado para quando for partial
                         attLink += ',"'+ properties.idContainer + '"' ;
                     attLink +=');';
-                }
-                attLink += "'";
+                    attLink += "'";
+                }                
                 return attLink;
             }
             , Base=function(inheritor, properties){
