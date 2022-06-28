@@ -1819,7 +1819,7 @@
                                 
                                 if (properties.length>0){
                                     attClass  = 'class="nav-item dropdown"';
-                                    attDropdown = 'class="nav-link dropdown-toggle" data-toggle="dropdown" '
+                                    attDropdown = 'class="nav-link dropdown-toggle" data-bs-toggle="dropdown" '
                                                 + 'role="button" aria-haspopup="true" aria-expanded="false"';
                                     attDropdownUl = '<div id="'+properties.id+'"  class="dropdown-menu" aria-labelledby="navbarDropdown"></div>';  
                                     if (properties.type=='Submenu') { 
@@ -1846,7 +1846,7 @@
                 ,  sidebar:function(){
                         return{
                         format (properties){
-                                let attIcon=''  , attClass = 'collapsed'
+                                let attIcon=''  , attClass = 'mb-1'  
                                     , attHint = (properties.title)? 'title="' + properties.title + '"' : '';
                                 if (properties.active){
                                     attClass += ' active';
@@ -1856,12 +1856,12 @@
                                     attIcon='<i class="'+properties.icon+'"></i>';
                                 
                                 if (properties.length>0){ //menu      
-                                    return `<li data-toggle="collapse" class="${attClass}" data-target="#${properties.id}" ${attHint}>`
+                                    return `<li data-bs-toggle="collapse" class="${attClass}" data-bs-target="#${properties.id}" ${attHint}>`
                                         +'<a ' +formatLink(properties)+'>'
                                         +    attIcon+properties.caption
                                         +    '<span class="arrow"></span>'
                                         +'</a></li>'
-                                        +`<ul id="${properties.id}"  class="sub-menu collapse"></ul>`;
+                                        +`<div id="${properties.id}_collapse class="collapse" style=""><ul id="${properties.id}"  class="btn-toggle-nav list-unstyled fw-normal pb-1 small"></ul></div>`; //sub-menu collapse
                                 } else{ // as opcoes do menu entram aqui        
                                     return `<li><a id="${properties.id}" ${attHint} ${formatLink(properties)}>`
                                                 +attIcon+properties.caption
@@ -1871,10 +1871,10 @@
                         , createContainer(idContent){
                             let id = idContent+'Root';
                             $(`#${idContent}`).append(`<div class="brand">Sistema
-                                                        <i class="icon-reorder icon-large toggle-btn" data-toggle="collapse" data-target="#${id}"></i>
+                                                        <i class="icon-reorder icon-large toggle-btn" data-bs-toggle="collapse" data-bs-target="#${id}"></i>
                                                     </div>`);  
-                            $(`#${idContent}`).append(`<div class="menu-list"></div>`);                                              
-                            $(`#${idContent} > .menu-list`).append(`<ul id='${id}' class="menu-content collapse out">`);        
+                            $(`#${idContent}`).append(`<div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"></div>`);           //"menu-list"                                   
+                            $(`#${idContent} > .d-flex`).append(`<ul id='${id}' class="list-unstyled ps-0">`);    // menu-content collapse out    
                             return id;
                         }  
                         } //return
