@@ -49,6 +49,34 @@ const c$ = {
         ,   cep: {format:'00000-000|_____-___', strip:'-'}
         , placa: {format:'AAA-0000|___-____', strip:'.-'}
     }
+    , ICON:{
+        BACK:{KEY:'back'   , COLOR:'#51A351', CLASS:'icon-circle-arrow-left' }
+    , SEARCH:{KEY:'search' , COLOR:'#51A351', CLASS:'icon-search'            }
+    ,    NEW:{KEY:'new'    , COLOR:'#51A351', CLASS:'icon-plus-sign'         }
+    ,   SAVE:{KEY:'save'   , COLOR:'#51A351', CLASS:'icon-save'              }
+    ,  PRINT:{KEY:'print'  , COLOR:'#51A351', CLASS:'icon-print'             }
+    ,   EDIT:{KEY:'edit'   , COLOR:'#51A351', CLASS:'icon-edit'              }
+    , REMOVE:{KEY:'remove' , COLOR:'#BD362F', CLASS:'icon-trash'             }
+    ,  FIRST:{KEY:'first'  , COLOR:'#51A351', CLASS:'bi bi-chevron-bar-left'}
+    ,PREVIUS:{KEY:'next'   , COLOR:'#51A351', CLASS:'icon-arrow-right'} //bi bi-chevron-bar-left
+    ,   NEXT:{KEY:'next'   , COLOR:'#51A351', CLASS:'icon-arrow-right'} //bi bi-chevron-bar-right
+    ,   LAST:{KEY:'last'   , COLOR:'#51A351', CLASS:'bi bi-chevron-bar-right'}
+    ,  CLOSE:{KEY:'close'  , COLOR:'#51A351', CLASS:'icon-remove-circle'}
+    ,   HOME:{KEY:'home'   , COLOR:'#51A351', CLASS:'icon-home'}
+    ,   UNDO:{KEY:'undo'   , COLOR:'#51A351', CLASS:'icon-undo'}
+    , FILTER:{KEY:'Filter' , COLOR:'#51A351', CLASS:'icon-filter'}
+    ,   SORT:{KEY:'sort'   , COLOR:'#BD362F', CLASS:''}
+    ,     OK:{KEY:'ok'     , COLOR:'#51A351', CLASS:'icon-ok-circle'        }  
+    ,SUCESSO:{KEY:'sucesso', COLOR:'#51A351', CLASS:'bi bi-file-check-fill' }  
+    , CANCEL:{KEY:'cancel' , COLOR:'#BD362F', CLASS:'icon-circle-arrow-left'}
+    ,  ERROR:{KEY:'error'  , COLOR:'#BD362F', CLASS:'icon-info-sign'        }
+    ,   INFO:{KEY:'info'   , COLOR:'#51A351', CLASS:'icon-info-sign'        }
+    ,   HELP:{KEY:'help'   , COLOR:'#51A351', CLASS:'icon-question-sign'    }
+    ,    YES:{KEY:'yes'    , COLOR:'#51A351', CLASS:'icon-check'            }
+    ,     NO:{KEY:'no'     , COLOR:'#BD362F', CLASS:'icon-arrow-left'       }
+    ,   INIT:{KEY:'init'   , COLOR:''       , CLASS:''}
+    ,SUBVISION:{KEY:'subvision', VALUE:'Detalhes', ICON:'icon-list'}
+    }    
 }
 
 c$.ORDER.CLASS =  order =>{
