@@ -538,6 +538,16 @@ j$.Ext = function(){
                 , text: 'tx'+name.toFirstUpper()}
         }
     }
+    const toObject=(source, key="key")=>{
+        if (j$.Ext.isObject(source))
+           return source;
+        else {
+           let obj={}
+           obj[key]=source;
+           return obj;
+        }
+    }    
+    // j$.Ext.toObject({a:'1', nome:"Eu"}); j$.Ext.toObject("Eu", 'class'); j$.Ext.toObject("Eu");
     //, toMoney=value=>{}
         // value = value.toString().replace(",",'.');
         // return moneyFormat(value, 2);
@@ -724,6 +734,7 @@ j$.Ext = function(){
       , moneyFormat 
       , format
       , toRecord
+      , toObject
       ,       init:()=>true
       ,       type:obj=>{return Object.prototype.toString.call(obj).match(/^\[object (.*)\]$/)[1]}
       ,    isArray:obj=>{return (j$.Ext.type(obj)==='Array')}

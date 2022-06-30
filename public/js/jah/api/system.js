@@ -558,8 +558,15 @@ j$.ui.Render= function(){
             return '';
     }
     , alert:(wrap, msg, clas$)=>{
-        clas$ = (clas$)? `class='alert ${clas$}'`: "class='alert'";
-        wrap.insert(`<div ${clas$}><button type="button" class="close" data-dismiss="alert">×</button>${msg}</div>`);
+        let alert = j$.Ext.toObject(clas$, 'CLASS')
+        , iconClass = (alert.ICON)?j$.ui.Render.icon(alert.ICON):"";
+        //<i class="bi bi-person-circle text-success"></i>
+        alert.CLASS = (alert.CLASS)? `class='alert ${alert.CLASS} alert-dismissible fade show'`: "class='alert alert-dismissible fade show'";
+        wrap.insert(`<div ${alert.CLASS} role="alert">                    
+                    ${iconClass}
+                    ${msg}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                     </div>`);
     }
     };
 }();    

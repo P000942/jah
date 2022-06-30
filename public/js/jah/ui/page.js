@@ -597,13 +597,13 @@
                 }
             }
             ,   error:(msg, wrap)=>{
-                        j$.Page.Alert.show(msg, CONFIG.ALERT.ERROR.CLASS, wrap)
+                        j$.Page.Alert.show(msg, CONFIG.ALERT.ERROR, wrap)
                     }
             ,    info:(msg, wrap)=>{
-                        j$.Page.Alert.show(msg, CONFIG.ALERT.INFO.CLASS, wrap)
+                        j$.Page.Alert.show(msg, CONFIG.ALERT.INFO, wrap)
                     }
             , success:(msg, wrap)=>{
-                        j$.Page.Alert.show(msg, CONFIG.ALERT.SUCCESS.CLASS, wrap)
+                        j$.Page.Alert.show(msg, CONFIG.ALERT.SUCCESS, wrap)
                     }
             , hide:(wrap=i$(_wrap))=>{ wrap.innerHTML=''}
             }

@@ -145,13 +145,14 @@ const CONFIG = {
        ,   UNDO:{KEY:'undo',   VALUE:'Desfazer' , ICON:'icon-undo'}
        , FILTER:{KEY:'Filter', VALUE:'Filtrar'  , ICON:'icon-filter'}
        ,   SORT:{KEY:'sort',   VALUE:'Ordenar'  , ICON:''}
-       ,     OK:{KEY:'ok',     VALUE:'OK'       , ICON:'icon-ok-circle'        , COLOR:'#51A351'}
+       ,     OK:{KEY:'ok',     VALUE:'OK'       , ICON:'icon-ok-circle'        , COLOR:'#51A351'}  
+       ,SUCESSO:{KEY:'sucesso',VALUE:'Sucesso'  , ICON:'bi bi-file-check-fill' , COLOR:'#51A351'}  
        , CANCEL:{KEY:'cancel', VALUE:'Cancelar' , ICON:'icon-circle-arrow-left', COLOR:'#BD362F'}
        ,  ERROR:{KEY:'error',  VALUE:'Erro'     , ICON:'icon-info-sign'        , COLOR:'#BD362F'}
        ,   INFO:{KEY:'info',   VALUE:'Nota'     , ICON:'icon-info-sign'        , COLOR:'#51A351'}
        ,   HELP:{KEY:'help',   VALUE:'Ajuda'    , ICON:'icon-question-sign'    , COLOR:'#51A351'}
-       ,    YES:{KEY:'yes',    VALUE:'Sim'      , ICON:'icon-check'     , COLOR:'#51A351'}
-       ,     NO:{KEY:'no',     VALUE:'Não'      , ICON:'icon-arrow-left', COLOR:'#BD362F'}
+       ,    YES:{KEY:'yes',    VALUE:'Sim'      , ICON:'icon-check'            , COLOR:'#51A351'}
+       ,     NO:{KEY:'no',     VALUE:'Não'      , ICON:'icon-arrow-left'       , COLOR:'#BD362F'}
        ,  INIT:{KEY:'init',    VALUE:'Iniciar'  , ICON:''}
        ,SUBVISION:{KEY:'subvision', VALUE:'Detalhes', ICON:'icon-list'}
     }
@@ -176,9 +177,9 @@ const CONFIG = {
           , CONTEXT: 'js/query/'
             }
     , ALERT:{
-          ERROR:{CLASS:'alert-danger'}
-      , SUCCESS:{CLASS:'alert-success'}
-      ,    INFO:{CLASS:'alert-info'}
+          ERROR:{CLASS:'alert-danger' , ICON:"error"}
+      , SUCCESS:{CLASS:'alert-success', ICON:"success"}
+      ,    INFO:{CLASS:'alert-info'   , ICON:"info"}
     }
     ,FEEDBACK:{CLASS:{VALID:'valid-feedback', INVALID:'invalid-feedback', LEGEND:''}}
     ,   INPUT:{CLASS:{DEFAULT:'form-control form-control-sm space', FOCUS:'input_focus'
@@ -329,6 +330,7 @@ CONFIG.SYNONYM={
       ,   filter:['filter','filtro']
       ,     edit:['edit','detalhar','edite','editar']
       ,       ok:['ok']
+      ,  sucesso:['sucesso', 'success']
       ,   cancel:['cancel','cancelar']
       ,    close:['close','fechar']
       ,     home:['home']
