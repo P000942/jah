@@ -1819,7 +1819,7 @@
                                 
                                 if (properties.length>0){
                                     attClass  = 'class="nav-item dropdown"';
-                                    attDropdown = 'class="nav-link dropdown-toggle" data-toggle="dropdown" '
+                                    attDropdown = 'class="nav-link dropdown-toggle" data-bs-toggle="dropdown" '
                                                 + 'role="button" aria-haspopup="true" aria-expanded="false"';
                                     attDropdownUl = '<div id="'+properties.id+'"  class="dropdown-menu" aria-labelledby="navbarDropdown"></div>';  
                                     if (properties.type=='Submenu') { 
@@ -1846,7 +1846,7 @@
                 ,  sidebar:function(){
                         return{
                         format (properties){
-                                let attIcon=''  , attClass = 'collapsed'
+                                let attIcon=''  , attClass = 'menu mb-0'  
                                     , attHint = (properties.title)? 'title="' + properties.title + '"' : '';
                                 if (properties.active){
                                     attClass += ' active';
@@ -1856,25 +1856,30 @@
                                     attIcon='<i class="'+properties.icon+'"></i>';
                                 
                                 if (properties.length>0){ //menu      
-                                    return `<li data-toggle="collapse" class="${attClass}" data-target="#${properties.id}" ${attHint}>`
-                                        +'<a ' +formatLink(properties)+'>'
+                                    return `<li class="${attClass}"  ${attHint}>`
+                                        +`<a class="btn btn-toggle collapsed" ` 
+                                        + formatLink(properties)
+                                        +` data-bs-toggle="collapse" data-bs-target="#${properties.id}_target" aria-expanded="false">`
                                         +    attIcon+properties.caption
-                                        +    '<span class="arrow"></span>'
-                                        +'</a></li>'
-                                        +`<ul id="${properties.id}"  class="sub-menu collapse"></ul>`;
-                                } else{ // as opcoes do menu entram aqui        
-                                    return `<li><a id="${properties.id}" ${attHint} ${formatLink(properties)}>`
-                                                +attIcon+properties.caption
+                                        +'</a>'
+                                        +`<div id="${properties.id}_target" class="collapse" style=""><ul id="${properties.id}"  class="sub-menu"></ul></div>` //sub-menu collapse
+                                        + '</li>';
+                                } else{ // as opcoes do menu entram aqui   
+                                    if (attIcon.isEmpty())
+                                        attIcon='<i class="icon-angle-right"></i>';
+                                    return `<li class="sub-menu"><a id="${properties.id}" ${attHint} ${formatLink(properties)}>`
+                                                +attIcon                                               
+                                                +properties.caption
                                         + '</a></li>';
                                 }                
                         }
                         , createContainer(idContent){
                             let id = idContent+'Root';
-                            $(`#${idContent}`).append(`<div class="brand">Sistema
-                                                        <i class="icon-reorder icon-large toggle-btn" data-toggle="collapse" data-target="#${id}"></i>
-                                                    </div>`);  
-                            $(`#${idContent}`).append(`<div class="menu-list"></div>`);                                              
-                            $(`#${idContent} > .menu-list`).append(`<ul id='${id}' class="menu-content collapse out">`);        
+                            $(`#${idContent}`).append(`<a id="brand" >
+                                                        <span class="fs-5 fw-semibold ms-1">Sistema</span>
+                                                        <i class="icon-reorder icon-large" data-bs-toggle="collapse" data-bs-target="#${id}"></i>
+                                                      </a>`);     
+                            $(`#${idContent}`).append(`<ul id='${id}' class="list-unstyled ps-0 collapse show">`);
                             return id;
                         }  
                         } //return
@@ -1887,8 +1892,8 @@
                     if (properties.idContainer) // Container é usado para quando for partial
                         attLink += ',"'+ properties.idContainer + '"' ;
                     attLink +=');';
-                }
-                attLink += "'";
+                    attLink += "'";
+                }                
                 return attLink;
             }
             , Base=function(inheritor, properties){

@@ -536,7 +536,7 @@ j$.ui.Render= function(){
     , formatButtonDropdown:(properties)=>{
         return '<div id="' +properties.id+ '"  class="btn-group" role="group" aria-label="Button group with nested dropdown">'                 
                 +  '<div class="btn-group" role="group">'                   
-                +    '<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" ' +j$.ui.Render.attributes(properties,['value','onclick','submenu','id'])+ '>'+j$.ui.Render.icon(properties)+'</button>'              
+                +    '<button class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown" ' +j$.ui.Render.attributes(properties,['value','onclick','submenu','id'])+ '>'+j$.ui.Render.icon(properties)+'</button>'              
                 +    '<div id="'+properties.id+'Menu" class="dropdown-menu"></div>'
                 +    '</div>'
                 +'</div>';
