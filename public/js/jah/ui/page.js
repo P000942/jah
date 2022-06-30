@@ -1846,7 +1846,7 @@
                 ,  sidebar:function(){
                         return{
                         format (properties){
-                                let attIcon=''  , attClass = 'mb-1'  
+                                let attIcon=''  , attClass = 'menu mb-0'  
                                     , attHint = (properties.title)? 'title="' + properties.title + '"' : '';
                                 if (properties.active){
                                     attClass += ' active';
@@ -1857,28 +1857,29 @@
                                 
                                 if (properties.length>0){ //menu      
                                     return `<li class="${attClass}"  ${attHint}>`
-                                        +`<button class="btn btn-toggle align-items-center rounded collapsed" ` 
+                                        +`<a class="btn btn-toggle collapsed" ` 
                                         + formatLink(properties)
                                         +` data-bs-toggle="collapse" data-bs-target="#${properties.id}_target" aria-expanded="false">`
                                         +    attIcon+properties.caption
-                                       // +    '<span class="arrow"></span>'
-                                        +'</button>'
-                                        +`<div id="${properties.id}_target" class="collapse" style=""><ul id="${properties.id}"  class="btn-toggle-nav list-unstyled fw-normal pb-1 small"></ul></div>` //sub-menu collapse
+                                        +'</a>'
+                                        +`<div id="${properties.id}_target" class="collapse" style=""><ul id="${properties.id}"  class="sub-menu"></ul></div>` //sub-menu collapse
                                         + '</li>';
-                                } else{ // as opcoes do menu entram aqui        
-                                    return `<li><a id="${properties.id}" class="link-dark rounded text-decoration-none" ${attHint} ${formatLink(properties)}>`
-                                                +attIcon+properties.caption
+                                } else{ // as opcoes do menu entram aqui   
+                                    if (attIcon.isEmpty())
+                                        attIcon='<i class="icon-angle-right"></i>';
+                                    return `<li class="sub-menu"><a id="${properties.id}" ${attHint} ${formatLink(properties)}>`
+                                                +attIcon                                               
+                                                +properties.caption
                                         + '</a></li>';
                                 }                
                         }
                         , createContainer(idContent){
                             let id = idContent+'Root';
-                            $(`#${idContent}`).append(`<a class="link-dark text-decoration-none"><span class="fs-5 fw-semibold">Sistema</span>
-                                                        <i class="icon-reorder icon-large toggle-btn" data-bs-toggle="collapse" data-bs-target="#${id}"></i>
-                                                    </a>`);  
-                            /* $(`#${idContent}`).append(`<div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"></div>`);           //"menu-list"                                   
-                             */$(`#${idContent} > .d-flex`).append(`<ul id='${id}' class="list-unstyled ps-0">`);    // menu-content collapse out    
-                            $(`#${idContent}`).append(`<ul id='${id}' class="list-unstyled ps-0">`);
+                            $(`#${idContent}`).append(`<a id="brand" >
+                                                        <span class="fs-5 fw-semibold ms-1">Sistema</span>
+                                                        <i class="icon-reorder icon-large" data-bs-toggle="collapse" data-bs-target="#${id}"></i>
+                                                      </a>`);     
+                            $(`#${idContent}`).append(`<ul id='${id}' class="list-unstyled ps-0 collapse show">`);
                             return id;
                         }  
                         } //return
