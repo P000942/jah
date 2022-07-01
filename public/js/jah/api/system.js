@@ -112,12 +112,17 @@ const System = function(){
                             if (!response.ok){                        
                                 if (properties.onFailure)
                                     propertiesonFailure(data); 
-                            }else
-                                response.json()
-                                .then(data=> {
-                                    if (properties.onSuccess)
-                                        properties.onSuccess(data);
-                                })
+                            }else{
+                                if (response.status == CONFIG.HTTP.STATUS.NO_CONTENT.VALUE)
+                                    properties.onSuccess(response);
+                                else{
+                                    response.json()
+                                    .then(data=> {
+                                        if (properties.onSuccess)
+                                            properties.onSuccess(data);
+                                    })
+                                }   
+                            } 
                         })
                         .catch((err)    => 
                             console.log('erro:'+err.message)
@@ -541,26 +546,18 @@ j$.ui.Render= function(){
                 +    '</div>'
                 +'</div>';
     }
+    , color: value=> {return (value) ?`style="color:${value};" `  :'' }
     , icon:(properties)=>{
-        let iconClass
-            , key = properties;
-        if (j$.Ext.isString(properties))
-            iconClass = CONFIG.icon(key);
-        else if(j$.Ext.isObject(properties)){
-            key = (properties.key)?properties.key:'';
-            iconClass =(properties.icon) ?properties.icon :CONFIG.icon(key)
-        }
-        if (iconClass){
-            let color = CONFIG.color(key);
-            let txColor=(color)?`style="color:${color};" `  :'';
-            return `<i class="${iconClass}" ${txColor}></i>`;
-        }else
-            return '';
+        let atts = j$.Ext.toObject(properties, 'key')
+        ,   ICON = (atts.icon) ?atts.icon :c$.ICON.get(atts.key)
+        ,  color = j$.ui.Render.color(ICON.COLOR);
+        return (ICON.CLASS)
+             ? `<i class="${ICON.CLASS}" ${color}></i>`
+             : '';
     }
     , alert:(wrap, msg, clas$)=>{
         let alert = j$.Ext.toObject(clas$, 'CLASS')
         , iconClass = (alert.ICON)?j$.ui.Render.icon(alert.ICON):"";
-        //<i class="bi bi-person-circle text-success"></i>
         alert.CLASS = (alert.CLASS)? `class='alert ${alert.CLASS} alert-dismissible fade show'`: "class='alert alert-dismissible fade show'";
         wrap.insert(`<div ${alert.CLASS} role="alert">                    
                     ${iconClass}
