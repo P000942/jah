@@ -26,7 +26,7 @@ const c$ = {
             //, AllowInsert : true
             //, DisplayMaskCharacters : false //Display mask characters when default text is not present                 
             , DATE :{
-                "default":      "dd/mm/yyyy"
+                  "default":      "dd/mm/yyyy"
                 , shortDate:      "d/m/yy"
                 , mediumDate:     "mmm d, yyyy"
                 , longDate:       "mmmm d, yyyy"
@@ -48,36 +48,38 @@ const c$ = {
         ,   cca: {format:'00.000.000-0|__.___.___-_', strip:'.-'}
         ,   cep: {format:'00000-000|_____-___', strip:'-'}
         , placa: {format:'AAA-0000|___-____', strip:'.-'}
-    }
-    , ICON:{
-        BACK:{KEY:'back'   , COLOR:'#51A351', CLASS:'icon-circle-arrow-left' }
-    , SEARCH:{KEY:'search' , COLOR:'#51A351', CLASS:'icon-search'            }
-    ,    NEW:{KEY:'new'    , COLOR:'#51A351', CLASS:'icon-plus-sign'         }
-    ,   SAVE:{KEY:'save'   , COLOR:'#51A351', CLASS:'icon-save'              }
-    ,  PRINT:{KEY:'print'  , COLOR:'#51A351', CLASS:'icon-print'             }
-    ,   EDIT:{KEY:'edit'   , COLOR:'#51A351', CLASS:'icon-edit'              }
-    , REMOVE:{KEY:'remove' , COLOR:'#BD362F', CLASS:'icon-trash'             }
-    ,  FIRST:{KEY:'first'  , COLOR:'#51A351', CLASS:'bi bi-chevron-bar-left'}
-    ,PREVIUS:{KEY:'next'   , COLOR:'#51A351', CLASS:'icon-arrow-right'} //bi bi-chevron-bar-left
-    ,   NEXT:{KEY:'next'   , COLOR:'#51A351', CLASS:'icon-arrow-right'} //bi bi-chevron-bar-right
-    ,   LAST:{KEY:'last'   , COLOR:'#51A351', CLASS:'bi bi-chevron-bar-right'}
-    ,  CLOSE:{KEY:'close'  , COLOR:'#51A351', CLASS:'icon-remove-circle'}
-    ,   HOME:{KEY:'home'   , COLOR:'#51A351', CLASS:'icon-home'}
-    ,   UNDO:{KEY:'undo'   , COLOR:'#51A351', CLASS:'icon-undo'}
-    , FILTER:{KEY:'Filter' , COLOR:'#51A351', CLASS:'icon-filter'}
-    ,   SORT:{KEY:'sort'   , COLOR:'#BD362F', CLASS:''}
-    ,     OK:{KEY:'ok'     , COLOR:'#51A351', CLASS:'icon-ok-circle'        }  
-    ,SUCESSO:{KEY:'sucesso', COLOR:'#51A351', CLASS:'bi bi-file-check-fill' }  
-    , CANCEL:{KEY:'cancel' , COLOR:'#BD362F', CLASS:'icon-circle-arrow-left'}
-    ,  ERROR:{KEY:'error'  , COLOR:'#BD362F', CLASS:'icon-info-sign'        }
-    ,   INFO:{KEY:'info'   , COLOR:'#51A351', CLASS:'icon-info-sign'        }
-    ,   HELP:{KEY:'help'   , COLOR:'#51A351', CLASS:'icon-question-sign'    }
-    ,    YES:{KEY:'yes'    , COLOR:'#51A351', CLASS:'icon-check'            }
-    ,     NO:{KEY:'no'     , COLOR:'#BD362F', CLASS:'icon-arrow-left'       }
-    ,   INIT:{KEY:'init'   , COLOR:''       , CLASS:''}
-    ,SUBVISION:{KEY:'subvision', VALUE:'Detalhes', ICON:'icon-list'}
     }    
+    , COLOR:{ICON:'#51A351', ICON_FAIL:'#BD362F'}
 }
+
+c$.ICON={
+      BACK:{KEY:'back'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-circle-arrow-left' }
+,   SEARCH:{KEY:'search'   , COLOR:c$.COLOR.ICON     , CLASS:'icon-search'            }
+,      NEW:{KEY:'new'      , COLOR:c$.COLOR.ICON     , CLASS:'icon-plus-sign'         }
+,     SAVE:{KEY:'save'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-save'              }
+,    PRINT:{KEY:'print'    , COLOR:c$.COLOR.ICON     , CLASS:'icon-print'             }
+,     EDIT:{KEY:'edit'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-edit'              }
+,   REMOVE:{KEY:'remove'   , COLOR:c$.COLOR.ICON_FAIL, CLASS:'icon-trash'             }
+,    FIRST:{KEY:'first'    , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-chevron-bar-left'}
+,  PREVIUS:{KEY:'next'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-arrow-right'} //bi bi-chevron-bar-left
+,     NEXT:{KEY:'next'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-arrow-right'} //bi bi-chevron-bar-right
+,     LAST:{KEY:'last'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-chevron-bar-right'}
+,    CLOSE:{KEY:'close'    , COLOR:c$.COLOR.ICON     , CLASS:'icon-remove-circle'}
+,     HOME:{KEY:'home'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-home'}
+,     UNDO:{KEY:'undo'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-undo'}
+,   FILTER:{KEY:'Filter'   , COLOR:c$.COLOR.ICON     , CLASS:'icon-filter'}
+,     SORT:{KEY:'sort'     , COLOR:c$.COLOR.ICON_FAIL, CLASS:''}
+,       OK:{KEY:'ok'       , COLOR:c$.COLOR.ICON     , CLASS:'icon-ok-circle'        }  
+,  SUCCESS:{KEY:'sucesso'  , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-file-check-fill' }  
+,   CANCEL:{KEY:'cancel'   , COLOR:c$.COLOR.ICON_FAIL, CLASS:'icon-circle-arrow-left'}
+,    ERROR:{KEY:'error'    , COLOR:c$.COLOR.ICON_FAIL, CLASS:'icon-info-sign'        }
+,     INFO:{KEY:'info'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-info-sign'        }
+,     HELP:{KEY:'help'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-question-sign'    }
+,      YES:{KEY:'yes'      , COLOR:c$.COLOR.ICON     , CLASS:'icon-check'            }
+,       NO:{KEY:'no'       , COLOR:c$.COLOR.ICON_FAIL, CLASS:'icon-arrow-left'       }
+,     INIT:{KEY:'init'     , COLOR:''                , CLASS:''}
+,SUBVISION:{KEY:'subvision', COLOR:''                , CLASS:'icon-list'}
+}    
 
 c$.ORDER.CLASS =  order =>{
     let _class = "";
@@ -150,39 +152,39 @@ const CONFIG = {
     , BOOLEAN:{'true':{value:true, text:'sim'}, 'false':{value:false, text:'Não'}}
     , LAYOUT:{CONTENT:'content', ALERT_CONTENT:'wrapAlert'}
     , ACTION:{
-           BACK:{KEY:'back',   VALUE:'Voltar'   , ICON:'icon-circle-arrow-left' , COLOR:'#51A351'}
-       , SEARCH:{KEY:'search', VALUE:'Pesquisar', ICON:'icon-search'            , COLOR:'#51A351'}
-       ,    NEW:{KEY:'new',    VALUE:'Incluir'  , ICON:'icon-plus-sign'         , COLOR:'#51A351'
+           BACK:{KEY:'back',   VALUE:'Voltar'     , COLOR:c$.COLOR.ICON}
+       , SEARCH:{KEY:'search', VALUE:'Pesquisar'  , COLOR:c$.COLOR.ICON}
+       ,    NEW:{KEY:'new',    VALUE:'Incluir'    , COLOR:c$.COLOR.ICON
                 , MESSAGE:{
                   SUCCESS:'Inclusão realizada com sucesso.'
                   , ERROR:'<strong>ERRO NA INCLUSÃO!</strong>Verifique os erros assinalados e faça as correções'}
                 }
-       ,   SAVE:{KEY:'save',   VALUE:'Salvar'   , ICON:'icon-save'  , COLOR:'#51A351'
+       ,   SAVE:{KEY:'save',   VALUE:'Salvar'   , ICON:c$.ICON.SAVE  , COLOR:c$.COLOR.ICON
                 , MESSAGE:{
                   SUCCESS:'Atualização realizada com sucesso.'
-                  , ERROR:'<strong>ERRO NA ATUALIZAÇÂO!</strong> Verifique os erros assinalados e faça as correções'}
+                  , ERROR:'<strong>ERRO NA ATUALIZAÇÃO!</strong> Verifique os erros assinalados e faça as correções'}
                 }
-       ,  PRINT:{KEY:'print',  VALUE:'Imprimir' , ICON:'icon-print'    , COLOR:'#51A351'}
-       ,   EDIT:{KEY:'edit',   VALUE:'Editar'   , ICON:'icon-edit'     , COLOR:'#51A351'}
-       , REMOVE:{KEY:'remove', VALUE:'Excluir'  , ICON:'icon-trash'    , COLOR:'#BD362F' , MESSAGE:{SUCCESS:'Exclusão realizada com sucesso.'}}
-       ,  FIRST:{KEY:'first',  VALUE:'Primeiro' , ICON:''}
-       ,   NEXT:{KEY:'next',   VALUE:'Próximo'  , ICON:'icon-arrow-right'}
-       ,   LAST:{KEY:'last',   VALUE:'Último'   , ICON:''}
-       ,  CLOSE:{KEY:'close',  VALUE:'Fechar'   , ICON:'icon-remove-circle'}
-       ,   HOME:{KEY:'home',   VALUE:'Início'   , ICON:'icon-home'}
-       ,   UNDO:{KEY:'undo',   VALUE:'Desfazer' , ICON:'icon-undo'}
-       , FILTER:{KEY:'Filter', VALUE:'Filtrar'  , ICON:'icon-filter'}
-       ,   SORT:{KEY:'sort',   VALUE:'Ordenar'  , ICON:''}
-       ,     OK:{KEY:'ok',     VALUE:'OK'       , ICON:'icon-ok-circle'        , COLOR:'#51A351'}  
-       ,SUCESSO:{KEY:'sucesso',VALUE:'Sucesso'  , ICON:'bi bi-file-check-fill' , COLOR:'#51A351'}  
-       , CANCEL:{KEY:'cancel', VALUE:'Cancelar' , ICON:'icon-circle-arrow-left', COLOR:'#BD362F'}
-       ,  ERROR:{KEY:'error',  VALUE:'Erro'     , ICON:'icon-info-sign'        , COLOR:'#BD362F'}
-       ,   INFO:{KEY:'info',   VALUE:'Nota'     , ICON:'icon-info-sign'        , COLOR:'#51A351'}
-       ,   HELP:{KEY:'help',   VALUE:'Ajuda'    , ICON:'icon-question-sign'    , COLOR:'#51A351'}
-       ,    YES:{KEY:'yes',    VALUE:'Sim'      , ICON:'icon-check'            , COLOR:'#51A351'}
-       ,     NO:{KEY:'no',     VALUE:'Não'      , ICON:'icon-arrow-left'       , COLOR:'#BD362F'}
-       ,  INIT:{KEY:'init',    VALUE:'Iniciar'  , ICON:''}
-       ,SUBVISION:{KEY:'subvision', VALUE:'Detalhes', ICON:'icon-list'}
+    ,  PRINT:{KEY:'print',  VALUE:'Imprimir' }
+    ,   EDIT:{KEY:'edit',   VALUE:'Editar'   , COLOR:c$.COLOR.ICON}
+    , REMOVE:{KEY:'remove', VALUE:'Excluir'  , COLOR:c$.COLOR.ICON_FAIL , MESSAGE:{SUCCESS:'Exclusão realizada com sucesso.'}}
+    ,  FIRST:{KEY:'first',  VALUE:'Primeiro' }
+    ,   NEXT:{KEY:'next',   VALUE:'Próximo'  }
+    ,   LAST:{KEY:'last',   VALUE:'Último'   }
+    ,  CLOSE:{KEY:'close',  VALUE:'Fechar'   }
+    ,   HOME:{KEY:'home',   VALUE:'Início'   }
+    ,   UNDO:{KEY:'undo',   VALUE:'Desfazer' }
+    , FILTER:{KEY:'Filter', VALUE:'Filtrar'  }
+    ,   SORT:{KEY:'sort',   VALUE:'Ordenar'  }
+    ,     OK:{KEY:'ok',     VALUE:'OK'       }  
+    ,SUCCESS:{KEY:'sucesso',VALUE:'Sucesso'  }  
+    , CANCEL:{KEY:'cancel', VALUE:'Cancelar' }
+    ,  ERROR:{KEY:'error',  VALUE:'Erro'     }
+    ,   INFO:{KEY:'info',   VALUE:'Nota'     }
+    ,   HELP:{KEY:'help',   VALUE:'Ajuda'    }
+    ,    YES:{KEY:'yes',    VALUE:'Sim'      }
+    ,     NO:{KEY:'no',     VALUE:'Não'      }
+    ,   INIT:{KEY:'init',    VALUE:'Iniciar' }
+    ,SUBVISION:{KEY:'subvision', VALUE:'Detalhes'}
     }
     , CRUD:{BUTTONS:{WRAP:'wrap_command', ALIGN: c$.ALIGN.BOTTOM}
           , GRID:{BUTTONS:{}}
@@ -249,7 +251,8 @@ const CONFIG = {
 CONFIG.REPORT={
       COLOR:{ON:'#F8F8FF', OFF:'#FFFFFF'}
     // Medidas em milimetro 'mm'
-  ,   PAPER:{A4:{PORTRAIT:{height:'287', width:'202'}, LANDSCAPE:{height:'194', width:'289'}}
+    , PAPER:{
+             A4:{PORTRAIT:{height:'287', width:'202'}, LANDSCAPE:{height:'194', width:'289'}}
         ,LETTER:{PORTRAIT:{height:'269', width:'208'}, LANDSCAPE:{height:'206', width:'271'}}
         , LEGAL:{PORTRAIT:{height:'345', width:'208'}, LANDSCAPE:{height:'206', width:'347'}}
       } 
@@ -358,7 +361,7 @@ CONFIG.SYNONYM={
       ,   filter:['filter','filtro']
       ,     edit:['edit','detalhar','edite','editar']
       ,       ok:['ok']
-      ,  sucesso:['sucesso', 'success']
+      ,  success:['sucesso', 'success']
       ,   cancel:['cancel','cancelar']
       ,    close:['close','fechar']
       ,     home:['home']
@@ -379,9 +382,9 @@ CONFIG.synonym= value=>{
 };
 
 CONFIG.icon=(vl_key, source)=>{
-    source=(source)?source.toUpperCase():'ACTION';
+    let oSource=(source)?CONFIG[sourcesource.toUpperCase()]:c$.ICON; // 'ACTION';
     let key =CONFIG.synonym(vl_key); // Obtém a chave correta considerando os sinônimos
-    return (key)?CONFIG[source][key.toUpperCase()].ICON:null;    // Retorna o icone
+    return (key)?oSource[key.toUpperCase()].CLASS:null;    // Retorna o icone
 };
 CONFIG.color=(vl_key, source)=>{
     source=(source)?source.toUpperCase():'ACTION';
