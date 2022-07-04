@@ -1035,7 +1035,7 @@
             };
         }; // j$.Page.Buttons
         
-        // Cria o navegar para fazer paginação
+        // Cria o egar para fazer paginação
         // pager (): é o que controla data, faz o calculos de pagina e devolve os registro para exibir na página
         // j$.Page.Navigator: É o componente que cria os elementos visuais de html para navegação e recebe a ações para o controller
         j$.Page.Navigator=function(parent, pager , actionController){
@@ -1052,13 +1052,13 @@
                  properties.caption =properties.value;
                  properties.method =CONFIG.synonym(properties.key.toLowerCase());
                  if (properties.method===CONFIG.ACTION.BACK.KEY){
-                     properties.caption = '&laquo;';
+                     properties.caption =  j$.ui.Render.icon(c$.ICON.PREVIUS); 
                  }else if (properties.method===CONFIG.ACTION.NEXT.KEY){
-                     properties.caption = '&raquo;';
+                     properties.caption = j$.ui.Render.icon(c$.ICON.NEXT);
                  }else if (properties.method===CONFIG.ACTION.FIRST.KEY){
-                     properties.caption ='&iota;&lsaquo;';
+                     properties.caption =j$.ui.Render.icon(c$.ICON.FIRST);
                  }else if (properties.method===CONFIG.ACTION.LAST.KEY){
-                     properties.caption = '&rsaquo;&iota;';
+                     properties.caption = j$.ui.Render.icon(c$.ICON.LAST);
                  }else
                     properties.method ='get';
                  return properties;
@@ -1750,7 +1750,7 @@
                                           + `${_tab.parent.key}.close('${_tab.key}');">`
                                           //+`<i class="bi bi-x-circle" style="font-size: 1.0rem; color: black;"></i>`
                                           //+`<i class="bi bi-x-circle"></i>`
-                                          +j$.ui.Render.icon('bi bi-x-circle')
+                                          +j$.ui.Render.icon(c$.ICON.CLOSE)                                          
                                           +"</a>";              
                             return `<span class='${CONFIG.TAB.CLASS.TITLE}' onmouseover='j$.Dashboard.Tabs.HANDLE.onmouseover(this);' onmouseout='j$.Dashboard.Tabs.HANDLE.onmouseout(this);' id='tab_link_`+ this.key+"'>"
                                 +`<a class='${CONFIG.TAB.CLASS.TITLE}' id='link_` + _tab.key +  "' " 

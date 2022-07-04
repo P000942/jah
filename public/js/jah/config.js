@@ -64,7 +64,7 @@ c$.ICON={
 ,  PREVIUS:{KEY:'previus'  , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-skip-start-fill'} //bi bi-chevron-bar-left ou bi bi-skip-start-fill
 ,     NEXT:{KEY:'next'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-skip-end-fill'} //bi bi-chevron-bar-right ou bi bi-skip-end-fill
 ,     LAST:{KEY:'last'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-chevron-bar-right'}
-,    CLOSE:{KEY:'close'    , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-x-circle-fill'}
+,    CLOSE:{KEY:'close'                              , CLASS:'bi bi-x-circle'}
 ,     HOME:{KEY:'home'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-house-door-fill'}
 ,     UNDO:{KEY:'undo'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-arrow-counterclockwise'}
 ,   FILTER:{KEY:'Filter'   , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-filter'}
