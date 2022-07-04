@@ -53,32 +53,32 @@ const c$ = {
 }
 
 c$.ICON={
-      BACK:{KEY:'back'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-circle-arrow-left' }
-,   SEARCH:{KEY:'search'   , COLOR:c$.COLOR.ICON     , CLASS:'icon-search'            }
-,      NEW:{KEY:'new'      , COLOR:c$.COLOR.ICON     , CLASS:'icon-plus-sign'         }
-,     SAVE:{KEY:'save'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-save'              }
-,    PRINT:{KEY:'print'    , COLOR:c$.COLOR.ICON     , CLASS:'icon-print'             }
-,     EDIT:{KEY:'edit'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-edit'              }
-,   REMOVE:{KEY:'remove'   , COLOR:c$.COLOR.ICON_FAIL, CLASS:'icon-trash'             }
+      BACK:{KEY:'back'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-arrow-left-circle' }
+,   SEARCH:{KEY:'search'   , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-search'            }
+,      NEW:{KEY:'new'      , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-plus-circle'         }
+,     SAVE:{KEY:'save'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-save'              }
+,    PRINT:{KEY:'print'    , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-printer'             }
+,     EDIT:{KEY:'edit'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-pencil-square'              }
+,   REMOVE:{KEY:'remove'   , COLOR:c$.COLOR.ICON_FAIL, CLASS:'bi bi-trash'             }
 ,    FIRST:{KEY:'first'    , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-chevron-bar-left'}
-,  PREVIUS:{KEY:'previus'  , COLOR:c$.COLOR.ICON     , CLASS:'icon-arrow-left'} //bi bi-chevron-bar-left ou bi bi-skip-start-fill
-,     NEXT:{KEY:'next'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-arrow-right'} //bi bi-chevron-bar-right ou bi bi-skip-end-fill
+,  PREVIUS:{KEY:'previus'  , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-skip-start-fill'} //bi bi-chevron-bar-left ou bi bi-skip-start-fill
+,     NEXT:{KEY:'next'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-skip-end-fill'} //bi bi-chevron-bar-right ou bi bi-skip-end-fill
 ,     LAST:{KEY:'last'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-chevron-bar-right'}
-,    CLOSE:{KEY:'close'    , COLOR:c$.COLOR.ICON     , CLASS:'icon-remove-circle'}
-,     HOME:{KEY:'home'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-home'}
-,     UNDO:{KEY:'undo'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-undo'}
-,   FILTER:{KEY:'Filter'   , COLOR:c$.COLOR.ICON     , CLASS:'icon-filter'}
+,    CLOSE:{KEY:'close'    , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-x-circle-fill'}
+,     HOME:{KEY:'home'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-house-door-fill'}
+,     UNDO:{KEY:'undo'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-arrow-counterclockwise'}
+,   FILTER:{KEY:'Filter'   , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-filter'}
 ,     SORT:{KEY:'sort'     , COLOR:c$.COLOR.ICON_FAIL, CLASS:''}
-,       OK:{KEY:'ok'       , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-check-circle-fill'}  //icon-ok-circle
+,       OK:{KEY:'ok'       , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-check-circle-fill'}   
 ,  SUCCESS:{KEY:'sucesso'  , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-file-check-fill' }  
 ,   CANCEL:{KEY:'cancel'   , COLOR:c$.COLOR.ICON_FAIL, CLASS:'bi bi-x-circle-fill'}
-,    ERROR:{KEY:'error'    , COLOR:c$.COLOR.ICON_FAIL, CLASS:'icon-info-sign'        }
-,     INFO:{KEY:'info'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-info-sign'        }
-,     HELP:{KEY:'help'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-question-sign'    }
-,      YES:{KEY:'yes'      , COLOR:c$.COLOR.ICON     , CLASS:'icon-check'            }
+,    ERROR:{KEY:'error'    , COLOR:c$.COLOR.ICON_FAIL, CLASS:'bi bi-info-circle-fill'        }
+,     INFO:{KEY:'info'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-info-circle-fill'        }
+,     HELP:{KEY:'help'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-question-circle'    }
+,      YES:{KEY:'yes'      , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-check-circle-fill'            }
 ,       NO:{KEY:'no'       , COLOR:c$.COLOR.ICON_FAIL, CLASS:'bi bi-x-circle-fill'       }
 ,     INIT:{KEY:'init'     , COLOR:''                , CLASS:''}
-,SUBVISION:{KEY:'subvision', COLOR:''                , CLASS:'icon-list'}
+,SUBVISION:{KEY:'subvision', COLOR:''                , CLASS:'bi bi-card-list'}
 }    
 
 c$.ORDER.CLASS =  order =>{

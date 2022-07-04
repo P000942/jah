@@ -59,26 +59,19 @@ a.link_tab:hover{
     text-decoration:none;  color:#000000;
 }
 
-a.link_tab_close, a.link_tab_close:hover{ text-decoration:none;
-                 padding: 0 2px 0 1px;
-                 margin: 2px 0 0 2px;
-                 background-repeat:no-repeat;
-                 background-position:center;
-                 font-family: FontAwesome;
-                 font-size: 13pt;
+a.link_tab_close{ 
+   text-decoration:none;
+   color: lightgrey;
+   margin-left: 6px; 
+   background-repeat:no-repeat;
+   background-position:center;
+   /* font-size: 13pt; */
+   font-size: 1.0rem;
 }
 
-a.link_tab_close:after{  
-  color: lightgrey;
-  content: "\f057";
-  font-size: 13pt;
+a.link_tab_close>i:hover{ 
+   color:crimson;
 }
-a.link_tab_close:hover:after{    
- color:crimson;
- content: "\f057";
- font-size: 14pt;
-}
-
 
 span.active_link_tab{
    font-size:12px; color:white; z-index:6; font-weight:bold;

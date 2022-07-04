@@ -1745,8 +1745,13 @@
                             i$(_tab.id).show();		
                         }
                         function render(){			 
-                            let linkClose =(_tab.fixed)?'':`<a class='${CONFIG.TAB.CLASS.CLOSE}' href=\"javascript:j$.Dashboard.Tabs.c$.` + _tab.parent.key 
-                                            + ".close('" + _tab.key + "');\" >&nbsp;&nbsp;</a>";              
+                            let linkClose =(_tab.fixed)?''
+                                          :`<a class='${CONFIG.TAB.CLASS.CLOSE}' href="javascript:j$.Dashboard.Tabs.c$.` 
+                                          + `${_tab.parent.key}.close('${_tab.key}');">`
+                                          //+`<i class="bi bi-x-circle" style="font-size: 1.0rem; color: black;"></i>`
+                                          //+`<i class="bi bi-x-circle"></i>`
+                                          +j$.ui.Render.icon('bi bi-x-circle')
+                                          +"</a>";              
                             return `<span class='${CONFIG.TAB.CLASS.TITLE}' onmouseover='j$.Dashboard.Tabs.HANDLE.onmouseover(this);' onmouseout='j$.Dashboard.Tabs.HANDLE.onmouseout(this);' id='tab_link_`+ this.key+"'>"
                                 +`<a class='${CONFIG.TAB.CLASS.TITLE}' id='link_` + _tab.key +  "' " 
                                 + "href=\"javascript:j$.Dashboard.Tabs.c$." + _tab.parent.key + ".activate('" + _tab.key + "');\" >"
@@ -1862,7 +1867,7 @@
                                         + '</li>';
                                 } else{ // as opcoes do menu entram aqui   
                                     if (attIcon.isEmpty())
-                                        attIcon='<i class="icon-angle-right"></i>';
+                                        attIcon='<i class="bi bi-chevron-right"></i>';
                                     return `<li class="sub-menu"><a id="${properties.id}" ${attHint} ${formatLink(properties)}>`
                                                 +attIcon                                               
                                                 +properties.caption
@@ -1873,7 +1878,7 @@
                             let id = idContent+'Root';
                             $(`#${idContent}`).append(`<a id="brand" >
                                                         <span class="fs-5 fw-semibold ms-1">Sistema</span>
-                                                        <i class="icon-reorder icon-large" data-bs-toggle="collapse" data-bs-target="#${id}"></i>
+                                                        <i class="bi bi-list" style="font-size: 1.5rem; color: black;" data-bs-toggle="collapse" data-bs-target="#${id}"></i>
                                                       </a>`);     
                             $(`#${idContent}`).append(`<ul id='${id}' class="list-unstyled ps-0 collapse show">`);
                             return id;
