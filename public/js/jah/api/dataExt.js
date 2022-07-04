@@ -251,6 +251,13 @@ const j$ = function(){
     Date.prototype.format = function (mask, utc) {return j$.Ext.dateFormat(this, mask, utc)}
 
     //@note: procura por valor no objeto e retorna array com as propriedades que contem o valor
+    Object.isEmpty = function(source){
+        for (let key in source)
+            return false;
+        return true;
+    }
+
+    //@note: procura por valor no objeto e retorna array com as propriedades que contem o valor
     Object.getByValue = function(source, value, attribute="value"){
         let items=[]
         for (let key in source){
@@ -747,6 +754,16 @@ j$.Ext = function(){
       , isFunction:obj=>{return (j$.Ext.type(obj)==='Function')}
       ,isUndefined:obj=>{return !j$.Ext.isDefined(obj)}
       ,  isDefined:obj=>{return (obj==null || obj==undefined) ?false :true}
+      ,hasAnyValue:obj=>{ 
+                            if  (j$.Ext.isDefined(obj)){
+                                if (j$.Ext.isNumber(obj) ||
+                                   (j$.Ext.isString(obj) && !obj.isEmpty()) ||
+                                   (j$.Ext.isArray (obj) && obj.length()>0) ||
+                                   (j$.Ext.isObject(obj) && !Object.isEmpty(obj)))
+                                return true; 
+                            }                            
+                             return false;                            
+                        }
     }
 }();
 

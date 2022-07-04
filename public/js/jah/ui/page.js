@@ -1808,15 +1808,13 @@
                     menubar:function(){
                         return{
                         format (properties){
-                                let attClass = '', attDropdown = '', attDropdownUl ='', attIcon='';  
-                                let attHint = (properties.title)? 'title="' + properties.title + '"' : '';
+                                let attClass = '', attDropdown = '', attDropdownUl =''
+                                  , attIcon = j$.ui.Render.icon(properties.icon)  
+                                  , attHint = (properties.title)? 'title="' + properties.title + '"' : '';
                                 if (properties.active){
                                     attClass='class="active"';
                                     properties.Root.active=true;
                                 }
-                                if (properties.icon)
-                                    attIcon='<i class="'+properties.icon+'"></i>';
-                                
                                 if (properties.length>0){
                                     attClass  = 'class="nav-item dropdown"';
                                     attDropdown = 'class="nav-link dropdown-toggle" data-bs-toggle="dropdown" '
@@ -1846,15 +1844,13 @@
                 ,  sidebar:function(){
                         return{
                         format (properties){
-                                let attIcon=''  , attClass = 'menu mb-0'  
-                                    , attHint = (properties.title)? 'title="' + properties.title + '"' : '';
+                                let attIcon=j$.ui.Render.icon(properties.icon)
+                                  , attClass = 'menu mb-0'  
+                                  , attHint = (properties.title)? 'title="' + properties.title + '"' : '';
                                 if (properties.active){
                                     attClass += ' active';
                                     properties.Root.active=true;
-                                }
-                                if (properties.icon)
-                                    attIcon='<i class="'+properties.icon+'"></i>';
-                                
+                                }                               
                                 if (properties.length>0){ //menu      
                                     return `<li class="${attClass}"  ${attHint}>`
                                         +`<a class="btn btn-toggle collapsed" ` 

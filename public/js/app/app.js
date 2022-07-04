@@ -77,7 +77,7 @@ j$.Page.Helper = function(Factory){ // Para adicionar mais menus e submenus
              _menu = j$.Dashboard.Factory.addMenu({caption:'Partial'});
              //_menu.add({caption:'Partial',   partial:urlPartial  , title:'Serah insedrido na tba'});
              _menu.add({caption:'Partial 2', partial:urlPartial_1, title:'Serah insedrido na tba'});
-             _menu.add({caption:'Assunto',       title:'Assunto - exemplo colocar um  form na tab',
+             _menu.add({caption:'Assunto', icon:{CLASS:'bi bi-table', COLOR:'green'},    title:'Assunto - exemplo colocar um  form na tab',
                   onClick:(menu, event)=>{
                       j$.Dashboard.Service.open({key:menu.key, caption:menu.caption
                           , onLoad: tab=>{
@@ -89,7 +89,7 @@ j$.Page.Helper = function(Factory){ // Para adicionar mais menus e submenus
                     , onClick:j$.Dashboard.Service.openPartial
              });
              _menu.add(); // vai adicionar uma linha
-             _menu.add({key:'Tabela', caption:'Tabela', icon:'icon-pencil', title:'Tabela de Exemplo'
+             _menu.add({key:'Tabela', caption:'Tabela', icon:'bi bi-table', title:'Tabela de Exemplo'
                     , onClick:j$.Dashboard.Service.delegateTo
              });
 

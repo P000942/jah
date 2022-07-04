@@ -61,22 +61,22 @@ c$.ICON={
 ,     EDIT:{KEY:'edit'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-edit'              }
 ,   REMOVE:{KEY:'remove'   , COLOR:c$.COLOR.ICON_FAIL, CLASS:'icon-trash'             }
 ,    FIRST:{KEY:'first'    , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-chevron-bar-left'}
-,  PREVIUS:{KEY:'next'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-arrow-right'} //bi bi-chevron-bar-left
-,     NEXT:{KEY:'next'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-arrow-right'} //bi bi-chevron-bar-right
+,  PREVIUS:{KEY:'previus'  , COLOR:c$.COLOR.ICON     , CLASS:'icon-arrow-left'} //bi bi-chevron-bar-left ou bi bi-skip-start-fill
+,     NEXT:{KEY:'next'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-arrow-right'} //bi bi-chevron-bar-right ou bi bi-skip-end-fill
 ,     LAST:{KEY:'last'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-chevron-bar-right'}
 ,    CLOSE:{KEY:'close'    , COLOR:c$.COLOR.ICON     , CLASS:'icon-remove-circle'}
 ,     HOME:{KEY:'home'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-home'}
 ,     UNDO:{KEY:'undo'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-undo'}
 ,   FILTER:{KEY:'Filter'   , COLOR:c$.COLOR.ICON     , CLASS:'icon-filter'}
 ,     SORT:{KEY:'sort'     , COLOR:c$.COLOR.ICON_FAIL, CLASS:''}
-,       OK:{KEY:'ok'       , COLOR:c$.COLOR.ICON     , CLASS:'icon-ok-circle'        }  
+,       OK:{KEY:'ok'       , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-check-circle-fill'}  //icon-ok-circle
 ,  SUCCESS:{KEY:'sucesso'  , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-file-check-fill' }  
-,   CANCEL:{KEY:'cancel'   , COLOR:c$.COLOR.ICON_FAIL, CLASS:'icon-circle-arrow-left'}
+,   CANCEL:{KEY:'cancel'   , COLOR:c$.COLOR.ICON_FAIL, CLASS:'bi bi-x-circle-fill'}
 ,    ERROR:{KEY:'error'    , COLOR:c$.COLOR.ICON_FAIL, CLASS:'icon-info-sign'        }
 ,     INFO:{KEY:'info'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-info-sign'        }
 ,     HELP:{KEY:'help'     , COLOR:c$.COLOR.ICON     , CLASS:'icon-question-sign'    }
 ,      YES:{KEY:'yes'      , COLOR:c$.COLOR.ICON     , CLASS:'icon-check'            }
-,       NO:{KEY:'no'       , COLOR:c$.COLOR.ICON_FAIL, CLASS:'icon-arrow-left'       }
+,       NO:{KEY:'no'       , COLOR:c$.COLOR.ICON_FAIL, CLASS:'bi bi-x-circle-fill'       }
 ,     INIT:{KEY:'init'     , COLOR:''                , CLASS:''}
 ,SUBVISION:{KEY:'subvision', COLOR:''                , CLASS:'icon-list'}
 }    
@@ -137,6 +137,7 @@ const CONFIG = {
             ,            TIMEOUT:{VALUE:408 , TEXT: "Timeout - Tempo de espera pelo recurso esgotou"}
             ,                 OK:{VALUE:200 , TEXT: "Realizado com sucesso"}
             ,            CREATED:{VALUE:201 , TEXT: "Recurso criado"}
+            ,         NO_CONTENT:{VALUE:204 , TEXT: "Realizado com sucesso"}
             ,            UNKNOWN:{VALUE:null, TEXT: "HTTP STATUS: Não reconhecido"}
              }
         }
@@ -152,38 +153,38 @@ const CONFIG = {
     , BOOLEAN:{'true':{value:true, text:'sim'}, 'false':{value:false, text:'Não'}}
     , LAYOUT:{CONTENT:'content', ALERT_CONTENT:'wrapAlert'}
     , ACTION:{
-           BACK:{KEY:'back',   VALUE:'Voltar'     , COLOR:c$.COLOR.ICON}
-       , SEARCH:{KEY:'search', VALUE:'Pesquisar'  , COLOR:c$.COLOR.ICON}
-       ,    NEW:{KEY:'new',    VALUE:'Incluir'    , COLOR:c$.COLOR.ICON
+           NEW:{KEY:'new',    VALUE:'Incluir'    
                 , MESSAGE:{
                   SUCCESS:'Inclusão realizada com sucesso.'
                   , ERROR:'<strong>ERRO NA INCLUSÃO!</strong>Verifique os erros assinalados e faça as correções'}
                 }
-       ,   SAVE:{KEY:'save',   VALUE:'Salvar'   , ICON:c$.ICON.SAVE  , COLOR:c$.COLOR.ICON
+      ,   SAVE:{KEY:'save',   VALUE:'Salvar'   
                 , MESSAGE:{
                   SUCCESS:'Atualização realizada com sucesso.'
                   , ERROR:'<strong>ERRO NA ATUALIZAÇÃO!</strong> Verifique os erros assinalados e faça as correções'}
                 }
-    ,  PRINT:{KEY:'print',  VALUE:'Imprimir' }
-    ,   EDIT:{KEY:'edit',   VALUE:'Editar'   , COLOR:c$.COLOR.ICON}
-    , REMOVE:{KEY:'remove', VALUE:'Excluir'  , COLOR:c$.COLOR.ICON_FAIL , MESSAGE:{SUCCESS:'Exclusão realizada com sucesso.'}}
-    ,  FIRST:{KEY:'first',  VALUE:'Primeiro' }
-    ,   NEXT:{KEY:'next',   VALUE:'Próximo'  }
-    ,   LAST:{KEY:'last',   VALUE:'Último'   }
-    ,  CLOSE:{KEY:'close',  VALUE:'Fechar'   }
-    ,   HOME:{KEY:'home',   VALUE:'Início'   }
-    ,   UNDO:{KEY:'undo',   VALUE:'Desfazer' }
-    , FILTER:{KEY:'Filter', VALUE:'Filtrar'  }
-    ,   SORT:{KEY:'sort',   VALUE:'Ordenar'  }
-    ,     OK:{KEY:'ok',     VALUE:'OK'       }  
-    ,SUCCESS:{KEY:'sucesso',VALUE:'Sucesso'  }  
-    , CANCEL:{KEY:'cancel', VALUE:'Cancelar' }
-    ,  ERROR:{KEY:'error',  VALUE:'Erro'     }
-    ,   INFO:{KEY:'info',   VALUE:'Nota'     }
-    ,   HELP:{KEY:'help',   VALUE:'Ajuda'    }
-    ,    YES:{KEY:'yes',    VALUE:'Sim'      }
-    ,     NO:{KEY:'no',     VALUE:'Não'      }
-    ,   INIT:{KEY:'init',    VALUE:'Iniciar' }
+    ,   REMOVE:{KEY:'remove', VALUE:'Excluir', MESSAGE:{SUCCESS:'Exclusão realizada com sucesso.'}}     
+    ,     BACK:{KEY:'back',   VALUE:'Voltar'     }
+    ,   SEARCH:{KEY:'search', VALUE:'Pesquisar'  }                
+    ,    PRINT:{KEY:'print',     VALUE:'Imprimir' }
+    ,     EDIT:{KEY:'edit',      VALUE:'Editar'   }    
+    ,    FIRST:{KEY:'first',     VALUE:'Primeiro' }
+    ,     NEXT:{KEY:'next',      VALUE:'Próximo'  }
+    ,     LAST:{KEY:'last',      VALUE:'Último'   }
+    ,    CLOSE:{KEY:'close',     VALUE:'Fechar'   }
+    ,     HOME:{KEY:'home',      VALUE:'Início'   }
+    ,     UNDO:{KEY:'undo',      VALUE:'Desfazer' }
+    ,   FILTER:{KEY:'Filter',    VALUE:'Filtrar'  }
+    ,     SORT:{KEY:'sort',      VALUE:'Ordenar'  }
+    ,       OK:{KEY:'ok',        VALUE:'OK'       }  
+    ,  SUCCESS:{KEY:'sucesso',   VALUE:'Sucesso'  }  
+    ,   CANCEL:{KEY:'cancel',    VALUE:'Cancelar' }
+    ,    ERROR:{KEY:'error',     VALUE:'Erro'     }
+    ,     INFO:{KEY:'info',      VALUE:'Nota'     }
+    ,     HELP:{KEY:'help',      VALUE:'Ajuda'    }
+    ,      YES:{KEY:'yes',       VALUE:'Sim'      }
+    ,       NO:{KEY:'no',        VALUE:'Não'      }
+    ,     INIT:{KEY:'init',      VALUE:'Iniciar' }
     ,SUBVISION:{KEY:'subvision', VALUE:'Detalhes'}
     }
     , CRUD:{BUTTONS:{WRAP:'wrap_command', ALIGN: c$.ALIGN.BOTTOM}
@@ -380,18 +381,11 @@ CONFIG.synonym= value=>{
             return key;
     }
 };
+c$.ICON.get=(value)=>{
+    let key =CONFIG.synonym(value).toUpperCase(); // Obtém a chave correta considerando os sinônimos
+    return (key)? c$.ICON[key] :{};    // Retorna o icone
+};
 
-CONFIG.icon=(vl_key, source)=>{
-    let oSource=(source)?CONFIG[sourcesource.toUpperCase()]:c$.ICON; // 'ACTION';
-    let key =CONFIG.synonym(vl_key); // Obtém a chave correta considerando os sinônimos
-    return (key)?oSource[key.toUpperCase()].CLASS:null;    // Retorna o icone
-};
-CONFIG.color=(vl_key, source)=>{
-    source=(source)?source.toUpperCase():'ACTION';
-    let key =CONFIG.synonym(vl_key);
-    return (key)?CONFIG[source][key.toUpperCase()].COLOR:null;    // Retorna o icone
-};
-//
 CONFIG.class=(vl_key, source)=>{
     source=(source)?source.toUpperCase():'ACTION';
     let key =CONFIG.synonym(vl_key); // Obtém a chave correta considerando os sinônimos

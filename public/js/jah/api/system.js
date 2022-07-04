@@ -536,24 +536,28 @@ j$.ui.Render= function(){
         return i$(properties.id);
     }
     , formatButton:(properties)=>{
-        return '<a' +j$.ui.Render.attributes(properties,['value', 'element'])+ '>'+j$.ui.Render.icon(properties)+properties.value+'</a>';
+        let icon = c$.ICON.get(properties.key); 
+        return '<a' +j$.ui.Render.attributes(properties,['value', 'element'])+ '>'
+             +j$.ui.Render.icon(icon) +properties.value+'</a>';
     }
     , formatButtonDropdown:(properties)=>{
+        let icon = c$.ICON.get(properties.key); 
         return '<div id="' +properties.id+ '"  class="btn-group" role="group" aria-label="Button group with nested dropdown">'                 
                 +  '<div class="btn-group" role="group">'                   
-                +    '<button class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown" ' +j$.ui.Render.attributes(properties,['value','onclick','submenu','id'])+ '>'+j$.ui.Render.icon(properties)+'</button>'              
+                +    '<button class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown" ' +j$.ui.Render.attributes(properties,['value','onclick','submenu','id'])+ '>'+j$.ui.Render.icon(icon)+'</button>'              
                 +    '<div id="'+properties.id+'Menu" class="dropdown-menu"></div>'
                 +    '</div>'
                 +'</div>';
     }
     , color: value=> {return (value) ?`style="color:${value};" `  :'' }
+    //@note: j$.ui.Render.icon('bi bi-table') ou j$.ui.Render.icon({CLASS:'bi bi-table', COLOR:'green'})
     , icon:(properties)=>{
-        let atts = j$.Ext.toObject(properties, 'key')
-        ,   ICON = (atts.icon) ?atts.icon :c$.ICON.get(atts.key)
-        ,  color = j$.ui.Render.color(ICON.COLOR);
-        return (ICON.CLASS)
-             ? `<i class="${ICON.CLASS}" ${color}></i>`
-             : '';
+        if (j$.Ext.hasAnyValue(properties)){
+            let ICON = j$.Ext.toObject(properties, 'CLASS') 
+            ,  color = j$.ui.Render.color(ICON.COLOR);               
+            return `<i class="${ICON.CLASS}" ${color}></i>`;
+        } else 
+            return "";    
     }
     , alert:(wrap, msg, clas$)=>{
         let alert = j$.Ext.toObject(clas$, 'CLASS')
