@@ -53,9 +53,9 @@ const c$ = {
 }
 
 c$.ICON={
-      BACK:{KEY:'back'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-arrow-left-circle' }
+      BACK:{KEY:'back'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-arrow-return-left' }
 ,   SEARCH:{KEY:'search'   , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-search'            }
-,      NEW:{KEY:'new'      , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-plus-circle'         }
+,      NEW:{KEY:'new'      , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-plus-square'         }
 ,     SAVE:{KEY:'save'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-save'              }
 ,    PRINT:{KEY:'print'    , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-printer'             }
 ,     EDIT:{KEY:'edit'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-pencil-square'              }
@@ -78,7 +78,7 @@ c$.ICON={
 ,      YES:{KEY:'yes'      , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-check-circle-fill'            }
 ,       NO:{KEY:'no'       , COLOR:c$.COLOR.ICON_FAIL, CLASS:'bi bi-x-circle-fill'       }
 ,     INIT:{KEY:'init'     , COLOR:''                , CLASS:''}
-,SUBVISION:{KEY:'subvision', COLOR:''                , CLASS:'bi bi-card-list'}
+,SUBVISION:{KEY:'subvision', COLOR:''                , CLASS:'bi bi-list'}
 }    
 
 c$.ORDER.CLASS =  order =>{

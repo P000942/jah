@@ -436,8 +436,8 @@
                     }
                     const create=function(){
                        _modal.clear();
-                       let txFixed=(fixed)?'':"<button type='button' class='close'  data-dismiss='modal' aria-label='Close'>"
-                                  +"<span aria-hidden='true'>&times;</span>"
+                       let txFixed=(fixed)?'':"<button type='button' class='btn-close'  data-bs-dismiss='modal' aria-label='Close'>"
+                                  /* +"<span aria-hidden='true'>&times;</span>" */
                                   +"</button>";
                        $(wrap).append("<div id='" +form.id+ "Modal' class='modal fade' role='dialog'>"
                                      +  "<div class='modal-dialog modal-sm modal-lg'>"
@@ -449,9 +449,7 @@
                                      +      "<div id='" +form.id+ "Body' class='modal-body'> <div class='container'>"
                                      +              "<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>"
                                      +      "</div></div>"
-                                     +      "<div id='" +form.id+ "Footer' class='modal-footer'>"
-                                               //+"<button type='button' class='btn btn-default' data-dismiss='modal'>Fechar</button>"
-                                     +       "</div>"
+                                     +      "<div id='" +form.id+ "Footer' class='modal-footer'></div>"
                                      +     "</div>"
                                      +   "</div>"
                                      + "</div>");
