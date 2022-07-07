@@ -361,7 +361,7 @@ const j$ = function(){
     // let aux = {text:"texto", nro: 1, ar:[1,2], obj:{nm:1, nr:2}, fn:()=>"2", dt:c$.NOW, fnc: function(){}}
     // Object.show(aux)
 
-    //@note:
+    //@note: copia metodos ou props de um objeto para outro
     Object.mixin=function(receiver, provider, methods){
         if (methods) { // Um Mixin fornecendo alguns métodos
             for (let i=0; i<methods.length; i++)
@@ -428,6 +428,15 @@ const j$ = function(){
     Object.exists = function(source, keys){
         let key = keys.find(key => {return (source[key])});
         return (key) ?true :false;
+    }
+    // retorna a primeira das chaves(key) que encontrar  no objeto 
+    Object.firstKey = function(source, keys){
+        return keys.find(key => {return (source[key])});
+    }
+    // retorna a primeiro valor entre as chaves(key) que encontrar  no objeto 
+    Object.firstValue = function(source, keys){
+        let key = keys.find(key => {return (source[key])});
+        return (key) ?source[key] :null;
     }
 
     Object.identify = (receicer, keys=['key','id'], labels=["label", "caption"])=>{

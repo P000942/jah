@@ -5,6 +5,8 @@
 // import {CONFIG, c$} from  "../config.js";
 // import j$.Ext from  "../api/dataExt.js"; 
 function i$(id) {
+    if (id instanceof HTMLElement)
+       return id;
     return document.getElementById(id);
 }
 
@@ -32,16 +34,16 @@ const System = function(){
             Element.prototype.stylize = function(properties) {
                 if (properties){
                     if (typeof properties =='string'){
-                    if (properties.match(/[:;]/gi)==null) //Se tem ':' eh uma string com style
-                        this.className = properties;
-                    else                             //senao, pode ser o nome de uma class
-                        this.style.cssText = properties;
+                        if (properties.match(/[:;]/gi)==null) //Se tem ':' eh uma string com style
+                            this.className = properties;
+                        else                                  //senao, pode ser o nome de uma class
+                            this.style.cssText = properties;
                     }else{
                         for (let att in properties){
                             if (att.trim().toLowerCase() == 'clas$')
                                 this.className = properties[att];
                             else
-                            this.style[att]=properties[att];
+                                this.style[att]=properties[att];
                         }
                     }
                 }
@@ -52,13 +54,15 @@ const System = function(){
                     $(id).append(content);
                 }else{
                     if (content.after)
-                    $(id).after(content.after);
-                    if (content.bottom)
-                    $(id).append(content.bottom);
+                        $(id).after(content.after);
+                    if (content.bottom || content.append)
+                        $(id).append((content.append) ?content.append :content.bottom);
                     if (content.before)
-                    $(id).before(content.before);
-                    if (content.top)
-                    $(id).prepend(content.top);
+                        $(id).before(content.before);
+                    if (content.top || content.prepend)
+                        $(id).prepend((content.prepend)?content.prepend :content.top);
+/*                     if (content.beforebegin || content.afterbegin || content.beforeend || content.afterend)
+                        $(id).insertAdjacentElement(content.top);  */                       
                 }
                 return (idInner) ?i$(idInner) :null;
             }
@@ -443,16 +447,16 @@ j$.ui.Render= function(){
         attributes:(attributes, exception)=>{
             //formata outros atributos de html do formulárioa para renderizar
             let result = ' ' 
-            , ignore =att=>{
-                let go=false;
-                if (['key','caption','icon'].indexOf(att)>-1){
-                    go= true;
-                } else if (exception){
-                    if ((j$.Ext.isString(exception) && exception===att)
-                    || (j$.Ext.isArray(exception) && exception.has(att)))
+            ,   ignore =att=>{
+                    let go=false;
+                    if (['key','caption','icon'].indexOf(att)>-1)
                         go= true;
-                }
-                return go;
+                    else if (exception){
+                        if ((j$.Ext.isString(exception) && exception===att)
+                        || (j$.Ext.isArray(exception) && exception.has(att)))
+                            go= true;
+                    }
+                    return go;
             };
             for (let attribute in attributes){
                 let att = attribute.replace(/[$]/g,'s');
@@ -474,18 +478,33 @@ j$.ui.Render= function(){
             }   
             return i$(id$);
         }
-    , label: (wrap, label, inputId, clas$=CONFIG.LABEL.CLASS.DEFAULT, mandatory)=>{
-            let att={clas$
-                    ,  id:(inputId) ?inputId+ '_label' :System.util.getId('Label')
-                    , for:(inputId) ?inputId :null
-                    };
+    , label: (wrap, label, inputId, att$)=>{
+            let att = {clas$:CONFIG.LABEL.CLASS.DEFAULT
+                    , mandatory:false
+                    , position:'append'
+                    , id:System.util.getId('Label')
+                    , for:null}
+            Object.setIfExist(att,att$);
+            let fmt_pos=(position, html)=>{
+                if (position==='append')
+                    return html;
+                let _pos = {};
+                _pos[position]=html;
+                return _pos;
+            }                         
+            if (inputId) {
+                att['id'] =inputId+ '_label' ;
+                att['for']=inputId;
+            }                
             label =(label)?label : att.id;
             if (!i$(att.id)){ // cria se não existir
-            let _att = j$.ui.Render.attributes(att,'label')
-            , required =(mandatory) ?`<span class="${CONFIG.INPUT.CLASS.REQUIRED}">*</span>` :'';
-            $(wrap).append(`<label ${_att} >${label}${required}:</label>`);
+                let _att = j$.ui.Render.attributes(att,'label')
+                , required =(att.mandatory) ?`<span class="${CONFIG.INPUT.CLASS.REQUIRED}">*</span>` :'';
+                i$(wrap).insert(fmt_pos(att.position, `<label ${_att} >${label}${required}:</label>`));   
             }
-            return i$(att.id);
+            let lbl = i$(att.id);
+            lbl.stylize(att.style);
+            return lbl;
     }
     , input:(wrap, id, inputType, maxlength, attributes)=>{
             if (!i$(id)){

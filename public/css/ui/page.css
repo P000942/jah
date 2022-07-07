@@ -6,7 +6,7 @@
  }
  .ikon-filter   { background-image: url(../../images/icon/filter.gif); }
  .ikon-sort-asc { background-image: url(../../images/icon/sort-asc.png); }
- .ikon-sort-desc{background-image: url(../../images/icon/sort-desc.png); } 
+ .ikon-sort-desc{background-image:  url(../../images/icon/sort-desc.png); } 
   
 .input_focus, .input_error {
      line-height: 20px;
@@ -30,6 +30,7 @@
 .space {
   padding-left:  10px;
   padding-right: 5px;
+  margin-bottom: 1px;
 }
 
 .menubar_space {
@@ -134,7 +135,13 @@ fieldset > legend{
     padding-left: 10px;
 }
 
-
+.wrap_field_br{
+  margin-bottom: 1px;
+}
+.wrap_classic .form-check{
+  width: auto;
+  padding-left: 2.0em;
+}
 .slidebox_show, .slidebox_hide, wrap_framebox, wrap_dropbox{
         background-color: transparent;
         margin:1px 0px 4px 0px ; padding-top: 0px; padding-bottom: 0px;

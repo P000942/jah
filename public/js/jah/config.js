@@ -213,11 +213,12 @@ const CONFIG = {
       ,    INFO:{CLASS:'alert-info'   , ICON:"info"}
     }
     ,FEEDBACK:{CLASS:{VALID:'valid-feedback', INVALID:'invalid-feedback', LEGEND:''}}
-    ,   INPUT:{CLASS:{DEFAULT:'form-control form-control-sm space', FOCUS:'input_focus'
+    ,   INPUT:{CLASS:{DEFAULT:'form-control form-control-sm space'
+                    ,   FOCUS:'input_focus'
                     , INVALID:'form-control form-control-sm is-invalid'
                     ,   VALID:'form-control form-control-sm is-valid'
                     ,REQUIRED:'required'
-                    }
+                    }                                
               }     
     ,   LABEL:{CLASS:{DEFAULT:"col-form-label col-form-label-sm col-3 col-sm-2 col-md-2 col-xl-2 inLine space"
                      , INLINE:"col-form-label col-form-label-sm col-auto inLine"
@@ -235,8 +236,7 @@ const CONFIG = {
                      }}    
                      
     ,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row space", COLUMN:"col-auto space"}}                           
-    ,   CHECK:{CLASS:{DEFAULT:'form-check-input', COLUMN:"form-check",  LABEL:"form-check-label"
-                      , ERROR:'form-check-input' ,FOCUS:'form-check-input'}}
+    ,   COLOR:{CLASS:{DEFAULT:'form-color-control form-control-sm'}}
     ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
     ,    MENU:{PARSER:c$.MENU.TYPE.SIDEBAR // "MENUBAR" ou 'SIDEBAR'
@@ -249,6 +249,8 @@ const CONFIG = {
                       } 
         }                 
 };
+CONFIG.CHECKBOX={CLASS:{DEFAULT:'form-check-input', COLUMN:"form-check",  LABEL:`${CONFIG.LABEL.CLASS.DEFAULT} form-check-label`
+                        , ERROR:'form-check-input',FOCUS:'form-check-input'}}
 CONFIG.REPORT={
       COLOR:{ON:'#F8F8FF', OFF:'#FFFFFF'}
     // Medidas em milimetro 'mm'

@@ -43,28 +43,35 @@ const TYPE = function() {
             this.format= p_value=> {
                     return  (this.maskAdapter) ?this.maskAdapter.format(p_value) :this.value(p_value);
             };
-            this.identify= (wrap, id, key)=>{
-                SELF.id =System.util.getId(SELF.type, id);
+            this.identify= (id, key)=>{
+                SELF.id =System.util.getId(SELF.type, (id) ?id :SELF.id);                
                 SELF.key =(key)?key : SELF.id;
             }
             function parseDesign(design){
+                let parseType = type =>{
+                    if (CONFIG[type] && CONFIG[type].CLASS){
+                        if (CONFIG[type].CLASS.DEFAULT)
+                            design.input.clas$  = CONFIG[type].CLASS.DEFAULT;
+                        if (CONFIG[type].CLASS.COLUMN)
+                            design.column.clas$  = CONFIG[type].CLASS.COLUMN; 
+                        if (CONFIG[type].CLASS.LABEL)
+                            design.label.clas$  = CONFIG[type].CLASS.LABEL;          
+                    }    
+                }
+                
                 if (!design){
                     design ={
                             input:{clas$: CONFIG.INPUT.CLASS.DEFAULT}
-                        , column:{clas$: CONFIG.WRAP.CLASS.COLUMN}
-                        ,  label:{clas$: CONFIG.LABEL.CLASS.DEFAULT}              
+                         , column:{clas$: CONFIG.WRAP.CLASS.COLUMN}
+                         ,  label:{clas$: CONFIG.LABEL.CLASS.DEFAULT}              
                     }     
                 }
-                if (SELF.type=='checkbox'){
-                    design.input.clas$  = CONFIG.CHECK.CLASS.DEFAULT;
-                    design.column.clas$ = CONFIG.CHECK.CLASS.COLUMN;
-                    design.label.clas$ += " "+CONFIG.CHECK.CLASS.LABEL;
-                }  
+                parseType(SELF.type.toUpperCase())
                 return design;    
             }
             this.create= (wrap, id, key,  design) =>{              
                 let wrapInput;
-                SELF.identify(wrap, id, key);
+                SELF.identify(id, key);
                 design = parseDesign(design);
                 SELF.classDefault = design.input.clas$;
                 if (design.labelInTheSameWrap){
@@ -808,9 +815,7 @@ TYPE.Helper = function(){
         , createLabel: function(inputField, wrap, clas$, style){
             if (inputField.label.isEmpty()) // label é o texto que foi setado no construtor
                 inputField.label=inputField.key;
-
-            let lbl = j$.ui.Render.label(wrap, inputField.label, inputField.id, clas$ ,inputField.mandatory)
-            lbl.stylize(style);
+            j$.ui.Render.label(wrap, inputField.label, inputField.id, {clas$, style, mandatory:inputField.mandatory})
             return {label:inputField.label, mandatory:inputField.mandatory}
         }
         , setProperties: function(inputField, Type, Properties) {
@@ -829,7 +834,7 @@ TYPE.Helper = function(){
                 Object.setIfExist(inputField, Properties,
                                 ['evaluate','autotab', 'label','mandatory', 'align', 'parentLegend'
                                 , 'readOnly', 'disabled', 'defaultValue', 'type'
-                                , 'dataType', 'list','attributes', 'resource']);
+                                , 'dataType', 'list','attributes', 'resource', 'id']);
                 Object.setIfExist(inputField.attributes, Properties,['min', 'max', 'step', 'pattern', 'placeholder']);                            
                 if (Properties.resource)
                     inputField.Resource =  j$.Resource.create(inputField.resource, inputField);
