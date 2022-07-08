@@ -44,19 +44,24 @@
     const actionController =function (){
         return{
                  edit(){alert('edite')}
-        ,      insert(){alert('criar')}
-        ,        back(){alert('voltar')}
+        ,      insert(e, s){
+                          myPage.Alert.show(`insert: ${e.text}`);
+                        }
+        ,        back(e){myPage.Alert.show(`back: ${e.text}`)}
         ,      remove(){alert('remover')}
         ,      update(){alert('alterar')}
         ,        sort(){alert('sort')}
         ,       print(){alert('print')}
         ,      filter(){alert('filtrar')}
-        ,         get(){alert('consultar')}
-        ,   pesquisar(){alert('pesquisar')}
-        ,        novo(){alert('novo')}
+        ,         get(){myPage.Alert.show("Pesquisar")}
+        ,   pesquisar(){myPage.Alert.show("Pesquisar")}//  alert('pesquisar')}
+        ,   hidealert(){myPage.Alert.hide()}
         ,       save(e){alert(e.text)}
-        ,      teste(e){alert(e.text)}
-        ,    simples(e){alert(e.text)}
+        ,      toggle(e){let btn = myPage.Buttons.button("TOGGLE")
+                        myPage.hide(); //@todo: toggle na página
+                        btn.set("Show")
+                        }
+        ,    resetar(e){myPage.reset()}
         ,    pornome(e){alert(e.text)}
         ,     porcpf(e){alert(e.text)}
         };
@@ -70,17 +75,17 @@
                  // Modificando os presets dos botões de comando
                  BUTTONS.INSERT.value='Novo'; //Muda o título - Mas muda global
                  BUTTONS.BACK={value:'back',  clas$:'btn btn-default'}; //Sobreposição tudo
-                 BUTTONS.TESTE={value:'Teste', clas$:'btn btn-default', icon:'icon-phone'}; // Incluir novo botão no preset comando
-                 page.Buttons.Items={TESTE:BUTTONS.TESTE
+                 BUTTONS.HIDE={value:'Hide', clas$:'btn btn-default', icon:{CLASS:'bi bi-x-circle'}}; // Incluir novo botão no preset comando
+                 page.Buttons.c$={TOGGLE:BUTTONS.HIDE  //@todo: icones
                                    ,  BACK:BUTTONS.BACK
                                    ,  SAVE:BUTTONS.SAVE
                                    , IMPRIMIR:BUTTONS.PRINT //dará erro pq não tem o "imprimir"no controller
-                                   , novo:{value:'novo', clas$:'btn'} // Inclui apenas para essa página 
-                                   , SIMPLES:{}
+                                   , hideAlert:{value:'Hide Alert', clas$:'btn'} // Inclui apenas para essa página 
+                                   , RESETAR:{}
                                };
                  // Cria um item novo direto nos commans da página
-                 page.Buttons.Items.pesquisar={value:"Pesquisar", clas$:'btn btn-default'}; //todas as outras propridades serão criados de acordo com a convenção
-                 let {pesquisar} = page.Buttons.Items;
+                 page.Buttons.c$.pesquisar={value:"Pesquisar", clas$:CONFIG.BUTTON.CLASS.DEFAULT}; //todas as outras propridades serão criados de acordo com a convenção
+                 let {pesquisar} = page.Buttons.c$;
                  pesquisar.submenu ={c$:{porNome:{caption:"Por nome"}
                                          ,porCpf:{caption:"Por cpf"}
                                       }}
@@ -116,7 +121,7 @@
                       Data5:TYPE.DATE5(),//{type:"date"}
                    DataTime:TYPE.DATETIME(),//{type:"datetime-local"}
                        Hora:TYPE.HOUR({type:"time"}),
-                        Cor:TYPE.COLOR(),
+                        Cor:TYPE.COLOR({defaultValue:"#f6b73c"}),
                       Email:TYPE.EMAIL(50),
                         Text:TYPE.CHAR(25),
                        Nome:TYPE.NAME(40),
@@ -125,7 +130,7 @@
                        CNPJ:TYPE.CNPJ(),
                         CCA:TYPE.CCA(),
                         CEP:TYPE.CEP(),
-                      Placa:TYPE.Placa(),
+                      Placa:TYPE.PLACA(),
                       Lista:TYPE.LIST({label:'Categoria', list:{'1':'Sistema', '2':'Projeto', '3':'Manutenção'}}),
                      listUf:TYPE.TYPEAHEAD({label:'UF', resource:{name:'uf', text:'txEstado'}}),
                       Check:TYPE.BOOLEAN({label:'Ativo', list:{'true':{value:true, text:'Ativo'}, 'false': {value:false, text:'Cancelado'}}}),
@@ -136,12 +141,10 @@
 
 </head>
 <body>
-
         <header>
- 
            <nav class="navbar navbar-expand-lg navbar-light bg-light" id="menubar">
-               <a class="btn" href='javascript:alert("teste")'><i class="icon-print"></i>Teste</a>
-               <a class="btn" href="#" onclick="init()"><i class="icon-edit"></i>Execute</a>
+               <a class="btn" href='javascript:alert("teste")'><i class="bi bi-printer-fill"></i>Teste</a>
+               <a class="btn" href="#" onclick="init()"><i class="bi bi-edit"></i>Execute</a>
            </nav>
         </header>
 

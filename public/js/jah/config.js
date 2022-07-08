@@ -378,14 +378,20 @@ CONFIG.SYNONYM={
 };
 
 CONFIG.synonym= value=>{
+    if (!j$.Ext.hasAnyValue(value))
+       return null;
     for (let key in CONFIG.SYNONYM){
         if (CONFIG.SYNONYM[key].has(value.toLowerCase()))
             return key;
     }
 };
 c$.ICON.get=(value)=>{
-    let key =CONFIG.synonym(value).toUpperCase(); // Obtém a chave correta considerando os sinônimos
-    return (key)? c$.ICON[key] :{};    // Retorna o icone
+    let sinon =CONFIG.synonym(value)  // Obtém a chave correta considerando os sinônimos
+      , key = (sinon) ? sinon :value 
+      , icon ={}
+    if (j$.Ext.hasAnyValue(key) && c$.ICON[key.toUpperCase()])
+       icon = c$.ICON[key.toUpperCase()];    // Retorna o icone
+    return icon;
 };
 
 CONFIG.class=(vl_key, source)=>{

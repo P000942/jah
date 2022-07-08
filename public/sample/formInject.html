@@ -22,21 +22,33 @@
     <script src="../js/helper/sample.js"></script>  
     <script type="text/javascript">
         function addField(){
-             const cpf=TYPE.CPF({label:'CPF NOVO', id:'newCPF'});
-             cpf.create(i$('novo_campo'));
+             /* const cpf=TYPE.CPF({label:'CPF NOVO', id:'newCPF'});
+             cpf.create(i$('novo_campo')); */
+             i$('novo_campo').addInput(TYPE.CPF({label:'CPF NOVO', id:'newCPF'}))
         }
         function addInForm(){
-             const cnpj=TYPE.CNPJ({label:'CNPJ NOVO'});
-             cnpj.create(i$('myFieldset'), 'newCNPJ');
+             i$('myFieldset').addInput(TYPE.CNPJ({label:'CNPJ NOVO'}),'newCNPJ')
         }
-        function addLabel(){
-           j$.ui.Render.label(i$('wrapNome'), 'Nome' ,i$('nome').id, {style:{color:'blue'}, mandatory:true, position:'prepend'});
+        function createLabel(){
+           i$('wrapNome').addLabel('Nome', i$('nome').id, {style:{color:'blue'}, mandatory:true, position:'prepend'})
         }
         function addAlert(){
-           //j$.Page.Alert.show(i$('wrapAlert'), '<strong>Advertência!</strong></br><lu><li>Mensagem de alerta.</li><li>Segunda Linha.</li></li><li>Terceira Linha.</li></lu>');
-        //   j$.Page.Alert.show(i$('wrapAlert'), ['<strong>SUCESSO!</strong> Mensagem de alerta com sucesso!'], CONFIG.ALERT.SUCCESS.CLASS);
-           j$.Page.Alert.show( ['<strong>INFORMAÇÃO!</strong> Mensagem de alerta com informação!'], CONFIG.ALERT.INFO.CLASS, i$('wrapAlert'),);
-           //j$.Page.Alert.show(i$('wrapAlert'), ['Mensagem de alerta','Segunda Linha','Terceira Linha'], CONFIG.ALERT.ERROR.CLASS);
+           // i$('wrapAlert').alertShow(['<strong>INFORMAÇÃO!</strong> Mensagem de alerta com informação!'], CONFIG.ALERT.INFO.CLASS);
+           // i$('wrapAlert').alertShow(['<strong>SUCESSO!</strong> Mensagem de alerta com sucesso!'], CONFIG.ALERT.SUCCESS.CLASS);
+           // i$('wrapAlert').alertShow(['<strong>Mensagem de alerta</strong>','Segunda Linha','Terceira Linha'], CONFIG.ALERT.ERROR.CLASS); 
+           // i$('wrapAlert').alertShow('<strong>Advertência!</strong></br><lu><li>Mensagem de alerta.</li><li>Segunda Linha.</li></li><li>Terceira Linha.</li></lu>');
+           // i$('wrapAlert').alertSuccess('<strong>INFORMAÇÃO!</strong> Mensagem de alerta com informação!');
+           // i$('wrapAlert').alertError('<strong>Advertência!</strong></br><lu><li>Mensagem de alerta.</li><li>Segunda Linha.</li></li><li>Terceira Linha.</li></lu>');
+            i$('wrapAlert').alertInfo('<lu><strong>Como exibir mensagens de alerta:</strong>'
+                                     +"<li>i$('idContainer').alertInfo(mensagem)</li>"
+                                     +"<li>i$('idContainer').alertSuccess(mensagem)</li>"
+                                     +"<li>i$('idContainer').alertError(mensagem)</li>"
+                                     +"<li>i$('idContainer').alertShow(mensagem, class)</li><lu>" 
+                                     +"<lu></br><strong>Constantes das classes de mensagem:</strong>"
+                                     +"<li>CONFIG.ALERT.INFO.CLASS</li>"
+                                     +"<li>CONFIG.ALERT.SUCCESS.CLASS</li>"
+                                     +"<li>CONFIG.ALERT.ERROR.CLASS</li></lu>"
+                                    );
         }
         const myPage = function() {
             // variável private
@@ -72,7 +84,7 @@
                       TYPE.CCA().bind(i$('cca'));
                       TYPE.CEP().bind(i$('cep'))
                       i$('cep').bind(TYPE.CEP());
-                      TYPE.Placa().bind(i$('placa'));
+                      TYPE.PLACA().bind(i$('placa'));
                       i$('lista').bind(TYPE.LIST({list:{'1':'Sistema', '2':'Projeto', '3':'Manutenção'}}));
                       TYPE.MASK('(@@)###-9',{validator:{error:'Campo com valor inválido', handler:function(value){return false;}}}).bind(i$('mask2'));
                       TYPE.MASK('(@@)###-9').bind(i$('mask'));
@@ -101,7 +113,7 @@
                         <a class="btn btn-default" id="btn1" onclick="myPage.init();">Injetar</a>
                         <a class="btn btn-default"  onclick="addField();">Novo campo</a>
                         <a class="btn btn-default"  onclick="addInForm();">No Form</a>
-                        <a class="btn btn-default"  onclick="addLabel();">Label</a>
+                        <a class="btn btn-default"  onclick="createLabel();">Label</a>
                         <a class="btn btn-default"  onclick="addAlert();">Alert</a>
                     </legend>
                     <div id='wrapAlert' class="ms-2 mt-2"></div>

@@ -423,8 +423,8 @@
                 };
                 const Modal =function(wrap,form, fixed){
                     let _modal = this;
-                    //this.show = show;
-                    this.display=show;
+                    this.show = show;
+                    //@todo this.display=show;
                     function show(){
                         $("#"+_modal.form.id+"Modal").modal('show'); // exibe o modal
                     }
@@ -465,7 +465,8 @@
                 }
                 const Form =function(wrap,form){
                     let _form = this;
-                    this.display=show;
+                    this.show = show;
+                    //@todo this.display=show;
                     function show(){ _form.form.show()}
                     this.clear=()=>{ wrap.innerHTML=""}
                     this.hide=()=>{_form.form.hide()}
@@ -566,6 +567,7 @@
            return {
                create: function(service, modal){
                    items[service.id] = new j$.Page.Form(service, modal);
+                   Object.setIfExist(service, items[service.id], ['Buttons','Alert','reset','hide','show'])
                    return items[service.id];
                }
              , c$:items
@@ -676,7 +678,7 @@
                    service.actionController = externalController
                 else
                    service.actionController =  j$.Controller.create(service);
-                $i.display();
+                $i.show();  //@todo: $i.display();
                 if (service.Child)
                    service.Child.notify({action:CONFIG.ACTION.INIT});
                 if (service.onOpen)
@@ -802,7 +804,7 @@
                 if (service && service.hide)
                    return false
                 else
-                   $this.display();
+                   $this.show(); //@todo: $this.display();
             };
         }; // $.Page.Modal
         j$.Page.Grid=function(page, btn_template=CONFIG.GRID.DEFAULT){
@@ -1022,6 +1024,28 @@
                      $(button.element).click(actionController[button.key]);
                  submenu(button);
             };
+/*             this.setValue(key, value){
+                if (_btn.c$[key]){
+                    _btn.c$[key].value=value;
+                    _btn.c$[key].element.innerText=value;
+                }
+            }
+            this.getValue(key){
+                return _btn.c$[key].element.innerText;
+            } */
+            this.button = key=>{
+                let b$ =_btn.c$[key];
+                return {
+                      show: ()=>{b$.element.show()}                    
+                   ,  hide: ()=>{b$.element.hide()}
+                   ,toggle: ()=>{b$.element.toggle()}
+                   ,   get: ()=>{return b$.element.get()}                    
+                   ,   set: value=>{
+                            b$.value=value;
+                            b$.element.innerText=value;
+                        }
+                }
+            }
             this.format=parent=>{
                 let html='';
                 for (let key in _btn.c$){
@@ -1746,8 +1770,6 @@
                             let linkClose =(_tab.fixed)?''
                                           :`<a class='${CONFIG.TAB.CLASS.CLOSE}' href="javascript:j$.Dashboard.Tabs.c$.` 
                                           + `${_tab.parent.key}.close('${_tab.key}');">`
-                                          //+`<i class="bi bi-x-circle" style="font-size: 1.0rem; color: black;"></i>`
-                                          //+`<i class="bi bi-x-circle"></i>`
                                           +j$.ui.Render.icon(c$.ICON.CLOSE)                                          
                                           +"</a>";              
                             return `<span class='${CONFIG.TAB.CLASS.TITLE}' onmouseover='j$.Dashboard.Tabs.HANDLE.onmouseover(this);' onmouseout='j$.Dashboard.Tabs.HANDLE.onmouseout(this);' id='tab_link_`+ this.key+"'>"
