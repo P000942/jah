@@ -31,6 +31,28 @@ const System = function(){
                 headTag.appendChild(script);
         }
       , initialized=function(){
+            Element.prototype.addInput = function(input, id) {
+                let name ="";
+                if (input.constructor && input.constructor.name)
+                   name = input.constructor.name.toUpperCase();
+                if (input.create && TYPE[name])
+                    input.create(this, id)
+            }
+            Element.prototype.addLabel = function(label, inputId, properties) {
+                j$.ui.Render.label(this, label, inputId, properties);    
+            }     
+            Element.prototype.alertShow = function(msg, clas$) {
+                j$.Page.Alert.show(msg, clas$, this)  
+            }  
+            Element.prototype.alertSuccess = function(msg) {
+                j$.Page.Alert.success(msg, this)  
+            }   
+            Element.prototype.alertError = function(msg) {
+                j$.Page.Alert.error(msg, this)   
+            }            
+            Element.prototype.alertInfo = function(msg) {
+                j$.Page.Alert.info(msg, this)   
+            }                             
             Element.prototype.stylize = function(properties) {
                 if (properties){
                     if (typeof properties =='string'){
@@ -68,15 +90,15 @@ const System = function(){
             }
             Element.prototype.remove = function() {
                 if (!this.id.isEmpty())
-                $("#" + this.id).remove();
+                    $("#" + this.id).remove();
             }
-            Element.prototype.addClassName = function(className) {
+/*             Element.prototype.addClassName = function(className) {
                 if (!this.id.isEmpty())
-                $("#" + this.id).addClass(className);
-            }
+                    $("#" + this.id).addClass(className);
+            } */
             Element.prototype.hide = function() {
                 if (!this.id.isEmpty())
-                $("#" + this.id).hide();
+                    $("#" + this.id).hide();
             }
             Element.prototype.show = function() {
                 if (!this.id.isEmpty())
@@ -578,7 +600,7 @@ j$.ui.Render= function(){
         } else 
             return "";    
     }
-    , alert:(wrap, msg, clas$)=>{
+    , alert:(wrap, msg, clas$=CONFIG.ALERT.INFO.CLASS)=>{
         let alert = j$.Ext.toObject(clas$, 'CLASS')
         , iconClass = (alert.ICON)?j$.ui.Render.icon(alert.ICON):"";
         alert.CLASS = (alert.CLASS)? `class='alert ${alert.CLASS} alert-dismissible fade show'`: "class='alert alert-dismissible fade show'";

@@ -245,9 +245,7 @@ const TYPE = function() {
                 };
             }
         ,   Color:function(Properties){
-                if (!Properties)
-                    Properties={}
-                Properties.type="color"; // para garantir que será usado o tipo date do html5
+                Properties = Object.preset(Properties,{type:"color", defaultValue:"#ffffff"})
                 this.inherit = superType;
                 this.inherit({size:10, dataType:DATATYPE.DATE
                     , validator:{handler:value=>{return value.isColor();} , error:TYPE.Error.MESSAGE.Date}}, Properties);
@@ -262,10 +260,8 @@ const TYPE = function() {
             }
         ,  Range:function(size, Properties){
                 let _me = this;
-                if (!Properties)
-                    Properties={}
-                Object.preset(Properties, {min:1, max:9, step:1});    
-                Properties.type="range"; // para garantir que será usado o tipo date do html5
+                Properties = Object.preset(Properties, {type: "range" // para garantir que será usado o tipo date do html5
+                                                            , min:1, max:9, step:1});                    
                 this.inherit = superType;
                 this.inherit({size, dataType:DATATYPE.DATE
                     , validator:{handler:value=>{return value.isRange();} , error:TYPE.Error.MESSAGE.Date}}, Properties);
@@ -302,8 +298,9 @@ const TYPE = function() {
                 let prompt='|'+mask.replace(/\w|[@]|[#]/g,"_"); //Montar prompt para entrada de dados;
                 let dataType = (mask.replace(c$.MASK.DecimalCharacter,"").replace(/\d|[#]/g,"").length>0)? DATATYPE.CHAR : DATATYPE.NUMBER;
                 let validator = {handler:value=>{return value.isValidInMask(mask);},error: "campo preenchido com formato inválido"};
-                if (!Properties.align)
-                    Properties.align = (dataType==DATATYPE.CHAR) ?c$.ALIGN.LEFT : c$.ALIGN.RIGHT;
+                /* if (!Properties.align)
+                    Properties.align = (dataType==DATATYPE.CHAR) ?c$.ALIGN.LEFT : c$.ALIGN.RIGHT; */
+                Properties = Object.preset(Properties,{align:(dataType==DATATYPE.CHAR) ?c$.ALIGN.LEFT : c$.ALIGN.RIGHT})    
                 this.inherit = superType;
                 this.inherit({validator:validator, dataType:dataType, mask:{format:mask+prompt, strip:strip}}, Properties);    
         }
@@ -475,7 +472,7 @@ const TYPE = function() {
    ,        CNPJ: properties=>{return new type.Cnpj(properties)}
    ,         CCA: properties=>{return new type.Cca(properties)}
    ,         CEP: properties=>{return new type.Cep(properties)}
-   ,       Placa: properties=>{return new type.Placa(properties)}
+   ,       PLACA: properties=>{return new type.Placa(properties)}
    ,         TEST:function(properties){return {
                    assert:function(obj, value){
                                 console.log('assert('    +value+ '):');
@@ -493,7 +490,7 @@ const TYPE = function() {
 //TYPE.TEST.assert(TYPE.PHONE(),'(092)8122-0122');
 //TYPE.TEST.assert(TYPE.CNPJ(),'07.311.461/0001-24');
 //TYPE.TEST.assert(TYPE.CPF(),'417.660.402-68');
-//TYPE.TEST.assert(TYPE.Placa(),'JGG-1111');
+//TYPE.TEST.assert(TYPE.PLACA(),'JGG-1111');
 //TYPE.TEST.assert(TYPE.CEP(),'69029-080');
 //TYPE.TEST.assert(TYPE.DATE(),'30/10/2011');
 //TYPE.TEST.assert(TYPE.NUMERIC(),'1');

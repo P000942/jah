@@ -276,7 +276,7 @@ const j$ = function(){
 
     //@note: definir um valor para uma propriedade de um método, caso a mesma nao seja informada;
     // é uma forma de garantir que certa propriedade estará presente no objeto
-    Object.preset = (receiver, propertie, defaultvalue)=>{
+    Object.preset = (receiver={}, propertie, defaultvalue)=>{
         if (j$.Ext.isObject(propertie)){ // copia propriedades do objeto
         for (let key in propertie)
             Object.preset(receiver, key, propertie[key]);
@@ -429,7 +429,7 @@ const j$ = function(){
         let key = keys.find(key => {return (source[key])});
         return (key) ?true :false;
     }
-    // retorna a primeira das chaves(key) que encontrar  no objeto 
+    // retorna a primeira das chaves(keys) que encontrar  no objeto 
     Object.firstKey = function(source, keys){
         return keys.find(key => {return (source[key])});
     }
