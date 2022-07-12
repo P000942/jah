@@ -577,12 +577,12 @@ j$.ui.Render= function(){
         return i$(properties.id);
     }
     , formatButton:(properties)=>{
-        let icon = c$.ICON.get(properties.key); 
+        let icon = (properties.icon) ?properties.icon :c$.ICON.get(properties.key);  
         return '<a' +j$.ui.Render.attributes(properties,['value', 'element'])+ '>'
              +j$.ui.Render.icon(icon) +properties.value+'</a>';
     }
     , formatButtonDropdown:(properties)=>{
-        let icon = c$.ICON.get(properties.key); 
+        let icon = (properties.icon) ?properties.icon :c$.ICON.get(properties.key); 
         return '<div id="' +properties.id+ '"  class="btn-group" role="group" aria-label="Button group with nested dropdown">'                 
                 +  '<div class="btn-group" role="group">'                   
                 +    '<button class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown" ' +j$.ui.Render.attributes(properties,['value','onclick','submenu','id'])+ '>'+j$.ui.Render.icon(icon)+'</button>'              

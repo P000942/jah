@@ -571,6 +571,14 @@ TYPE.Fieldset = function(){
             //this.Items=fields;
             this.c$=fields;
             this.length=0;
+            this.validate=()=>{
+                for(let key in this.c$){
+                    let field = this.c$[key];
+                    if (field.validate && !field.validate())
+                       return false;                    
+                 }
+                 return true;
+            }
             this.filter= function(){
                 let criteria={};
                 return {
@@ -946,31 +954,31 @@ TYPE.Error = function() {
         if (field){
             if (method!="hide")
                msg=subscribe(msg,field);
-            if (handle && handle[method])
-                handle[method](field, msg,clas$);
+            if (handle && handle[method])              
+                handle[method](field, msg,clas$);     // Vai acionar o handler externo
             else
-                TYPE.Error[method](field, msg,clas$);
+                TYPE.Error[method](field, msg,clas$); // Vai usar o padrão do   framework
         }        
     }    
-    return {  //Retorna a chamado do erro para o proprio campo de onde veio a chamado - vai seguir o comportamento padrao
+    return {  //Retorna a chamado do erro para o proprio campo de onde veio a chamada - vai seguir o comportamento padrao
 	        init:errorHandle=>{handle=errorHandle} // para definir um callback externo que trata as msgs
         ,  valid:(field,msg)       =>{field.Error.valid(field, msg)}
         ,invalid:(field,msg)       =>{field.Error.invalid(field, msg)}        
         ,   show:(field,msg,clas$) =>{field.Error.show(field, msg, clas$)}
         ,     on:(field,msg,clas$) =>{field.Error.show(field, msg, clas$)} // sinonimo de show        
-        ,    off:(field)           =>{field.Error.hide(field)} // sinonimo de hide
+        ,    off:(field)           =>{field.Error.hide(field)}             // sinonimo de hide
         ,   hide:(field)           =>{field.Error.hide(field)}
         ,noMarkIfValid(mark)         {TYPE.Feedback.noMarkIfValid(mark)} 
         ,MESSAGE:CONFIG.ERROR.MESSAGE    
         , passForward:{ // => O componetes do framework fazem essa chamada
-                    // => Se tem um handle externo, serah passado adiante
-                    // => Se nao tem um handle externo, executa os metodos do proprio error
-               valid:(field,msg)      =>{forward('valid', field, msg)}
-            ,invalid:(field,msg)      =>{forward('invalid'  , field, msg)}
+                        // => Se tem um handle externo, serah passado adiante
+                        // => Se nao tem um handle externo, executa os metodos do proprio error
+               valid:(field,msg)      =>{forward('valid'  , field, msg)}
+            ,invalid:(field,msg)      =>{forward('invalid', field, msg)}
             ,   show:(field,msg,clas$)=>{forward('show'   , field, msg, clas$)}
             ,     on:(field,msg,clas$)=>{forward('show'   , field, msg, clas$)} // sinonimo de show
-            ,    off:(field)          =>{forward('hide'  , field)} // sinonimo de hide
-            ,   hide:(field)          =>{forward('hide'  , field)}
+            ,    off:(field)          =>{forward('hide'   , field)}              // sinonimo de hide
+            ,   hide:(field)          =>{forward('hide'   , field)}
         }       
     };
 }();

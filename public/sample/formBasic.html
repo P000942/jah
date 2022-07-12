@@ -27,18 +27,19 @@
     <script src="../js/jah/ui/page.js"></script>
 
 <script type="text/javascript">
-     $(document).ready(function(){
-        TYPE.Error.init({   show(field, msg,clas$){TYPE.Error.invalid(field, msg)} //qualquer msg
-           ,invalid(field, msg)      {TYPE.Error.invalid(field, msg)} //quando deu erro
-           ,  valid(field, msg)      {TYPE.Error.valid  (field, msg)} //quando ok
-           ,   hide(field)           {TYPE.Error.hide   (field)} //para remover o erro
+     $(document).ready(function(){ // Um handler para tratar o comportamento nos campos
+                                   // Neste caso, mesmo definido o handler, está chamando o comportamento padrão do framework 
+        TYPE.Error.init({ show(field, msg,clas$){TYPE.Error.invalid(field, msg)} //qualquer msg
+                      ,invalid(field, msg)      {TYPE.Error.invalid(field, msg)} //quando deu erro
+                      ,  valid(field, msg)      {TYPE.Error.valid  (field, msg)} //quando ok
+                      ,   hide(field)           {TYPE.Error.hide   (field)}      //para remover o erro
            });
-        TYPE.Error.noMarkIfValid();
-    //   myPage.init();
+        TYPE.Error.noMarkIfValid(); // Se comentar o método, os inputs com conteúdo OK serão identificados
+    //   myPage.init(); // Para iniciar a página no load do form
      });
     //TYPE.Error.init({callback:function(msg,oType){alert(oType.label+': '+msg);}});
     const init =()=>{
-        $("#content").removeClass("lookThis"); // isso é apenas para fazer demonstraçao
+        $("#content").removeClass("lookThis"); // isso é apenas para fazer demonstraçao, essa cor vermelha está ai para chamar atenção
         myPage.init();
     }
     const actionController =function (){
@@ -47,19 +48,25 @@
         ,      insert(e, s){
                           myPage.Alert.show(`insert: ${e.text}`);
                         }
-        ,        back(e){myPage.Alert.show(`back: ${e.text}`)}
+        ,        back(e){myPage.Alert.info(`back: ${e.text}`)}
         ,      remove(){alert('remover')}
         ,      update(){alert('alterar')}
         ,        sort(){alert('sort')}
         ,       print(){alert('print')}
         ,      filter(){alert('filtrar')}
         ,         get(){myPage.Alert.show("Pesquisar")}
-        ,   pesquisar(){myPage.Alert.show("Pesquisar")}//  alert('pesquisar')}
+        ,   pesquisar(){myPage.Alert.show("Pesquisar")}
         ,   hidealert(){myPage.Alert.hide()}
-        ,       save(e){alert(e.text)}
+        ,       save(e){if (myPage.Fieldset.validate())
+                            myPage.Alert.success("<strong>SUCESSO:</strong> Operação bem sucedida!") 
+                        else
+                            myPage.Alert.error("<strong>ERRO:</strong> Operação não realizada!") 
+                        }
         ,      toggle(e){let btn = myPage.Buttons.button("TOGGLE")
-                        myPage.hide(); //@todo: toggle na página
-                        btn.set("Show")
+                             vl  = btn.get();
+                        //myPage.toggle();  // nesse caso, esconde a pagina inteira
+                        myPage.page.fieldset.toggle();
+                        btn.set(vl.toggle(["Show", "Hide"]));
                         }
         ,    resetar(e){myPage.reset()}
         ,    pornome(e){alert(e.text)}
@@ -76,13 +83,14 @@
                  BUTTONS.INSERT.value='Novo'; //Muda o título - Mas muda global
                  BUTTONS.BACK={value:'back',  clas$:'btn btn-default'}; //Sobreposição tudo
                  BUTTONS.HIDE={value:'Hide', clas$:'btn btn-default', icon:{CLASS:'bi bi-x-circle'}}; // Incluir novo botão no preset comando
-                 page.Buttons.c$={TOGGLE:BUTTONS.HIDE  //@todo: icones
-                                   ,  BACK:BUTTONS.BACK
-                                   ,  SAVE:BUTTONS.SAVE
-                                   , IMPRIMIR:BUTTONS.PRINT //dará erro pq não tem o "imprimir"no controller
-                                   , hideAlert:{value:'Hide Alert', clas$:'btn'} // Inclui apenas para essa página 
-                                   , RESETAR:{}
-                               };
+                 // Nota: Isso está mudando o padrão, afetará outros páginas também.
+                 page.Buttons.c$={TOGGLE:BUTTONS.HIDE   
+                                 ,  BACK:BUTTONS.BACK
+                                 ,  SAVE:BUTTONS.SAVE   
+                              , IMPRIMIR:BUTTONS.PRINT //Ao clicar, dará erro pq não tem o "imprimir" no actionController
+                             , hideAlert:{value:'Hide Alert', clas$:'btn'} // Inclui apenas para essa página 
+                               , RESETAR:{}
+                               }; 
                  // Cria um item novo direto nos commans da página
                  page.Buttons.c$.pesquisar={value:"Pesquisar", clas$:CONFIG.BUTTON.CLASS.DEFAULT}; //todas as outras propridades serão criados de acordo com a convenção
                  let {pesquisar} = page.Buttons.c$;
@@ -91,7 +99,6 @@
                                       }}
                  ///CONFIG.GRID.BUTTONS.edit.value='Editar'
                  //page.List.Detail.Link.Items.edit.value='Editar [RN-05]'; //Muda título do botão do link linhas de detalhe
-                 //var externalController=true
                  page.init(actionController);
             }
           , autoRequest:false
@@ -118,7 +125,7 @@
                   Maiuscula:TYPE.UPPERCASE(2,{label:'Maiúscula'}),
                   Minuscula:TYPE.LOWERCASE(4,{label:'Minúscula'}),
                        Data:TYPE.DATE(),
-                      Data5:TYPE.DATE5(),//{type:"date"}
+                      Data5:TYPE.DATE5(),   //{type:"date"}
                    DataTime:TYPE.DATETIME(),//{type:"datetime-local"}
                        Hora:TYPE.HOUR({type:"time"}),
                         Cor:TYPE.COLOR({defaultValue:"#f6b73c"}),

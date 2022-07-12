@@ -583,19 +583,19 @@
             //let $alert = this;
             let _wrap = CONFIG.LAYOUT.ALERT_CONTENT;
             return {
-            show:function(msg, alertClass, wrap=i$(_wrap)){
-                this.hide(wrap);
-                if (j$.Ext.isString(msg))
-                    j$.ui.Render.alert(wrap, msg, alertClass);
-                else if (j$.Ext.isArray(msg) && msg.length === 1){
-                    j$.ui.Render.alert(wrap, msg[0], alertClass);
-                }else{
-                    let html='<lu>'
-                    msg.forEach(function(text){html+=`<li>${text}</li>`});
-                    html+='</lu>'
-                    j$.ui.Render.alert(wrap, html , alertClass);
+                show:function(msg, alertClass, wrap=i$(_wrap)){
+                    this.hide(wrap);
+                    if (j$.Ext.isString(msg))
+                        j$.ui.Render.alert(wrap, msg, alertClass);
+                    else if (j$.Ext.isArray(msg) && msg.length === 1){
+                        j$.ui.Render.alert(wrap, msg[0], alertClass);
+                    }else{
+                        let html='<lu>'
+                        msg.forEach(function(text){html+=`<li>${text}</li>`});
+                        html+='</lu>'
+                        j$.ui.Render.alert(wrap, html , alertClass);
+                    }
                 }
-            }
             ,   error:(msg, wrap)=>{
                         j$.Page.Alert.show(msg, CONFIG.ALERT.ERROR, wrap)
                     }
@@ -605,7 +605,7 @@
             , success:(msg, wrap)=>{
                         j$.Page.Alert.show(msg, CONFIG.ALERT.SUCCESS, wrap)
                     }
-            , hide:(wrap=i$(_wrap))=>{ wrap.innerHTML=''}
+            ,    hide:(wrap=i$(_wrap))=>{ if (wrap) wrap.innerHTML=''}
             }
             //j$.Page.Alert.error("Meu texto de erro", i$("assuntoAlert")) // assuntoAlert é o padrão da tabs "servico"+"Alert"
             //j$.Page.Alert.info("Meu texto info"))                        // será exibido no padrão definido em CONFIG
@@ -699,15 +699,14 @@
                     show (msg,_class=CONFIG.ALERT.INFO.CLASS, inFocus){
                         if (msg){
                            inFocus = (inFocus) ?`<strong>${inFocus}</strong> ` : "";
-                           if (alert) 
-                              j$.Page.Alert.show( [`${inFocus}${msg}`], _class, alert);
+                          // if (alert) 
+                           j$.Page.Alert.show( [`${inFocus}${msg}`], _class, alert);
                         }else
                              $i.Alert.hide();
                     }
-                    , hide(){
-                        if (alert)
-                           j$.Page.Alert.hide(alert);
-                    }
+                    ,success(msg, inFocus){$i.Alert.show(msg, CONFIG.ALERT.SUCCESS.CLASS, inFocus)}
+                    ,error(msg, inFocus){$i.Alert.show(msg, CONFIG.ALERT.ERROR.CLASS, inFocus)}
+                    ,hide(){j$.Page.Alert.hide(alert)}
                     ,id:alert
                 } 
             }($i.alert);
@@ -1024,15 +1023,6 @@
                      $(button.element).click(actionController[button.key]);
                  submenu(button);
             };
-/*             this.setValue(key, value){
-                if (_btn.c$[key]){
-                    _btn.c$[key].value=value;
-                    _btn.c$[key].element.innerText=value;
-                }
-            }
-            this.getValue(key){
-                return _btn.c$[key].element.innerText;
-            } */
             this.button = key=>{
                 let b$ =_btn.c$[key];
                 return {
@@ -1464,14 +1454,7 @@
               
                 function validate(newRecord){
                       let record = this.record()
-                        , error  =false;
-                      for(let key in service.Fieldset.c$){
-                         let field = service.Fieldset.c$[key];
-                         if (field.validate){
-                            if (!field.validate())
-                                error=true;
-                         }
-                      }
+                        , error  =!service.Fieldset.validate();
                       if (service.validate && !error)
                           error=!service.validate(_me, record, newRecord);
               

@@ -240,6 +240,10 @@ const j$ = function(){
         let value = this.toString().replace(",",'.');
         return j$.Ext.moneyFormat(value,decimals);
      } 
+    //@note: procura por valor no objeto e retorna array com as propriedades que contem o valor
+    String.prototype.toggle = function(values){
+        return (this === values[1]) ?values[0] :values[1]       
+    }      
     String.preset= function(value, vlDefault='') {
         return (value == null) ?vlDefault :String(value);
     }
