@@ -230,9 +230,11 @@
         
         j$.Page = function(){
            let items = {}
-           ,frame=function(){
-                let me = this;
-                let items={};
+           , frame=function(){
+                let me = this
+                  , items={}
+                  , showbox_class=c$.ICON.SHOWBOX.CLASS //'bi bi-caret-up-fill'
+                  , hidebox_class=c$.ICON.HIDEBOX.CLASS; //'bi bi-caret-right-fill';
                 function slidebox(properties){
                     let self = this;
                     Object.preset(properties, {container:i$('content'), style:'slidebox_show'});
@@ -240,11 +242,11 @@
                     Object.preset(self, properties);
                     let create=function(){
                         let idFieldset =properties.id + "_slidebox";
-                        self.container.insert("<fieldset id='" +idFieldset+ "'>"
-                                    +"<legend class='slidebox_legend' id='" +self.id+ "_slidebox_legend'>"
-                                    +"<span title='Esconder' onclick='j$.Page.Frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
+                        self.container.insert(`<fieldset id='${idFieldset}'>`
+                                    +`<legend class='slidebox_legend' id='${self.id}_slidebox_legend'>`
+                                    +`<span title='Esconder' onclick='j$.Page.Frame.toggle("${self.id}")' class='${showbox_class}' id= '${self.id}_button'></span>`
                                     + self.legend+"</legend>"
-                                    + "<div id='" +self.id+ "'></div>"
+                                    + `<div id='${self.id}'></div>`
                                     +"</fieldset>");
                         self.source = i$(idFieldset);
                         self.source.stylize(self.style);
@@ -266,11 +268,11 @@
                     Object.preset(self, properties);
                     let create=function(){
                         let idFieldset =properties.id + "_framebox";
-                        self.container.insert("<div id='" +idFieldset+ "'>"
-                                    +"<div class='wrap_framebox_legend' id='" +self.id+ "_framebox_legend'>"
-                                    +"<span title='Esconder' onclick='j$.Page.Frame.toggle(\""+self.id+"\")' class='showbox' id='" +self.id+ "_button'></span>"
+                        self.container.insert(`<div id='${idFieldset}'>`
+                                    +`<div class='wrap_framebox_legend' id='${self.id}_framebox_legend'>`
+                                    +`<span title='Esconder' onclick='j$.Page.Frame.toggle("${self.id}")' class='${showbox_class}' id= '${self.id}_button'></span>`
                                     + self.legend+"</div>"
-                                    + "<div class='wrap_box' id='" +self.id+ "'></div>"
+                                    + `<div class='wrap_box' id='${self.id}'></div>`
                                     +"</div>");
                         self.source = i$(idFieldset);
                         self.source.stylize(self.style);
@@ -280,45 +282,41 @@
                     }();
                     items[self.id]=self;
                     Object.preset(self,{toggle:()=>{j$.Page.Frame.toggle(self.id)}
-                                    , show  :()=>{j$ui.Page.Frame.show(self.id)}});
+                                      , show  :()=>{j$ui.Page.Frame.show(self.id)}});
                     self.hide=()=>{j$.Page.Frame.hide(self.id)};
                     if (properties.hide){self.hide();}
                     return self;
                 }
                 let toggle=function(id){
                     let frame = this.items[id];
-                    if (frame.button.className == "showbox"){
+                    if (frame.button.title === "Esconder")
                         this.hide(id);
-                    } else {
-                        this.show(id);
-                    }
+                    else 
+                        this.show(id);                    
                 };
                 let hide=function(id){
                     let frame = this.items[id];
-                        frame.button.className =  "hidebox";
-                        frame.button.title = "esconder";
-                        if (frame.constructor.name=='slidebox')
+                    frame.button.className =  hidebox_class;
+                    frame.button.title = "Exibir";
+                    if (frame.constructor.name=='slidebox')
                         frame.source.className = "slidebox_hide";
-                        frame.target.hide();
+                    frame.target.hide();
                 };
                 let show=function(id){
                     let frame = this.items[id];
-                        frame.button.className =  "showbox";
-                        frame.button.title = "Exibir";
+                        frame.button.className =  showbox_class;
+                        frame.button.title = "Esconder";
                         if (frame.constructor.name=='slidebox')
-                        frame.source.className = "slidebox_show";
-            
+                            frame.source.className = "slidebox_show";
                         frame.target.show();
                 };
                 return{
-                    // properties={container:'', id:'', style:'', legend:''}
-                    slidebox:function(properties){return new slidebox(properties)}
-                , framebox:function(properties){return new framebox(properties)}
-                //, dropbox:function(properties){return new dropbox(properties);}
-                , toggle:toggle
-                , show:show
-                , hide:hide
-                , items:items
+                      slidebox:function(properties){return new slidebox(properties)}
+                    , framebox:function(properties){return new framebox(properties)}
+                    , toggle:toggle
+                    , show:show
+                    , hide:hide
+                    , items:items
                 };
             }()
            ,designer= function (){          

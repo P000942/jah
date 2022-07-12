@@ -102,7 +102,7 @@ fieldset > legend{
     /* height: 30px; */
     padding-left: 1px; 
     /* text-align: left; */
-    padding-bottom: 1px;
+    padding-bottom: 4px;
 }
 .wrap_framebox_legend {
     background-color: rgba(182,211,143,0.98);
@@ -159,15 +159,6 @@ fieldset > legend{
     height: 25px; line-height: 25px;
     border: 0;
 }
-
-.showbox, .hidebox{
-    margin-top:2px; margin-left:3px; margin-right: 0px;
-    float: left; cursor: pointer; width:16px; height:16px;
-    font-family: FontAwesome;
-}
-
-.showbox:before{content: "\f0d8";}
-.hidebox:before{content: "\f0da";}
 
 .wrap_command {
   text-align:left;

@@ -74,28 +74,28 @@
               , {type:'line'
                      , style:{marginLeft:'width:100%', marginBottom:'5px', borderColor:'green'}, title:"Caracteres Especiais"}
               , {type:'column'  , fields:[['Nome', 'Texto'],['Maiuscula','Minuscula', 'Letra']]
-                                , style:{marginLeft:'34px'}
+                                ,  style:{marginLeft:'34px'}
                             }
-              , {type:'line'    , style:{marginBottom:'1px', borderColor:'green'}
-                                , title:{text:"Campos Especiais Formatados", style:{textAlign:'left'}}}
+              , {type:'line'    ,  style:{marginBottom:'1px', borderColor:'green'}
+                                ,  title:{text:"Campos Especiais Formatados", style:{textAlign:'left'}}}
               , {type:'inLine'  , fields:[['CNPJ','CCA'],['CPF','CEP']]
-                                , style:{marginLeft:'3.0em'}
-                                , label: [["col-sm-1", "col-sm-2"],["col-sm-1", "col-sm-2"]]
-                                ,column: "col-sm-2" //["col-sm-2", "col-sm-1"]
+                                ,  style:{marginLeft:'3.0em'}
+                                ,  label: [["col-sm-1", "col-sm-2"],["col-sm-1", "col-sm-2"]]
+                                , column: "col-sm-2" //["col-sm-2", "col-sm-1"]
                              //   ,coupled: "col-sm-2" // aplica para 'column' e 'label' 
                             }
-              , {type:'line'    , style:{marginTop:'1px'}
-                                , title:{text:"Estilo de Coluna", style:{textAlign:'left'}}}
-              , {type:'column'  , fields:[['Data','Hora'],['Telefone','Placa']]
+              , {type:'line'    ,   style:{marginTop:'1px'}
+                                ,   title:{text:"Estilo de Coluna", style:{textAlign:'left'}}}
+              , {type:'column'  ,  fields:[['Data','Hora'],['Telefone','Placa']]
                                 , coupled: "col-sm-2"
-                                , style:{marginLeft:'80px'}}
+                                ,   style:{marginLeft:'80px'}}
               , {type:'slidebox.column', fields:['Mascara','MascaraUsuario']
                                        //, column:['col-sm-2']
                                        , id:'slidebox', title:'Máscaras'
                                        , design:[{type:'classic', fields:'Check'}]} // 1.quando tem apenas um campo, não precisar usar o um array para definir
                                                                                     // 2.Inclui no frame 'slidebox' os fields definidos no Array no estilo 'column'
                                                                                     // 3.Em seguida, no mesmo frame desenha tudo o que está definido em design (recursivo)
-              , {type:'framebox',  id:'framebox', title:'Listas'} // aqui apenas cria o frame - abaixo coloca as secoes
+              , {type:'framebox',  id:'framebox', title:'Listas'} // aqui apenas cria o frame - abaixo, serão colocadas as secoes
                 //Outra forma de colocar os campos em um frame é indicar o nome do mesmo
               , {type:'column',  frame:'framebox', fields:['listUf', 'Lista'], coupled: "col-sm-2"} 
                //Pode-se ainda indicar o id de algum container específico - qualquer container;
@@ -122,7 +122,7 @@
                        CNPJ:TYPE.CNPJ(),
                         CCA:TYPE.CCA(),
                         CEP:TYPE.CEP(),
-                      Placa:TYPE.Placa(),
+                      Placa:TYPE.PLACA(),
                       Lista:TYPE.LIST({label:'Categoria', list:{'1':'Sistema', '2':'Projeto', '3':'Manutenção'}}),
                       listUf:TYPE.LIST({label:'UF', resource:{name:'uf', text:'txEstado'}}),
                       Check:TYPE.BOOLEAN({label:'Ativo', list:{'true':{value:true, text:'Ativo'}, 'false': {value:false, text:'Cancelado'}}}),
@@ -140,6 +140,5 @@
         <section id="content_section" class="container-fluid">
             <div id='content'></div>
         </section>
-
 </body>
 </html>
