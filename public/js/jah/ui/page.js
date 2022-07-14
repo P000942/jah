@@ -29,7 +29,7 @@
         j$.Service = function(){
            let items = {}
             ,  Adapter = function(adapter){
-                    // Este é o adater default do Page
+                    // Este é o adapter default do Page
                     // o cliente pode criar um próprio com a mesma assinatura 
                     let $this=this;
                     Object.preset(this, adapter);
@@ -422,7 +422,7 @@
                 const Modal =function(wrap,form, fixed){
                     let _modal = this;
                     this.show = show;
-                    //@todo this.display=show;
+                    // TODO: this.display=show;
                     function show(){
                         $("#"+_modal.form.id+"Modal").modal('show'); // exibe o modal
                     }
@@ -464,7 +464,7 @@
                 const Form =function(wrap,form){
                     let _form = this;
                     this.show = show;
-                    //@todo this.display=show;
+                     
                     function show(){ _form.form.show()}
                     this.clear=()=>{ wrap.innerHTML=""}
                     this.hide=()=>{_form.form.hide()}
@@ -676,7 +676,7 @@
                    service.actionController = externalController
                 else
                    service.actionController =  j$.Controller.create(service);
-                $i.show();  //@todo: $i.display();
+                $i.show();   
                 if (service.Child)
                    service.Child.notify({action:CONFIG.ACTION.INIT});
                 if (service.onOpen)
@@ -801,7 +801,7 @@
                 if (service && service.hide)
                    return false
                 else
-                   $this.show(); //@todo: $this.display();
+                   $this.show();  
             };
         }; // $.Page.Modal
         j$.Page.Grid=function(page, btn_template=CONFIG.GRID.DEFAULT){
@@ -1492,11 +1492,12 @@
             return{
                 init: properties=>{
                     j$.Dashboard.Factory = (properties.designer && properties.designer.factory) 
-                                         ?j$.Dashboard[properties.designer.factory] 
-                                         :j$.Dashboard.Menubar
+                                         ? j$.Dashboard[properties.designer.factory] 
+                                         : j$.Dashboard.Menubar
                     j$.Dashboard.Factory.create();
                     j$.Dashboard.Service.init();
-                    j$.Dashboard.Factory.bindToTabs(properties.services, properties.designer.options);
+                    if (properties.services && properties.designer)
+                        j$.Dashboard.Factory.bindToTabs(properties.services, properties.designer.options);
                 }
                 , bindItem: item =>{
                     if (!item.url && !item.onCLick){
@@ -1514,11 +1515,11 @@
                 , openItem: (item, record) => {
                     if (!item.url && !item.onCLick){
                         if (item.partial)
-                            j$.Dashboard.Service.openPartial(item, null, record); //#Todo: passar o record
+                            j$.Dashboard.Service.openPartial(item, null, record);  
                         else if (item.modal){
                             j$.Service.c$[item.key].init(null, item.modal, record);
                         } else
-                            j$.Dashboard.Service.delegateTo(item, null, record); //#Todo: passar o record
+                            j$.Dashboard.Service.delegateTo(item, null, record); 
                     }
             }
             , idContent:idContent
@@ -1551,19 +1552,19 @@
                 , idContent:idContent
             };
         }(); // j$.Dashboard.Service
-        
+      
         j$.Dashboard.Menubar=function(){
             let menubar
-              , _c$ = CONFIG.MENU.OPTIONS[CONFIG.MENU.PARSER.toUpperCase()];
+              , _c$ = CONFIG.MENU.OPTIONS[CONFIG.MENU.PARSER.toUpperCase()] // design 
+              , _idContent= _c$.CONTENT
             const initialized = function(){
                 i$(j$.Dashboard.idContent).className =_c$.CLASS.CONTENT;
-                i$(_c$.CONTENT).className = _c$.CLASS.MENU;
-                for (let key in CONFIG.MENU.OPTIONS){
+                i$(_idContent).className = _c$.CLASS.MENU;
+             /*    for (let key in CONFIG.MENU.OPTIONS){ 
                     let option =  CONFIG.MENU.OPTIONS[key]
-                    if (key != CONFIG.MENU.PARSER.toUpperCase()){             
-                        i$(option.CONTENT).remove();
-                    }
-                }
+                    if (key != CONFIG.MENU.PARSER.toUpperCase())          
+                        i$(option.CONTENT).remove();                    
+                } */
                 return true;
             };    
         
@@ -1577,6 +1578,7 @@
                     }
                }
             , bindToTabs: function(Services, design){
+                    if (Services && design){
                         for (let key in design){
                             let menu = design[key];
                             if (j$.Ext.isArray(menu))
@@ -1584,15 +1586,20 @@
                             Object.preset(menu, {key:key, caption:key});
                             j$.Dashboard.Menubar.bindItems(menu, Services);
                         }
+                    }
                 }
-            ,  create:function(){
+            ,  create:function(content=_idContent){
                        initialized();
-                       menubar = j$.Dashboard.Menu.create(_c$.CONTENT)
+                       menubar = j$.Dashboard.Menu.create(content)
                     }
             , addMenu:function(menu){return menubar.addMenu(menu)}
             , getMenu:function(menu_key){ return menubar.getMenu(menu_key)}
             ,  render:function(menu){ menubar.render()}
-            , idContent:_c$.CONTENT
+            , idContent:function(id){
+                    if (id)
+                        _idContent=id
+                    return _idContent    
+                } 
             }
         }(); // j$.Dashboard.Menubar
         
@@ -1627,10 +1634,10 @@
                 
                     const initialized=function(){
                         if (!idContent){       
-                        throw  System.EXCEPTION.format(EXCEPTION.ITEM.INVALID_ELEMENT, "Impossível montar um objeto tabs sem indicar o 'ID' do elemento html onde será montado");
+                            throw  System.EXCEPTION.format(EXCEPTION.ITEM.INVALID_ELEMENT, "Impossível montar um objeto tabs sem indicar o 'ID' do elemento html onde será montado");
                         }else{
-                        i$(idContent).insert(`<div id='${idWrap}' class='${CONFIG.TAB.CLASS.CONTAINER}' />`); //wrap geral do tab
-                        i$(idWrap).insert(`<div id='${idTab}' class='${CONFIG.TAB.CLASS.BUTTONS}' />`);       //Wrap das tab-link
+                            i$(idContent).insert(`<div id='${idWrap}' class='${CONFIG.TAB.CLASS.CONTAINER}' />`); //wrap geral do tab
+                            i$(idWrap).insert(`<div id='${idTab}' class='${CONFIG.TAB.CLASS.BUTTONS}' />`);       //Wrap das tab-link
                         }
                         return true;
                     }();
@@ -1780,12 +1787,14 @@
                  C$:key=>{return tabs[key]}
               , open:(root,key)=>{tabs[root].open(key)}  
               , create: (idTabs, idContent)=>{
-                     tabs[idTabs] = new Root(idTabs, idContent);
-                     if (!j$.Dashboard.Tabs.root){
-                        j$.Dashboard.Tabs.root = tabs[idTabs]
-                        j$.$T = j$.Dashboard.Tabs.root.c$;
-                     }
-                     return tabs[idTabs];
+                    if (idTabs && idContent){
+                        tabs[idTabs] = new Root(idTabs, idContent);
+                        if (!j$.Dashboard.Tabs.root){
+                            j$.Dashboard.Tabs.root = tabs[idTabs]
+                            j$.$T = j$.Dashboard.Tabs.root.c$;
+                        }
+                        return tabs[idTabs];
+                    }    
               }
               , HANDLE:{
                         onmouseover: obj=>{
@@ -1857,9 +1866,9 @@
                                     attClass += ' active';
                                     properties.Root.active=true;
                                 }                               
-                                if (properties.length>0){ //menu      
+                                if (properties.length>0){ //o menu      
                                     return `<li class="${attClass}"  ${attHint}>`
-                                        +`<a class="btn btn-toggle collapsed" ` 
+                                        +`<a class="btn btn-toggle dropdown-toggle collapsed" ` 
                                         + formatLink(properties)
                                         +` data-bs-toggle="collapse" data-bs-target="#${properties.id}_target" aria-expanded="false">`
                                         +    attIcon+properties.caption
@@ -1867,7 +1876,7 @@
                                         +`<div id="${properties.id}_target" class="collapse" style=""><ul id="${properties.id}"  class="sub-menu"></ul></div>` //sub-menu collapse
                                         + '</li>';
                                 } else{ // as opcoes do menu entram aqui   
-                                    if (attIcon.isEmpty())
+                                    if (attIcon.isEmpty() && properties.Parent.Parent)
                                         attIcon='<i class="bi bi-chevron-right"></i>';
                                     return `<li class="sub-menu"><a id="${properties.id}" ${attHint} ${formatLink(properties)}>`
                                                 +attIcon                                               
@@ -1905,7 +1914,7 @@
                 this.render = ()=>{
                     $('#'+_base.Parent.id).append(j$.Dashboard.Menu.Designer.format(_base));
                     if (_base.onClick)
-                    $("#"+_base.id).click(_base.onClick);
+                        $("#"+_base.id).click(_base.onClick);
                     _base.submenu.render();
                 }
                 let util = function(){
@@ -2033,7 +2042,7 @@
                     return j$.Dashboard.Menu.Designer.createContainer(idContent);
                 };
             }   
-            //#todo: está sem uso no framework - mas é interessante para a criação de um menu
+            // TODO: está sem uso no framework - mas é interessante para a criação de um menu
             , Dropdown=function(idContent, caption){  
                 let _dropdown = this
                 , wCaption=(caption)?caption:'';
@@ -2060,7 +2069,7 @@
                create (idContent){
                    items[idContent] =new Navbar(idContent);
                    return items[idContent];
-              }      
+               }      
               , menubar: Designers.menubar
               , sidebar: Designers.sidebar            
               , Designer: Designers[_parser]

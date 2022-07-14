@@ -313,13 +313,11 @@ System.Node=function(inheritor, properties){
         return{
             formatKey:function(){
                 let key='';
-                if (j$.Ext.type(properties)=='String')
-                    key=properties.toKey();
-                else if (properties.key)
+                properties = j$.Ext.toObject(properties,'key');
+                if (properties.key)
                     key= properties.key;
                 else if (properties.caption)
                     key = properties.caption.toKey();
-                  //  key = _node.Parent.key + "_" + properties.caption.toKey();
 
                 if (key.isEmpty())
                     key=System.util.getId(_node.Parent.key + "_" + _node.type);

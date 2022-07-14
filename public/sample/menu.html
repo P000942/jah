@@ -7,46 +7,44 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="../css/font-awesome.css">
-
-    <!-- <link rel="stylesheet" href="../css/bootstrap-responsive.min.css"> -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
-    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" 
-    crossorigin="anonymous">  
-    <link rel="stylesheet" href="../css/layout.css" />
-
-    <script src="../js/vendor/jquery-3.5.1.js"></script>
-
-    <!-- <script src="../js/vendor/bootstrap.min.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script> 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css" />
+ 
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+ 
+  
     <script src="../js/jah/config.js"></script>
-    <script src="../js/jah/api/dataExt.js"></script>
+    <script src="../js/jah/api/dataExt.js"></script>    
     <script src="../js/jah/api/system.js"></script>
+    <!-- <script src="../js/jah/ui/type.js"></script> -->
     <script src="../js/jah/ui/page.js"></script>
 </head>
 <body>
         <header class="navbar navbar-expand navbar-light bg-light sticky-top flex-md-nowrap p-0 shadow">
             <div class="top-left navbar-brand col-md-2 col-lg-2"></div>
-            <input class="form-control form-control-dark w-100 col-md-6" type="text" placeholder="Pesquisar" aria-label="Search">
-           <nav class="navbar" id="menubar"></nav>
+            <input class="form-control form-control-dark w-100 col-md-6" type="text" placeholder="Pesquisar" aria-label="Search">           
         </header>
-
+        <nav id="menubar"></nav>
         <section id="content_section" class="container-fluid">
             <div id='content'></div>
         </section>
 
     </div>
-</body>
-</html>
+</body> 
+</html> 
 <script type="text/javascript">
     $(document).ready(function(){
-        const menu = j$.Dashboard.Menu.create("menubar");
+        j$.Dashboard.Menubar.idContent("menubar");
+        j$.Dashboard.init({}) 
+        const menu = j$.Dashboard.Menubar;
+        //const menu = j$.Dashboard.Menu.create("menubar");
         menu.addMenu({caption:"Home", active:true});
 
         const menu_link = menu.addMenu("Link");
-                menu_link.add({caption:'Link', icon:'icon-pencil', url:'http://localhost:8383/jah/partial.html', hint:'Conheça a história e a caminhada da Comunidade'});
-                menu_link.add({caption:'onClick', icon:'icon-pencil', onClick:function(){alert("onClick");}, hint:'Veja como estamos organizados'});
+                menu_link.add({caption:'Link', icon:{CLASS:'bi bi-pencil'}, url:'http://localhost:8383/jah/partial.html', hint:'Conheça a história e a caminhada da Comunidade'});
+                menu_link.add({caption:'onClick', icon:{CLASS:'bi bi-pencil'}, onClick:function(){alert("onClick");}, hint:'Veja como estamos organizados'});
                 menu_link.add(); 
                 const menu_album = menu_link.submenu.add({key: 'Album', caption:'Álbum'});
                       j$.Dashboard.Menu.c$.menubar.c$.Link.c$.Album.add({caption:'Album 01'});
