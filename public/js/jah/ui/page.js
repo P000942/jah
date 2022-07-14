@@ -1556,14 +1556,14 @@
         j$.Dashboard.Menubar=function(){
             let menubar
               , _c$ = CONFIG.MENU.OPTIONS[CONFIG.MENU.PARSER.toUpperCase()] // design 
-              , _idContent= _c$.CONTENT
+              , _idContent= _c$.ID
             const initialized = function(){
-                i$(j$.Dashboard.idContent).className =_c$.CLASS.CONTENT;
+                i$(j$.Dashboard.idContent).className =_c$.CLASS.WRAP;
                 i$(_idContent).className = _c$.CLASS.MENU;
              /*    for (let key in CONFIG.MENU.OPTIONS){ 
                     let option =  CONFIG.MENU.OPTIONS[key]
                     if (key != CONFIG.MENU.PARSER.toUpperCase())          
-                        i$(option.CONTENT).remove();                    
+                        i$(option.ID).remove();                    
                 } */
                 return true;
             };    

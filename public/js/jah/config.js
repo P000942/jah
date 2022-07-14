@@ -242,12 +242,12 @@ const CONFIG = {
     ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
     ,    MENU:{PARSER:c$.MENU.TYPE.SIDEBAR // "MENUBAR" ou 'SIDEBAR'
-            , OPTIONS:{SIDEBAR:{CLASS:{CONTENT:"col-md-10 ml-sm-auto col-lg-10 px-md-2"
+            , OPTIONS:{SIDEBAR:{CLASS:{WRAP:"col-md-10 ml-sm-auto col-lg-10 px-md-2"
                                         , MENU:"col-md-2 col-lg-2 d-md-block nav-side-menu"} //"col-md-2 col-lg-2 d-md-block nav-side-menu"
-                            , CONTENT:"sidebar"}
-                     , MENUBAR:{CLASS:{CONTENT:"col-md-12 ml-sm-auto col-lg-12 px-md-2"
+                            , ID:"sidebar"}
+                     , MENUBAR:{CLASS:{WRAP:"col-md-12 ml-sm-auto col-lg-12 px-md-2"
                                         , MENU:"navbar navbar-expand-lg navbar-light bg-light menubar_space"}
-                            , CONTENT:"menubar"}
+                            , ID:"menubar"}
                       } 
         }                 
 };
