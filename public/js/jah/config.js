@@ -227,18 +227,19 @@ const CONFIG = {
     ,   LABEL:{CLASS:{DEFAULT:"col-form-label col-form-label-sm col-3 col-sm-2 col-md-2 col-xl-2 inLine space"
                      , INLINE:"col-form-label col-form-label-sm col-auto inLine"
                      , COLUMN:"col-auto space"
-                     }}    
-    ,   TAB:{CLASS:{ CLOSE:"link_tab_close"  
-            ,        TITLE:"link_tab"  
-            ,       ACTIVE:"active_link_tab" 
-            ,        HOVER:"link_tab_hover"              
-            , HOVER_ACTIVE:"active_link_tab_hover"
-            ,         WRAP:"tab_wrap"
-            ,      CONTENT:"tab_content"
-            ,      BUTTONS:"tabs_buttons"
-            ,    CONTAINER:"tabs_wrap"
-                     }
-        }              
+                     }}        
+    ,   TABS:{
+            BUTTONS:{CLASS:"tabs_buttons"}        
+        ,   CONTENT:{CLASS:"tab_content", WRAP:{CLASS:"tab_wrap"}}
+        ,     CLASS:"tabs_wrap"
+        ,      LINK:{
+                        CLOSE:{CLASS:"link_tab_close"}
+                ,       TITLE:{CLASS:"link_tab"}
+                ,      ACTIVE:{CLASS:"active_link_tab"}
+                ,       HOVER:{CLASS:"link_tab_hover"}
+                ,HOVER_ACTIVE:{CLASS:"active_link_tab_hover"}
+                }
+        }                         
     ,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row space", COLUMN:"col-auto space"}}                           
     ,   COLOR:{CLASS:{DEFAULT:'form-color-control form-control-sm'}}
     ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}

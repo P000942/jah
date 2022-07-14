@@ -1636,8 +1636,8 @@
                         if (!idContent){       
                             throw  System.EXCEPTION.format(EXCEPTION.ITEM.INVALID_ELEMENT, "Impossível montar um objeto tabs sem indicar o 'ID' do elemento html onde será montado");
                         }else{
-                            i$(idContent).insert(`<div id='${idWrap}' class='${CONFIG.TAB.CLASS.CONTAINER}' />`); //wrap geral do tab
-                            i$(idWrap).insert(`<div id='${idTab}' class='${CONFIG.TAB.CLASS.BUTTONS}' />`);       //Wrap das tab-link
+                            i$(idContent).insert(`<div id='${idWrap}' class='${CONFIG.TABS.CLASS}' />`); //wrap geral do tab
+                            i$(idWrap).insert(`<div id='${idTab}' class='${CONFIG.TABS.BUTTONS.CLASS}' />`);       //Wrap das tab-link
                         }
                         return true;
                     }();
@@ -1713,8 +1713,8 @@
                             }             
                             i$(idTab).insert({bottom: _tab.render() + "\n"}); // cria o link da tab
                             i$(idWrap).insert({bottom: 
-                                                    `<div class='${CONFIG.TAB.CLASS.WRAP}' id='${_tab.id}'>` 
-                                                    +`<div class='${CONFIG.TAB.CLASS.CONTENT}' id='${_tab.idContent}'>${html}</div>`
+                                                     `<div class='${CONFIG.TABS.CONTENT.WRAP.CLASS}' id='${_tab.id}'>` 
+                                                    +`<div class='${CONFIG.TABS.CONTENT.CLASS}' id='${_tab.idContent}'>${html}</div>`
                                                     +"</div>\n"
                                             }); // cria o container da tab               
                         };             
@@ -1756,12 +1756,12 @@
                         }
                         function render(){			 
                             let linkClose =(_tab.fixed)?''
-                                          :`<a class='${CONFIG.TAB.CLASS.CLOSE}' href="javascript:j$.Dashboard.Tabs.c$.` 
+                                          :`<a class='${CONFIG.TABS.LINK.CLOSE.CLASS}' href="javascript:j$.Dashboard.Tabs.c$.` 
                                           + `${_tab.parent.key}.close('${_tab.key}');">`
                                           +j$.ui.Render.icon(c$.ICON.CLOSE)                                          
                                           +"</a>";              
-                            return `<span class='${CONFIG.TAB.CLASS.TITLE}' onmouseover='j$.Dashboard.Tabs.HANDLE.onmouseover(this);' onmouseout='j$.Dashboard.Tabs.HANDLE.onmouseout(this);' id='tab_link_`+ this.key+"'>"
-                                +`<a class='${CONFIG.TAB.CLASS.TITLE}' id='link_` + _tab.key +  "' " 
+                            return `<span class='${CONFIG.TABS.LINK.TITLE.CLASS}' onmouseover='j$.Dashboard.Tabs.HANDLE.onmouseover(this);' onmouseout='j$.Dashboard.Tabs.HANDLE.onmouseout(this);' id='tab_link_`+ this.key+"'>"
+                                +`<a class='${CONFIG.TABS.LINK.TITLE.CLASS}' id='link_` + _tab.key +  "' " 
                                 + "href=\"javascript:j$.Dashboard.Tabs.c$." + _tab.parent.key + ".activate('" + _tab.key + "');\" >"
                                 + _tab.caption + "</a>"
                                 + linkClose +"</span>";
@@ -1799,15 +1799,15 @@
               , HANDLE:{
                         onmouseover: obj=>{
                             if (obj.className.indexOf('active')>-1)
-                                obj.className = CONFIG.TAB.CLASS.HOVER_ACTIVE;
+                                obj.className = CONFIG.TABS.LINK.HOVER_ACTIVE.CLASS;
                             else
-                                obj.className = CONFIG.TAB.CLASS.HOVER;
+                                obj.className = CONFIG.TABS.LINK.HOVER.CLASS;
                         }
                        , onmouseout: obj=>{
                             if (obj.className.indexOf('active')>-1)
-                                obj.className = CONFIG.TAB.CLASS.ACTIVE;
+                                obj.className = CONFIG.TABS.LINK.ACTIVE.CLASS;
                             else        
-                                obj.className = CONFIG.TAB.CLASS.TITLE;
+                                obj.className = CONFIG.TABS.LINK.TITLE.CLASS;
                         }    
                 }  
               , c$:tabs
