@@ -59,7 +59,7 @@
                     let $i=this;
                     this.id=adpater.key;
                     this.Interface= {
-                        container:CONFIG.LAYOUT.CONTENT
+                        container:CONFIG.LAYOUT.ID
                         ,      id:$i.id.toFirstLower()
                         , Buttons:CONFIG.CRUD.preset()
                         ,    List:{limit:CONFIG.GRID.MAXLINE
@@ -579,7 +579,7 @@
         // Esse alert é da página
         j$.Page.Alert= function(){
             //let $alert = this;
-            let _wrap = CONFIG.LAYOUT.ALERT_CONTENT;
+            let _wrap = CONFIG.LAYOUT.ALERT.ID;
             return {
                 show:function(msg, alertClass, wrap=i$(_wrap)){
                     this.hide(wrap);
@@ -628,7 +628,7 @@
         
             Object.preset($i, {
                                actionController:(service.id) ?'j$.Service.c$.'+service.id+'.actionController' :''
-                             , container:(service.Interface.container) ?i$(service.Interface.container) :i$(CONFIG.LAYOUT.CONTENT)
+                             , container:(service.Interface.container) ?i$(service.Interface.container) :i$(CONFIG.LAYOUT.ID)
             });
             Object.preset(service.Interface,{Buttons:false});
             Object.preset(service,{
@@ -793,7 +793,7 @@
                 if (actionCallback)
                    $this.callback =actionCallback;
         
-                $this.inherit(i$(CONFIG.LAYOUT.CONTENT), {id:id}, fixed());
+                $this.inherit(i$(CONFIG.LAYOUT.ID), {id:id}, fixed());
         
                 title();
                 text();
@@ -1486,7 +1486,7 @@
         */
         
         j$.Dashboard = function(){
-            let idContent=CONFIG.LAYOUT.CONTENT
+            let idContent=CONFIG.LAYOUT.ID
              // , idToolbar='toolbar';
         
             return{
@@ -1613,7 +1613,7 @@
                 },
                 partial:(url, idContent, complete)=>{
                     if (!idContent)
-                        idContent = CONFIG.LAYOUT.CONTENT;
+                        idContent = CONFIG.LAYOUT.ID;
                      //let pars = '';
                     if (!url.isEmpty()) {
                         Ajax.Updater( idContent, url, {method: 'get', parameters: '', onComplete:complete});
@@ -1938,10 +1938,10 @@
             
                 let initialized = function(){
                         if (j$.Ext.isString(properties)){ // veio apenas o caption
-                            Object.preset(_base, {idContainer:CONFIG.LAYOUT.CONTENT});
+                            Object.preset(_base, {idContainer:CONFIG.LAYOUT.ID});
                         } else {
                             if (!properties){properties={}};
-                            _base.idContainer = (properties.idContainer)?properties.idContainer:CONFIG.LAYOUT.CONTENT;
+                            _base.idContainer = (properties.idContainer)?properties.idContainer:CONFIG.LAYOUT.ID;
                             Object.setIfExist(_base, properties, ['icon','title','byPass','modal']);
                             _base.url=util.getUrl();
                             //_base.byPass=> para não formatar o evento padrão que chama o url. É útil para qdo o o próprio cliente vai realizar uma ação após a escolha da opção

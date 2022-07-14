@@ -153,8 +153,10 @@ const CONFIG = {
    , RESOURCE:{CONTEXT:'http://localhost:3000/'}
    ,   SERVER:{CONTEXT:'http://localhost:3000/'}
     , BOOLEAN:{'true':{value:true, text:'sim'}, 'false':{value:false, text:'Não'}}
-    , LAYOUT:{CONTENT:'content', ALERT_CONTENT:'wrapAlert'}
-    , ACTION:{
+    , LAYOUT:{ID:'content'
+         , ALERT:{ID:'wrapAlert'}
+             }
+    , ACTION:{ 
            NEW:{KEY:'new',    VALUE:'Incluir'    
                 , MESSAGE:{
                   SUCCESS:'Inclusão realizada com sucesso.'
@@ -227,26 +229,26 @@ const CONFIG = {
                      , COLUMN:"col-auto space"
                      }}    
     ,   TAB:{CLASS:{ CLOSE:"link_tab_close"  
-                  ,  TITLE:"link_tab"  
-                  , ACTIVE:"active_link_tab" 
-                  , HOVER:"link_tab_hover"              
-                  , HOVER_ACTIVE:"active_link_tab_hover"
-                  ,   WRAP:"tab_wrap"
-                  ,CONTENT:"tab_content"
-                  ,BUTTONS:"tabs_buttons"
-                ,CONTAINER:"tabs_wrap"
-                     }}    
-                     
+            ,        TITLE:"link_tab"  
+            ,       ACTIVE:"active_link_tab" 
+            ,        HOVER:"link_tab_hover"              
+            , HOVER_ACTIVE:"active_link_tab_hover"
+            ,         WRAP:"tab_wrap"
+            ,      CONTENT:"tab_content"
+            ,      BUTTONS:"tabs_buttons"
+            ,    CONTAINER:"tabs_wrap"
+                     }
+        }              
     ,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row space", COLUMN:"col-auto space"}}                           
     ,   COLOR:{CLASS:{DEFAULT:'form-color-control form-control-sm'}}
     ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
     ,    MENU:{PARSER:c$.MENU.TYPE.SIDEBAR // "MENUBAR" ou 'SIDEBAR'
             , OPTIONS:{SIDEBAR:{CLASS:{WRAP:"col-md-10 ml-sm-auto col-lg-10 px-md-2"
-                                        , MENU:"col-md-2 col-lg-2 d-md-block nav-side-menu"} //"col-md-2 col-lg-2 d-md-block nav-side-menu"
+                                     , MENU:"col-md-2 col-lg-2 d-md-block nav-side-menu"} //"col-md-2 col-lg-2 d-md-block nav-side-menu"
                             , ID:"sidebar"}
                      , MENUBAR:{CLASS:{WRAP:"col-md-12 ml-sm-auto col-lg-12 px-md-2"
-                                        , MENU:"navbar navbar-expand-lg navbar-light bg-light menubar_space"}
+                                     , MENU:"navbar navbar-expand-lg navbar-light bg-light menubar_space"}
                             , ID:"menubar"}
                       } 
         }                 
