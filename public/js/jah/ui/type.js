@@ -49,21 +49,22 @@ const TYPE = function() {
             }
             function parseDesign(design){
                 let parseType = type =>{
-                    if (CONFIG[type] && CONFIG[type].CLASS){
-                        if (CONFIG[type].CLASS.DEFAULT)
-                            design.input.clas$  = CONFIG[type].CLASS.DEFAULT;
-                        if (CONFIG[type].CLASS.COLUMN)
-                            design.column.clas$  = CONFIG[type].CLASS.COLUMN; 
-                        if (CONFIG[type].CLASS.LABEL)
-                            design.label.clas$  = CONFIG[type].CLASS.LABEL;          
+                    if (CONFIG.INPUT.TYPE[type]){
+                        let _input=CONFIG.INPUT.TYPE[type]
+                        if (_input.CLASS)
+                            design.input.clas$  = _input.CLASS;
+                        if (_input.COLUMN && _input.COLUMN.CLASS)
+                            design.column.clas$  = _input.COLUMN.CLASS; 
+                        if (_input.LABEL && _input.LABEL.CLASS)
+                            design.label.clas$  = _input.LABEL.CLASS;          
                     }    
                 }
                 
                 if (!design){
                     design ={
-                            input:{clas$: CONFIG.INPUT.CLASS.DEFAULT}
+                            input:{clas$: CONFIG.INPUT.CLASS}
                          , column:{clas$: CONFIG.WRAP.CLASS.COLUMN}
-                         ,  label:{clas$: CONFIG.LABEL.CLASS.DEFAULT}              
+                         ,  label:{clas$: CONFIG.LABEL.CLASS}              
                     }     
                 }
                 parseType(SELF.type.toUpperCase())
@@ -125,7 +126,7 @@ const TYPE = function() {
                     TYPE.Error.passForward.hide(SELF);
                     if (!SELF.defaultValue.isEmpty())
                         i$(SELF.id).value=SELF.defaultValue;
-                    i$(SELF.id).className = SELF.classDefault; //CONFIG.INPUT.CLASS.DEFAULT;
+                    i$(SELF.id).className = SELF.classDefault; //CONFIG.INPUT.CLASS;
             };
             
             this.bind = (_input)=>{TYPE.Helper.bindField(SELF,_input)}
@@ -891,7 +892,7 @@ TYPE.Helper = function(){
 
 TYPE.Handle = {
     focus: e=>{
-        this.className = CONFIG.INPUT.CLASS.FOCUS;
+        this.className = CONFIG.INPUT.FOCUS.CLASS;
     }
   , error: (obj,event, id)=>{
         let field = i$(id).field;
@@ -906,7 +907,7 @@ TYPE.Handle = {
        if (validate)
            valid=validate(value);
     //    inputField.className = (valid) ?inputField.field.classDefault
-    //                                   :CONFIG.INPUT.CLASS.INVALID;
+    //                                   :CONFIG.INPUT.INVALID.CLASS;
        if (inputField.field.Resource && inputField.field.Legend)
            inputField.field.Legend.request();
     }
@@ -1015,7 +1016,7 @@ TYPE.Feedback =function (){
         ,off:hide
         ,valid  (field, msg){
                      let isValidClass = (_markIfValid) 
-                                      ? CONFIG.INPUT.CLASS.VALID
+                                      ? CONFIG.INPUT.VALID.CLASS
                                       : field.classDefault
                      show(field,msg, CONFIG.FEEDBACK.CLASS.VALID)                     
                      field.Input.className = (field.value().isEmpty()) 
@@ -1024,7 +1025,7 @@ TYPE.Feedback =function (){
                 } 
         ,invalid(field, msg){
                      show(field,msg, CONFIG.FEEDBACK.CLASS.INVALID)
-                     field.Input.className = CONFIG.INPUT.CLASS.INVALID;
+                     field.Input.className = CONFIG.INPUT.INVALID.CLASS;
                 } 
         ,set(msg){_msg=msg}
         ,get(){return _msg}

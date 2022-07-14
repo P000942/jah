@@ -44,7 +44,7 @@
         }); 
 (function(Assunto){        
         Assunto.Interface = {
-           container:CONFIG.LAYOUT.CONTENT
+           container:CONFIG.LAYOUT.ID
               , id:'assunto'
               , title:'Assunto'
               , List:{maxline:4, maxpage:4}

@@ -499,7 +499,7 @@ j$.ui.Render= function(){
             return i$(id$);
         }
     , label: (wrap, label, inputId, att$)=>{
-            let att = {clas$:CONFIG.LABEL.CLASS.DEFAULT
+            let att = {clas$:CONFIG.LABEL.CLASS
                     , mandatory:false
                     , position:'append'
                     , id:System.util.getId('Label')
@@ -519,7 +519,7 @@ j$.ui.Render= function(){
             label =(label)?label : att.id;
             if (!i$(att.id)){ // cria se não existir
                 let _att = j$.ui.Render.attributes(att,'label')
-                , required =(att.mandatory) ?`<span class="${CONFIG.INPUT.CLASS.REQUIRED}">*</span>` :'';
+                , required =(att.mandatory) ?`<span class="${CONFIG.INPUT.REQUIRED.CLASS}">*</span>` :'';
                 i$(wrap).insert(fmt_pos(att.position, `<label ${_att} >${label}${required}:</label>`));   
             }
             let lbl = i$(att.id);

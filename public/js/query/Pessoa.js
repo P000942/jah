@@ -3,7 +3,7 @@ j$.Service.create("Pessoa",
            
      // ,resource:{name:'usuuario'} 
       Interface:{
-            container:CONFIG.LAYOUT.CONTENT    
+            container:CONFIG.LAYOUT.ID    
               , title:'Exemplo de Consulta - Pessoas'
               , List:true 
               , Buttons:CONFIG.QUERY.preset()        

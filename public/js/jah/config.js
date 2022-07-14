@@ -217,17 +217,16 @@ const CONFIG = {
       ,    INFO:{CLASS:'alert-info'   , ICON:"info"}
     }
     ,FEEDBACK:{CLASS:{VALID:'valid-feedback', INVALID:'invalid-feedback', LEGEND:''}}
-    ,   INPUT:{CLASS:{DEFAULT:'form-control form-control-sm space'
-                    ,   FOCUS:'input_focus'
-                    , INVALID:'form-control form-control-sm is-invalid'
-                    ,   VALID:'form-control form-control-sm is-valid'
-                    ,REQUIRED:'required'
-                    }                                
-              }     
-    ,   LABEL:{CLASS:{DEFAULT:"col-form-label col-form-label-sm col-3 col-sm-2 col-md-2 col-xl-2 inLine space"
-                     , INLINE:"col-form-label col-form-label-sm col-auto inLine"
-                     , COLUMN:"col-auto space"
-                     }}        
+    ,   INPUT:{CLASS:'form-control form-control-sm space'
+           ,   FOCUS:{CLASS:"input_focus"}
+           ,   VALID:{CLASS:"form-control form-control-sm is-valid"}
+           , INVALID:{CLASS:"form-control form-control-sm is-invalid"}
+           ,REQUIRED:{CLASS:"required"}
+       }      
+    ,   LABEL:{  CLASS:"col-form-label col-form-label-sm col-3 col-sm-2 col-md-2 col-xl-2 inLine space"
+              , INLINE:{CLASS:"col-form-label col-form-label-sm col-auto inLine"}
+              , COLUMN:{CLASS:"col-auto space"}
+            }        
     ,   TABS:{
             BUTTONS:{CLASS:"tabs_buttons"}        
         ,   CONTENT:{CLASS:"tab_content", WRAP:{CLASS:"tab_wrap"}}
@@ -241,7 +240,7 @@ const CONFIG = {
                 }
         }                         
     ,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row space", COLUMN:"col-auto space"}}                           
-    ,   COLOR:{CLASS:{DEFAULT:'form-color-control form-control-sm'}}
+    //,   COLOR:{CLASS:{DEFAULT:'form-color-control form-control-sm'}}
     ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
     ,    MENU:{PARSER:c$.MENU.TYPE.SIDEBAR // "MENUBAR" ou 'SIDEBAR'
@@ -254,8 +253,21 @@ const CONFIG = {
                       } 
         }                 
 };
-CONFIG.CHECKBOX={CLASS:{DEFAULT:'form-check-input', COLUMN:"form-check",  LABEL:`${CONFIG.LABEL.CLASS.DEFAULT} form-check-label`
-                        , ERROR:'form-check-input',FOCUS:'form-check-input'}}
+CONFIG.INPUT.TYPE={
+     DEFAULT:{CLASS:'form-control form-control-sm space'
+          ,   FOCUS:{CLASS:"input_focus"}
+          ,   VALID:{CLASS:"form-control form-control-sm is-valid"}
+          , INVALID:{CLASS:"form-control form-control-sm is-invalid"}
+          ,REQUIRED:{CLASS:"required"}
+             } 
+   ,   COLOR:{CLASS:'form-color-control form-control-sm'}    
+   ,CHECKBOX:{CLASS:'form-check-input'
+            , COLUMN:{CLASS:"form-check"}  
+            ,  LABEL:{CLASS:`${CONFIG.LABEL.CLASS} form-check-label`}  
+            ,  ERROR:{CLASS:"form-check-input-check"}  
+            ,  FOCUS:{CLASS:"form-check-input"}  
+              }                                         
+    }
 CONFIG.REPORT={
       COLOR:{ON:'#F8F8FF', OFF:'#FFFFFF'}
     // Medidas em milimetro 'mm'
@@ -273,11 +285,11 @@ CONFIG.REPORT.DEFAULT={
   
 CONFIG.DESIGN={
    CLASSIC:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:CONFIG.WRAP.CLASS.ROW, COLUMN:CONFIG.WRAP.CLASS.COLUMN
-            , INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.DEFAULT}  
+            , INPUT:CONFIG.INPUT.CLASS, LABEL:CONFIG.LABEL.CLASS}  
 ,   COLUMN:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:"form-row space pb-1"           , COLUMN:"form-group space"
-            , INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.COLUMN} 
+            , INPUT:CONFIG.INPUT.CLASS, LABEL:CONFIG.LABEL.COLUMN.CLASS} 
 ,   INLINE:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:CONFIG.WRAP.CLASS.ROW, COLUMN:CONFIG.WRAP.CLASS.COLUMN
-            , INPUT:CONFIG.INPUT.CLASS.DEFAULT, LABEL:CONFIG.LABEL.CLASS.INLINE}                                          
+            , INPUT:CONFIG.INPUT.CLASS, LABEL:CONFIG.LABEL.INLINE.CLASS}                                          
 } 
 //@note: Retorna o objeto com o status http
 CONFIG.HTTP.STATUS.get = status =>{

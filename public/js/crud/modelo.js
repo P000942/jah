@@ -24,7 +24,7 @@ j$.Service.create("Tabela",
 });
 (function(tab){    
     tab.Interface = {
-        container:CONFIG.LAYOUT.CONTENT
+        container:CONFIG.LAYOUT.ID
         ,      id:Tabela.id.toLowerCase()
         ,   title:'Exemplo de Tabela'
         ,    List:{limit:5, maxpage:5, Buttons:CONFIG.CRUD.GRID.preset()}

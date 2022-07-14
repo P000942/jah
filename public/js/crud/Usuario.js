@@ -3,7 +3,7 @@
 j$.Service.createCrud("Usuario",
    { resource:{name:'Users', id:'id'}
       // , Interface:{
-      //      container:CONFIG.LAYOUT.CONTENT
+      //      container:CONFIG.LAYOUT.ID
       //         , title:'Cadastro de Usuários'
       //         , List:true
       // }
