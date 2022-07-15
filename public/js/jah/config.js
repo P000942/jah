@@ -144,11 +144,11 @@ const CONFIG = {
              }
         }
 
-   , EXCEPTION:{RECORD_NOT_FOUND:{id:'RECORD_NOT_FOUND'    , text:"Registro não encontrado"}
-              ,   INVALID_COLUMN:{id:'INVALID_COLUMN'      , text:"Coluna inválida. Não existe no recurso."}
-              ,    INVALID_FIELD:{id:'INVALID_FIELD'       , text:"Compo inválida. Não existe no 'fieldset'."}
-              ,  INVALID_ELEMENT:{id:'INVALID_ELEMENT'     , text:"Elemento inválido. Não encontrado o elemento solicitado"}
-              ,     SERVICE_NULL:{id:'SERVICE_NULL'        , text:"Serviço não informado(key)."}
+   , EXCEPTION:{RECORD_NOT_FOUND:{id:'RECORD_NOT_FOUND' , text:"Registro não encontrado"}
+              ,   INVALID_COLUMN:{id:'INVALID_COLUMN'   , text:"Coluna inválida. Não existe no recurso."}
+              ,    INVALID_FIELD:{id:'INVALID_FIELD'    , text:"Compo inválida. Não existe no 'fieldset'."}
+              ,  INVALID_ELEMENT:{id:'INVALID_ELEMENT'  , text:"Elemento inválido. Não encontrado o elemento solicitado"}
+              ,     SERVICE_NULL:{id:'SERVICE_NULL'     , text:"Serviço não informado(key)."}
                }
    , RESOURCE:{CONTEXT:'http://localhost:3000/'}
    ,   SERVER:{CONTEXT:'http://localhost:3000/'}
@@ -239,8 +239,10 @@ const CONFIG = {
                 ,HOVER_ACTIVE:{CLASS:"active_link_tab_hover"}
                 }
         }                         
-    ,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row space", COLUMN:"col-auto space"}}                           
-    //,   COLOR:{CLASS:{DEFAULT:'form-color-control form-control-sm'}}
+    //,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row space", COLUMN:"col-auto space"}}                           
+    ,    WRAP:{SECTION:{CLASS:"wrap_classic"}
+              ,    ROW:{CLASS:"form-group row space"}
+              , COLUMN:{CLASS:"col-auto space"}}                           
     ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
     ,    MENU:{PARSER:c$.MENU.TYPE.SIDEBAR // "MENUBAR" ou 'SIDEBAR'
@@ -284,12 +286,21 @@ CONFIG.REPORT.DEFAULT={
 }
   
 CONFIG.DESIGN={
-   CLASSIC:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:CONFIG.WRAP.CLASS.ROW, COLUMN:CONFIG.WRAP.CLASS.COLUMN
-            , INPUT:CONFIG.INPUT.CLASS, LABEL:CONFIG.LABEL.CLASS}  
-,   COLUMN:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:"form-row space pb-1"           , COLUMN:"form-group space"
-            , INPUT:CONFIG.INPUT.CLASS, LABEL:CONFIG.LABEL.COLUMN.CLASS} 
-,   INLINE:{SECTION:CONFIG.WRAP.CLASS.SECTION ,   ROW:CONFIG.WRAP.CLASS.ROW, COLUMN:CONFIG.WRAP.CLASS.COLUMN
-            , INPUT:CONFIG.INPUT.CLASS, LABEL:CONFIG.LABEL.INLINE.CLASS}                                          
+   CLASSIC:{SECTION:{CLASS:CONFIG.WRAP.SECTION.CLASS}
+          ,     ROW:{CLASS:CONFIG.WRAP.ROW.CLASS}
+          ,  COLUMN:{CLASS:CONFIG.WRAP.COLUMN.CLASS}
+          ,   INPUT:{CLASS:CONFIG.INPUT.CLASS}
+          ,   LABEL:{CLASS:CONFIG.LABEL.CLASS}  }
+,   COLUMN:{SECTION:{CLASS:CONFIG.WRAP.SECTION.CLASS}
+          ,     ROW:{CLASS:"form-row space pb-1"}
+          ,  COLUMN:{CLASS:"form-group space"}
+          ,   INPUT:{CLASS:CONFIG.INPUT.CLASS}
+          ,   LABEL:{CLASS:CONFIG.LABEL.COLUMN.CLASS}} 
+,   INLINE:{SECTION:{CLASS:CONFIG.WRAP.SECTION.CLASS}
+          ,     ROW:{CLASS:CONFIG.WRAP.ROW.CLASS}
+          ,  COLUMN:{CLASS:CONFIG.WRAP.COLUMN.CLASS}
+          ,   INPUT:{CLASS:CONFIG.INPUT.CLASS}
+          ,   LABEL:{CLASS:CONFIG.LABEL.INLINE.CLASS}}                                          
 } 
 //@note: Retorna o objeto com o status http
 CONFIG.HTTP.STATUS.get = status =>{

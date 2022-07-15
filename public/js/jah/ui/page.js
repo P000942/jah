@@ -359,7 +359,7 @@
                                 }     
                             }  
                             // combinar os padroes do designer com as definicoes do cliente
-                            _section.clas$ =(_section.clas$) ?design.clas$[key] +' '+ _section.clas$ :design.clas$[key]; 
+                            _section.clas$ =(_section.clas$) ?design.clas$[key].class +' '+ _section.clas$ :design.clas$[key].class; 
                         }    
                         sections.labelInTheSameWrap=design.labelInTheSameWrap;   
                         return sections;      
@@ -378,8 +378,8 @@
                 };
                 let addSection=(page, section, fieldset, design)=>{              
                     let reposit={}
-                    , wrapSection = (design.clas$.section) 
-                                    ?j$.ui.Render.wrap(section, null,design.clas$.section, design.style)
+                    , wrapSection = (design.clas$.section && design.clas$.section.class) 
+                                    ?j$.ui.Render.wrap(section, null,design.clas$.section.class, design.style)
                                     :section;              
                     /* Eh necessario organizar as sections pq, para falicitar,
                         ...existem varias possibilidades de escreve o codigo de uma sessao
@@ -391,7 +391,7 @@
                         let sections = ["label","column","input","row"];
                         reposit.fields =fields;
                         if (design.coupled){ // para configurar 'label' e 'column' de forma igual
-                            design.label = design.coupled;
+                            design.label  = design.coupled;
                             design.column = design.coupled;
                         }
                         function parse(section, key){

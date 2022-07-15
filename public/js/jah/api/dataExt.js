@@ -297,8 +297,12 @@ const j$ = function(){
     Object.toLowerCase = (propertie)=>{
         let receiver ={};
         if (j$.Ext.isObject(propertie)){ // copia propriedades do objeto
-            for (let key in propertie)
-                receiver[key.toLowerCase()] = propertie[key]
+            for (let key in propertie){
+                let value = propertie[key]
+                if (j$.Ext.isObject(value))  
+                    value=Object.toLowerCase(value)
+                receiver[key.toLowerCase()] = value
+            }
         }
         return receiver;
     };
