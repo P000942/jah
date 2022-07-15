@@ -154,8 +154,7 @@ const CONFIG = {
    ,   SERVER:{CONTEXT:'http://localhost:3000/'}
     , BOOLEAN:{'true':{value:true, text:'sim'}, 'false':{value:false, text:'Não'}}
     , LAYOUT:{ID:'content'
-         , ALERT:{ID:'wrapAlert'}
-             }
+         , ALERT:{ID:'wrapAlert'}}
     , ACTION:{ 
            NEW:{KEY:'new',    VALUE:'Incluir'    
                 , MESSAGE:{
@@ -192,31 +191,32 @@ const CONFIG = {
     ,SUBVISION:{KEY:'subvision', VALUE:'Detalhes'}
     }
     , CRUD:{BUTTONS:{WRAP:'wrap_command', ALIGN: c$.ALIGN.BOTTOM}
-          , GRID:{BUTTONS:{}}
-          , CLASS:{HEADER:"tab_header"  
-                  , TITLE:"tab_header_title"
-                  ,  MENU:"tab_header_menu" }
-          , CONTEXT: 'js/crud/'          
+          ,    GRID:{BUTTONS:{}}
+          ,  HEADER:{CLASS:"tab_header"}
+          ,   TITLE:{CLASS:"tab_header_title"}
+         ,     MENU:{CLASS:"tab_header_menu" }
+          , CONTEXT:'js/crud/'          
       }
     , CHILD:{MODAL: true}  
     , GRID:{
             MAXLINE:10        // Quantidade de registros na página
           , MAXPAGE:5         // Quantidade de páginas na barra de navegação
-          , DEFAULT: 'CRUD'   // O template de GRID default
-          ,   CLASS:{TABLE:"list"
-                    , WRAP:"wrap_list"
-                    }
-    }
+          ,  PRESET: 'CRUD'   // O template de GRID default para preset
+          ,   TABLE:{CLASS:"list"}
+          ,    WRAP:{CLASS:"wrap_list"}
+        }
     , QUERY:{BUTTONS:{}
-          , GRID:{BUTTONS:{}}
-          , CONTEXT: 'js/query/'
+           ,    GRID:{BUTTONS:{}}
+           , CONTEXT: 'js/query/'
             }
     , ALERT:{
-          ERROR:{CLASS:'alert-danger' , ICON:"error"}
-      , SUCCESS:{CLASS:'alert-success', ICON:"success"}
-      ,    INFO:{CLASS:'alert-info'   , ICON:"info"}
+          ERROR:{CLASS:'alert-danger' , ICON:c$.ICON.ERROR}
+      , SUCCESS:{CLASS:'alert-success', ICON:c$.ICON.SUCCESS}
+      ,    INFO:{CLASS:'alert-info'   , ICON:c$.ICON.INFO}
     }
-    ,FEEDBACK:{CLASS:{VALID:'valid-feedback', INVALID:'invalid-feedback', LEGEND:''}}
+    ,FEEDBACK:{ VALID:{CLASS:'valid-feedback'}
+            , INVALID:{CLASS:'invalid-feedback'}
+            ,  LEGEND:{CLASS:''}}
     ,   INPUT:{CLASS:'form-control form-control-sm space'
            ,   FOCUS:{CLASS:"input_focus"}
            ,   VALID:{CLASS:"form-control form-control-sm is-valid"}
@@ -238,8 +238,7 @@ const CONFIG = {
                 ,       HOVER:{CLASS:"link_tab_hover"}
                 ,HOVER_ACTIVE:{CLASS:"active_link_tab_hover"}
                 }
-        }                         
-    //,    WRAP:{CLASS:{SECTION:"wrap_classic", ROW:"form-group row space", COLUMN:"col-auto space"}}                           
+        }                                                  
     ,    WRAP:{SECTION:{CLASS:"wrap_classic"}
               ,    ROW:{CLASS:"form-group row space"}
               , COLUMN:{CLASS:"col-auto space"}}                           
@@ -248,12 +247,12 @@ const CONFIG = {
             }
     ,   PAGER:{CLASS:'pagination pagination-sm'}
     ,    MENU:{PARSER:c$.MENU.TYPE.SIDEBAR // "MENUBAR" ou 'SIDEBAR'
-            , OPTIONS:{SIDEBAR:{CLASS:{WRAP:"col-md-10 ml-sm-auto col-lg-10 px-md-2"
-                                     , MENU:"col-md-2 col-lg-2 d-md-block nav-side-menu"} //"col-md-2 col-lg-2 d-md-block nav-side-menu"
-                            , ID:"sidebar"}
-                     , MENUBAR:{CLASS:{WRAP:"col-md-12 ml-sm-auto col-lg-12 px-md-2"
-                                     , MENU:"navbar navbar-expand-lg navbar-light bg-light menubar_space"}
-                            , ID:"menubar"}
+             ,   TYPE:{SIDEBAR:{WRAP:{CLASS:"col-md-10 ml-sm-auto col-lg-10 px-md-2"}
+                              , ITEM:{CLASS:"col-md-2 col-lg-2 d-md-block nav-side-menu"} 
+                              ,   ID:"sidebar"}
+                     , MENUBAR:{WRAP:{CLASS:"col-md-12 ml-sm-auto col-lg-12 px-md-2"}
+                              , ITEM:{CLASS:"navbar navbar-expand-lg navbar-light bg-light menubar_space"}
+                              ,   ID:"menubar"}
                       } 
         }                 
 };
@@ -288,22 +287,25 @@ CONFIG.REPORT.DEFAULT={
 }
   
 CONFIG.DESIGN={
-   CLASSIC:{SECTION:{CLASS:CONFIG.WRAP.SECTION.CLASS}
-          ,     ROW:{CLASS:CONFIG.WRAP.ROW.CLASS}
-          ,  COLUMN:{CLASS:CONFIG.WRAP.COLUMN.CLASS}
-          ,   INPUT:{CLASS:CONFIG.INPUT.CLASS}
-          ,   LABEL:{CLASS:CONFIG.LABEL.CLASS}  }
-,   COLUMN:{SECTION:{CLASS:CONFIG.WRAP.SECTION.CLASS}
-          ,     ROW:{CLASS:"form-row space pb-1"}
-          ,  COLUMN:{CLASS:"form-group space"}
-          ,   INPUT:{CLASS:CONFIG.INPUT.CLASS}
-          ,   LABEL:{CLASS:CONFIG.LABEL.COLUMN.CLASS}} 
-,   INLINE:{SECTION:{CLASS:CONFIG.WRAP.SECTION.CLASS}
-          ,     ROW:{CLASS:CONFIG.WRAP.ROW.CLASS}
-          ,  COLUMN:{CLASS:CONFIG.WRAP.COLUMN.CLASS}
-          ,   INPUT:{CLASS:CONFIG.INPUT.CLASS}
-          ,   LABEL:{CLASS:CONFIG.LABEL.INLINE.CLASS}}                                          
+   TYPE:{ 
+    CLASSIC:{ SECTION:{CLASS:CONFIG.WRAP.SECTION.CLASS}
+            ,     ROW:{CLASS:CONFIG.WRAP.ROW.CLASS}
+            ,  COLUMN:{CLASS:CONFIG.WRAP.COLUMN.CLASS}
+            ,   INPUT:{CLASS:CONFIG.INPUT.CLASS}
+            ,   LABEL:{CLASS:CONFIG.LABEL.CLASS}  }
+    ,   COLUMN:{SECTION:{CLASS:CONFIG.WRAP.SECTION.CLASS}
+            ,     ROW:{CLASS:"form-row space pb-1"}
+            ,  COLUMN:{CLASS:"form-group space"}
+            ,   INPUT:{CLASS:CONFIG.INPUT.CLASS}
+            ,   LABEL:{CLASS:CONFIG.LABEL.COLUMN.CLASS}} 
+    , INLINE:{SECTION:{CLASS:CONFIG.WRAP.SECTION.CLASS}
+            ,     ROW:{CLASS:CONFIG.WRAP.ROW.CLASS}
+            ,  COLUMN:{CLASS:CONFIG.WRAP.COLUMN.CLASS}
+            ,   INPUT:{CLASS:CONFIG.INPUT.CLASS}
+            ,   LABEL:{CLASS:CONFIG.LABEL.INLINE.CLASS}}                                          
+   }
 } 
+CONFIG.DESIGN.DEFAULT = CONFIG.DESIGN.TYPE.CLASSIC
 //@note: Retorna o objeto com o status http
 CONFIG.HTTP.STATUS.get = status =>{
           let res = Object.getByValue(CONFIG.HTTP.STATUS, status,'VALUE');

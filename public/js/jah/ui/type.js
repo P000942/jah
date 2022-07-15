@@ -748,7 +748,7 @@ TYPE.Helper = function(){
         }
     
         hide=()      =>{TYPE.Feedback.hide(this.field)}
-        show=text    =>{TYPE.Feedback.show(this.field, text,CONFIG.FEEDBACK.CLASS.LEGEND)}
+        show=text    =>{TYPE.Feedback.show(this.field, text,CONFIG.FEEDBACK.LEGEND.CLASS)}
         failure=error=>{TYPE.Feedback.invalid(this.field, error)}
     
         get =  response => {
@@ -1005,7 +1005,7 @@ TYPE.Feedback =function (){
         if (field)
            fmtId(field).hide();    
     }
-    function show(field,msg,clas$=CONFIG.FEEDBACK.CLASS.INVALID){
+    function show(field,msg,clas$=CONFIG.FEEDBACK.INVALID.CLASS){
         let fb = fmtId(field,msg); 
         fb.className = clas$  
         fb.show();
@@ -1019,13 +1019,13 @@ TYPE.Feedback =function (){
                      let isValidClass = (_markIfValid) 
                                       ? CONFIG.INPUT.VALID.CLASS
                                       : field.classDefault
-                     show(field,msg, CONFIG.FEEDBACK.CLASS.VALID)                     
+                     show(field,msg, CONFIG.FEEDBACK.VALID.CLASS)                     
                      field.Input.className = (field.value().isEmpty()) 
                                            ? field.classDefault
                                            : isValidClass;  
                 } 
         ,invalid(field, msg){
-                     show(field,msg, CONFIG.FEEDBACK.CLASS.INVALID)
+                     show(field,msg, CONFIG.FEEDBACK.INVALID.CLASS)
                      field.Input.className = CONFIG.INPUT.INVALID.CLASS;
                 } 
         ,set(msg){_msg=msg}

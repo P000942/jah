@@ -472,9 +472,9 @@
                        _form.clear();
                        $(wrap).append("<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>");
              
-                       $('#'+form.id).append(`<div class='${CONFIG.CRUD.CLASS.HEADER}' id='${form.id}Header'>`
-                                            +`<div class='${CONFIG.CRUD.CLASS.TITLE}'  id='${form.id}Title'>${form.title}</div>`
-                                            +`<nav class='${CONFIG.CRUD.CLASS.MENU}'   id='${form.id}Menu'></nav>`
+                       $('#'+form.id).append(`<div class='${CONFIG.CRUD.HEADER.CLASS}' id='${form.id}Header'>`
+                                            +`<div class='${CONFIG.CRUD.TITLE.CLASS}'  id='${form.id}Title'>${form.title}</div>`
+                                            +`<nav class='${CONFIG.CRUD.MENU.CLASS}'   id='${form.id}Menu'></nav>`
                                             +"</div>");  
              
                        $('#'+form.id).append("<fieldset class='crud' id='" +form.id+ "Fieldset'></fieldset>");
@@ -533,16 +533,16 @@
                         }
                         }
                     ,  classic:(page, section, fieldset, design)=>{
-                            design.clas$=Object.toLowerCase(CONFIG.DESIGN.CLASSIC);                     
+                            design.clas$=Object.toLowerCase(CONFIG.DESIGN.TYPE.CLASSIC);                     
                             return addSection(page, section, fieldset, design);
                         }
                     ,   inLine:(page, section, fieldset, design)=>{
-                            design.clas$=Object.toLowerCase(CONFIG.DESIGN.INLINE);                    
+                            design.clas$=Object.toLowerCase(CONFIG.DESIGN.TYPE.INLINE);                    
                             Object.preset(design,{inLine:true, labelInTheSameWrap:false});    
                             return addSection(page, section, fieldset, design);
                         }              
                     ,   column:(page, section, fieldset, design)=>{
-                            Object.preset(design,{clas$:Object.toLowerCase(CONFIG.DESIGN.COLUMN)
+                            Object.preset(design,{clas$:Object.toLowerCase(CONFIG.DESIGN.TYPE.COLUMN)
                                                 ,inLine:true, labelInTheSameWrap:true, design});                    
                             return addSection(page, section, fieldset, design);                   
                         }
@@ -702,8 +702,8 @@
                         }else
                              $i.Alert.hide();
                     }
-                    ,success(msg, inFocus){$i.Alert.show(msg, CONFIG.ALERT.SUCCESS.CLASS, inFocus)}
-                    ,error(msg, inFocus){$i.Alert.show(msg, CONFIG.ALERT.ERROR.CLASS, inFocus)}
+                    ,success(msg, inFocus){$i.Alert.show(msg, CONFIG.ALERT.SUCCESS, inFocus)}
+                    ,error(msg, inFocus){$i.Alert.show(msg, CONFIG.ALERT.ERROR, inFocus)}
                     ,hide(){j$.Page.Alert.hide(alert)}
                     ,id:alert
                 } 
@@ -804,7 +804,7 @@
                    $this.show();  
             };
         }; // $.Page.Modal
-        j$.Page.Grid=function(page, btn_template=CONFIG.GRID.DEFAULT){
+        j$.Page.Grid=function(page, btn_template=CONFIG.GRID.PRESET){
             let _grid = this;    
             _grid.index= c$.RC.NONE;
             let pager = null;
@@ -865,8 +865,8 @@
                    table:()=>{
                       let idList =`${page.form.id}List`
                         , idWrap =`${page.form.id}ListWrap`
-                        ,   html =`<div class='${CONFIG.GRID.CLASS.WRAP}' id='${idWrap}'>`
-                                 +`<table class='${CONFIG.GRID.CLASS.TABLE}' id='${idList}'></table>`
+                        ,   html =`<div   class='${CONFIG.GRID.WRAP.CLASS}'  id='${idWrap}'>`
+                                 +`<table class='${CONFIG.GRID.TABLE.CLASS}' id='${idList}'></table>`
                                  +`</div>`; 
                       if (!i$(idList)){
                          //let tab = page.tabs.open({key:`${page.form.id}Detalhe`, caption:"Detalhes", fixed:true})
@@ -1555,13 +1555,13 @@
       
         j$.Dashboard.Menubar=function(){
             let menubar
-              , _c$ = CONFIG.MENU.OPTIONS[CONFIG.MENU.PARSER.toUpperCase()] // design 
+              , _c$ = CONFIG.MENU.TYPE[CONFIG.MENU.PARSER.toUpperCase()] // design 
               , _idContent= _c$.ID
             const initialized = function(){
-                i$(j$.Dashboard.idContent).className =_c$.CLASS.WRAP;
-                i$(_idContent).className = _c$.CLASS.MENU;
-             /*    for (let key in CONFIG.MENU.OPTIONS){ 
-                    let option =  CONFIG.MENU.OPTIONS[key]
+                i$(j$.Dashboard.idContent).className =_c$.WRAP.CLASS;
+                i$(_idContent).className = _c$.ITEM.CLASS;
+             /*    for (let key in CONFIG.MENU.TYPE){ 
+                    let option =  CONFIG.MENU.TYPE[key]
                     if (key != CONFIG.MENU.PARSER.toUpperCase())          
                         i$(option.ID).remove();                    
                 } */
@@ -1818,7 +1818,6 @@
         j$.Dashboard.Menu = function(){ // factory
             let items = {}
               , _parser = CONFIG.MENU.PARSER
-              , _option = CONFIG.MENU.OPTIONS[_parser.toUpperCase()]
               , Designers={
                     menubar:function(){
                         return{
