@@ -18,8 +18,10 @@
     <script src="../js/jah/config.js"></script>
     <script src="../js/jah/api/dataExt.js"></script>    
     <script src="../js/jah/api/system.js"></script>
-    <!-- <script src="../js/jah/ui/type.js"></script> -->
+    <script src="../js/jah/ui/type.js"></script>
     <script src="../js/jah/ui/page.js"></script>
+    <script src="../js/jah/resource/resource.js"></script>
+    <script src="../js/helper/data.js"></script> 
 </head>
 <body>
         <header class="navbar navbar-expand navbar-light bg-light sticky-top flex-md-nowrap p-0 shadow">
@@ -36,6 +38,16 @@
 </html> 
 <script type="text/javascript">
     $(document).ready(function(){
+        //const adapter={services:{Assunto:{caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto'}}}
+/*         j$.Service.load("Assunto" , {caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto'});
+        j$.Service.load("Tarefa"  , {caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa', local:true});
+        j$.Service.load("Mensagem", {caption:'Mensagem' ,   crud:true, title:'Mensagem' , modal:true}); */
+        const adapter={services:{               
+               Assunto:{caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto'}
+          ,     Tarefa:{caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa', local:true}
+          ,   Mensagem:{caption:'Mensagem' ,   crud:true, title:'Mensagem' , modal:true}
+        }}
+        j$.Service.createAdapter(adapter);
         j$.Dashboard.Menubar.idContent("menubar");
         j$.Dashboard.init({}) 
         const menu = j$.Dashboard.Menubar;
@@ -43,16 +55,18 @@
         menu.addMenu({caption:"Home", active:true});
 
         const menu_link = menu.addMenu("Link");
-                menu_link.add({caption:'Link', icon:{CLASS:'bi bi-pencil'}, url:'http://localhost:8383/jah/partial.html', hint:'Conheça a história e a caminhada da Comunidade'});
-                menu_link.add({caption:'onClick', icon:{CLASS:'bi bi-pencil'}, onClick:function(){alert("onClick");}, hint:'Veja como estamos organizados'});
-                menu_link.add(); 
-                const menu_album = menu_link.submenu.add({key: 'Album', caption:'Álbum'});
-                      j$.Dashboard.Menu.c$.menubar.c$.Link.c$.Album.add({caption:'Album 01'});
-                      menu_album.addMenu('Album 02');
-                      j$.Dashboard.Menu.c$.menubar.c$.Link.c$.Album.divider.add();
-                      j$.Dashboard.Menu.c$.menubar.c$.Link.c$.Album.add({caption:'Album 03', url:'http://localhost:8383/jah/partial.html'});
-                      j$.Dashboard.Menu.c$.menubar.c$.Link.c$.Album.add(); // vai incluir um separador - também com ["" ou null ]
-                      j$.Dashboard.Menu.c$.menubar.c$.Link.c$.Album.addMenu(); // Vai incluir o menu
+              menu_link.add({caption:'Link', icon:{CLASS:'bi bi-pencil'}
+                           ,     url:'http://localhost:8383/jah/partial.html'
+                           ,    hint:'Conheça a história e a caminhada da Comunidade'});
+              menu_link.add({caption:'onClick', icon:{CLASS:'bi bi-pencil'}, onClick:function(){alert("onClick");}, hint:'Veja como estamos organizados'});
+              menu_link.add(); 
+              const menu_album = menu_link.submenu.add({key: 'Album', caption:'Álbum'});
+                    menu_album.add({caption:'Album 01'});
+                    menu_album.addMenu('Album 02');
+                    j$.Dashboard.Menu.c$.menubar.c$.Link.c$.Album.divider.add();
+                    menu_album.add({caption:'Album 03', url:'http://localhost:8383/jah/partial.html'});
+                    menu_album.add();     // vai incluir um separador - também com ["" ou null ]
+                    menu_album.addMenu(); // Vai incluir o menu 
                       
         const menu_partial = menu.addMenu({caption:"Partial", hint:"Exibe o link usando ajax."})
                 menu_partial.add([{caption:'Visão Geral',   partial:'http://localhost:3000/sample/partial.html', hint:'Conheça a história e a caminhada da Comunidade'}
@@ -61,13 +75,14 @@
                                     onClick:menu=>{j$.Dashboard.Service.open({key:menu.key
                                                                      , caption:menu.caption
                                                                       , onLoad: tab=>{Assunto.init(tab.idContent)}
-                                                                         })}
+                                                     })}
                                 }]);
-        menu.addMenu("Tabela").add([{caption:'Sistemas', partial:'http://localhost:3000/sample/partial.html',   hint:'Veja os sistemas'}
-                                   ,{caption:'Servico' , partial:'http://localhost:3000/sample/partial_1.html', hint:'Veja os sistemas'}
-                                   , //Um separador
-                                   ,{caption:'Progamas',   items:["Pgm 1", {caption:"Pgm 2"}]}
-                                ]);
+        menu.addMenu("Tabela")
+            .add([{caption:'Sistemas', partial:'http://localhost:3000/sample/partial.html'  , hint:'Veja os sistemas'}
+                 ,{caption:'Servico' , partial:'http://localhost:3000/sample/partial_1.html', hint:'Veja os sistemas'}
+                 , //Um separador
+                 ,{caption:'Progamas', items:["Pgm 1", {caption:"Pgm 2"}]}
+                ]);
         menu.render();
     });
 </script>

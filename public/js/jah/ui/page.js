@@ -34,16 +34,8 @@
                     let $this=this;
                     Object.preset(this, adapter);
                     this.load = ()=>{ // Fazer carga dos JS
-                        for (let key in adapter.services){
-                            let item = adapter.services[key];
-                            item.key = key;
-                            if (!item.partial && !item.url && !item.local){
-                                if (item.crud)
-                                    System.using(CONFIG.CRUD.CONTEXT+key+".js");
-                                else if (item.query)
-                                    System.using(CONFIG.QUERY.CONTEXT+key+".js");
-                            }
-                        }
+                        for (let key in adapter.services)                                                      
+                            j$.Service.load(key, adapter.services[key]);                        
                     }
                     this.getService=key=>{
                         if ($this.services[key])
@@ -180,7 +172,15 @@
             
            return {
               get:key=>{return items[key]}
-            //, Items:items
+            , load:(key,item)=>{
+                    item.key = key;
+                    if (!item.partial && !item.url && !item.local){
+                        if (item.crud)
+                            System.using(CONFIG.CRUD.CONTEXT+key+".js");
+                        else if (item.query)
+                            System.using(CONFIG.QUERY.CONTEXT+key+".js");
+                    }
+                }
             , c$:items
             , C$:key=>{return items[key]}
             , createCrud: function(key, service){
@@ -1954,16 +1954,14 @@
                         add:items=>{
                             if (j$.Ext.isObject(items) || (j$.Ext.isString(items) && !items.isEmpty())){
                                 if (items.items)
-                                return _base.submenu.addMenu(items)   //adiciona o menu
-                                                    .add(items.items);//adiciona o submenu
+                                    return _base.submenu.addMenu(items)   //adiciona o menu
+                                                        .add(items.items);//adiciona o submenu
                                 else
-                                return _base.submenu.addMenu(items);                  
+                                    return _base.submenu.addMenu(items);                  
                             }else if (j$.Ext.isArray(items)){
                                 let _items=[]
                                 for (let idx=0; idx<items.length;idx++)
-                                //items.forEach((item,idx)=>{
                                     _items[idx]=_base.submenu.add(items[idx]); 
-                                //})
                                 return _items;
                             }else 
                                 return _base.divider.add(items);         

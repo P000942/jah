@@ -195,7 +195,7 @@ const CONFIG = {
           ,  HEADER:{CLASS:"tab_header"}
           ,   TITLE:{CLASS:"tab_header_title"}
          ,     MENU:{CLASS:"tab_header_menu" }
-          , CONTEXT:'js/crud/'          
+          , CONTEXT:'../js/crud/'          
       }
     , CHILD:{MODAL: true}  
     , GRID:{
@@ -207,7 +207,7 @@ const CONFIG = {
         }
     , QUERY:{BUTTONS:{}
            ,    GRID:{BUTTONS:{}}
-           , CONTEXT: 'js/query/'
+           , CONTEXT: '../js/query/'
             }
     , ALERT:{
           ERROR:{CLASS:'alert-danger' , ICON:c$.ICON.ERROR}
@@ -242,9 +242,7 @@ const CONFIG = {
     ,    WRAP:{SECTION:{CLASS:"wrap_classic"}
               ,    ROW:{CLASS:"form-group row space"}
               , COLUMN:{CLASS:"col-auto space"}}                           
-    ,  BUTTON:{CLASS:'btn btn-default'
-            //  , GRID:{CLASS:'btn btn-sm'}
-            }
+    ,  BUTTON:{CLASS:'btn btn-default'}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
     ,    MENU:{PARSER:c$.MENU.TYPE.SIDEBAR // "MENUBAR" ou 'SIDEBAR'
              ,   TYPE:{SIDEBAR:{WRAP:{CLASS:"col-md-10 ml-sm-auto col-lg-10 px-md-2"}
