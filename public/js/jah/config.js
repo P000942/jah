@@ -243,7 +243,9 @@ const CONFIG = {
     ,    WRAP:{SECTION:{CLASS:"wrap_classic"}
               ,    ROW:{CLASS:"form-group row space"}
               , COLUMN:{CLASS:"col-auto space"}}                           
-    ,  BUTTON:{CLASS:{DEFAULT:'btn btn-default', GRID:'btn btn-sm'}}
+    ,  BUTTON:{CLASS:'btn btn-default'
+            //  , GRID:{CLASS:'btn btn-sm'}
+            }
     ,   PAGER:{CLASS:'pagination pagination-sm'}
     ,    MENU:{PARSER:c$.MENU.TYPE.SIDEBAR // "MENUBAR" ou 'SIDEBAR'
             , OPTIONS:{SIDEBAR:{CLASS:{WRAP:"col-md-10 ml-sm-auto col-lg-10 px-md-2"
@@ -323,7 +325,7 @@ CONFIG.CRUD.BUTTONS={
 
 CONFIG.QUERY.BUTTONS={
        BACK:{value:CONFIG.ACTION.BACK.VALUE}
-   ,    SEARCH:{value:CONFIG.ACTION.SEARCH.VALUE}
+   , SEARCH:{value:CONFIG.ACTION.SEARCH.VALUE}
    ,  PRINT:{value:CONFIG.ACTION.PRINT.VALUE}
 };
 // CONFIG.CONFIRM.BUTTONS={
@@ -331,11 +333,11 @@ CONFIG.QUERY.BUTTONS={
 //    ,       OK:{value:CONFIG.ACTION.OK.VALUE}
 // };
 CONFIG.CRUD.GRID.BUTTONS={
-       EDIT:{value:'Detalhar'                , clas$:CONFIG.BUTTON.CLASS.DEFAULT, icon:CONFIG.ACTION.EDIT.ICON}
-   , REMOVE:{value:CONFIG.ACTION.REMOVE.VALUE, clas$:CONFIG.BUTTON.CLASS.DEFAULT, icon:CONFIG.ACTION.REMOVE.ICON}
+       EDIT:{value:'Detalhar'                , clas$:CONFIG.BUTTON.CLASS, icon:CONFIG.ACTION.EDIT.ICON}
+   , REMOVE:{value:CONFIG.ACTION.REMOVE.VALUE, clas$:CONFIG.BUTTON.CLASS, icon:CONFIG.ACTION.REMOVE.ICON}
 };
 CONFIG.QUERY.GRID.BUTTONS={
-       EDIT:{value:'Detalhar',  clas$:CONFIG.BUTTON.CLASS.DEFAULT, icon:CONFIG.ACTION.EDIT.ICON}
+       EDIT:{value:'Detalhar',  clas$:CONFIG.BUTTON.CLASS, icon:CONFIG.ACTION.EDIT.ICON}
 };
 
 // Faz cópias dos presets(CONFIG.CRUD.BUTTONS, CONFIG.GRID.BUTTONS)

@@ -986,7 +986,7 @@
                 let value = (button.VALUE) ?button.VALUE :key.toLowerCase().toFirstUpper();
                 if (parent && parent.id)
                     Object.preset(button, {id: parent.id +'_'+ key});
-                Object.preset(button,{key:key, value, clas$:CONFIG.BUTTON.CLASS.DEFAULT});
+                Object.preset(button,{key:key, value, clas$:CONFIG.BUTTON.CLASS});
                 if (!button.onclick && actionController && j$.Ext.isString(actionController))
                    button.onclick = actionController+'.' +key.toLowerCase()+'(this);';
                 return button;

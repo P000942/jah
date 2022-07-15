@@ -61,10 +61,11 @@ const TYPE = function() {
                 }
                 
                 if (!design){
+                    let _def = CONFIG.DESIGN.DEFAULT;
                     design ={
-                            input:{clas$: CONFIG.INPUT.CLASS}
-                         , column:{clas$: CONFIG.WRAP.CLASS.COLUMN}
-                         ,  label:{clas$: CONFIG.LABEL.CLASS}              
+                            input:{clas$: _def.INPUT.CLASS}        
+                         , column:{clas$: _def.COLUMN.CLASS}  
+                         ,  label:{clas$: _def.LABEL.CLASS}               
                     }     
                 }
                 parseType(SELF.type.toUpperCase())
