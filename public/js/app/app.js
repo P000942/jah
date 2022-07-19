@@ -47,7 +47,7 @@ j$.Service.createAdapter(adapter);
 $(document).ready(function(){
     j$.Dashboard.init(j$.Page.Adapter);
     j$.Page.Helper.init(j$.Dashboard.Factory);
-;});
+});
 
 // => Essa é uma forma de você definir como quer mostrar os erros
 // basta comentar para manter o padrão

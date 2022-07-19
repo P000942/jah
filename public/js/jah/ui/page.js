@@ -420,38 +420,44 @@
                     return wrapSection;    
                 };
                 const Modal =function(wrap,form, fixed){
-                    let _modal = this;
+                    let _modal = this
+                      , idModal= form.id+ "Modal" ;
                     this.show = show;
                     // TODO: this.display=show;
                     function show(){
-                        $("#"+_modal.form.id+"Modal").modal('show'); // exibe o modal
+                        let myModal = new bootstrap.Modal($(`#${idModal}`), {keyboard: true, focus:true})
+                        myModal.show();
+                        $(`#${idModal}`).on('hidden.bs.modal', function(event){
+ /*                            if ($('.modal:visible').length)
+                               $('body').addClass ='modal-open'; */
+                             //  $("html,body").css({"overflow":"auto"});
+                        })  
                     }
                     this.clear=function(){
-                        if (i$(form.id+ "Modal")) {$("#"+form.id+ "Modal").remove();}
+                        if (i$(idModal)) {$("#"+idModal).remove();}
                     }
                     this.hide=function(){
-                        $("#"+_modal.form.id+"Modal").modal('hide'); // exibe o modal
+                        $("#"+idModal).modal('hide'); // exibe o modal
                     }
                     const create=function(){
                        _modal.clear();
-                       let txFixed=(fixed)?'':"<button type='button' class='btn-close'  data-bs-dismiss='modal' aria-label='Close'>"
-                                  /* +"<span aria-hidden='true'>&times;</span>" */
-                                  +"</button>";
-                       $(wrap).append("<div id='" +form.id+ "Modal' class='modal fade' role='dialog'>"
+                       let txFixed=(fixed)?''
+                                  :"<button type='button' class='btn-close'  data-bs-dismiss='modal' aria-label='Close'></button>";
+                       $(wrap).append(`<div id='${idModal}' class='modal fade' tabindex='-1' role='dialog'>`
                                      +  "<div class='modal-dialog modal-sm modal-lg'>"
                                      +    "<div class='modal-content'>"
-                                     +      "<div id='" +form.id+ "Header' class='modal-header'>"                        
-                                     +              "<h4 class='modal-title' id='" +form.id+ "Caption' >" +form.title+ "</h4>"
+                                     +      `<div id='${form.id}Header' class='modal-header'>`                        
+                                     +              `<h4 class='modal-title' id='${form.id}Caption' >${form.title}</h4>`
                                      +              txFixed
                                      +      "</div>"
-                                     +      "<div id='" +form.id+ "Body' class='modal-body'> <div class='container'>"
-                                     +              "<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>"
+                                     +      `<div id='${form.id}Body' class='modal-body'> <div class='container'>`
+                                     +              `<form id='${form.id}' name='${form.id}'`+ j$.ui.Render.attributes(form.attributes)+ "></form>"
                                      +      "</div></div>"
-                                     +      "<div id='" +form.id+ "Footer' class='modal-footer'></div>"
+                                     +      `<div id='${form.id}Footer' class='modal-footer'></div>`
                                      +     "</div>"
                                      +   "</div>"
                                      + "</div>");
-                       $('#'+form.id).append("<div id='" +form.id+ "Alert'></div>");
+                       $('#'+form.id).append(`<div id='${form.id}Alert'></div>`);
                        _modal.body     =i$(form.id+ "Body");
                        _modal.form     =i$(form.id);
                        _modal.fieldset =i$(form.id);
