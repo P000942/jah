@@ -1492,9 +1492,7 @@
         */
         
         j$.Dashboard = function(){
-            let idContent=CONFIG.LAYOUT.ID
-             // , idToolbar='toolbar';
-        
+            let idContent=CONFIG.LAYOUT.ID        
             return{
                 init: properties=>{
                     j$.Dashboard.Factory = (properties.designer && properties.designer.factory) 
@@ -1561,16 +1559,10 @@
       
         j$.Dashboard.Menubar=function(){
             let menubar
-              , _c$ = CONFIG.MENU.TYPE[CONFIG.MENU.PARSER.toUpperCase()] // design 
-              , _idContent= _c$.ID
             const initialized = function(){
-                i$(j$.Dashboard.idContent).className =_c$.WRAP.CLASS;
-                i$(_idContent).className = _c$.ITEM.CLASS;
-             /*    for (let key in CONFIG.MENU.TYPE){ 
-                    let option =  CONFIG.MENU.TYPE[key]
-                    if (key != CONFIG.MENU.PARSER.toUpperCase())          
-                        i$(option.ID).remove();                    
-                } */
+                let design = CONFIG.MENU.TYPE[CONFIG.MENU.PARSER.toUpperCase()] // design 
+                i$(j$.Dashboard.idContent).className =design.WRAP.CLASS;
+                i$(CONFIG.MENU.PARSER).className = design.ITEM.CLASS;      
                 return true;
             };    
         
@@ -1594,18 +1586,13 @@
                         }
                     }
                 }
-            ,  create:function(content=_idContent){
+            ,  create:function(){
                        initialized();
-                       menubar = j$.Dashboard.Menu.create(content)
+                       menubar = j$.Dashboard.Menu.create(CONFIG.MENU.PARSER)
                     }
             , addMenu:function(menu){return menubar.addMenu(menu)}
             , getMenu:function(menu_key){ return menubar.getMenu(menu_key)}
-            ,  render:function(menu){ menubar.render()}
-            , idContent:function(id){
-                    if (id)
-                        _idContent=id
-                    return _idContent    
-                } 
+            ,  render:function(){menubar.render()}
             }
         }(); // j$.Dashboard.Menubar
         
@@ -1823,7 +1810,6 @@
         
         j$.Dashboard.Menu = function(){ // factory
             let items = {}
-              , _parser = CONFIG.MENU.PARSER
               , Designers={
                     menubar:function(){
                         return{
@@ -1890,9 +1876,11 @@
                                 }                
                         }
                         , createContainer(idContent){
-                            let id = idContent+'Root';
-                            $(`#${idContent}`).append(`<a id="brand" >
-                                                        <span class="fs-5 fw-semibold ms-1">Sistema</span>
+                            let id = idContent+'Root'
+                            ,title = j$.Ext.hasAnyValue(CONFIG.MENU.TITLE.VALUE)
+                                   ? `<span class="${CONFIG.MENU.TITLE.CLASS}">${CONFIG.MENU.TITLE.VALUE}</span>`: ""                                   
+
+                            $(`#${idContent}`).append(`<a id="brand" >${title}                                                        
                                                         <i class="bi bi-list" style="font-size: 1.5rem; color: black;" data-bs-toggle="collapse" data-bs-target="#${id}"></i>
                                                       </a>`);     
                             $(`#${idContent}`).append(`<ul id='${id}' class="list-unstyled ps-0 collapse show">`);
@@ -2075,7 +2063,6 @@
                }      
               , menubar: Designers.menubar
               , sidebar: Designers.sidebar            
-              , Designer: Designers[_parser]
               , c$:items
               , C$:key=>{return items[key]}      
             };

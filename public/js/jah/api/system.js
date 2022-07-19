@@ -611,4 +611,30 @@ j$.ui.Render= function(){
     };
 }();    
 
+System.Init = function(){
+    let sequence = {};
+    return{
+        menu:parserDefault=>{      
+            if (CONFIG.MENU.PARSER.isEmpty())
+                CONFIG.MENU.PARSER = parserDefault;    // para garantir o parser
+              
+            if (i$(`${c$.MENU.TYPE.MENUBAR}`) && i$(`${c$.MENU.TYPE.SIDEBAR}`)){  
+                if (CONFIG.MENU.PARSER===c$.MENU.TYPE.MENUBAR)          
+                    i$(c$.MENU.TYPE.SIDEBAR).remove();
+                else 
+                    i$(c$.MENU.TYPE.MENUBAR).remove();                    
+            }
+            else if (i$(`${c$.MENU.TYPE.MENUBAR}`)) // vai prevalecer o id=parser definido no html
+                CONFIG.MENU.PARSER = c$.MENU.TYPE.MENUBAR;
+            else if (i$(`${c$.MENU.TYPE.SIDEBAR}`))
+                CONFIG.MENU.PARSER = c$.MENU.TYPE.SIDEBAR; 
+            j$.Dashboard.Menu.Designer = j$.Dashboard.Menu[CONFIG.MENU.PARSER]
+        }
+    }
+}();
+
+$(document).ready(function(){
+    System.Init.menu(c$.MENU.TYPE.SIDEBAR);
+});
+
 // export {i$, System};

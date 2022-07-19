@@ -14,7 +14,6 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
  
-  
     <script src="../js/jah/config.js"></script>
     <script src="../js/jah/api/dataExt.js"></script>    
     <script src="../js/jah/api/system.js"></script>
@@ -26,51 +25,47 @@
 <body>
         <header class="navbar navbar-expand navbar-light bg-light sticky-top flex-md-nowrap p-0 shadow">
             <div class="top-left navbar-brand col-md-2 col-lg-2"></div>
-            <input class="form-control form-control-dark w-100 col-md-6" type="text" placeholder="Pesquisar" aria-label="Search">           
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">           
         </header>
-        <nav id="menubar"></nav>
+        <nav id="sidebar"></nav>
         <section id="content_section" class="container-fluid">
             <div id='content'></div>
         </section>
-
     </div>
 </body> 
 </html> 
 <script type="text/javascript">
     $(document).ready(function(){
-        //const adapter={services:{Assunto:{caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto'}}}
-/*         j$.Service.load("Assunto" , {caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto'});
-        j$.Service.load("Tarefa"  , {caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa', local:true});
-        j$.Service.load("Mensagem", {caption:'Mensagem' ,   crud:true, title:'Mensagem' , modal:true}); */
         const adapter={services:{               
-               Assunto:{caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto'}
-          ,     Tarefa:{caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa', local:true}
-          ,   Mensagem:{caption:'Mensagem' ,   crud:true, title:'Mensagem' , modal:true}
-        }}
+                            Assunto:{caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto'}
+                        ,     Tarefa:{caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa', local:true}
+                        ,   Mensagem:{caption:'Mensagem' ,   crud:true, title:'Mensagem' , modal:true}
+                        }}
+            ,  urlPartial = CONFIG.SERVER.CONTEXT + 'sample/partial.html'
+            , urlPartial1 = CONFIG.SERVER.CONTEXT + 'sample/partial_1.html'
         j$.Service.createAdapter(adapter);
-        j$.Dashboard.Menubar.idContent("menubar");
+        //j$.Dashboard.Menubar.idContent("menubar");
         j$.Dashboard.init({}) 
         const menu = j$.Dashboard.Menubar;
-        //const menu = j$.Dashboard.Menu.create("menubar");
         menu.addMenu({caption:"Home", active:true});
 
         const menu_link = menu.addMenu("Link");
               menu_link.add({caption:'Link', icon:{CLASS:'bi bi-pencil'}
-                           ,     url:'http://localhost:8383/jah/partial.html'
+                           ,     url:urlPartial
                            ,    hint:'Conheça a história e a caminhada da Comunidade'});
               menu_link.add({caption:'onClick', icon:{CLASS:'bi bi-pencil'}, onClick:function(){alert("onClick");}, hint:'Veja como estamos organizados'});
               menu_link.add(); 
               const menu_album = menu_link.submenu.add({key: 'Album', caption:'Álbum'});
                     menu_album.add({caption:'Album 01'});
                     menu_album.addMenu('Album 02');
-                    j$.Dashboard.Menu.c$.menubar.c$.Link.c$.Album.divider.add();
-                    menu_album.add({caption:'Album 03', url:'http://localhost:8383/jah/partial.html'});
+                    j$.Dashboard.Menu.c$.sidebar.c$.Link.c$.Album.divider.add();
+                    menu_album.add({caption:'Album 03', url:urlPartial});
                     menu_album.add();     // vai incluir um separador - também com ["" ou null ]
                     menu_album.addMenu(); // Vai incluir o menu 
                       
         const menu_partial = menu.addMenu({caption:"Partial", hint:"Exibe o link usando ajax."})
-                menu_partial.add([{caption:'Visão Geral',   partial:'http://localhost:3000/sample/partial.html', hint:'Conheça a história e a caminhada da Comunidade'}
-                                ,{caption:'Semenentinha',  partial:'http://localhost:3000/sample/partial_1.html', hint:'Veja como estamos organizados'}
+                menu_partial.add([{caption:'Visão Geral', partial:urlPartial, hint:'Conheça a história e a caminhada da Comunidade'}
+                                ,{caption:'Semenentinha', partial:urlPartial1, hint:'Veja como estamos organizados'}
                                 ,{caption:'Assunto',       hint:'Veja um álbum de nosso trabalho de evagelização!',
                                     onClick:menu=>{j$.Dashboard.Service.open({key:menu.key
                                                                      , caption:menu.caption
@@ -78,8 +73,8 @@
                                                      })}
                                 }]);
         menu.addMenu("Tabela")
-            .add([{caption:'Sistemas', partial:'http://localhost:3000/sample/partial.html'  , hint:'Veja os sistemas'}
-                 ,{caption:'Servico' , partial:'http://localhost:3000/sample/partial_1.html', hint:'Veja os sistemas'}
+            .add([{caption:'Sistemas', partial:urlPartial  , hint:'Veja os sistemas'}
+                 ,{caption:'Servico' , partial:urlPartial1, hint:'Veja os sistemas'}
                  , //Um separador
                  ,{caption:'Progamas', items:["Pgm 1", {caption:"Pgm 2"}]}
                 ]);
