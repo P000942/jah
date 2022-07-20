@@ -1558,11 +1558,12 @@
         }(); // j$.Dashboard.Service
       
         j$.Dashboard.Menubar=function(){
-            let menubar
-            const initialized = function(){
-                let design = CONFIG.MENU.TYPE[CONFIG.MENU.PARSER.toUpperCase()] // design 
+            let menubar, _parser
+            const initialized = function(parser){
+                _parser = parser; //CONFIG.MENU.PARSER;
+                let design = CONFIG.MENU.TYPE[_parser.toUpperCase()] // design 
                 i$(j$.Dashboard.idContent).className =design.WRAP.CLASS;
-                i$(CONFIG.MENU.PARSER).className = design.ITEM.CLASS;      
+                i$(_parser).className = design.ITEM.CLASS;      
                 return true;
             };    
         
@@ -1586,9 +1587,9 @@
                         }
                     }
                 }
-            ,  create:function(){
-                       initialized();
-                       menubar = j$.Dashboard.Menu.create(CONFIG.MENU.PARSER)
+            ,  create:function(parser=CONFIG.MENU.PARSER){
+                       initialized(parser);
+                       menubar = j$.Dashboard.Menu.create(parser)
                     }
             , addMenu:function(menu){return menubar.addMenu(menu)}
             , getMenu:function(menu_key){ return menubar.getMenu(menu_key)}
@@ -1648,12 +1649,12 @@
                     }        
                     // Exibe o TAB (ativo) se tiver escondido, e ESCONDE se tiver ativo   
                     function toggle(){
-                    if (active_tab){
-                        if (active_tab.active) 
-                            active_tab.hide();
-                        else
-                            active_tab.show();
-                    } 
+                        if (active_tab){
+                            if (active_tab.active) 
+                                active_tab.hide();
+                            else
+                                active_tab.show();
+                        } 
                     }        
                     // Coloca a tab indica(key) como ativa
                     function activate(key){	
@@ -1777,8 +1778,8 @@
                     } //tab 	
             } // Root;
             return{        
-                 C$:key=>{return tabs[key]}
-              , open:(root,key)=>{tabs[root].open(key)}  
+                    C$:key=>{return tabs[key]}
+              ,   open:(root,key)=>{tabs[root].open(key)}  
               , create: (idTabs, idContent)=>{
                     if (idTabs && idContent){
                         tabs[idTabs] = new Root(idTabs, idContent);
@@ -1900,12 +1901,12 @@
                 }                
                 return attLink;
             }
-            , Base=function(inheritor, properties){
+            , Base=function(inheritor, properties, designer){
                 let _base = this;
                 this.inherit=System.Node;
                 this.inherit(inheritor, properties);
                 this.render = ()=>{
-                    $('#'+_base.Parent.id).append(j$.Dashboard.Menu.Designer.format(_base));
+                    $('#'+_base.Parent.id).append(designer.format(_base));
                     if (_base.onClick)
                         $("#"+_base.id).click(_base.onClick);
                     _base.submenu.render();
@@ -1963,7 +1964,7 @@
                         , addMenu(items){
                             if (j$.Ext.isObject(items))
                                 j$.Dashboard.bindItem(items); // fazer a ligacao com o caminho de abertudo do item (tab, url)
-                            let lastItem = new Subitem(_base, items);
+                            let lastItem = new Subitem(_base, items, designer);
                             _base.put(lastItem.key, lastItem);
                             return lastItem;
                         }  
@@ -1998,29 +1999,29 @@
                 }();
             
                 function render(){
-                    $('#'+_base.Parent.id).append(j$.Dashboard.Menu.Designer.format(_base));
+                    $('#'+_base.Parent.id).append(designer.format(_base));
                     if (_base.onClick)
                         $("#"+_base.id).click(_base.onClick);
                     _base.submenu.render();
                 };
             } // Base    
               //properties={key:'', caption:'', url:'', partial:'', title:'', idContainer:'', byBass:false, onClick:function(){}}
-            ,    Item=function (parent, properties){
+            ,  Item=function (parent, properties, designer){
                 this.inherit = Base;
-                this.inherit({type:'Menu', Root:parent, Parent:parent}, properties);
+                this.inherit({type:'Menu', Root:parent, Parent:parent}, properties, designer);
             }  
             //properties={key:'', caption:'', url:'', partial:'', title:'', idContainer:'', icon:'' byBass:false, onClick:function(){}}
-            ,  Subitem = function (parent, properties){
+            ,  Subitem = function (parent, properties, designer){
                 this.inherit = Base;
-                this.inherit({type:'Submenu', Root:parent.Root, Parent:parent}, properties);
+                this.inherit({type:'Submenu', Root:parent.Root, Parent:parent}, properties, designer);
             }
-            ,  Navbar=function(idContent){
+            ,  Navbar=function(idContent, designer){
                 let _navbar = this;
                 this.inherit=System.Node;
                 this.inherit({type:'Navbar', Root:_navbar, Parent:null},{key:idContent, id:create()});
                 //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
                 this.addMenu = properties =>{
-                    let menu = new Item(_navbar, properties);
+                    let menu = new Item(_navbar, properties, designer);
                     _navbar.put(menu.key,menu);
                     return menu;
                 }
@@ -2030,7 +2031,7 @@
                 }
             
                 function create(){
-                    return j$.Dashboard.Menu.Designer.createContainer(idContent);
+                    return designer.createContainer(idContent);
                 };
             }   
             // TODO: está sem uso no framework - mas é interessante para a criação de um menu
@@ -2057,8 +2058,10 @@
                 }
             } 
             return{
-               create (idContent){
-                   items[idContent] =new Navbar(idContent);
+               create (idContent, parser){
+                   if (!parser)
+                       parser=CONFIG.MENU.PARSER
+                   items[idContent] =new Navbar(idContent, Designers[parser]);
                    return items[idContent];
                }      
               , menubar: Designers.menubar

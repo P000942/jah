@@ -628,7 +628,6 @@ System.Init = function(){
                 CONFIG.MENU.PARSER = c$.MENU.TYPE.MENUBAR;
             else if (i$(`${c$.MENU.TYPE.SIDEBAR}`))
                 CONFIG.MENU.PARSER = c$.MENU.TYPE.SIDEBAR; 
-            j$.Dashboard.Menu.Designer = j$.Dashboard.Menu[CONFIG.MENU.PARSER]
         }
     }
 }();
