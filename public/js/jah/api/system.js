@@ -82,19 +82,13 @@ const System = function(){
                     if (content.before)
                         $(id).before(content.before);
                     if (content.top || content.prepend)
-                        $(id).prepend((content.prepend)?content.prepend :content.top);
-/*                     if (content.beforebegin || content.afterbegin || content.beforeend || content.afterend)
-                        $(id).insertAdjacentElement(content.top);  */                       
+                        $(id).prepend((content.prepend)?content.prepend :content.top);                    
                 }
                 return (idInner) ?i$(idInner) :null;
             }
-            Element.prototype.remove = function() {
+/*             Element.prototype.retire = function() {
                 if (!this.id.isEmpty())
                     $("#" + this.id).remove();
-            }
-/*             Element.prototype.addClassName = function(className) {
-                if (!this.id.isEmpty())
-                    $("#" + this.id).addClass(className);
             } */
             Element.prototype.hide = function() {
                 if (!this.id.isEmpty())

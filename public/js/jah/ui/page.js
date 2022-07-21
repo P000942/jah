@@ -1826,24 +1826,26 @@
                                     attClass  = 'class="nav-item dropdown"';
                                     attDropdown = 'class="nav-link dropdown-toggle" data-bs-toggle="dropdown" '
                                                 + 'role="button" aria-haspopup="true" aria-expanded="false"';
-                                    attDropdownUl = '<div id="'+properties.id+'"  class="dropdown-menu" aria-labelledby="navbarDropdown"></div>';  
+                                    attDropdownUl = `<div id="${properties.id}"  class="dropdown-menu" aria-labelledby="navbarDropdown"></div>`;  
                                     if (properties.type=='Submenu') { 
                                         attClass  ='class="dropdown-submenu"';
                                     }
                                     return '<li '  +attClass+ ' ' +attHint+ '>'
-                                        +'<a '  +attDropdown  + ' ' +formatLink(properties)+'>'+attIcon+properties.caption //+attCarret
-                                        +'</a>' +attDropdownUl+ '</li>';
+                                         + '<a '  +attDropdown  + ' ' +formatLink(properties)+'>'+attIcon+properties.caption //+attCarret
+                                         + '</a>' +attDropdownUl+ '</li>';
                                 } else{ // os item do menu entram aqui        
-                                    return `<a id="${properties.id}" class="dropdown-item" ${attHint} ${formatLink(properties)}>`
+                                    return `<li class="nav-item"><a id="${properties.id}" class="nav-link" ${attHint} ${formatLink(properties)}>`
                                                 +attIcon+properties.caption
-                                        + '</a>';
+                                        + '</a></li>';
                                 }                
                         }
                         , createContainer(idContent){
                             let id = idContent+'Root';
-                            $(`#${idContent}`).append(`<div class="container"></div>`);                
-                            $(`#${idContent} > .container`).append(`<div class="navbar-collapse"> </div>`);
-                            $(`#${idContent} > .container > .navbar-collapse`).append(`<ul id='${id}' class='navbar-nav mr-auto'></ul>`);
+                            // $(`#${idContent}`).append(`<div class="container"></div>`);                
+                            // $(`#${idContent} > .container`).append(`<div class="navbar-collapse"> </div>`);
+                            // $(`#${idContent} > .container > .navbar-collapse`).append(`<ul id='${id}' class='navbar-nav mr-auto'></ul>`);
+                            $(`#${idContent}`).addClass("navbar-collapse"); 
+                            $(`#${idContent}`).append(`<ul id='${id}' class='navbar-nav me-auto'></ul>`);
                             return id;
                         }         
                         } //return

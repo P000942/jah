@@ -244,18 +244,15 @@ const CONFIG = {
               , COLUMN:{CLASS:"col-auto space"}}                           
     ,  BUTTON:{CLASS:'btn btn-default'}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
-    ,    MENU:{PARSER:c$.MENU.TYPE.SIDEBAR // "MENUBAR" ou 'SIDEBAR'
+    ,    MENU:{PARSER:c$.MENU.TYPE.MENUBAR // "MENUBAR" ou 'SIDEBAR'
             ,    TYPE:{SIDEBAR:{WRAP:{CLASS:"col-md-10 ml-sm-auto col-lg-10 px-md-2"}
                               , ITEM:{CLASS:"col-md-2 col-lg-2 d-md-block nav-side-menu"} 
-                            //  ,   ID:"sidebar"
                             }
                      , MENUBAR:{WRAP:{CLASS:"col-md-12 ml-sm-auto col-lg-12 px-md-2"}
                               , ITEM:{CLASS:"navbar navbar-expand-lg navbar-light bg-light menubar_space"}
-                            //  ,   ID:"menubar"
                             }
                       }                       
             ,  TITLE:{VALUE:"Jah", CLASS:"fs-5 fw-semibold ms-1"}
-            ,     ID:"sidebar"
         }                 
 };
 CONFIG.INPUT.TYPE={
@@ -454,4 +451,3 @@ c$.MASK.NUMBER.exists=function(value){
 }
 c$.MASK.CHARS = c$.MASK.NUMBER.CHARS + c$.MASK.ALPHA.CHARS;
 // export {CONFIG, c$};
-
