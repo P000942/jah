@@ -239,7 +239,7 @@ const j$ = function(){
     String.prototype.toMoney=function(decimals){
         let value = this.toString().replace(",",'.');
         return j$.Ext.moneyFormat(value,decimals);
-     } 
+    } 
     //@note: procura por valor no objeto e retorna array com as propriedades que contem o valor
     String.prototype.toggle = function(values){
         return (this === values[1]) ?values[0] :values[1]       
@@ -782,6 +782,24 @@ j$.Ext = function(){
                              return false;                            
                         }
     }
+}();
+j$.Dom = function(){    
+    const exists = function(ids){
+        let res=[];
+        ids.forEach(id=>{
+            if (i$(id))
+               res.push(id);            
+        })  
+        return res;      
+    }
+    const keep = function(keeped, ids){
+        ids.forEach(id=>{
+            if (id!=keeped && i$(id))
+               i$(id).remove();            
+        })   
+        return i$(keeped);
+    }    
+    return {exists, keep}
 }();
 
 String.prototype.gsub=function(pattern, replacement) {

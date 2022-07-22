@@ -441,8 +441,7 @@
                     }
                     const create=function(){
                        _modal.clear();
-                       let txFixed=(fixed)?''
-                                  :"<button type='button' class='btn-close'  data-bs-dismiss='modal' aria-label='Close'></button>";
+                       let txFixed=(fixed)?'' :j$.ui.Render.formatClose("modal")  
                        $(wrap).append(`<div id='${idModal}' class='modal fade' tabindex='-1' role='dialog'>`
                                      +  "<div class='modal-dialog modal-sm modal-lg'>"
                                      +    "<div class='modal-content'>"
@@ -1840,10 +1839,7 @@
                                 }                
                         }
                         , createContainer(idContent){
-                            let id = idContent+'Root';
-                            // $(`#${idContent}`).append(`<div class="container"></div>`);                
-                            // $(`#${idContent} > .container`).append(`<div class="navbar-collapse"> </div>`);
-                            // $(`#${idContent} > .container > .navbar-collapse`).append(`<ul id='${id}' class='navbar-nav mr-auto'></ul>`);
+                            let id = idContent+'Root';                 
                             $(`#${idContent}`).addClass("navbar-collapse"); 
                             $(`#${idContent}`).append(`<ul id='${id}' class='navbar-nav me-auto'></ul>`);
                             return id;
@@ -1881,16 +1877,70 @@
                         , createContainer(idContent){
                             let id = idContent+'Root'
                             ,title = j$.Ext.hasAnyValue(CONFIG.MENU.TITLE.VALUE)
-                                   ? `<span class="${CONFIG.MENU.TITLE.CLASS}">${CONFIG.MENU.TITLE.VALUE}</span>`: ""                                   
+                                   ? `<span class="${CONFIG.MENU.TITLE.CLASS}">${CONFIG.MENU.TITLE.VALUE}</span>`: "";
 
-                            $(`#${idContent}`).append(`<a id="brand" >${title}                                                        
-                                                        <i class="bi bi-list" style="font-size: 1.5rem; color: black;" data-bs-toggle="collapse" data-bs-target="#${id}"></i>
-                                                      </a>`);     
+                            $(`#${idContent}`).append(`<a id="brand" class="navbar-brand" 
+                                                        data-bs-toggle="collapse" data-bs-target="#${id}">                                                        
+                                                        ${j$.ui.Render.icon(c$.ICON.MENULIST)}${title}
+                                                       </a>`);     
                             $(`#${idContent}`).append(`<ul id='${id}' class="list-unstyled ps-0 collapse show">`);
                             return id;
-                        }  
+                        } 
                         } //return
                     }()   //sidebar
+                , offcanvas:function(){
+                    return{
+                        format (properties){
+                                let attIcon=j$.ui.Render.icon(properties.icon)
+                                  , attClass = 'menu mb-0'  
+                                  , attHint = (properties.title)? 'title="' + properties.title + '"' : '';
+                                if (properties.active){
+                                    attClass += ' active';
+                                    properties.Root.active=true;
+                                }                               
+                                if (properties.length>0){ //o menu      
+                                    return `<li class="${attClass}"  ${attHint}>`
+                                        +`<a class="btn btn-toggle dropdown-toggle collapsed" ` 
+                                        + formatLink(properties)
+                                        +` data-bs-toggle="collapse" data-bs-target="#${properties.id}_target" aria-expanded="false">`
+                                        +    attIcon+properties.caption
+                                        +'</a>'
+                                        +`<div id="${properties.id}_target" class="collapse" style=""><ul id="${properties.id}"  class="sub-menu"></ul></div>` //sub-menu collapse
+                                        + '</li>';
+                                } else{ // as opcoes do menu entram aqui   
+                                    if (attIcon.isEmpty() && properties.Parent.Parent)
+                                        attIcon='<i class="bi bi-chevron-right"></i>';
+                                    return `<li class="sub-menu"><a id="${properties.id}" ${attHint} ${formatLink(properties)}>`
+                                                +attIcon                                               
+                                                +properties.caption
+                                        + '</a></li>';
+                                }                
+                        }
+                        , createContainer(idCanvas){
+                            let idRoot = idCanvas+'Root'
+                            ,  idContent = idCanvas+'Container'
+                            ,   idHeader = idCanvas+'Header'
+                            ,    idTitle = idCanvas+'Title'
+                            ,     idBody = idCanvas+'Body'
+                            ,      title = j$.Ext.hasAnyValue(CONFIG.MENU.TITLE.VALUE)
+                                         ? `<span class="${CONFIG.MENU.TITLE.CLASS}">${CONFIG.MENU.TITLE.VALUE}</span>`: "";             
+                            $(`#${idCanvas}`).html(
+                                `<a class="navbar-brand" data-bs-toggle="offcanvas" href="#${idContent}" role="button" aria-controls="${idContent}">                                    
+                                    ${j$.ui.Render.icon(c$.ICON.MENULIST)}${title}
+                                </a>`);
+                            $('body').append(`<div id="${idContent}" class="offcanvas offcanvas-start" tabindex="-1"  aria-labelledby="${idContent}Label"></div>`)
+                            $(`#${idContent}`).append(
+                                `<div id="${idHeader}" class="offcanvas-header">
+                                    <h5 id="${idTitle}" class="offcanvas-title">${title}</h5>
+                                    ${j$.ui.Render.formatClose("offcanvas")}                                    
+                                </div>`)                                
+                            $(`#${idContent}`).append(`<div id="${idBody}" class="offcanvas-body"><h1>Corpo Canvas</h1></div>`)  
+                            $(`#${idBody}`).append(`<ul id='${idRoot}' class="list-unstyled ps-0 collapse show"></ul>`);
+                            //<ul class="navbar-nav justify-content-end flex-grow-1 pe-3"></ul>
+                            return idRoot;
+                        }  
+                        } //return
+                }()  //offcanvas    
             }
             , formatLink= properties =>{
                 let attLink = '';
@@ -2067,7 +2117,8 @@
                    return items[idContent];
                }      
               , menubar: Designers.menubar
-              , sidebar: Designers.sidebar            
+              , sidebar: Designers.sidebar
+              , offcanvas: Designers.offcanvas
               , c$:items
               , C$:key=>{return items[key]}      
             };

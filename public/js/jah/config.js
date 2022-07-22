@@ -11,7 +11,7 @@ const c$ = {
     ,  KEY:{F1:112, F2:113, F3:114, F4:115, F5:116, F6:117,F7:118, F8:119, F9:120, F10:121, F11:122, F12:123
         , TAB:9, ENTER:13, ESC:27, COMMA:44, BACKSPACE:8, END:35, HOME:36, LEFT:37, UP:38, RIGHT:39, DOWN:40, INS:45, DEL:46, REFRESH:116}
     ,FILTER:{}
-    ,  MENU:{TYPE:{SIDEBAR:'sidebar', MENUBAR:'menubar'}}
+    ,  MENU:{TYPE:{SIDEBAR:'sidebar', MENUBAR:'menubar', OFFCANVAS:'offcanvas'}}
     ,  MASK:{
               SEPARATOR : "|"
             , PROMPT: "_"
@@ -79,6 +79,7 @@ c$.ICON={
 ,       NO:{KEY:'no'       , COLOR:c$.COLOR.ICON_FAIL, CLASS:'bi bi-x-circle-fill'    }
 ,  SHOWBOX:{KEY:'showbox'  , COLOR:c$.COLOR.BLACK    , CLASS:'bi bi-caret-up-fill'    }
 ,  HIDEBOX:{KEY:'hidebox'  , COLOR:c$.COLOR.BLACK    , CLASS:'bi bi-caret-right-fill'  }
+, MENULIST:{KEY:'menulist' , COLOR:false             , CLASS:'bi bi-list', STYLE:'font-size: 1.5rem; color: black;'}
 ,     INIT:{KEY:'init'     , COLOR:''                , CLASS:''}
 ,SUBVISION:{KEY:'subvision', COLOR:''                , CLASS:'bi bi-list'}
 }    
@@ -244,13 +245,16 @@ const CONFIG = {
               , COLUMN:{CLASS:"col-auto space"}}                           
     ,  BUTTON:{CLASS:'btn btn-default'}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
-    ,    MENU:{PARSER:c$.MENU.TYPE.MENUBAR // "MENUBAR" ou 'SIDEBAR'
+    ,    MENU:{PARSER:c$.MENU.TYPE.SIDEBAR // "MENUBAR" ou 'SIDEBAR' ou 'OFFCANVAS'
             ,    TYPE:{SIDEBAR:{WRAP:{CLASS:"col-md-10 ml-sm-auto col-lg-10 px-md-2"}
                               , ITEM:{CLASS:"col-md-2 col-lg-2 d-md-block nav-side-menu"} 
-                            }
+                            }                            
                      , MENUBAR:{WRAP:{CLASS:"col-md-12 ml-sm-auto col-lg-12 px-md-2"}
                               , ITEM:{CLASS:"navbar navbar-expand-lg navbar-light bg-light menubar_space"}
                             }
+                    ,OFFCANVAS:{WRAP:{CLASS:"col-md-10 ml-sm-auto col-lg-10 px-md-2"}
+                              , ITEM:{CLASS:"col-md-2 col-lg-2 d-md-block nav-side-menu"} 
+                            }        
                       }                       
             ,  TITLE:{VALUE:"Jah", CLASS:"fs-5 fw-semibold ms-1"}
         }                 

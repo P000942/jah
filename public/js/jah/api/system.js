@@ -573,6 +573,9 @@ j$.ui.Render= function(){
         return '<a' +j$.ui.Render.attributes(properties,['value', 'element'])+ '>'
              +j$.ui.Render.icon(icon) +properties.value+'</a>';
     }
+    , formatClose:(dismiss)=>{        
+        return `<button type="button" class="btn-close text-reset" data-bs-dismiss="${dismiss}" aria-label="Fechar"></button>`;
+    }
     , formatButtonDropdown:(properties)=>{
         let icon = (properties.icon) ?properties.icon :c$.ICON.get(properties.key); 
         return '<div id="' +properties.id+ '"  class="btn-group" role="group" aria-label="Button group with nested dropdown">'                 
@@ -583,12 +586,14 @@ j$.ui.Render= function(){
                 +'</div>';
     }
     , color: value=> {return (value) ?`style="color:${value};" `  :'' }
+    , style: value=> {return (value) ?`style="${value}" `  :'' }
     //@note: j$.ui.Render.icon('bi bi-table') ou j$.ui.Render.icon({CLASS:'bi bi-table', COLOR:'green'})
     , icon:(properties)=>{
         if (j$.Ext.hasAnyValue(properties)){
             let ICON = j$.Ext.toObject(properties, 'CLASS') 
-            ,  color = j$.ui.Render.color(ICON.COLOR);               
-            return `<i class="${ICON.CLASS}" ${color}></i>`;
+            ,  color = j$.ui.Render.color(ICON.COLOR)              
+            ,  style = j$.ui.Render.style(ICON.STYLE);               
+            return `<i class="${ICON.CLASS}" ${color}${style}></i>`;
         } else 
             return "";    
     }
@@ -599,8 +604,8 @@ j$.ui.Render= function(){
         wrap.insert(`<div ${alert.CLASS} role="alert">                    
                     ${iconClass}
                     ${msg}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                     </div>`);
+                    ${j$.ui.Render.formatClose("alert")}                    
+                     </div>`);                    
     }
     };
 }();    
@@ -608,20 +613,14 @@ j$.ui.Render= function(){
 System.Init = function(){
     let sequence = {};
     return{
-        menu:parserDefault=>{      
+        menu:parserDefault=>{  
+            let parsers = j$.Dom.exists([c$.MENU.TYPE.MENUBAR, c$.MENU.TYPE.SIDEBAR,c$.MENU.TYPE.OFFCANVAS]);    
             if (CONFIG.MENU.PARSER.isEmpty())
-                CONFIG.MENU.PARSER = parserDefault;    // para garantir o parser
-              
-            if (i$(`${c$.MENU.TYPE.MENUBAR}`) && i$(`${c$.MENU.TYPE.SIDEBAR}`)){  
-                if (CONFIG.MENU.PARSER===c$.MENU.TYPE.MENUBAR)          
-                    i$(c$.MENU.TYPE.SIDEBAR).remove();
-                else 
-                    i$(c$.MENU.TYPE.MENUBAR).remove();                    
-            }
-            else if (i$(`${c$.MENU.TYPE.MENUBAR}`)) // vai prevalecer o id=parser definido no html
-                CONFIG.MENU.PARSER = c$.MENU.TYPE.MENUBAR;
-            else if (i$(`${c$.MENU.TYPE.SIDEBAR}`))
-                CONFIG.MENU.PARSER = c$.MENU.TYPE.SIDEBAR; 
+               CONFIG.MENU.PARSER = parserDefault; // para garantir o parser
+            if (parsers.length>1)                  // vai permanecer apenas o parserDefault 
+               j$.Dom.keep(CONFIG.MENU.PARSER, parsers) 
+            else                                   // vai prevalecer o id=parser que está declarado no html
+                CONFIG.MENU.PARSER = parsers[0];
         }
     }
 }();

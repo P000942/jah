@@ -84,6 +84,7 @@
 
   .nav-side-menu #brand {
     width: 100%;    
+    color:#000;
   }
 
   .nav-side-menu .sub-menu li {
