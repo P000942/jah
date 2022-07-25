@@ -1810,70 +1810,67 @@
         
         j$.Dashboard.Menu = function(){ // factory
             let items = {}
+              , prepare = properties=>{
+                let ws ={icon:j$.ui.Render.icon(properties.icon)
+                  ,temSubmenu: (properties.length>0)                      
+                  ,      hint: (properties.title)? 'title="' + properties.title + '"' : ''}
+                , ehSubmenu= (properties.type=='Submenu') //(properties.Parent.Parent)
+                ws.attClass = ehSubmenu ?'sub-menu' :'menu mb-0'  
+                if (properties.active){
+                    ws.attClass += ' active';
+                    properties.Root.active=true;
+                }
+                if (ws.icon.isEmpty() && ehSubmenu && !ws.temSubmenu)
+                    ws.icon='<i class="bi bi-chevron-right"></i>'; 
+                return ws;
+              }
+              , format = function (properties){ 
+                    let ws = prepare(properties)                            
+                    if (ws.temSubmenu){ //o menu      
+                        return `<li class="${ws.attClass}"  ${ws.hint}>`
+                                +`<a class="btn btn-toggle dropdown-toggle collapsed" formatLink(properties)` 
+                                +` data-bs-toggle="collapse" data-bs-target="#${properties.id}_target" aria-expanded="false">`
+                                +    ws.icon+properties.caption
+                                +'</a>'
+                                +`<div id="${properties.id}_target" class="collapse" style="">
+                                    <ul id="${properties.id}"  class="sub-menu list-unstyled"></ul></div>` //sub-menu collapse
+                            + '</li>';
+                    } else{ // as opcoes do menu entram aqui                                          
+                        return `<li class="${ws.attClass}">
+                                    <a class='btn ps-1' id="${properties.id}" ${ws.hint} ${formatLink(properties)}>`
+                                    +ws.icon                                               
+                                    +properties.caption
+                            + '</a></li>';
+                    }                
+                }
               , Designers={
                     menubar:function(){
                         return{
-                        format (properties){
-                                let attClass = '', attDropdown = '', attDropdownUl =''
-                                  , attIcon = j$.ui.Render.icon(properties.icon)  
-                                  , attHint = (properties.title)? 'title="' + properties.title + '"' : '';
-                                if (properties.active){
-                                    attClass='class="active"';
-                                    properties.Root.active=true;
-                                }
-                                if (properties.length>0){
-                                    attClass  = 'class="nav-item dropdown"';
-                                    attDropdown = 'class="nav-link dropdown-toggle" data-bs-toggle="dropdown" '
-                                                + 'role="button" aria-haspopup="true" aria-expanded="false"';
-                                    attDropdownUl = `<div id="${properties.id}"  class="dropdown-menu" aria-labelledby="navbarDropdown"></div>`;  
-                                    if (properties.type=='Submenu') { 
-                                        attClass  ='class="dropdown-submenu"';
-                                    }
-                                    return '<li '  +attClass+ ' ' +attHint+ '>'
-                                         + '<a '  +attDropdown  + ' ' +formatLink(properties)+'>'+attIcon+properties.caption //+attCarret
-                                         + '</a>' +attDropdownUl+ '</li>';
-                                } else{ // os item do menu entram aqui        
-                                    return `<li class="nav-item"><a id="${properties.id}" class="nav-link" ${attHint} ${formatLink(properties)}>`
-                                                +attIcon+properties.caption
-                                        + '</a></li>';
-                                }                
-                        }
-                        , createContainer(idContent){
-                            let id = idContent+'Root';                 
-                            $(`#${idContent}`).addClass("navbar-collapse"); 
-                            $(`#${idContent}`).append(`<ul id='${id}' class='navbar-nav me-auto'></ul>`);
-                            return id;
-                        }         
+                            format (properties){
+                                    let ws = prepare(properties) 
+                                    if (ws.temSubmenu){
+                                        return `<li class='nav-item dropdown me-2'  ${ws.hint}>`
+                                             + `<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
+                                                ${formatLink(properties)} href="#">${ws.icon}${properties.caption}</a>`
+                                             + `<ul id="${properties.id}"  class="dropdown-menu" aria-labelledby="navbarDropdown"></ul></li>`;
+                                    } else{ // os item do menu entram aqui                                                
+                                        return `<li>
+                                               <a id="${properties.id}" class="dropdown-item ps-1" ${ws.hint} ${formatLink(properties)} href="#">`
+                                                    +ws.icon+properties.caption
+                                            + '</a></li>';
+                                    }                
+                            }
+                            , createContainer(idContent){
+                                let id = idContent+'Root';                 
+                                $(`#${idContent}`).append(`<div class="collapse navbar-collapse"></div>`);
+                                $(`#${idContent} > div`).append(`<ul id='${id}' class='navbar-nav me-auto'></ul>`);
+                                return id;
+                            }         
                         } //return
                     }()  //menubar
                 ,  sidebar:function(){
                         return{
-                        format (properties){
-                                let attIcon=j$.ui.Render.icon(properties.icon)
-                                  , attClass = 'menu mb-0'  
-                                  , attHint = (properties.title)? 'title="' + properties.title + '"' : '';
-                                if (properties.active){
-                                    attClass += ' active';
-                                    properties.Root.active=true;
-                                }                               
-                                if (properties.length>0){ //o menu      
-                                    return `<li class="${attClass}"  ${attHint}>`
-                                        +`<a class="btn btn-toggle dropdown-toggle collapsed" ` 
-                                        + formatLink(properties)
-                                        +` data-bs-toggle="collapse" data-bs-target="#${properties.id}_target" aria-expanded="false">`
-                                        +    attIcon+properties.caption
-                                        +'</a>'
-                                        +`<div id="${properties.id}_target" class="collapse" style=""><ul id="${properties.id}"  class="sub-menu"></ul></div>` //sub-menu collapse
-                                        + '</li>';
-                                } else{ // as opcoes do menu entram aqui   
-                                    if (attIcon.isEmpty() && properties.Parent.Parent)
-                                        attIcon='<i class="bi bi-chevron-right"></i>';
-                                    return `<li class="sub-menu"><a id="${properties.id}" ${attHint} ${formatLink(properties)}>`
-                                                +attIcon                                               
-                                                +properties.caption
-                                        + '</a></li>';
-                                }                
-                        }
+                        format 
                         , createContainer(idContent){
                             let id = idContent+'Root'
                             ,title = j$.Ext.hasAnyValue(CONFIG.MENU.TITLE.VALUE)
@@ -1890,35 +1887,10 @@
                     }()   //sidebar
                 , offcanvas:function(){
                     return{
-                        format (properties){
-                                let attIcon=j$.ui.Render.icon(properties.icon)
-                                  , attClass = 'menu mb-0'  
-                                  , attHint = (properties.title)? 'title="' + properties.title + '"' : '';
-                                if (properties.active){
-                                    attClass += ' active';
-                                    properties.Root.active=true;
-                                }                               
-                                if (properties.length>0){ //o menu      
-                                    return `<li class="${attClass}"  ${attHint}>`
-                                        +`<a class="btn btn-toggle dropdown-toggle collapsed" ` 
-                                        + formatLink(properties)
-                                        +` data-bs-toggle="collapse" data-bs-target="#${properties.id}_target" aria-expanded="false">`
-                                        +    attIcon+properties.caption
-                                        +'</a>'
-                                        +`<div id="${properties.id}_target" class="collapse" style=""><ul id="${properties.id}"  class="sub-menu"></ul></div>` //sub-menu collapse
-                                        + '</li>';
-                                } else{ // as opcoes do menu entram aqui   
-                                    if (attIcon.isEmpty() && properties.Parent.Parent)
-                                        attIcon='<i class="bi bi-chevron-right"></i>';
-                                    return `<li class="sub-menu"><a id="${properties.id}" ${attHint} ${formatLink(properties)}>`
-                                                +attIcon                                               
-                                                +properties.caption
-                                        + '</a></li>';
-                                }                
-                        }
+                        format 
                         , createContainer(idCanvas){
-                            let idRoot = idCanvas+'Root'
-                            ,  idContent = idCanvas+'Container'
+                            let idContent= idCanvas+'Container'
+                            ,     idRoot = idCanvas+'Root' 
                             ,   idHeader = idCanvas+'Header'
                             ,    idTitle = idCanvas+'Title'
                             ,     idBody = idCanvas+'Body'
@@ -1928,15 +1900,14 @@
                                 `<a class="navbar-brand" data-bs-toggle="offcanvas" href="#${idContent}" role="button" aria-controls="${idContent}">                                    
                                     ${j$.ui.Render.icon(c$.ICON.MENULIST)}${title}
                                 </a>`);
-                            $('body').append(`<div id="${idContent}" class="offcanvas offcanvas-start" tabindex="-1"  aria-labelledby="${idContent}Label"></div>`)
+                            $('body').append(`<div id="${idContent}" class="nav-side-menu offcanvas offcanvas-start" tabindex="-1"  aria-labelledby="${idContent}Label"></div>`)
                             $(`#${idContent}`).append(
                                 `<div id="${idHeader}" class="offcanvas-header">
                                     <h5 id="${idTitle}" class="offcanvas-title">${title}</h5>
                                     ${j$.ui.Render.formatClose("offcanvas")}                                    
                                 </div>`)                                
-                            $(`#${idContent}`).append(`<div id="${idBody}" class="offcanvas-body"><h1>Corpo Canvas</h1></div>`)  
-                            $(`#${idBody}`).append(`<ul id='${idRoot}' class="list-unstyled ps-0 collapse show"></ul>`);
-                            //<ul class="navbar-nav justify-content-end flex-grow-1 pe-3"></ul>
+                            $(`#${idContent}`).append(`<div id="${idBody}" class="offcanvas-body p-0"></div>`)  
+                            $(`#${idBody}`).append(`<ul id='${idRoot}' class="navbar-nav list-unstyled ps-0 collapse show"></ul>`);
                             return idRoot;
                         }  
                         } //return

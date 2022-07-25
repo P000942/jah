@@ -138,7 +138,40 @@ const wizard = function(){
             myPage.init(idContent)
       }
       , criarCanvas: function (idContent){
-        j$.Dashboard.Menu.offcanvas.createContainer(idContent)
+        let menu = j$.Dashboard.Menu.create(idContent, c$.MENU.TYPE.OFFCANVAS);
+        //let menu = j$.Dashboard.Menu.offcanvas.createContainer(idContent);
+            menu.addMenu({caption:"Home", active:true});
+            let menu_link = menu.addMenu("Tabs");
+            menu_link.add({caption:'Link',  url:ws.urlPartial});
+            menu_link.divider.add();
+            menu_link.add({caption:'Menu Partial', byPass:true, url:ws.urlPartial,
+                 onClick:function(menu, event){
+                      ws.tabs.open(
+                             {key:"tab_"+menu.id,
+                          caption:menu.caption,
+                           onLoad:function(tab){
+                               tab.showURL(menu.url);
+                           }
+                      });
+                 }
+             });
+             menu_link.add({caption:'Abrir Form', byPass:true, url: ws.urlPartial,
+                 onClick:function(menu, event){
+                      ws.tabs.open(
+                             {key:"tab_"+menu.id,
+                          caption:menu.caption,
+                           onLoad:function(tab){
+                              wizard.abrirForm(tab.idContent);
+                           }
+                      });
+                 }
+             });
+             menu_link.add({caption:'Menu Partial Simples', byPass:true, url:ws.urlPartial,
+                 onClick:function(menu, event){
+                      ws.tabs.open({key:'tab_'+menu.key, caption:menu.caption, url:menu.url});
+                 }
+             });
+             menu.render();
       }
     };
 }();
@@ -151,44 +184,21 @@ const wizard = function(){
         <header class="navbar navbar-expand navbar-light bg-light sticky-top flex-md-nowrap p-0 shadow">
             <div class="container-fluid">  
                 <div id="offcanvas"></div>
-<!--                 <div>
-                <a class="navbar-brand" data-bs-toggle="offcanvas" href="#offcanvasNavbar" role="button" aria-controls="offcanvasNavbar">
-                    <i class='bi bi-list' style="font-size: 1.5rem; color: black;"></i>        
-                  Wizard
-                </a> </div> -->
                 <button class="btn btn-sm btn-outline-secondary"  onclick="wizard.criarCanvas('offcanvas');" title="Canvas">
                     <i class="bi bi-person-circle"></i>Canvas
                 </button> 
-                <nav class="" id="menux"></nav>
+                <nav id="menux"></nav>
                 <form>
                     <div class="input-group">
                       <span class="input-group-text" id="basic-addon1"><i class="bi bi-search text-info"></i></span>
                       <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
                     </div>
                 </form>
-<!--                 <button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-                    <i class='bi bi-list' style="font-size: 1.5rem; color: black;"></i>
-                </button>  -->
             </div>
         </header>
-<!--         <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-            <div class="offcanvas-header">
-              <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Offcanvas</h5>
-              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-              <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page"> <i class='bi bi-house-fill text-primary'></i>Home</a>
-                </li>                     
-              </ul>
-            </div>
-        </div> -->
+
         <section id="content_section" class="container-fluid">
             <div id='content'>
-                <div id="a1">Item 1</div>
-                <div id="a2">Item 2</div>
-                <div id="a3">Item 3</div>
             </div>
         </section>
 </body>
