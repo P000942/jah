@@ -65,7 +65,7 @@ c$.ICON={
 ,     NEXT:{KEY:'next'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-skip-end-fill'}  
 ,     LAST:{KEY:'last'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-chevron-bar-right'}
 ,    CLOSE:{KEY:'close'                              , CLASS:'bi bi-x-circle'}
-,     HOME:{KEY:'home'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-house-door-fill'}
+,     HOME:{KEY:'home'     , COLOR:c$.COLOR.BLACK    , CLASS:'bi bi-house-door-fill'}
 ,     UNDO:{KEY:'undo'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-arrow-counterclockwise'}
 ,   FILTER:{KEY:'Filter'   , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-filter'}
 ,     SORT:{KEY:'sort'     , COLOR:c$.COLOR.ICON_FAIL, CLASS:''}
@@ -75,8 +75,13 @@ c$.ICON={
 ,    ERROR:{KEY:'error'    , COLOR:c$.COLOR.ICON_FAIL, CLASS:'bi bi-info-circle-fill' }
 ,     INFO:{KEY:'info'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-info-circle-fill' }
 ,     HELP:{KEY:'help'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-question-circle'  }
+,     USER:{KEY:'user'     , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-file-person'  }
 ,      YES:{KEY:'yes'      , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-check-circle-fill'}
 ,       NO:{KEY:'no'       , COLOR:c$.COLOR.ICON_FAIL, CLASS:'bi bi-x-circle-fill'    }
+,       ON:{KEY:'on'       , COLOR:c$.COLOR.ICON     , CLASS:'bi bi-power'    }
+,      OFF:{KEY:'on'       , COLOR:'red         '    , CLASS:'bi bi-power'    }
+,  TURN_ON:{KEY:'turnOn'   , COLOR:c$.COLOR.BLACK    , CLASS:'bi bi-toggle-on'    }
+, TURN_OFF:{KEY:'turnOff'  , COLOR:c$.COLOR.BLACK    , CLASS:'bi bi-toggle-off'    }
 ,  SHOWBOX:{KEY:'showbox'  , COLOR:c$.COLOR.BLACK    , CLASS:'bi bi-caret-up-fill'    }
 ,  HIDEBOX:{KEY:'hidebox'  , COLOR:c$.COLOR.BLACK    , CLASS:'bi bi-caret-right-fill'  }
 , MENULIST:{KEY:'menulist' , COLOR:false             , CLASS:'bi bi-list', STYLE:'font-size: 1.5rem; color: black;'}

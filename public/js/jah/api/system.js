@@ -352,7 +352,7 @@ System.Node=function(inheritor, properties){
         _node.c$[key]=null;
     };
     this.show =()=>{
-        console.log(_node.key +"."+ _node.caption);
+        //console.log(_node.key +"."+ _node.caption);
         for (let key in _node.c$)
             _node.c$[key].show();
     };

@@ -94,85 +94,71 @@
                            });
 
 const wizard = function(){
-    let _criarMenu =true;
+    let _criarMenu =true
+      , gerar = (menu, canvas=false) =>{
+                menu.addMenu({caption:"Home", active:true, icon:c$.ICON.HOME});
+                if (canvas)
+                    menu.addMenu({caption:"Criar Menu" 
+                       ,onClick:function(menu, event){wizard.criarMenu()}
+                    });
+                menu.addMenu({key:'switch', caption:"ON", icon:c$.ICON.ON 
+                    ,onClick:function(menu, event){                        
+                        let item = i$(menu.id)
+                        ,    vl = item.get().toggle(['ON', 'OFF']);
+                       // menu.element.querySelector('i').style.color = (vl=='ON') ?c$.ICON.ON.COLOR :c$.ICON.OFF.COLOR;
+                        //menu.set(vl.toggle(['ON', 'OFF']));                       
+                        //menu.element.prepend('<i class="bi bi-power" style="color:#000000;" ></i>'); 
+                        menu.element.innerHTML = (`${j$.ui.Render.icon(c$.ICON[vl])}${vl}`); 
+                    }
+                });
+                
+                let menu_link = menu.addMenu("Tabs");
+                menu_link.add({caption:'Link',  url:ws.urlPartial});
+                menu_link.divider.add();
+                menu_link.add({caption:'Menu Partial', byPass:true, url:ws.urlPartial,
+                    onClick:function(menu, event){
+                        ws.tabs.open(
+                                {key:"tab_"+menu.id,
+                            caption:menu.caption,
+                            onLoad:function(tab){
+                                tab.showURL(menu.url);
+                            }
+                        });
+                    }
+                });
+                menu_link.add({caption:'Abrir Form', byPass:true, url: ws.urlPartial,
+                    onClick:function(menu, event){
+                        ws.tabs.open(
+                                {key:"tab_"+menu.id,
+                            caption:menu.caption,
+                            onLoad:function(tab){
+                                wizard.abrirForm(tab.idContent);
+                            }
+                        });
+                    }
+                });
+                menu_link.add({caption:'Menu Partial Simples', byPass:true, url:ws.urlPartial,
+                    onClick:function(menu, event){
+                        ws.tabs.open({key:'tab_'+menu.key, caption:menu.caption, url:menu.url});
+                    }
+                });
+                menu.render();
+                return menu;
+      }
+     
     return {
-      criarMenu:function(){  
-         if (_criarMenu){          
-            let menu = j$.Dashboard.Menu.create("menux", c$.MENU.TYPE.OFFCANVAS);
-            menu.addMenu({caption:"Home", active:true});
-            let menu_link = menu.addMenu("Tabs");
-            menu_link.add({caption:'Link',  url:ws.urlPartial});
-            menu_link.divider.add();
-            menu_link.add({caption:'Menu Partial', byPass:true, url:ws.urlPartial,
-                 onClick:function(menu, event){
-                      ws.tabs.open(
-                             {key:"tab_"+menu.id,
-                          caption:menu.caption,
-                           onLoad:function(tab){
-                               tab.showURL(menu.url);
-                           }
-                      });
-                 }
-             });
-             menu_link.add({caption:'Abrir Form', byPass:true, url: ws.urlPartial,
-                 onClick:function(menu, event){
-                      ws.tabs.open(
-                             {key:"tab_"+menu.id,
-                          caption:menu.caption,
-                           onLoad:function(tab){
-                              wizard.abrirForm(tab.idContent);
-                           }
-                      });
-                 }
-             });
-             menu_link.add({caption:'Menu Partial Simples', byPass:true, url:ws.urlPartial,
-                 onClick:function(menu, event){
-                      ws.tabs.open({key:'tab_'+menu.key, caption:menu.caption, url:menu.url});
-                 }
-             });
-             menu.render();
-        } 
-        _criarMenu =false;     
-      }
-      , abrirForm: function (idContent){
+        abrirForm: function (idContent){
             myPage.init(idContent)
-      }
-      , criarCanvas: function (idContent){
-        let menu = j$.Dashboard.Menu.create(idContent, c$.MENU.TYPE.OFFCANVAS);
-        //let menu = j$.Dashboard.Menu.offcanvas.createContainer(idContent);
-            menu.addMenu({caption:"Home", active:true});
-            let menu_link = menu.addMenu("Tabs");
-            menu_link.add({caption:'Link',  url:ws.urlPartial});
-            menu_link.divider.add();
-            menu_link.add({caption:'Menu Partial', byPass:true, url:ws.urlPartial,
-                 onClick:function(menu, event){
-                      ws.tabs.open(
-                             {key:"tab_"+menu.id,
-                          caption:menu.caption,
-                           onLoad:function(tab){
-                               tab.showURL(menu.url);
-                           }
-                      });
-                 }
-             });
-             menu_link.add({caption:'Abrir Form', byPass:true, url: ws.urlPartial,
-                 onClick:function(menu, event){
-                      ws.tabs.open(
-                             {key:"tab_"+menu.id,
-                          caption:menu.caption,
-                           onLoad:function(tab){
-                              wizard.abrirForm(tab.idContent);
-                           }
-                      });
-                 }
-             });
-             menu_link.add({caption:'Menu Partial Simples', byPass:true, url:ws.urlPartial,
-                 onClick:function(menu, event){
-                      ws.tabs.open({key:'tab_'+menu.key, caption:menu.caption, url:menu.url});
-                 }
-             });
-             menu.render();
-      }
+        }
+       ,criarMenu:function(){  
+            if (_criarMenu){          
+                gerar(j$.Dashboard.Menu.create("menux", c$.MENU.TYPE.MENUBAR));            
+            } 
+            _criarMenu =false;     
+        }
+        ,criarCanvas: function (idContent){
+            let menu = gerar(j$.Dashboard.Menu.create(idContent, c$.MENU.TYPE.OFFCANVAS), true);
+        }
     };
 }();
 

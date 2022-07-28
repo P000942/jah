@@ -256,9 +256,9 @@
                     }();
                     items[self.id]=self;
                     Object.preset(self,{toggle:()=>{j$.Page.Frame.toggle(self.id)}
-                                    , show  :()=>{j$.Page.Frame.show(self.id)}});
-                    self.hide=()=>{j$.Page.Frame.hide(self.id)};
-                    if (properties.hide){self.hide();}
+                                      ,   show:()=>{j$.Page.Frame.show(self.id)}});
+                    self.hide=()=>{j$.Page.Frame.hide(self.id)};  
+                    if (properties.hide){self.hide()}
                     return self;
                 }
                 function framebox(properties){
@@ -316,7 +316,7 @@
                     , toggle:toggle
                     , show:show
                     , hide:hide
-                    , items:items
+                    , c$:items  
                 };
             }()
            ,designer= function (){          
@@ -469,14 +469,14 @@
                 const Form =function(wrap,form){
                     let _form = this;
                     this.show = show;
-                     
-                    function show(){ _form.form.show()}
+                    
+                    function show(){ _form.form.show()}  
                     this.clear=()=>{ wrap.innerHTML=""}
                     this.hide=()=>{_form.form.hide()}
                     const create=function(){
                        _form.clear();
                        $(wrap).append("<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>");
-             
+                      
                        $('#'+form.id).append(`<div class='${CONFIG.CRUD.HEADER.CLASS}' id='${form.id}Header'>`
                                             +`<div class='${CONFIG.CRUD.TITLE.CLASS}'  id='${form.id}Title'>${form.title}</div>`
                                             +`<nav class='${CONFIG.CRUD.MENU.CLASS}'   id='${form.id}Menu'></nav>`
@@ -493,7 +493,7 @@
                        _form.menu     =i$(form.id+"Menu");
                        _form.footer   =i$(form.id+'Footer');
                        _form.alert    =i$(form.id+"Alert");
-                    }();
+                    }();                    
                 }        
                 return{
                     create:page=>{
@@ -698,7 +698,7 @@
                 }    
             };
             $i.Alert = function(alert){
-                return{
+                return{  
                     show (msg,_class=CONFIG.ALERT.INFO.CLASS, inFocus){
                         if (msg){
                            inFocus = (inFocus) ?`<strong>${inFocus}</strong> ` : "";
@@ -732,11 +732,12 @@
                       element.hide();    
                    return  i$(idTitle).innerHTML; 
                 }             
-                return{
+                return{  
                     title
                   , menu:i$(idMenu)
                   , show(){element.show()}
                   , hide(){element.hide()}
+                  , toggle(){element.toggle()}
                 };
             }();    
         }; // j$.Page.Form
@@ -1028,7 +1029,7 @@
             };
             this.button = key=>{
                 let b$ =_btn.c$[key];
-                return {
+                return {   
                       show: ()=>{b$.element.show()}                    
                    ,  hide: ()=>{b$.element.hide()}
                    ,toggle: ()=>{b$.element.toggle()}
@@ -1567,32 +1568,32 @@
             };    
         
             return{
-                //menu={key:'', caption:'', url:'', title:'', items:[]}
-              bindItems: function(menu, Services){
-                    let menuBase = menubar.addMenu(menu);
-                    for (let idx=0; idx<menu.items.length;  idx++){
-                        let item = Services[menu.items[idx]];
-                        menuBase.add(item);
-                    }
-               }
-            , bindToTabs: function(Services, design){
-                    if (Services && design){
-                        for (let key in design){
-                            let menu = design[key];
-                            if (j$.Ext.isArray(menu))
-                                menu = {items:design[key]};
-                            Object.preset(menu, {key:key, caption:key});
-                            j$.Dashboard.Menubar.bindItems(menu, Services);
+                    //menu={key:'', caption:'', url:'', title:'', items:[]}
+                bindItems: function(menu, Services){
+                        let menuBase = menubar.addMenu(menu);
+                        for (let idx=0; idx<menu.items.length;  idx++){
+                            let item = Services[menu.items[idx]];
+                            menuBase.add(item);
+                        }
+                }
+                , bindToTabs: function(Services, design){
+                        if (Services && design){
+                            for (let key in design){
+                                let menu = design[key];
+                                if (j$.Ext.isArray(menu))
+                                    menu = {items:design[key]};
+                                Object.preset(menu, {key:key, caption:key});
+                                j$.Dashboard.Menubar.bindItems(menu, Services);
+                            }
                         }
                     }
-                }
-            ,  create:function(parser=CONFIG.MENU.PARSER){
-                       initialized(parser);
-                       menubar = j$.Dashboard.Menu.create(parser)
-                    }
-            , addMenu:function(menu){return menubar.addMenu(menu)}
-            , getMenu:function(menu_key){ return menubar.getMenu(menu_key)}
-            ,  render:function(){menubar.render()}
+                ,  create:function(parser=CONFIG.MENU.PARSER){
+                        initialized(parser);
+                        menubar = j$.Dashboard.Menu.create(parser)
+                        }
+                , addMenu:function(menu){return menubar.addMenu(menu)}
+                , getMenu:function(menu_key){ return menubar.getMenu(menu_key)}
+                ,  render:function(){menubar.render()}
             }
         }(); // j$.Dashboard.Menubar
         
@@ -1810,24 +1811,24 @@
         
         j$.Dashboard.Menu = function(){ // factory
             let items = {}
-              , prepare = properties=>{
-                let ws ={icon:j$.ui.Render.icon(properties.icon)
-                  ,temSubmenu: (properties.length>0)                      
-                  ,      hint: (properties.title)? 'title="' + properties.title + '"' : ''}
-                , ehSubmenu= (properties.type=='Submenu') //(properties.Parent.Parent)
-                ws.attClass = ehSubmenu ?'sub-menu' :'menu mb-0'  
-                if (properties.active){
-                    ws.attClass += ' active';
-                    properties.Root.active=true;
-                }
-                if (ws.icon.isEmpty() && ehSubmenu && !ws.temSubmenu)
-                    ws.icon='<i class="bi bi-chevron-right"></i>'; 
-                return ws;
+              , prepare = (properties, _class)=>{
+                    let ws ={icon:j$.ui.Render.icon(properties.icon)
+                    ,temSubmenu: (properties.length>0)                      
+                    ,      hint: (properties.title)? 'title="' + properties.title + '"' : ''}
+                    , ehSubmenu= (properties.type=='Submenu') //(properties.Parent.Parent)
+                    ws.class = ehSubmenu ? _class.submenu : _class.menu  
+                    if (properties.active){
+                        ws.class += ' active';
+                        properties.Root.active=true;
+                    }
+                    if (ws.icon.isEmpty() && ehSubmenu && !ws.temSubmenu)
+                        ws.icon='<i class="bi bi-chevron-right"></i>'; 
+                    return ws;
               }
               , format = function (properties){ 
-                    let ws = prepare(properties)                            
+                    let ws = prepare(properties, {menu:'menu mb-0', submenu:'sub-menu'})                            
                     if (ws.temSubmenu){ //o menu      
-                        return `<li class="${ws.attClass}"  ${ws.hint}>`
+                        return `<li class="${ws.class}"  ${ws.hint}>`
                                 +`<a class="btn btn-toggle dropdown-toggle collapsed" formatLink(properties)` 
                                 +` data-bs-toggle="collapse" data-bs-target="#${properties.id}_target" aria-expanded="false">`
                                 +    ws.icon+properties.caption
@@ -1836,7 +1837,7 @@
                                     <ul id="${properties.id}"  class="sub-menu list-unstyled"></ul></div>` //sub-menu collapse
                             + '</li>';
                     } else{ // as opcoes do menu entram aqui                                          
-                        return `<li class="${ws.attClass}">
+                        return `<li class="${ws.class}">
                                     <a class='btn ps-1' id="${properties.id}" ${ws.hint} ${formatLink(properties)}>`
                                     +ws.icon                                               
                                     +properties.caption
@@ -1847,15 +1848,15 @@
                     menubar:function(){
                         return{
                             format (properties){
-                                    let ws = prepare(properties) 
+                                    let ws = prepare(properties,{menu:'nav-link', submenu:'dropdown-item ps-1'}) 
                                     if (ws.temSubmenu){
                                         return `<li class='nav-item dropdown me-2'  ${ws.hint}>`
                                              + `<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
                                                 ${formatLink(properties)} href="#">${ws.icon}${properties.caption}</a>`
                                              + `<ul id="${properties.id}"  class="dropdown-menu" aria-labelledby="navbarDropdown"></ul></li>`;
-                                    } else{ // os item do menu entram aqui                                                
-                                        return `<li>
-                                               <a id="${properties.id}" class="dropdown-item ps-1" ${ws.hint} ${formatLink(properties)} href="#">`
+                                    } else{ // os item do menu entram aqui                                                                                     
+                                        return `<li class='nav-item'>
+                                               <a id="${properties.id}" class="${ws.class}" ${ws.hint} ${formatLink(properties)} href="#">`
                                                     +ws.icon+properties.caption
                                             + '</a></li>';
                                     }                
@@ -1929,10 +1930,16 @@
                 this.inherit=System.Node;
                 this.inherit(inheritor, properties);
                 this.render = ()=>{
-                    $('#'+_base.Parent.id).append(designer.format(_base));
+                    $(`#${_base.Parent.id}`).append(designer.format(_base));
+                    _base.element = i$(_base.id); 
                     if (_base.onClick)
-                        $("#"+_base.id).click(_base.onClick);
+                        _base.element.addEventListener("click", _base.onClick);
                     _base.submenu.render();
+                    Object.join(_base, _base.element,['show', 'hide', 'toggle']);
+                    _base.set=value=>{
+                        _base.caption=value;
+                        _base.element.content(value);
+                    }
                 }
                 let util = function(){
                     return{
@@ -1946,10 +1953,10 @@
                                 url= properties.partial;
                             // Se tem um LINK e tem container serah injetado neste como partial
                             return url;
-                    }
-                    , checkActive: ()=>{
-                            return (properties.active !=undefined && !_base.Root.active && _base.type=='Menu')?properties.active:false;
-                    }
+                        }
+                        , checkActive: ()=>{
+                                return (properties.active !=undefined && !_base.Root.active && _base.type=='Menu')?properties.active:false;
+                        }
                     };
                 }();
             
@@ -1993,9 +2000,9 @@
                         }  
                         , render:menu=>{
                             for (let key in _base.c$)
-                                $('#'+_base.id).append(_base.c$[key].render());
-                        }
-                };
+                                $('#'+_base.id).append(_base.c$[key].render())
+                        } 
+                }
                 }();
                 this.add=_base.submenu.add;
                 this.addMenu=_base.submenu.addMenu;
@@ -2021,12 +2028,12 @@
                     };
                 }();
             
-                function render(){
+/*                 function render(){
                     $('#'+_base.Parent.id).append(designer.format(_base));
                     if (_base.onClick)
                         $("#"+_base.id).click(_base.onClick);
                     _base.submenu.render();
-                };
+                }; */
             } // Base    
               //properties={key:'', caption:'', url:'', partial:'', title:'', idContainer:'', byBass:false, onClick:function(){}}
             ,  Item=function (parent, properties, designer){
@@ -2057,8 +2064,8 @@
                     return designer.createContainer(idContent);
                 };
             }   
-            // TODO: está sem uso no framework - mas é interessante para a criação de um menu
-            , Dropdown=function(idContent, caption){  
+            // @todo: está sem uso no framework - mas é interessante para a criação de um menu
+            ,  Dropdown=function(idContent, caption){  
                 let _dropdown = this
                 , wCaption=(caption)?caption:'';
                 this.inherit=System.Node;
