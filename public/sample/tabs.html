@@ -45,7 +45,7 @@ $(document).ready(function(){
         , tabPartial={key:"tab_Partial", caption:'Partial', url:urlPartial, title:'Title Partial Tab'}
        // , menu = j$.Dashboard.Menu.create("menubar")        // cria o menu no container "menubar"    
         j$.Dashboard.init({})
-    const menu = j$.Dashboard.Menubar;     
+    const menu = j$.Dashboard.menuAdapter;     
     menu.addMenu({caption:"Home", active:true});
     menu.addMenu("Tabs")
         .add([{caption:'Link Externo',  url:urlPartial}

@@ -1494,14 +1494,13 @@
         j$.Dashboard = function(){
             let idContent=CONFIG.LAYOUT.ID        
             return{
-                init: properties=>{
-                    j$.Dashboard.Factory = (properties.designer && properties.designer.factory) 
-                                         ? j$.Dashboard[properties.designer.factory] 
-                                         : j$.Dashboard.Menubar
-                    j$.Dashboard.Factory.create();
-                    j$.Dashboard.Service.init();
-                    if (properties.services && properties.designer)
-                        j$.Dashboard.Factory.bindToTabs(properties.services, properties.designer.options);
+                  init: (properties, parser=CONFIG.MENU.PARSER)=>{ //@todo: onde uso(insiro) esse factory
+                                    //@todo: Não tá legal ser apenas Factory e específico pro menu
+                    j$.Dashboard.menuAdapter = (properties.design && properties.design.menuAdapter) 
+                                         ? j$.Dashboard[properties.design.menuAdapter] 
+                                         : j$.Dashboard.menuAdapter                                                            
+                    j$.Dashboard.Service.init();                    
+                    j$.Dashboard.menuAdapter.init(properties, parser);
                 }
                 , bindItem: item =>{
                     if (!item.url && !item.onCLick){
@@ -1525,8 +1524,8 @@
                         } else
                             j$.Dashboard.Service.delegateTo(item, null, record); 
                     }
-            }
-            , idContent:idContent
+                }
+                , idContent:idContent
             }
         }(); // j$.Dashboard
         
@@ -1557,45 +1556,40 @@
             };
         }(); // j$.Dashboard.Service
       
-        j$.Dashboard.Menubar=function(){
-            let menubar, _parser
-            const initialized = function(parser){
-                _parser = parser; //CONFIG.MENU.PARSER;
-                let design = CONFIG.MENU.TYPE[_parser.toUpperCase()] // design 
+        j$.Dashboard.menuAdapter=function(){ //@todo: esse é um menuAdapter que faz a adptação do que está no services ao menu
+            let menubar
+            , createMenu = function(parser=CONFIG.MENU.PARSER, properties){
+                let design = CONFIG.MENU.TYPE[parser.toUpperCase()]                  
                 i$(j$.Dashboard.idContent).className =design.WRAP.CLASS;
-                i$(_parser).className = design.ITEM.CLASS;      
-                return true;
-            };    
+                i$(parser).className = design.ITEM.CLASS;                      
+                menubar = j$.Dashboard.Menu.create(parser)
+                if (properties && properties.services && properties.design &&  properties.design.options){                                         
+                    for (let key in properties.design.options)
+                        addOption(key,properties.design.options, properties.services);                                                                                    
+                }                
+            }             
+            , addOption=(key,options, services)=>{
+                let option = options[key];
+                if (j$.Ext.isArray(option))
+                    option = {items:options[key]};
+                Object.preset(option, {key, caption:key});                
+                addService(menubar.addMenu(option), option, services);
+            }          
+              //@note: menu={key:'', caption:'', url:'', title:'', items:[]}
+            , addService=(menu, option, services)=>{
+                option.items.forEach(key=>{menu.add(services[key])})
+            }            
         
             return{
-                    //menu={key:'', caption:'', url:'', title:'', items:[]}
-                bindItems: function(menu, Services){
-                        let menuBase = menubar.addMenu(menu);
-                        for (let idx=0; idx<menu.items.length;  idx++){
-                            let item = Services[menu.items[idx]];
-                            menuBase.add(item);
-                        }
+              init(properties, parser){
+                    createMenu(parser, properties);
                 }
-                , bindToTabs: function(Services, design){
-                        if (Services && design){
-                            for (let key in design){
-                                let menu = design[key];
-                                if (j$.Ext.isArray(menu))
-                                    menu = {items:design[key]};
-                                Object.preset(menu, {key:key, caption:key});
-                                j$.Dashboard.Menubar.bindItems(menu, Services);
-                            }
-                        }
-                    }
-                ,  create:function(parser=CONFIG.MENU.PARSER){
-                        initialized(parser);
-                        menubar = j$.Dashboard.Menu.create(parser)
-                        }
-                , addMenu:function(menu){return menubar.addMenu(menu)}
-                , getMenu:function(menu_key){ return menubar.getMenu(menu_key)}
-                ,  render:function(){menubar.render()}
+                ,  create:parser=>{createMenu(parser)}
+                , addMenu:  menu=>{return menubar.addMenu(menu)}
+                , getMenu:   key=>{return menubar.getMenu(key)}
+                ,  render:    ()=>{menubar.render()}
             }
-        }(); // j$.Dashboard.Menubar
+        }(); // j$.Dashboard.menuAdapter
         
         j$.Dashboard.Open = function(){
             return{
@@ -1811,40 +1805,40 @@
         
         j$.Dashboard.Menu = function(){ // factory
             let items = {}
-              , prepare = (properties, _class)=>{
-                    let ws ={icon:j$.ui.Render.icon(properties.icon)
-                    ,temSubmenu: (properties.length>0)                      
-                    ,      hint: (properties.title)? 'title="' + properties.title + '"' : ''}
-                    , ehSubmenu= (properties.type=='Submenu') //(properties.Parent.Parent)
-                    ws.class = ehSubmenu ? _class.submenu : _class.menu  
-                    if (properties.active){
-                        ws.class += ' active';
-                        properties.Root.active=true;
-                    }
-                    if (ws.icon.isEmpty() && ehSubmenu && !ws.temSubmenu)
-                        ws.icon='<i class="bi bi-chevron-right"></i>'; 
-                    return ws;
-              }
-              , format = function (properties){ 
-                    let ws = prepare(properties, {menu:'menu mb-0', submenu:'sub-menu'})                            
-                    if (ws.temSubmenu){ //o menu      
-                        return `<li class="${ws.class}"  ${ws.hint}>`
-                                +`<a class="btn btn-toggle dropdown-toggle collapsed" formatLink(properties)` 
-                                +` data-bs-toggle="collapse" data-bs-target="#${properties.id}_target" aria-expanded="false">`
-                                +    ws.icon+properties.caption
-                                +'</a>'
-                                +`<div id="${properties.id}_target" class="collapse" style="">
-                                    <ul id="${properties.id}"  class="sub-menu list-unstyled"></ul></div>` //sub-menu collapse
-                            + '</li>';
-                    } else{ // as opcoes do menu entram aqui                                          
-                        return `<li class="${ws.class}">
-                                    <a class='btn ps-1' id="${properties.id}" ${ws.hint} ${formatLink(properties)}>`
-                                    +ws.icon                                               
-                                    +properties.caption
-                            + '</a></li>';
-                    }                
+            , prepare = (properties, _class)=>{
+                let ws ={icon:j$.ui.Render.icon(properties.icon)
+                ,temSubmenu: (properties.length>0)                      
+                ,      hint: (properties.title)? 'title="' + properties.title + '"' : ''}
+                , ehSubmenu= (properties.type=='Submenu') //(properties.Parent.Parent)
+                ws.class = ehSubmenu ? _class.submenu : _class.menu  
+                if (properties.active){
+                    ws.class += ' active';
+                    properties.Root.active=true;
                 }
-              , Designers={
+                if (ws.icon.isEmpty() && ehSubmenu && !ws.temSubmenu)
+                    ws.icon='<i class="bi bi-chevron-right"></i>'; 
+                return ws;
+            }
+            , format = function (properties){ 
+                let ws = prepare(properties, {menu:'menu mb-0', submenu:'sub-menu'})                            
+                if (ws.temSubmenu){ //o menu      
+                    return `<li class="${ws.class}"  ${ws.hint}>`
+                            +`<a class="btn btn-toggle dropdown-toggle collapsed" formatLink(properties)` 
+                            +` data-bs-toggle="collapse" data-bs-target="#${properties.id}_target" aria-expanded="false">`
+                            +    ws.icon+properties.caption
+                            +'</a>'
+                            +`<div id="${properties.id}_target" class="collapse" style="">
+                                <ul id="${properties.id}"  class="sub-menu list-unstyled"></ul></div>` //sub-menu collapse
+                        + '</li>';
+                } else{ // as opcoes do menu entram aqui                                          
+                    return `<li class="${ws.class}">
+                                <a class='btn ps-1' id="${properties.id}" ${ws.hint} ${formatLink(properties)}>`
+                                +ws.icon                                               
+                                +properties.caption
+                        + '</a></li>';
+                }                
+            }
+            , Designers={
                     menubar:function(){
                         return{
                             format (properties){
@@ -2012,14 +2006,14 @@
                         add:()=>{
                             if (_base.Root.key==c$.MENU.TYPE.MENUBAR){
                                 ct +=1;
-                                _base.put('divider'+ct,divider);
-                                return divider;
+                                _base.put('divider'+ct,fmtDivider);
+                                return fmtDivider;
                             }   
                         }
                     };
                 }();
             
-                let divider=function(){
+                let fmtDivider=function(){
                     let format=function(){return '<div class="dropdown-divider"></div>';};
                     return {
                         render:()=>{
@@ -2027,52 +2021,49 @@
                         }
                     };
                 }();
-            
-/*                 function render(){
-                    $('#'+_base.Parent.id).append(designer.format(_base));
-                    if (_base.onClick)
-                        $("#"+_base.id).click(_base.onClick);
-                    _base.submenu.render();
-                }; */
             } // Base    
               //properties={key:'', caption:'', url:'', partial:'', title:'', idContainer:'', byBass:false, onClick:function(){}}
-            ,  Item=function (parent, properties, designer){
+            , iMenu=function (parent, properties, designer){
                 this.inherit = Base;
                 this.inherit({type:'Menu', Root:parent, Parent:parent}, properties, designer);
             }  
             //properties={key:'', caption:'', url:'', partial:'', title:'', idContainer:'', icon:'' byBass:false, onClick:function(){}}
-            ,  Subitem = function (parent, properties, designer){
+            , Subitem = function (parent, properties, designer){
                 this.inherit = Base;
                 this.inherit({type:'Submenu', Root:parent.Root, Parent:parent}, properties, designer);
             }
-            ,  Navbar=function(idContent, designer){
-                let _navbar = this;
+            , Navbar=function(idContent, designer){
+                let _navbar= this
+                ,    create=()=>{return designer.createContainer(idContent)}
+/*                 , addChilds=(_base, option)=>{
+                        for (let idx=0; idx<option.items.length;  idx++){
+                            let item = services[option.items[idx]];
+                            _base.add(item);
+                        }
+                    } */
                 this.inherit=System.Node;
                 this.inherit({type:'Navbar', Root:_navbar, Parent:null},{key:idContent, id:create()});
                 //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
                 this.addMenu = properties =>{
-                    let menu = new Item(_navbar, properties, designer);
-                    _navbar.put(menu.key,menu);
+                    let menu = new iMenu(_navbar, properties, designer);
+                    _navbar.put(menu.key, menu);
+                //    addChilds(menu, properties)
                     return menu;
                 }
                 this.render = ()=>{
                     for (let key in _navbar.c$)
                         _navbar.c$[key].render();
-                }
-            
-                function create(){
-                    return designer.createContainer(idContent);
-                };
+                }            
             }   
             // @todo: está sem uso no framework - mas é interessante para a criação de um menu
-            ,  Dropdown=function(idContent, caption){  
+            , Dropdown=function(idContent, caption){  
                 let _dropdown = this
-                , wCaption=(caption)?caption:'';
+                , _caption=(caption)?caption:'';
                 this.inherit=System.Node;
-                this.inherit({type:'Dropdown', Root:_dropdown, Parent:null},{key:idContent, id:create(), caption:wCaption});
+                this.inherit({type:'Dropdown', Root:_dropdown, Parent:null},{key:idContent, id:create(), caption:_caption});
                 //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
                 this.addMenu = properties=>{
-                    let menu = new Item(_dropdown, properties);
+                    let menu = new iMenu(_dropdown, properties);
                     _dropdown.put(menu.key,menu);
                     return menu;
                 }
@@ -2094,8 +2085,8 @@
                    items[idContent] =new Navbar(idContent, Designers[parser]);
                    return items[idContent];
                }      
-              , menubar: Designers.menubar
-              , sidebar: Designers.sidebar
+              ,   menubar: Designers.menubar
+              ,   sidebar: Designers.sidebar
               , offcanvas: Designers.offcanvas
               , c$:items
               , C$:key=>{return items[key]}      

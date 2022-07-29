@@ -26,27 +26,28 @@ const adapter={
           ,   Mensagem:{caption:'Mensagem' ,   crud:true, title:'Mensagem' , modal:true}//      , resource:'mensagem', modal:true}
        //   ,         Uf:{caption:'UF'       ,   crud:true, title:'Unidades da federacao', resource:'uf'}
         }
-   , designer: { 
+   , design: { 
        options:{ // Para montar os menus e sebmenus
-             Tabelas:{caption:'Tabelas', items:['Papel'
-                                               ,'Usuario'
-                                               ,'Documento'
-                                               ,'Mensagem'
-                                               //,'Uf'
-                                               ]}
+             Tabelas:{caption:'Tabelas' //Possibilidade de add um caption no menu
+                    ,   items:['Papel'
+                              ,'Usuario'
+                              ,'Documento'
+                              ,'Mensagem'
+                              //,'Uf'
+                    ]}
          ,    Outros:['Assunto', 'SituacaoAtividade','Partial'] // key e caption serão igual a "Outros"
          ,  Consulta:['Pessoa','Basico']
        }
-       //,factory: "Menubar" // "Menubar"  ou "Sidebar"    
+       //,menuAdapter: "Menubar", "offcanvas"  ou "Sidebar"    
     }   
-};
+}
 System.using("js/crud/modelo.js"); // Didatico para ver como carregar um arquivo javascript ou css
 
-j$.Service.createAdapter(adapter);
+j$.Service.createAdapter(adapter); // Vai carregar os serviços
 
 $(document).ready(function(){
     j$.Dashboard.init(j$.Page.Adapter);
-    j$.Page.Helper.init(j$.Dashboard.Factory);
+    t$.sample.init(j$.Dashboard.menuAdapter);
 });
 
 // => Essa é uma forma de você definir como quer mostrar os erros
@@ -58,11 +59,10 @@ TYPE.Error.init({   show(field, msg,clas$){TYPE.Error.invalid(field, msg)} //qua
            ,   hide(field)           {TYPE.Error.hide   (field)}           //para remover o erro           
            });
 
-j$.Page.Helper = function(Factory){ // Para adicionar mais menus e submenus
-     const criarMenu = function(Factory){
+t$.sample = function(menuAdapter){ // Para adicionar mais menus e submenus
+    const criarMenu = menuAdapter=>{
              let _path = CONFIG.SERVER.CONTEXT
-               //, Factory = Factory
-               , _menu = Factory.addMenu({caption:'Forms'});
+               , _menu = menuAdapter.addMenu({caption:'Forms'});
 
              _menu.add([{caption:'Form basic' , url:_path+ 'sample/formBasic.html' , title:'Form com campos formatados e controller'}
                        ,{caption:'Form Inject', url:_path+ 'sample/formInject.html', title:'Maninuplar informações do form'}
@@ -70,11 +70,11 @@ j$.Page.Helper = function(Factory){ // Para adicionar mais menus e submenus
                        , // se um item do array sem nada ou uma string, null - vai inserir uma linha
                        ,{caption:'Relatório'  , url:_path+ 'sample/reportTest.html', title:'Exemplo de relatório'}]);
 
-             Factory.addMenu({caption:'Link Externo'})
+             menuAdapter.addMenu({caption:'Link Externo'})
                                  .add([{caption:'Link 1 '   , url:urlPartial  , title:'Vai abri uma página web com a URL'}
                                       ,{caption:'Link 2'    , url:urlPartial_1, title:'Vai abri uma página web com a URL'}]);
 
-             _menu = j$.Dashboard.Factory.addMenu({caption:'Partial'});
+             _menu = menuAdapter.addMenu({caption:'Partial'});
              //_menu.add({caption:'Partial',   partial:urlPartial  , title:'Serah insedrido na tba'});
              _menu.add({caption:'Partial 2', partial:urlPartial_1, title:'Serah insedrido na tba'});
              _menu.add({caption:'Assunto', icon:{CLASS:'bi bi-table', COLOR:'green'},    title:'Assunto - exemplo colocar um  form na tab',
@@ -96,10 +96,10 @@ j$.Page.Helper = function(Factory){ // Para adicionar mais menus e submenus
 //             _menu.add({key:'SituacaoAtividade', caption:'Situação',       title:'Cadastro de Situa��es da Atividade',
 //                 onActivate:function(menu){openItem(menu);}
 //             });
-             j$.Dashboard.Factory.render();
+             menuAdapter.render();
     };
 
-    const criarTab= function (){ // Criar uma tab inicial que já aperece quando inicia o dashboard
+    const criarTab= ()=>{ // Criar uma tab inicial que já aperece quando inicia o dashboard
          let whenComplete = (htmlPartial, url)=>{console.log(`callback do load complete tab.showURL('${url}')`)};
          j$.Dashboard.Service.open({key:"tab_inicial", caption:"Home", fixed:true
            , onLoad      (tab){tab.showURL("sample/partial_1.html", whenComplete)}
@@ -115,8 +115,8 @@ j$.Page.Helper = function(Factory){ // Para adicionar mais menus e submenus
          //tabs.open({key:"tab_papel", caption:"Papel", onLoad: function(tab){ Papel.init("tab_Papel");}});
     };
     return{
-        init:function(Factory){
-            criarMenu(Factory);
+        init(menuAdapter){
+            criarMenu(menuAdapter);
             criarTab();
         }
     };

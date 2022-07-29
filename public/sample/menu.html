@@ -45,7 +45,7 @@
             , urlPartial1 = CONFIG.SERVER.CONTEXT + 'sample/partial_1.html'
         j$.Service.createAdapter(adapter);
         j$.Dashboard.init({}) 
-        const menu = j$.Dashboard.Menubar;
+        const menu = j$.Dashboard.menuAdapter;
         menu.addMenu({caption:"Home", active:true});
 
         const menu_link = menu.addMenu("Link");
