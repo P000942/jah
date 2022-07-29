@@ -27,25 +27,7 @@
 
         //@note: Factory - para criar os servicos
         j$.Service = function(){
-           let items = {}
-            ,  Adapter = function(adapter){
-                    // Este é o adapter default do Page
-                    // o cliente pode criar um próprio com a mesma assinatura 
-                    let $this=this;
-                    Object.preset(this, adapter);
-                    this.load = ()=>{ // Fazer carga dos JS
-                        for (let key in adapter.services)                                                      
-                            j$.Service.load(key, adapter.services[key]);                        
-                    }
-                    this.getService=key=>{
-                        if ($this.services[key])
-                            return $this.services[key];
-                        else
-                            return {key:key};
-                    }
-                    this.load();
-            };
-        
+           let items = {};
            class CrudBase{
                 constructor(adpater, service){
                     let $i=this;
@@ -192,10 +174,10 @@
             , createChild: function(key, parent, service){
                     return new Child(key, parent, service);
                }
-            , createAdapter: (source, adapter=Adapter)=>{ // o cliente pode informador o adapter
-                    j$.Page.Adapter = new adapter(source); 
-                    return j$.Page.Adapter;
-               }   
+            , init: (source, adapter)=>{ // o cliente pode informador o adapter
+                    j$.Adapter.createPage(source, adapter)
+                    return j$.Adapter.Page;
+                }   
             , create:(key, service)=>{
                   if (!key)
                       throw new TypeError(CONFIG.EXCEPTION.SERVICE_NULL.text);
@@ -218,8 +200,8 @@
             , adapter:function (){
                   return{
                      get:function(key){
-                        return (j$.Page.Adapter)
-                              ? j$.Page.Adapter.getService(key)
+                        return (j$.Adapter.Page)
+                              ? j$.Adapter.Page.getService(key)
                               :{key:key};
                      }
                   }
@@ -1492,15 +1474,17 @@
         */
         
         j$.Dashboard = function(){
-            let idContent=CONFIG.LAYOUT.ID        
+            let idContent=CONFIG.LAYOUT.ID
+              , Adapter={}        
             return{
-                  init: (properties, parser=CONFIG.MENU.PARSER)=>{ //@todo: onde uso(insiro) esse factory
+                  init:(properties=j$.Adapter.Page, parser=CONFIG.MENU.PARSER)=>{ //@todo: onde uso(insiro) esse factory
                                     //@todo: Não tá legal ser apenas Factory e específico pro menu
-                    j$.Dashboard.menuAdapter = (properties.design && properties.design.menuAdapter) 
-                                         ? j$.Dashboard[properties.design.menuAdapter] 
-                                         : j$.Dashboard.menuAdapter                                                            
+                    Adapter.menu = (properties && properties.design && properties.design.menuAdapter) 
+                                  ? j$.Dashboard[properties.design.menuAdapter] 
+                                  : j$.Adapter.Menu                                                            
                     j$.Dashboard.Service.init();                    
-                    j$.Dashboard.menuAdapter.init(properties, parser);
+                    Adapter.menu.init(properties, parser)                    
+                    return Adapter;
                 }
                 , bindItem: item =>{
                     if (!item.url && !item.onCLick){
@@ -1525,7 +1509,8 @@
                             j$.Dashboard.Service.delegateTo(item, null, record); 
                     }
                 }
-                , idContent:idContent
+                , idContent
+                , Adapter
             }
         }(); // j$.Dashboard
         
@@ -1555,8 +1540,29 @@
                 , idContent:idContent
             };
         }(); // j$.Dashboard.Service
-      
-        j$.Dashboard.menuAdapter=function(){ //@todo: esse é um menuAdapter que faz a adptação do que está no services ao menu
+j$.Adapter = function(){
+            class AdapterPage {
+                constructor(adapter) {
+                    // Este é o adapter default do Page
+                    // o cliente pode criar um próprio com a mesma assinatura 
+                    let $this = this;
+                    Object.preset(this, adapter);
+                    this.load = () => {
+                        for (let key in adapter.services)
+                            j$.Service.load(key, adapter.services[key]);
+                    };
+                    this.getService = key => {
+                        if ($this.services[key])
+                            return $this.services[key];
+
+                        else
+                            return { key: key };
+                    };
+                    this.load();
+                }
+            }
+   return {      
+        Menu:function(){ //@todo: esse é um menuAdapter que faz a adptação do que está no services ao menu
             let menubar
             , createMenu = function(parser=CONFIG.MENU.PARSER, properties){
                 let design = CONFIG.MENU.TYPE[parser.toUpperCase()]                  
@@ -1589,8 +1595,14 @@
                 , getMenu:   key=>{return menubar.getMenu(key)}
                 ,  render:    ()=>{menubar.render()}
             }
-        }(); // j$.Dashboard.menuAdapter
-        
+        }() // j$.Adapter.Menu
+        , createPage:(source, adapter=AdapterPage)=>{ // o cliente pode informador o adapter
+            j$.Adapter.Page = new adapter(source);             
+            return j$.Adapter.Page;
+        }
+   }
+}()
+
         j$.Dashboard.Open = function(){
             return{
                 url: (url, idContent)=>{

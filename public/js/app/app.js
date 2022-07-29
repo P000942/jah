@@ -38,16 +38,16 @@ const adapter={
          ,    Outros:['Assunto', 'SituacaoAtividade','Partial'] // key e caption serão igual a "Outros"
          ,  Consulta:['Pessoa','Basico']
        }
-       //,menuAdapter: "Menubar", "offcanvas"  ou "Sidebar"    
+       //,menuAdapter: (pode escrever um adapter)
     }   
 }
 System.using("js/crud/modelo.js"); // Didatico para ver como carregar um arquivo javascript ou css
 
-j$.Service.createAdapter(adapter); // Vai carregar os serviços
+j$.Service.init(adapter); // Vai carregar os serviços (.js)
 
 $(document).ready(function(){
-    j$.Dashboard.init(j$.Page.Adapter);
-    t$.sample.init(j$.Dashboard.menuAdapter);
+    j$.Dashboard.init(); //(j$.Adapter.Page)
+    t$.sample.init(j$.Adapter.Menu);
 });
 
 // => Essa é uma forma de você definir como quer mostrar os erros

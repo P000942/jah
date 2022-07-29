@@ -180,21 +180,21 @@ const System = function(){
             }
             Element.prototype.content= function(value){
                 if (value == undefined){
-                let value = '';
-                switch(j$.Ext.type(this)){
-                    case 'HTMLSelectElement':
-                        value = this.selectedIndex;
-                        break;
-                    case 'HTMLInputElement':
-                        if (this.type == "radio" || this.type == "checkbox")
-                            value = this.checked;
-                        if (this.type == "text" || this.type == "hidden")
-                            value = this.value;
+                    let value = '';
+                    switch(j$.Ext.type(this)){
+                        case 'HTMLSelectElement':
+                            value = this.selectedIndex;
                             break;
-                    default:
-                        value= this.textContent;
-                }
-                return value;
+                        case 'HTMLInputElement':
+                            if (this.type == "radio" || this.type == "checkbox")
+                                value = this.checked;
+                            if (this.type == "text" || this.type == "hidden")
+                                value = this.value;
+                                break;
+                        default:
+                            value= this.textContent;
+                    }
+                    return value;
                 }else{
                     switch(j$.Ext.type(this)){
                         case 'HTMLSelectElement':
