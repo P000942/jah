@@ -297,71 +297,6 @@ System.EXCEPTION = function() {
     };
 }();
 
-System.Node=function(inheritor, properties){
-    let _node = this;
-    this.length = 0;
-    this.c$ = {};
-    this.C$ = getItem;
-    Object.preset(_node, inheritor,["type","Root","Parent"])
-    let util = function(){
-        return{
-            formatKey:function(){
-                let key='';
-                properties = j$.Ext.toObject(properties,'key');
-                if (properties.key)
-                    key= properties.key;
-                else if (properties.caption)
-                    key = properties.caption.toKey();
-
-                if (key.isEmpty())
-                    key=System.util.getId(_node.Parent.key + "_" + _node.type);
-
-                if (properties.caption==undefined)
-                    properties.caption=key.toCaption();
-
-                return key;
-            }
-        ,  formatId:function(){return (properties.id)?properties.id:_node.Parent.id +'_'+_node.key;}
-        , checkHandler: function(){
-                if (properties.onClick) {_node.onClick =function(event){return properties.onClick(_node, event);};}
-        }
-        };
-    }();
-    this.id = function(){
-        if (j$.Ext.isString(properties)){ // veio apenas o caption
-            Object.preset(_node, {caption:properties, key:util.formatKey()});
-        } else {
-            if (!properties){properties={}};
-            _node.key=util.formatKey();
-            _node.caption = properties.caption;
-            util.checkHandler();
-        }
-        return util.formatId();
-    }();
-    function getItem(key){
-        return _node.c$[key];
-    }
-    let addItem=(key, item)=>{
-        _node.length +=1;
-        _node.c$[key]=item;
-    };
-    // this.add = addItem;
-    this.put = addItem;
-    this.remove = key=>{
-        _node.length -=1;
-        _node.c$[key]=null;
-    };
-    this.show =()=>{
-        //console.log(_node.key +"."+ _node.caption);
-        for (let key in _node.c$)
-            _node.c$[key].show();
-    };
-    this.first = ()=>{
-        for (let key in _node.c$)
-            return _node.c$[key];
-    };
-};
-
 System.Action = ()=>{ 
     let self = this;
     this.actions = col_actions = [];
@@ -386,12 +321,7 @@ class Collection {
         this.Items={};
         this.length = 0;
         this.c$ = this.Items;
-        //this.C$ = getItem;
      }
-     getItem(key){
-        return this.Items[key];
-     }
-     C$ = this.getItem;
      add = (key, item)=>{
         this.length +=1;
         if (!item.Parent && this.Parent)
@@ -409,14 +339,17 @@ class Collection {
         for (let key in this.c$)
             return this.c$[key];
      }
-
      last =()=>{
         let item; 
         for (let key in this.c$)
         item = this.c$[key];
         return item;
      }
-
+     show =()=>{
+        //console.log(_node.key +"."+ _node.caption);
+        for (let key in _node.c$)
+            _node.c$[key].show();
+    }
      sweep = (action, param)=>{
          for(let key in this.c$){
             action(this.c$[key], param);
@@ -436,6 +369,72 @@ class Observer extends System.Collection{
     }
 }
 System.Observer = Observer;
+
+
+
+
+System.Node=function(inheritor, properties){
+    let _node = this;
+    this.length = 0;
+    this.c$ = {};
+    Object.preset(_node, inheritor,["type","Root","Parent"])
+    let util = function(){
+        return{
+            formatKey:function(){
+                let key='';
+                properties = j$.Ext.toObject(properties,'key');
+                if (properties.key)
+                    key= properties.key;
+                else if (properties.caption)
+                    key = properties.caption.toKey();
+
+                if (key.isEmpty())
+                    key=System.util.getId(_node.Parent.key + "_" + _node.type);
+
+                if (properties.caption==undefined)
+                    properties.caption=key.toCaption();
+
+                return key;
+            }
+        ,  formatId:function(){return (properties.id)?properties.id:_node.Parent.id +'_'+_node.key;}
+        , checkHandler: function(){
+                if (properties.onClick) {_node.onClick =function(event){return properties.onClick(_node, event);};}
+        }
+        };
+    }()
+    this.id = function(){
+        if (j$.Ext.isString(properties)){ // veio apenas o caption
+            Object.preset(_node, {caption:properties, key:util.formatKey()});
+        } else {
+            if (!properties){properties={}};
+            _node.key=util.formatKey();
+            _node.caption = properties.caption;
+            util.checkHandler();
+        }
+        return util.formatId();
+    }()
+
+    let addItem=(key, item)=>{
+        _node.length +=1;
+        _node.c$[key]=item;
+    }
+    // this.add = addItem;
+    this.put = addItem;
+    this.remove = key=>{
+        _node.length -=1;
+        _node.c$[key]=null;
+    }
+    this.show =()=>{
+        //console.log(_node.key +"."+ _node.caption);
+        for (let key in _node.c$)
+            _node.c$[key].show();
+    }
+    this.first = ()=>{
+        for (let key in _node.c$)
+            return _node.c$[key];
+    }
+}
+
 
 System.util = function(){
     let sequence = {};

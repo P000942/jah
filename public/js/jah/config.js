@@ -152,7 +152,7 @@ const CONFIG = {
 
    , EXCEPTION:{RECORD_NOT_FOUND:{id:'RECORD_NOT_FOUND' , text:"Registro não encontrado"}
               ,   INVALID_COLUMN:{id:'INVALID_COLUMN'   , text:"Coluna inválida. Não existe no recurso."}
-              ,    INVALID_FIELD:{id:'INVALID_FIELD'    , text:"Compo inválida. Não existe no 'fieldset'."}
+              ,    INVALID_FIELD:{id:'INVALID_FIELD'    , text:"Compo inválida. Não existe no 'fieldset'."} //@todo: tem que retirar, está sem uso
               ,  INVALID_ELEMENT:{id:'INVALID_ELEMENT'  , text:"Elemento inválido. Não encontrado o elemento solicitado"}
               ,     SERVICE_NULL:{id:'SERVICE_NULL'     , text:"Serviço não informado(key)."}
                }

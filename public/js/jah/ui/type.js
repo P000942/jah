@@ -570,7 +570,6 @@ TYPE.Fieldset = function(){
                 }
             }
             let _fs = this;
-            //this.Items=fields;
             this.c$=fields;
             this.length=0;
             this.validate=()=>{
@@ -605,7 +604,7 @@ TYPE.Fieldset = function(){
             init();
         }
     
-        C$ = key=>{
+/*         C$ = key=>{
             try {
                 if (this.c$[key]==undefined)
                     throw CONFIG.EXCEPTION.INVALID_FIELD;
@@ -616,7 +615,7 @@ TYPE.Fieldset = function(){
                        console.log(exception.text +" '"+key+"'");
                    return false;
             }
-        }
+        } */
     
         // varre fieldset devolve um registro dos campos que estão preenchidos
         // útil para consultas

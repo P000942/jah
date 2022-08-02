@@ -164,7 +164,6 @@ j$.Service = function(){
             }
         }
     , c$:items
-    , C$:key=>{return items[key]}
     , createCrud: function(key, service){
             return this.create(key, new Crud(j$.Service.adapter.get(key), service));
         }
@@ -556,7 +555,6 @@ j$.Page = function(){
             return items[service.id];
         }
         , c$:items
-        , C$:key=>{return items[key]}
         , Designer:designer
         , Frame:frame
     };
@@ -674,10 +672,8 @@ j$.Page.Form=function(service, modal) {
                 parms = service.Child.bindFields;
             service.autoRequest(parms);
         }   
-        if (service.Fieldset) {
-            $i.c$ = service.Fieldset.c$;
-            $i.C$ = service.Fieldset.C$;
-        }    
+        if (service.Fieldset) 
+            $i.c$ = service.Fieldset.c$;    
     };
     $i.Alert = function(alert){
         return{  
@@ -1460,9 +1456,7 @@ j$.Controller = function(){
                 return items[service.id];
         }
         , get:key=>{return items[key];}
-        //, Items:items
         , c$:items
-        , C$:key=>{return items[key];}
     };
 }(); // j$.Controller
 j$.$C=j$.Controller.c$;
@@ -1570,7 +1564,7 @@ j$.Dashboard.Tabs = function(){
             , idWrap = "wrap_"+idTab;
             this.inherit=System.Node;
             this.inherit({type:'Tabroot', Root:_root, Parent:null}, {key:idTab, id:idContent});   
-            Object.preset(_root, {add:add, getItem: _root.C$, open:open, toggle:toggle, activate:activate, close:close}); 
+            Object.preset(_root, {add:add, open:open, toggle:toggle, activate:activate, close:close}); 
         
             const initialized=function(){
                 if (!idContent){       
@@ -1587,7 +1581,7 @@ j$.Dashboard.Tabs = function(){
                 return tab;
             }  
             function open(oTab){
-                let tab= _root.C$(oTab.key);
+                let tab= _root.c$[oTab.key];
                 if (!tab)
                 tab=_root.add(oTab);   	
                 _root.activate(tab.key);
@@ -1604,7 +1598,7 @@ j$.Dashboard.Tabs = function(){
             }        
             // Coloca a tab indica(key) como ativa
             function activate(key){	
-                let tab=_root.C$(key);	       
+                let tab=_root.c$[key];	       
                 if (active_tab)  // Verifica se há uma TAB ativa e desativa a mesma
                     active_tab.deactivate();
                 active_tab=tab;	
@@ -1613,7 +1607,7 @@ j$.Dashboard.Tabs = function(){
             }	
             // fecha a tab indica(key) 
             function close(key){	
-                let tab=_root.C$(key);
+                let tab=_root.c$[key];
                 if (active_tab){             
                     if (active_tab.key==key)
                         active_tab=null;
@@ -1722,10 +1716,9 @@ j$.Dashboard.Tabs = function(){
                     _tab.loaded = true;  		  
                 } 		  
             } //tab 	
-    } // Root;
-    return{        
-            C$:key=>{return tabs[key]}
-        ,   open:(root,key)=>{tabs[root].open(key)}  
+        } // Root;
+    return{           
+        open:(root,key)=>{tabs[root].open(key)}  
         , create: (idTabs, idContent)=>{
             if (idTabs && idContent){
                 tabs[idTabs] = new Root(idTabs, idContent);
@@ -1919,7 +1912,7 @@ j$.Dashboard.Menu = function(){ // factory
                         $('#'+_base.id).append(_base.c$[key].render())
                 } 
         }
-        }();
+        }()
         this.add=_base.submenu.add;
         this.addMenu=_base.submenu.addMenu;
         this.divider = function(){
@@ -1933,7 +1926,7 @@ j$.Dashboard.Menu = function(){ // factory
                     }   
                 }
             };
-        }();
+        }()
         let  getUrl= ()=>{
                     let url=false;
                     if (properties.url){
@@ -2033,8 +2026,7 @@ j$.Dashboard.Menu = function(){ // factory
         ,   menubar: Designers.menubar
         ,   sidebar: Designers.sidebar
         , offcanvas: Designers.offcanvas
-        , c$:items
-        , C$:key=>{return items[key]}      
+        , c$:items  
     };
 }(); //j$.Dashboard.Menu  
         

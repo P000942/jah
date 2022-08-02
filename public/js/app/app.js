@@ -1,6 +1,5 @@
 /*
 c$ => Atalho para uma coleção
-C$ => Atalho para um item específico .C$(key)
 j$.$C => Atalho para os controles ativos
 j$.$P => Atalho para as páginas ativas
 j$.$R => Atalho para os recursos ativos
