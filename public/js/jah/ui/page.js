@@ -153,8 +153,7 @@ j$.Service = function(){
     };  
     
     return {
-        get:key=>{return items[key]}
-    , load:(key,item)=>{
+      load:(key,item)=>{
             item.key = key;
             if (!item.partial && !item.url && !item.local){
                 if (item.crud)
@@ -163,8 +162,8 @@ j$.Service = function(){
                     System.using(CONFIG.QUERY.CONTEXT+key+".js");
             }
         }
-    , c$:items
-    , createCrud: function(key, service){
+    ,  c$:items
+    ,  createCrud: function(key, service){
             return this.create(key, new Crud(j$.Service.adapter.get(key), service));
         }
     , createQuery: function(key, service){
@@ -173,11 +172,11 @@ j$.Service = function(){
     , createChild: function(key, parent, service){
             return new Child(key, parent, service);
         }
-    , init: (source, adapter)=>{ // o cliente pode informador o adapter
+    ,     init: (source, adapter)=>{ // o cliente pode informador o adapter
             j$.Adapter.createPage(source, adapter)
             return j$.Adapter.Page;
         }   
-    , create:(key, service)=>{
+    ,   create:(key, service)=>{
             if (!key)
                 throw new TypeError(CONFIG.EXCEPTION.SERVICE_NULL.text);
             if (service.constructor.name=="Object"){ //para o servicos que sao criados manualmente
@@ -187,7 +186,7 @@ j$.Service = function(){
             window[key] = items[key];
             return items[key];
         }
-    , build:function(key, adapter){
+    ,    build:function(key, adapter){
             let service = items[key];
             if (!service){
                 service = (adapter.crud)
@@ -196,12 +195,12 @@ j$.Service = function(){
             }
             return service;
         }
-    , adapter:function (){
+    ,  adapter:function (){
             return{
                 get:function(key){
-                return (j$.Adapter.Page)
-                        ? j$.Adapter.Page.getService(key)
-                        :{key:key};
+                    return (j$.Adapter.Page)
+                         ? j$.Adapter.Page.getService(key)
+                         : {key:key};
                 }
             }
         }()
@@ -400,80 +399,69 @@ j$.Page = function(){
             }
             return wrapSection;    
         };
-        const Modal =function(wrap,form, fixed){
-            let _modal = this
-                , idModal= form.id+ "Modal" ;
-            this.show = show;
-            // TODO: this.display=show;
-            function show(){
+        const Modal =function(wrap,design, fixed){
+            let me$ = this
+             , idModal = design.id+ "Modal" ;
+            this.show=()=>{
                 let myModal = new bootstrap.Modal($(`#${idModal}`), {keyboard: true, focus:true})
                 myModal.show();
-                $(`#${idModal}`).on('hidden.bs.modal', function(event){
-/*                            if ($('.modal:visible').length)
-                        $('body').addClass ='modal-open'; */
-                        //  $("html,body").css({"overflow":"auto"});
-                })  
             }
-            this.clear=function(){
-                if (i$(idModal)) {$("#"+idModal).remove();}
+            this.clear=()=>{
+                if (i$(idModal)) {$("#"+idModal).remove()}
             }
-            this.hide=function(){
-                $("#"+idModal).modal('hide'); // exibe o modal
-            }
+            this.hide=()=>{ $("#"+idModal).modal('hide')}
             const create=function(){
-                _modal.clear();
+                me$.clear();
                 let txFixed=(fixed)?'' :j$.ui.Render.formatClose("modal")  
                 $(wrap).append(`<div id='${idModal}' class='modal fade' tabindex='-1' role='dialog'>`
                                 +  "<div class='modal-dialog modal-sm modal-lg'>"
                                 +    "<div class='modal-content'>"
-                                +      `<div id='${form.id}Header' class='modal-header'>`                        
-                                +              `<h4 class='modal-title' id='${form.id}Caption' >${form.title}</h4>`
+                                +      `<div id='${design.id}Header' class='modal-header'>`                        
+                                +              `<h4 class='modal-title' id='${design.id}Caption' >${design.title}</h4>`
                                 +              txFixed
                                 +      "</div>"
-                                +      `<div id='${form.id}Body' class='modal-body'> <div class='container'>`
-                                +              `<form id='${form.id}' name='${form.id}'`+ j$.ui.Render.attributes(form.attributes)+ "></form>"
+                                +      `<div id='${design.id}Body' class='modal-body'> <div class='container'>`
+                                +              `<form id='${design.id}' name='${design.id}'`+ j$.ui.Render.attributes(design.attributes)+ "></form>"
                                 +      "</div></div>"
-                                +      `<div id='${form.id}Footer' class='modal-footer'></div>`
+                                +      `<div id='${design.id}Footer' class='modal-footer'></div>`
                                 +     "</div>"
                                 +   "</div>"
                                 + "</div>");
-                $('#'+form.id).append(`<div id='${form.id}Alert'></div>`);
-                _modal.body     =i$(form.id+ "Body");
-                _modal.form     =i$(form.id);
-                _modal.fieldset =i$(form.id);
-                _modal.caption  =i$(form.id+"Caption");
-                _modal.header   =i$(form.id+"Header");
-                _modal.footer   =i$(form.id+"Footer");
-                _modal.alert    =i$(form.id+"Alert");
-            }();
+                $('#'+design.id).append(`<div id='${design.id}Alert'></div>`);
+                me$.body     =i$(design.id+ "Body");
+                me$.form     =i$(design.id);
+                me$.fieldset =i$(design.id);
+                me$.caption  =i$(design.id+"Caption");
+                me$.header   =i$(design.id+"Header");
+                me$.footer   =i$(design.id+"Footer");
+                me$.alert    =i$(design.id+"Alert");
+            }()
         }
-        const Form =function(wrap,form){
-            let _form = this;
-            this.show = show;
-            
-            function show(){ _form.form.show()}  
-            this.clear=()=>{ wrap.innerHTML=""}
-            this.hide=()=>{_form.form.hide()}
+        const Form =function(wrap, design){
+            let me$ = this;
+            this.show =()=>{this.form.show()}  
+            this.clear=()=>{wrap.innerHTML=""}
+            this.hide=() =>{this.form.hide()}
             const create=function(){
-                _form.clear();
-                $(wrap).append("<form id='" +form.id+ "' name='" +form.id+ "'"+ j$.ui.Render.attributes(form.attributes)+ "></form>");
+                me$.clear();
+                $(wrap).append("<form id='" +design.id+ "' name='" +design.id+ "'"+ j$.ui.Render.attributes(design.attributes)+ "></form>");
                 
-                $('#'+form.id).append(`<div class='${CONFIG.CRUD.HEADER.CLASS}' id='${form.id}Header'>`
-                                    +`<div class='${CONFIG.CRUD.TITLE.CLASS}'  id='${form.id}Title'>${form.title}</div>`
-                                    +`<nav class='${CONFIG.CRUD.MENU.CLASS}'   id='${form.id}Menu'></nav>`
-                                    +"</div>");  
+                $('#'+design.id).append(`<div class='${CONFIG.CRUD.HEADER.CLASS}' id='${design.id}Header'>`
+                                    + `<div class='${CONFIG.CRUD.TITLE.CLASS}'  id='${design.id}Title'>${design.title}</div>`
+                                    + `<nav class='${CONFIG.CRUD.MENU.CLASS}'   id='${design.id}Menu'></nav>`
+                                    + "</div>");  
         
-                $('#'+form.id).append("<fieldset class='crud' id='" +form.id+ "Fieldset'></fieldset>");
-                $('#'+form.id+' > fieldset').append(`<div id='${form.id}Alert'></div>`);
-                $('#'+form.id).append(`<div id='${form.id}Footer'></div>`);
-                _form.body     =i$(form.id);
-                _form.form     =i$(form.id);
-                _form.fieldset =i$(form.id+"Fieldset");
-                _form.caption  =i$(form.id+"Title");
-                _form.header   =i$(form.id+"Header");
-                _form.menu     =i$(form.id+"Menu");
-                _form.footer   =i$(form.id+'Footer');
-                _form.alert    =i$(form.id+"Alert");
+                $('#'+design.id).append("<fieldset class='crud' id='" +design.id+ "Fieldset'></fieldset>");
+                $('#'+design.id+' > fieldset').append(`<div id='${design.id}Alert'></div>`);
+                $('#'+design.id).append(`<div id='${design.id}Footer'></div>`);
+                me$.body     =i$(design.id);
+                me$.form     =i$(design.id);
+                me$.fieldset =i$(design.id+"Fieldset");
+                me$.caption  =i$(design.id+"Title");
+                me$.header   =i$(design.id+"Header");
+                me$.menu     =i$(design.id+"Menu");
+                me$.footer   =i$(design.id+'Footer');
+                me$.alert    =i$(design.id+"Alert");
             }();                    
         }        
         return{
@@ -563,7 +551,6 @@ j$.$P = j$.Page.c$;
         
 // Esse alert é da página
 j$.Page.Alert= function(){
-    //let $alert = this;
     let _wrap = CONFIG.LAYOUT.ALERT.ID;
     return {
         show:function(msg, alertClass, wrap=i$(_wrap)){
@@ -603,10 +590,10 @@ j$.Page.Form=function(service, modal) {
     service.page = this;
 
     let DEFAULT_BUTTON_PRESET = CONFIG.CRUD.preset
-        , alignButtons = (service.alignButton) ?service.alignButton :CONFIG.CRUD.BUTTONS.ALIGN;
+      , alignButtons = (service.alignButton) ?service.alignButton :CONFIG.CRUD.BUTTONS.ALIGN;
     
     if (modal)
-            alignButtons=c$.ALIGN.BOTTOM;
+        alignButtons=c$.ALIGN.BOTTOM;
 
     if (service.constructor && service.constructor.name==="query")
         DEFAULT_BUTTON_PRESET = CONFIG.QUERY.preset;
@@ -618,8 +605,8 @@ j$.Page.Form=function(service, modal) {
     Object.preset(service.Interface,{Buttons:false});
     Object.preset(service,{
             onSuccess:  ACTION =>{j$.Page.Alert.success(ACTION.MESSAGE.SUCCESS, $i.Alert.id)}
-        ,   onError:  ACTION =>{j$.Page.Alert.error(ACTION.MESSAGE.ERROR, $i.Alert.id)}
-        , onFailure: response=>{j$.Page.Alert.error(response.msg, $i.Alert.id)}
+          ,   onError:  ACTION =>{j$.Page.Alert.error(ACTION.MESSAGE.ERROR, $i.Alert.id)}
+          , onFailure: response=>{j$.Page.Alert.error(response.msg, $i.Alert.id)}
     });
     if (!service.Interface.id)
         service.Interface.id = service.id.toFirstLower();
@@ -721,71 +708,71 @@ j$.Page.Form=function(service, modal) {
 }; // j$.Page.Form
         
 j$.Page.Modal=function(id, service, actionCallback) {
-    let $this = this;
+    let $i = this;
     if (service)
-        Object.preset($this, service);
+        Object.preset($i, service);
         //this.properties=(helper)?helper:{fixed:false};
     this.callback = actionCallback;
     //this.fixed = fixed(helper);
-    $this.inherit = j$.Page.Designer.modal;
+    $i.inherit = j$.Page.Designer.modal;
     let ws ={buttons:{}, controller:{}}
     let callback=function(key, action){
         this.execute=function(){
             if (!action())
-                $this.hide();
-            if ($this.callback)
-                $this.callback(key)
+                $i.hide();
+            if ($i.callback)
+                $i.callback(key)
         }
     }
     function footer(actionController){
-        $this.footer.hide();
+        $i.footer.hide();
         if (actionController){
-            $this.footer.innerHTML ='';
+            $i.footer.innerHTML ='';
             for(let key in actionController){
                 ws.buttons[key]=CONFIG.action(key);
                 let action=new callback(key, actionController[key]);
                 ws.controller[key]=action.execute;
             }
-            $this.Buttons = new j$.Page.Buttons(ws.controller, ws.buttons);
-            $this.Buttons.create($this.footer);   // cria os buttoes
-            $this.footer.show();
+            $i.Buttons = new j$.Page.Buttons(ws.controller, ws.buttons);
+            $i.Buttons.create($i.footer);   // cria os buttoes
+            $i.footer.show();
         }
     }
     function fixed(){
-        if ($this.actionController)
-            return ($this.fixed)?true:false;
+        if ($i.actionController)
+            return ($i.fixed)?true:false;
         else
             return false;
     }
     function text(){
-        if ($this.text)
-            $this.body.innerHTML =$this.text;
+        if ($i.text)
+            $i.body.innerHTML =$i.text;
     }
     function title(){
-        $this.caption.innerHTML = '';
-        if ($this.title)
-            $this.caption.innerHTML = $this.title;
-        if ($this.caption.innerHTML.isEmpty())
-            $this.caption.hide();
+        $i.caption.innerHTML = '';
+        if ($i.title)
+            $i.caption.innerHTML = $i.title;
+        if ($i.caption.innerHTML.isEmpty())
+            $i.caption.hide();
         else
-            $this.caption.show();
+            $i.caption.show();
     }
 
     this.show= (service, actionCallback) =>{
         if (service)
-                Object.setIfExist($this, service, ['text','title','actionController','fixed']);
+                Object.setIfExist($i, service, ['text','title','actionController','fixed']);
         if (actionCallback)
-            $this.callback =actionCallback;
+            $i.callback =actionCallback;
 
-        $this.inherit(i$(CONFIG.LAYOUT.ID), {id:id}, fixed());
+        $i.inherit(i$(CONFIG.LAYOUT.ID), {id:id}, fixed());
 
         title();
         text();
-        footer($this.actionController);
+        footer($i.actionController);
         if (service && service.hide)
             return false
         else
-            $this.show();  
+            $i.show();  
     };
 }; // $.Page.Modal
 j$.Page.Grid=function(page, btn_template=CONFIG.GRID.PRESET){
@@ -958,7 +945,6 @@ j$.Page.Buttons=function(actionController, buttons, presetFunction){
         , wrapButtons
         , _wrap;
     Object.preset(_btn,{c$:getItems()});
-    // this.c$ = this.Items;
     presetFunction =(presetFunction)?presetFunction:()=>{};
     // Obter o grupos de buttons
     function getItems(){
@@ -1008,13 +994,13 @@ j$.Page.Buttons=function(actionController, buttons, presetFunction){
     this.button = key=>{
         let b$ =_btn.c$[key];
         return {   
-                show: ()=>{b$.element.show()}                    
+               show: ()=>{b$.element.show()}                    
             ,  hide: ()=>{b$.element.hide()}
             ,toggle: ()=>{b$.element.toggle()}
             ,   get: ()=>{return b$.element.get()}                    
             ,   set: value=>{
-                    b$.value=value;
-                    b$.element.innerText=value;
+                     b$.value=value;
+                     b$.element.innerText=value;
                 }
         }
     }
@@ -1125,7 +1111,6 @@ j$.Confirm = new j$.Page.Modal("Confirme",{
 }); // j$.Confirm 
 //@Teste:  j$.Confirm.show();
 
-//@todo: mudar para t$.Alert 
 // Esse é o alert como modal 
 j$.Alert = new j$.Page.Modal("Alert",{
                     text: '<p><strong>MUDAR O TEXTO:</strong></p>j$.Alert.text</br>ou</br>{text:"Meu texto"} no método show</p></br>'
@@ -1162,11 +1147,11 @@ j$.Controller = function(){
     let items = {};
     //@note: ActionController: faz a chamada aos métodos do recurso (RESOURCE)
     function ActionController(ResponseController){
-        let _me = this;
+        let $i = this;
         let Resource = ResponseController.Resource;
     
-        Object.preset(_me, {remove, save:update, get, filter, sort, search});
-        Object.setIfExist(_me, ResponseController,['edit','insert','back','print','List','child', 'refresh']);
+        Object.preset($i, {remove, save:update, get, filter, sort, search});
+        Object.setIfExist($i, ResponseController,['edit','insert','back','print','List','child', 'refresh']);
     
         function filter(event, key, value){
             if (event.ctrlKey && event.button==c$.MOUSE.BUTTON.LEFT){
@@ -1203,8 +1188,8 @@ j$.Controller = function(){
                 j$.Confirm.show({title:"Exclusão de Registro", text:"Confirma a exclusão de registro?"}
                         , action =>{
                             if (action=="yes"){
-                                let idxList = _me.List.getPosition(cell); // Idenifica a posição(linha) no grid (table)
-                                let recordRow =(_me.List.Pager.absolutePosition(idxList)); // Posicao no dataset(array)
+                                let idxList = $i.List.getPosition(cell); // Idenifica a posição(linha) no grid (table)
+                                let recordRow =($i.List.Pager.absolutePosition(idxList)); // Posicao no dataset(array)
                                 let id = Resource.Dataset.id(recordRow);
                                 Resource.remove(id, recordRow);
                             }
@@ -1232,21 +1217,21 @@ j$.Controller = function(){
         }
     } //ActionController    
     function ResponseController($service){
-        let _me = this
+        let $i = this
             , EDITED = false
             , NEW_RECORD =false
             , BUTTONS;
         const initialized = function(){
-                _me.service = $service;
-                _me.ResponseHandler = new ResponseHandler(_me);
-                if (j$.Ext.isDefined(_me.service.resource)){
-                    if (j$.Ext.isString(_me.service.resource))
-                        _me.service.resource ={name: _me.service.resource.toFirstLower() };
+                $i.service = $service;
+                $i.ResponseHandler = new ResponseHandler($i);
+                if (j$.Ext.isDefined($i.service.resource)){
+                    if (j$.Ext.isString($i.service.resource))
+                        $i.service.resource ={name: $i.service.resource.toFirstLower() };
                 }else
-                    _me.service.resource ={name: _me.service.id.toFirstLower()};
+                    $i.service.resource ={name: $i.service.id.toFirstLower()};
         
-                _me.Resource =  j$.Resource.create(_me.service.resource, _me.ResponseHandler);
-                _me.service.Resource =  _me.Resource;
+                $i.Resource =  j$.Resource.create($i.service.resource, $i.ResponseHandler);
+                $i.service.Resource =  $i.Resource;
         
                 BUTTONS = function(buttons){
                     // Carregar os elementos(button) para cria as constantes com o botões (Exemplo: BUTTONS.SAVE, BUTTONS.EDIT)
@@ -1254,10 +1239,10 @@ j$.Controller = function(){
                     for (let key in buttons)
                         values[key.toUpperCase()]=buttons[key].element;
                     return values;
-                }(_me.service.page.Buttons.c$);
+                }($i.service.page.Buttons.c$);
         
-                Object.preset(_me,{edit, insert, back, sort, print, UpdateController:null, child, filter});
-                Object.setIfExist(_me,_me.service.page,'List');
+                Object.preset($i,{edit, insert, back, sort, print, UpdateController:null, child, filter});
+                Object.setIfExist($i,$i.service.page,'List');
         
                 init();
                 hide(['PRINT','INSERT','SAVE','CHILD']);
@@ -1267,20 +1252,20 @@ j$.Controller = function(){
         this.isNewRecord = ()=>{return NEW_RECORD};
         
         function print(){
-            let r3port=window.open("report.html", _me.service.id ,'toolbar=no,location=no,directories=no,status=no,menubar=yes,scrollbars=yes,resizable=yes, height=1024,width=1280, fullscreen=yes');
+            let r3port=window.open("report.html", $i.service.id ,'toolbar=no,location=no,directories=no,status=no,menubar=yes,scrollbars=yes,resizable=yes, height=1024,width=1280, fullscreen=yes');
         }
         
         function sort(sort){
-            _me.service.Fieldset.sort.clear();
+            $i.service.Fieldset.sort.clear();
             init();
         }
         
         //@example: criteria={idAssunto:2}
         function filter(criteria){
-            _me.service.Fieldset.filter.clear();
+            $i.service.Fieldset.filter.clear();
             if (criteria){
                 for (let key in criteria){
-                    let field = _me.service.Fieldset.c$[key];
+                    let field = $i.service.Fieldset.c$[key];
                     field.filterToggle(true); // exibir icone
                 }
             }
@@ -1291,22 +1276,22 @@ j$.Controller = function(){
             hide(['BACK', 'SAVE','CHILD']);
             EDITED    = false;
             NEW_RECORD=false;
-            if (_me.UpdateController)
-                _me.UpdateController.refresh();
+            if ($i.UpdateController)
+                $i.UpdateController.refresh();
         }
         
         function edit(cell){
-                _me.service.updating=false;
+                $i.service.updating=false;
                 hide(['GET','INSERT']);
                 NEW_RECORD=false;
                 EDITED    =true;
-                _me.UpdateController.reset();
-                let idxListEdited = _me.List.getPosition(cell);
-                let recordRow = _me.Resource.Dataset.Pager.absolutePosition(idxListEdited);
-                _me.UpdateController.edit(recordRow);
+                $i.UpdateController.reset();
+                let idxListEdited = $i.List.getPosition(cell);
+                let recordRow = $i.Resource.Dataset.Pager.absolutePosition(idxListEdited);
+                $i.UpdateController.edit(recordRow);
         }
         function child(key){ // key é o indicador da chave que contém o filho
-            _me.service.page.child.c$[key].open();
+            $i.service.page.child.c$[key].open();
         }
         
         function back(){ (EDITED)?init():history.back();}
@@ -1315,9 +1300,9 @@ j$.Controller = function(){
                 hide(['GET','INSERT','PRINT','CHILD']);
                 EDITED    =true;
                 NEW_RECORD=true;
-                _me.UpdateController.reset();
-                if (_me.service.afterInsert)
-                    _me.service.afterInsert(_me.UpdateController);
+                $i.UpdateController.reset();
+                if ($i.service.afterInsert)
+                    $i.service.afterInsert($i.UpdateController);
         }
         
         function hide(buttons){
@@ -1339,10 +1324,10 @@ j$.Controller = function(){
             };
             this.remove= function(response, recordRow) {
                 let rowDeleted = parent.UpdateController.remove();
-                if (_me.List.index===rowDeleted)
+                if ($i.List.index===rowDeleted)
                     init();
-                else if (_me.List.index>rowDeleted) 
-                    _me.List.index--;
+                else if ($i.List.index>rowDeleted) 
+                    $i.List.index--;
             };
             this.post= function(record, recordRow) {
                 parent.UpdateController.insert(record, recordRow);
@@ -1351,21 +1336,21 @@ j$.Controller = function(){
             };
         
             this.put= function(record, recordRow) {
-                let idxListEdited=_me.List.index;
-                let pagEdited=_me.List.Pager.number();
+                let idxListEdited=$i.List.index;
+                let pagEdited=$i.List.Pager.number();
         
-                let pos = _me.Resource.Dataset.Pager.pagePosition(recordRow); // esse controle só faz sentido para uma atualização externa.
+                let pos = $i.Resource.Dataset.Pager.pagePosition(recordRow); // esse controle só faz sentido para uma atualização externa.
                 if (pagEdited==pos.page){     // é a mesma página
-                    let rowEdit = (pos.index==idxListEdited && !_me.service.updating) ?recordRow :null;
+                    let rowEdit = (pos.index==idxListEdited && !$i.service.updating) ?recordRow :null;
                     if (pos.index!=idxListEdited) // Não é a mesma linha do grid que está sendo editada tb está sendo atualizado
-                    idxListEdited = pos.index
+                        idxListEdited = pos.index
                     parent.UpdateController.update(idxListEdited,record, rowEdit);
                 } else 
                     parent.UpdateController.update( c$.RC.NONE,record);
         
                 NEW_RECORD=false;
                 EDITED    =true;
-                _me.service.updating=false;
+                $i.service.updating=false;
             };
         
             this.filter= function(criteria) {parent.filter(criteria)}
@@ -1378,12 +1363,12 @@ j$.Controller = function(){
         };
     } //ResponseController   
     function UpdateController(service){
-        let _me = this
+        let $i = this
             , Resource  = service.Resource;
             // , Interface = service.Interface;
         
         const initialized=function(){
-            Object.preset(_me, {remove, update, edit, insert, validate, record:createRecord, refresh, reset, form:i$(service.Interface.id)});
+            Object.preset($i, {remove, update, edit, insert, validate, record:createRecord, refresh, reset, form:i$(service.Interface.id)});
             if (!Resource.Dataset.empty)
                 service.Fieldset.bindColumns(Resource.Dataset.Columns);
             return true;
@@ -1395,7 +1380,7 @@ j$.Controller = function(){
             if (service.page.List)
                 service.page.List.init(Resource);
             else
-                _me.reset();
+                $i.reset();
         }
         
         function edit(recordRow, record){
@@ -1417,7 +1402,7 @@ j$.Controller = function(){
         }
         
         function insert(record, recordRow){
-            _me.edit(recordRow, record);
+            $i.edit(recordRow, record);
             if (service.page.List)
                 service.page.List.Detail.add(record);
             if (service.onSuccess)
@@ -1439,7 +1424,7 @@ j$.Controller = function(){
                 let record = this.record()
                 , error  =!service.Fieldset.validate();
                 if (service.validate && !error)
-                    error=!service.validate(_me, record, newRecord);
+                    error=!service.validate($i, record, newRecord);
         
                 if (error && service.onError)
                     service.onError( (newRecord) ?CONFIG.ACTION.NEW :CONFIG.ACTION.SAVE);
@@ -1455,7 +1440,6 @@ j$.Controller = function(){
                     items[service.id] = new ActionController(new ResponseController(service));
                 return items[service.id];
         }
-        , get:key=>{return items[key];}
         , c$:items
     };
 }(); // j$.Controller
@@ -1472,8 +1456,8 @@ j$.Dashboard = function(){
     let idContent=CONFIG.LAYOUT.ID
         , Adapter={}        
     return{
-            init:(properties=j$.Adapter.Page, parser=CONFIG.MENU.PARSER)=>{ //@todo: onde uso(insiro) esse factory
-                            //@todo: Não tá legal ser apenas Factory e específico pro menu
+            init:(properties=j$.Adapter.Page, parser=CONFIG.MENU.PARSER)=>{ //@todo: onde é usado(faz sentido está aí?) esse factory
+                                                                            //@todo: Não tá legal ser apenas Factory e específico pro menu
             Adapter.menu = (properties && properties.design && properties.design.menuAdapter) 
                             ? j$.Dashboard[properties.design.menuAdapter] 
                             : j$.Adapter.Menu                                                            
@@ -2052,7 +2036,7 @@ j$.Adapter = function(){
         }
     }
     return {      
-        Menu:function(){ //@todo: esse é um menuAdapter que faz a adptação do que está no services ao menu
+        Menu:function(){ //Esse é um menuAdapter que faz a adptação do que está declaro no services para gerar o menu
             let menubar
             , createMenu = function(parser=CONFIG.MENU.PARSER, properties){
                 let design = CONFIG.MENU.TYPE[parser.toUpperCase()]                  

@@ -370,9 +370,6 @@ class Observer extends System.Collection{
 }
 System.Observer = Observer;
 
-
-
-
 System.Node=function(inheritor, properties){
     let _node = this;
     this.length = 0;
@@ -396,11 +393,11 @@ System.Node=function(inheritor, properties){
 
                 return key;
             }
-        ,  formatId:function(){return (properties.id)?properties.id:_node.Parent.id +'_'+_node.key;}
-        , checkHandler: function(){
+        ,   formatId:function(){return (properties.id)?properties.id:_node.Parent.id +'_'+_node.key;}
+        ,   checkHandler: function(){
                 if (properties.onClick) {_node.onClick =function(event){return properties.onClick(_node, event);};}
+            }
         }
-        };
     }()
     this.id = function(){
         if (j$.Ext.isString(properties)){ // veio apenas o caption
