@@ -63,12 +63,12 @@
                     menu_album.addMenu(); // Vai incluir o menu 
                       
         const menu_partial = menu.addMenu({caption:"Partial", hint:"Exibe o link usando ajax."})
-                menu_partial.add([{caption:'Visão Geral', partial:urlPartial, hint:'Conheça a história e a caminhada da Comunidade'}
-                                ,{caption:'Semenentinha', partial:urlPartial1, hint:'Veja como estamos organizados'}
-                                ,{caption:'Assunto',       hint:'Veja um álbum de nosso trabalho de evagelização!',
+                menu_partial.add([{caption:'Visão Geral' , partial:urlPartial, hint:'Conheça a história e a caminhada da Comunidade'}
+                                 ,{caption:'Semenentinha', partial:urlPartial1, hint:'Veja como estamos organizados'}
+                                 ,{caption:'Assunto',       hint:'Veja um álbum de nosso trabalho de evagelização!',
                                     onClick:menu=>{j$.Dashboard.Service.open({key:menu.key
-                                                                     , caption:menu.caption
-                                                                      , onLoad: tab=>{Assunto.init(tab.idContent)}
+                                                                        , caption:menu.caption
+                                                                          , onLoad: tab=>{Assunto.init(tab.idContent)}
                                                      })}
                                 }]);
         menu.addMenu("Tabela")

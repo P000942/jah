@@ -158,7 +158,7 @@ const CONFIG = {
                }
    , RESOURCE:{CONTEXT:'http://localhost:3000/'}
    ,   SERVER:{CONTEXT:'http://localhost:3000/'}
-    , BOOLEAN:{'true':{value:true, text:'sim'}, 'false':{value:false, text:'Não'}}
+    , BOOLEAN:{'true':{value:true, text:'Sim', short:'S'}, 'false':{value:false, text:'Não', short:'N'}}
     , LAYOUT:{ID:'content'
          , ALERT:{ID:'wrapAlert'}}
     , ACTION:{ 

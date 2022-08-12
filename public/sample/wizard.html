@@ -32,8 +32,7 @@
      });
 
      const ws={
-                urlPartial : CONFIG.SERVER.CONTEXT + 'sample/partial.html'
-                , actionController:function (){
+                 actionController:function (){
                         return{
                                edit(e){ws.alert(`    edite: ${e.text}`)}
                         ,    insert(e){ws.alert(`    criar: ${e.text}`)}
@@ -99,23 +98,20 @@ const wizard = function(){
                 menu.addMenu({caption:"Home", active:true, icon:c$.ICON.HOME});
                 if (canvas)
                     menu.addMenu({caption:"Criar Menu" 
-                       ,onClick:function(menu, event){wizard.criarMenu()}
+                       ,onClick:function(menu, event){wizard.criarMenu(menu, event)}
                     });
                 menu.addMenu({key:'switch', caption:"ON", icon:c$.ICON.ON 
                     ,onClick:function(menu, event){                        
                         let item = i$(menu.id)
                         ,    vl = item.get().toggle(['ON', 'OFF']);
-                       // menu.element.querySelector('i').style.color = (vl=='ON') ?c$.ICON.ON.COLOR :c$.ICON.OFF.COLOR;
-                        //menu.set(vl.toggle(['ON', 'OFF']));                       
-                        //menu.element.prepend('<i class="bi bi-power" style="color:#000000;" ></i>'); 
                         menu.element.innerHTML = (`${j$.ui.Render.icon(c$.ICON[vl])}${vl}`); 
                     }
                 });
                 
                 let menu_link = menu.addMenu("Tabs");
-                menu_link.add({caption:'Link',  url:ws.urlPartial});
+                menu_link.add({caption:'Link',  url:w$.urlPartial});
                 menu_link.divider.add();
-                menu_link.add({caption:'Menu Partial', byPass:true, url:ws.urlPartial,
+                menu_link.add({caption:'Menu Partial',  url:w$.urlPartial,
                     onClick:function(menu, event){
                         ws.tabs.open(
                                 {key:"tab_"+menu.id,
@@ -126,7 +122,7 @@ const wizard = function(){
                         });
                     }
                 });
-                menu_link.add({caption:'Abrir Form', byPass:true, url: ws.urlPartial,
+                menu_link.add({caption:'Abrir Form',  url: w$.urlPartial,
                     onClick:function(menu, event){
                         ws.tabs.open(
                                 {key:"tab_"+menu.id,
@@ -137,7 +133,7 @@ const wizard = function(){
                         });
                     }
                 });
-                menu_link.add({caption:'Menu Partial Simples', byPass:true, url:ws.urlPartial,
+                menu_link.add({caption:'Menu Partial Simples', url:w$.urlPartial,
                     onClick:function(menu, event){
                         ws.tabs.open({key:'tab_'+menu.key, caption:menu.caption, url:menu.url});
                     }
@@ -150,7 +146,7 @@ const wizard = function(){
         abrirForm: function (idContent){
             myPage.init(idContent)
         }
-       ,criarMenu:function(){  
+       ,criarMenu:function(menu, event){  
             if (_criarMenu){          
                 gerar(j$.Dashboard.Menu.create("menux", c$.MENU.TYPE.MENUBAR));            
             } 

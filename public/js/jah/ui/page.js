@@ -268,14 +268,14 @@ j$.Page = function(){
             return self;
         }
         let toggle=function(id){
-            let frame = this.items[id];
+            let frame = this.c$[id];
             if (frame.button.title === "Esconder")
                 this.hide(id);
             else 
                 this.show(id);                    
         };
         let hide=function(id){
-            let frame = this.items[id];
+            let frame = this.c$[id];
             frame.button.className =  hidebox_class;
             frame.button.title = "Exibir";
             if (frame.constructor.name=='slidebox')
@@ -283,7 +283,7 @@ j$.Page = function(){
             frame.target.hide();
         };
         let show=function(id){
-            let frame = this.items[id];
+            let frame = this.c$[id];
                 frame.button.className =  showbox_class;
                 frame.button.title = "Esconder";
                 if (frame.constructor.name=='slidebox')
@@ -291,7 +291,7 @@ j$.Page = function(){
                 frame.target.show();
         };
         return{
-                slidebox:function(properties){return new slidebox(properties)}
+              slidebox:function(properties){return new slidebox(properties)}
             , framebox:function(properties){return new framebox(properties)}
             , toggle:toggle
             , show:show
@@ -483,8 +483,8 @@ j$.Page = function(){
                         section =i$(design.container);
 
                     if (design.frame != undefined){
-                        if (frame.items[design.frame])
-                            section = frame.items[design.frame].target;
+                        if (frame.c$[design.frame])
+                            section = frame.c$[design.frame].target;
                         else
                             try{
                                 throw CONFIG.EXCEPTION.INVALID_ELEMENT
@@ -1466,7 +1466,7 @@ j$.Dashboard = function(){
             return Adapter;
         }
         , bindItem: item =>{
-            if (!item.url && !item.onCLick){
+            if (!item.url && !item.onClick){
                 if (item.partial)
                     item.onClick=j$.Dashboard.Service.openPartial;
                 else if (item.modal){
@@ -1476,7 +1476,8 @@ j$.Dashboard = function(){
                 } else
                     item.onClick=j$.Dashboard.Service.delegateTo;
                 item.byPass =true;
-            }
+            } else if (item.onClick)
+                item.byPass =true;
         }
         , openItem: (item, record) => {
             if (!item.url && !item.onCLick){
@@ -1559,7 +1560,7 @@ j$.Dashboard.Tabs = function(){
                 }
                 return true;
             }();
-            function add(oTab){            
+            function add(oTab){         
                 let tab = new Tab(_root, oTab);   
                 _root.put(tab.key,tab);
                 return tab;
@@ -1567,7 +1568,7 @@ j$.Dashboard.Tabs = function(){
             function open(oTab){
                 let tab= _root.c$[oTab.key];
                 if (!tab)
-                tab=_root.add(oTab);   	
+                    tab=_root.add(oTab);   	
                 _root.activate(tab.key);
                 return tab;
             }        
@@ -1605,10 +1606,10 @@ j$.Dashboard.Tabs = function(){
             //tab={key:'' caption:''[, fixed:false, onLoad:function(){}, onActivate:function(){}, onDeactivate:function(){}]}
             function Tab(_parent, tab){   
                 let _tab = this;  
-                Object.preset(_tab,{append:addContent, update:updContent,clear:clearContent, showURL:showURL, render:render
-                                , show:show, load:load, hide:hide, activate:activate, close:close, deactivate:deactivate 
-                                , fixed:false, loaded:false, active:false, parent: _parent
-                                , caption:tab.caption, id:tab.key, key:tab.key, idContent:tab.key+"_Content" 
+                Object.preset(_tab,{append:addContent, update:updContent,clear:clearContent, showURL, render
+                                ,     show, load, hide, activate, close, deactivate 
+                                ,    fixed:false, loaded:false, active:false, parent: _parent
+                                ,  caption:tab.caption, id:tab.key, key:tab.key, idContent:tab.key+"_Content"
                             });		  
         
                 //this.title =text=>{return _tab.Header.title(text)}                  
@@ -1618,12 +1619,12 @@ j$.Dashboard.Tabs = function(){
                     if (!_tab.onLoad && _tab.url){
                         _tab.onLoad=function(tab){tab.showURL();};
                     }
-                    createBase();   
+                    createBase(tab.content);   
                     return true;           
                 }();
                 
-                function createBase(){
-                    let html = ""; 
+                function createBase(content){
+                    let html = (content) ?content :""; 
                     if (i$(_tab.id)) { // Quando jah existe, remove
                         html = i$(_tab.id).innerHTML;
                         i$(i$(_tab.id).parentNode).removeChild(i$(_tab.id));  	
@@ -1631,10 +1632,11 @@ j$.Dashboard.Tabs = function(){
                     }             
                     i$(idTab).insert({bottom: _tab.render() + "\n"}); // cria o link da tab
                     i$(idWrap).insert({bottom: 
-                                                `<div class='${CONFIG.TABS.CONTENT.WRAP.CLASS}' id='${_tab.id}'>` 
+                                             `<div class='${CONFIG.TABS.CONTENT.WRAP.CLASS}' id='${_tab.id}'>` 
                                             +`<div class='${CONFIG.TABS.CONTENT.CLASS}' id='${_tab.idContent}'>${html}</div>`
                                             +"</div>\n"
-                                    }); // cria o container da tab               
+                                    }); // cria o container da tab     
+                    i$(_tab.id).hide();       
                 };             
                 // executar a ação associada a TAB indica(key)
                 function load(){              
@@ -1675,7 +1677,7 @@ j$.Dashboard.Tabs = function(){
                 function render(){			 
                     let linkClose =(_tab.fixed)?''
                                     :`<a class='${CONFIG.TABS.LINK.CLOSE.CLASS}' href="javascript:j$.Dashboard.Tabs.c$.` 
-                                    + `${_tab.parent.key}.close('${_tab.key}');">`
+                                    +`${_tab.parent.key}.close('${_tab.key}');">`
                                     +j$.ui.Render.icon(c$.ICON.CLOSE)                                          
                                     +"</a>";              
                     return `<span class='${CONFIG.TABS.LINK.TITLE.CLASS}' onmouseover='j$.Dashboard.Tabs.HANDLE.onmouseover(this);' onmouseout='j$.Dashboard.Tabs.HANDLE.onmouseout(this);' id='tab_link_`+ this.key+"'>"

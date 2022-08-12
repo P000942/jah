@@ -1,41 +1,123 @@
+const t$ = function(){    
+    let designers={   
+        accordion: function(){   
+            function wrap(value, tag='p'){
+                return `<${tag}>${value}</${tag}>`;
+            }
+            function bold(value, strong=true){
+                return strong ?wrap(value,'strong') :value;
+            }
+            function show(value, tag='p', strong=false, cr=false){
+                let res = cr ?"<br>" :""
+                return wrap(bold(value,strong),tag)+res; 
+            }
+            function cr(){            
+                return "<br>"; 
+            }
+            function descr(value){
+                return wrap(wrap(bold(value),"i"),'h5')+"<br>"; 
+            }
+            function header(value, id){        
+                return `<h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false" aria-controls="${id}">
+                            <strong>${bold(value)}</strong></button></h2>`;
+            }
+            function body(value, id){        
+                return  `<div id="${id}" class="accordion-collapse collapse" ><div class="accordion-body">${value}</div></div>`
+            }
+            function item(header, body){        
+                return  `<div class="accordion-item">${header}${body}</div>`
+            }     
+            function create(content, id){        
+                return  `<div class="accordion" id=${id}>${content}</div>`
+            }             
+            function card(text,  title="",subtitle="",link=""){                                
+                return `<div class="card"><div class="card-body">
+                            <h5 class="card-title">${title}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">${subtitle}</h6>
+                            <p class="card-text">${text}</p>
+                            <a href="#" class="card-link">${link}</a>
+                        </div></div><br>`; 
+            }   
+            function ftmCard(r$){
+                let _c = "";
+                if (j$.Ext.isDefined(r$))
+                   _c = (j$.Ext.isString(r$))
+                      ? r$
+                      : card(r$.text, r$.title, r$.subtitle, r$.link) 
+                return _c;           
+            }          
+            function add(r$){                                
+                let tx = t$.item(t$.header(r$.header, r$.id)
+                                ,t$.body(ftmCard(r$.card) + r$.body, r$.id)
+                            )
+                    return r$.parent ?tx :create(tx, `${r$.id}Root`);                  
+            }             
+            
+            return {item, header, body, show, create, descr, cr, card, add}        
+        }()
+        , log: function(){   
+            function show(value){
+                console.log(value);
+                return "";
+            }
+            function cr(){            
+                console.log("");
+                return ""; 
+            }
+            function item(header, body){return  show(header+body)}     
+            function create(content){return show(content)}      
+            function add(r$){        
+                return show(r$.header)
+                     + r$.card? show(r$.card) :""
+                     + show(r$.body)
+            }      
 
-const t$ = function(){
-    let vlr = (value, noDelimiter)=>{
-        if (value)
-            if (j$.Ext.isString(value))        
-            return (noDelimiter) ?value :`"${value}"`;
-        // else if (j$.Ext.isNumber(value))   return value;
-            else if (j$.Ext.isArray(value))    
-                return JSON.stringify(value);      
-                //return `[${value.toString()}]`;              
-            else if (j$.Ext.isObject(value))   return JSON.stringify(value); 
-            else if (j$.Ext.isDate(value))     return value.format("dd/mm/yyyy");            
-            else                               return value;
-        else
-            return "";    
+            return {item, header:show, body:show, show, create, descr:show, cr, card:show, add}        
+        }()
     }
-    , ve=(value, fn, result, parms, noDelimiter=false)=>{
-        if (fn)
+    
+    function show(value, tag, strong, cr=false){
+       return t$.show(value, tag, strong, cr);      
+    }
+    init = designer=>{
+        Object.setIfExist(t$, designers[designer],['item', 'header', 'body', 'show', 'create', 'descr', 'card', 'add'])
+        t$.cr = designers[designer].cr();
+    }
+    
+    let vlr = (value, noDelimiter, strip)=>{
+        if (j$.Ext.isDefined(value))
+            if (j$.Ext.isString(value))      return (noDelimiter) ?value :`"${value}"`;
+            else if (j$.Ext.isArray(value))  
+                return strip ?JSON.stringify(value).replace(/[\[\]]/g,"") :JSON.stringify(value)
+            else if (j$.Ext.isObject(value)) return JSON.stringify(value); 
+            else if (j$.Ext.isDate(value))   return value.format("dd/mm/yyyy");            
+            else                             return value;
+        else 
+            return value;    
+    }
+    , ve=(value, fn, result, parms="", noDelimiter=false)=>{
+        let text=value;
+        if (fn){
             if (parms && parms[0])
-                console.log(`"${value}".${fn}(${vlr(parms, noDelimiter)})=> `.padStart(45,' ')+ vlr(result));
+                text=`"${value}".${fn}(${vlr(parms, noDelimiter)})=> `.padStart(45,' ')+ vlr(result)
             else
-                console.log(`"${value}".${fn}()=> `.padStart(45,' ')+ vlr(result));
-        else
-            console.log(value);
+                text=`"${value}".${fn}(${parms})=> `.padStart(45,' ')+ vlr(result);
+        }
+        return show(text);
     }
-    , v$=(value, fn, context="j$.Ext")=>{ 
-            let text="";
+    , vt=value=>{return show(value,'h2',true)}
+    , vd=value=>{return t$.descr(value)}    
+    , v$=(value, fn, context="j$.Ext", strip=false)=>{ 
+            let text=`${fn}(${vlr(value,false ,strip)})=> `.padStart(40,' ') + context;
             if (context=="j$.Ext")
-                text =  `j$.Ext.${fn}(${vlr(value)})=> `.padStart(40,' ') + j$.Ext[fn](value)
-            else  
-                text =  `${fn}(${vlr(value)})=> `.padStart(40,' ') + context;
-            console.log( text);
+                text =  `j$.Ext.${fn}(${vlr(value, false ,strip)})=> `.padStart(40,' ') + j$.Ext[fn](value) 
+            return show( text);
     } 
     , v=(fn, result, values)=>{ 
+        let text= `${fn}=> `.padStart(45,' ') + vlr(result);
         if (values)
-            console.log( `${fn}(${vlr(values)})=> `.padStart(45,' ') + result);
-        else    
-            console.log( `${fn}=> `.padStart(45,' ') + vlr(result));
+            text= `${fn}(${vlr(values)})=> `.padStart(45,' ') + result;
+        return show(text);
     }    
     , join = values=>{
         let res="", del="";
@@ -48,357 +130,552 @@ const t$ = function(){
         return res;
     }
     ,   vo=(fn, receiver, provider, keys)=>{ 
-            let vl = join([ receiver, provider, keys]);
-            console.log(`Object.${fn}(${vl})=> `.padStart(50,' '));
-            console.log(Object[fn](receiver, provider, keys));
+            let vl = join([receiver, provider, keys])
+              ,tx=show(`Object.${fn}(${vl})=> `.padStart(50,' '))
+                  +show(Object[fn](receiver, provider, keys));
+            return tx;      
     }  
-    return{             
-            isDigit:value=>{ve(value,"isDigit"  , value.isDigit())}    
-    ,     isInteger:value=>{ve(value,"isInteger", value.isInteger())}
-    ,     isNumeric:value=>{ve(value,"isNumeric", value.isNumeric())}
-    ,       isMoney:value=>{ve(value,"isMoney"  , value.isMoney())}    
-    ,        isDate:value=>{ve(value,"isDate"   , value.isDate())}
-    ,        isHour:value=>{ve(value,"isHour"   , value.isHour())}
-    ,      isLetter:value=>{ve(value,"isLetter" , value.isLetter())}
-    ,        isName:value=>{ve(value,"isName"   , value.isName())}
-    ,       isEmail:value=>{ve(value,"isEmail"  , value.isEmail())}    
-    ,       isEmpty:value=>{ve(value,"isEmpty"  , value.isEmpty())}
-    ,       isPhone:value=>{ve(value,"isPhone"  , value.isPhone())}
-    ,         ehCPF:value=>{ve(value,"ehCPF"    , value.ehCpf())}
-    ,        ehCNPJ:value=>{ve(value,"ehCNPJ"   , value.ehCnpj())}
-    ,         ehCCA:value=>{ve(value,"ehCCA"    , value.ehCca())}
-    ,         ehCEP:value=>{ve(value,"ehCEP"    , value.ehCep())}
-    ,       ehPlaca:value=>{ve(value,"ehPlaca"  , value.ehPlaca())} 
-    ,          type:value=>{v$(value,"type")}    
-    ,      isString:value=>{v$(value,"isString")} 
-    ,      isNumber:value=>{v$(value,"isNumber")}
-    ,       isArray:value=>{v$(value,"isArray")} 
-    ,      isObject:value=>{v$(value,"isObject")} 
-    ,    isFunction:value=>{v$(value,"isFunction")} 
-    ,       isValue:value=>{v$(value,"isValue")} 
-    ,     isDefined:value=>{v$(value,"isDefined")} 
-    ,   isUndefined:value=>{v$(value,"isUndefined")} 
-    , isValidInMask:(value,mask)=>{ve(value,"isValidInMask", value.isValidInMask(mask),[mask])}
-    ,          Mask:(value,mask)=>{ve(value,"mask", value.format(mask))}
-    ,      module11:(value,dig,lim)=>{ve(value,"module11", value.module11(dig,lim),((dig) ?[dig,lim].join() :""), true)}
-    ,     digitoCpf:(value)=>{ve(value,"digitoCpf", value.digitoCpf())}
-    ,    digitoCnpj:(value)=>{ve(value,"digitoCnpj", value.digitoCnpj())}
-    ,     digitoCca:(value)=>{ve(value,"digitoCca", value.digitoCca())}
-    ,        Str:{
-                       trim:(value)=>{ve(value,"trim", value.trim())}
-            ,      noAccent:(value)=>{ve(value,"noAccent", value.noAccent())}
-            ,  toCapitalize:(value)=>{ve(value,"toCapitalize", value.toCapitalize())}
-            ,  toFirstLower:(value)=>{ve(value,"toFirstLower", value.toFirstLower())}
-            ,  toFirstUpper:(value)=>{ve(value,"toFirstUpper", value.toFirstUpper())}
-            ,         toKey:(value)=>{ve(value,"toKey", value.toKey())}
-            ,  stringPreset:(value, vlDefault)=>{v$([value, vlDefault],"String.preset", String.preset(value, vlDefault))}
-            ,    toSeparate:(value,del)=>{ve(value,"toSeparate", value.toSeparate(del),del)}    
-            ,        repeat:(value,times)=>{ve(value,"repeat", value.repeat(times),times)}
-            ,     toCaption:(value,del)=>{ve(value,"toCaption", value.toCaption(del),del)}
-            ,     stripChar:(value,del)=>{ve(value,"stripChar", value.stripChar(del),del)}
-            ,    startsWith:(value,del)=>{ve(value,"startsWith", value.startsWith(del),del)}
-        }
-    ,       Obj:{
-                preset(receiver, provider, keys){vo("preset", receiver, provider, keys)}
-              , setIfExist(receiver, provider, keys){vo("setIfExist", receiver, provider, keys)}
-              , join(receiver, provider, keys){vo("join", receiver, provider, keys)} 
-              , merge(receiver, provider, keys){vo("merge", receiver, provider, keys)} 
-              , getByValue(source, value, attribute){vo("getByValue", source, value, attribute)} 
-              , compare(receiver, provider, keys){vo("compare", receiver, provider, keys)} 
-              , contains(receiver, provider, keys){vo("contains", receiver, provider, keys)} 
-              , synonym(receiver, keys){vo("synonym", receiver, keys)} 
-              , exists(receiver, keys){vo("exists", receiver, keys)} 
-              , identify(receiver, keys, labels){vo("identify", receiver, keys, labels)} 
-              , label(receiver, labels, keys){vo("label", receiver, labels, keys)} 
+    return{    
+        Test:{    
+              Chk:{         
+                    isDigit:value=>{return ve(value,"isDigit"  , value.isDigit()  )}    
+            ,     isInteger:value=>{return ve(value,"isInteger", value.isInteger())}
+            ,     isNumeric:value=>{return ve(value,"isNumeric", value.isNumeric())}
+            ,       isMoney:value=>{return ve(value,"isMoney"  , value.isMoney()  )}    
+            ,        isDate:value=>{return ve(value,"isDate"   , value.isDate()   )}
+            ,        isHour:value=>{return ve(value,"isHour"   , value.isHour()   )}
+            ,      isLetter:value=>{return ve(value,"isLetter" , value.isLetter() )}
+            ,        isName:value=>{return ve(value,"isName"   , value.isName()   )}
+            ,       isEmail:value=>{return ve(value,"isEmail"  , value.isEmail()  )}    
+            ,       isEmpty:value=>{return ve(value,"isEmpty"  , value.isEmpty()  )}
+            ,       isPhone:value=>{return ve(value,"isPhone"  , value.isPhone()  )}
+            ,         ehCPF:value=>{return ve(value,"ehCPF"    , value.ehCpf()    )}
+            ,        ehCNPJ:value=>{return ve(value,"ehCNPJ"   , value.ehCnpj()   )}
+            ,         ehCCA:value=>{return ve(value,"ehCCA"    , value.ehCca()    )}
+            ,         ehCEP:value=>{return ve(value,"ehCEP"    , value.ehCep()    )}
+            ,       ehPlaca:value=>{return ve(value,"ehPlaca"  , value.ehPlaca()  )} 
+            ,          type:value=>{
+                return v$(value,"type")
+            }    
+            ,      isString:value=>{return v$(value,"isString")} 
+            ,      isNumber:value=>{return v$(value,"isNumber")}
+            ,       isArray:value=>{return v$(value,"isArray")} 
+            ,      isObject:value=>{return v$(value,"isObject")} 
+            ,    isFunction:value=>{return v$(value,"isFunction")} 
+            ,       isValue:value=>{return v$(value,"isValue")} 
+            ,     isDefined:value=>{return v$(value,"isDefined")} 
+            ,   isUndefined:value=>{return v$(value,"isUndefined")} 
+            , isValidInMask:(value,mask)=> {return ve(value,"isValidInMask", value.isValidInMask(mask),[mask])}
             }
-    ,       Arr:{
-                preset(receiver, provider, keys){vo("preset", receiver, provider, keys)}
-              , setIfExist(receiver, provider, keys){vo("setIfExist", receiver, provider, keys)}     
+            , Dig:{
+                   module11:(value,dig,lim)=>{return ve(value,"module11", value.module11(dig,lim),((dig) ?[dig,lim].join() :""), true)}
+            ,     digitoCpf:(value)=>{return ve(value,"digitoCpf" , value.digitoCpf())}
+            ,    digitoCnpj:(value)=>{return ve(value,"digitoCnpj", value.digitoCnpj())}
+            ,     digitoCca:(value)=>{return ve(value,"digitoCca" , value.digitoCca())}
+            }    
+            , Str:{
+                               trim:(value)=>{return ve(value,"trim"        , value.trim())}
+                    ,      noAccent:(value)=>{return ve(value,"noAccent"    , value.noAccent())}
+                    ,  toCapitalize:(value)=>{return ve(value,"toCapitalize", value.toCapitalize())}
+                    ,  toFirstLower:(value)=>{return ve(value,"toFirstLower", value.toFirstLower())}
+                    ,  toFirstUpper:(value)=>{return ve(value,"toFirstUpper", value.toFirstUpper())}
+                    ,         toKey:(value)=>{return ve(value,"toKey"       , value.toKey())}
+                    ,        preset:(value, vlDefault)=>{return v$([value, vlDefault],"String.preset", String.preset(value, vlDefault),true)}
+                    ,        repeat:(value,times)=>{return ve(value,"repeat"   , value.repeat(times),times)}
+                    ,     toCaption:(value,del)  =>{return ve(value,"toCaption", value.toCaption(del),del)}
+                    ,     stripChar:(value,del)  =>{return ve(value,"stripChar", value.stripChar(del),del)}
+                    ,    startsWith:(value,del)  =>{return ve(value,"startsWith", value.startsWith(del),del)}
+                    ,          Mask:(value,mask) =>{return ve(value,"mask", value.format(mask), mask)}
+            }
+            , Obj:{
+                        preset  (receiver, provider, keys){return vo("preset", receiver, provider, keys)}
+                    , setIfExist(receiver, provider, keys){return vo("setIfExist", receiver, provider, keys)}
+                    , join      (receiver, provider, keys){return vo("join", receiver, provider, keys)} 
+                    , merge     (receiver, provider, keys){return vo("merge", receiver, provider, keys)} 
+                    , getByValue(source, value, attribute){return vo("getByValue", source, value, attribute)} 
+                    , compare   (receiver, provider, keys){return vo("compare", receiver, provider, keys)} 
+                    , contains  (receiver, provider, keys){return vo("contains", receiver, provider, keys)} 
+                    , synonym   (receiver, keys)          {return vo("synonym", receiver, keys)} 
+                    , exists    (receiver, keys)          {return vo("exists", receiver, keys)} 
+                    , identify  (receiver, keys, labels)  {return vo("identify", receiver, keys, labels)} 
+                    , label     (receiver, labels, keys)  {return vo("label", receiver, labels, keys)} 
+            }
+            , Arr:{
+                        preset  (receiver, provider, keys){return vo("preset", receiver, provider, keys)}
+                    , setIfExist(receiver, provider, keys){return vo("setIfExist", receiver, provider, keys)}     
+            }    
         }            
-    , ve
-    , v
+        , ve
+        , v
+        , vt
+        , vd                            
+        , init
+        //, designer:"accordion"         //log ou acoordion
     }
 }();
 
-t$.Format = function(){              
-    t$.ve('<<< Format: Date.format(mask) or String.format(mask) or j$.Ext.format(value, mask)>>');
-    t$.Mask("1111222","9,99"); t$.Mask("11222","99.990,00"); t$.Mask("9281220911","(000)0000-0000");
-    t$.Mask("jgg1111","AAA-0000"); t$.Mask("JGG1111","aaa-0000");t$.Mask("jgG1111","@@@-0000");
-    t$.Mask("11112011","##/##/####");  t$.Mask("1","000.000");
-    t$.Mask("jgg1111","AaA-0000");
-    t$.ve();
-    let _Date = c$.NOW;
-    t$.ve('<<< DATE: Date.format() OR j$.Ext.format(date, mask)>>>');
-    t$.v('Date.format()'            , _Date.format());
-    t$.v('Date.format("dd/mm/yyyy")', _Date.format("dd/mm/yyyy"));
-    t$.v('Date.format("yyyymmdd")'  , _Date.format("yyyymmdd"));
-    t$.v('Date.format("HH:MM:ss")'  , _Date.format("HH:MM:ss"));  
-    t$.ve();
-    t$.ve('<<< BOOLEAN: Boolean.format() >>>');
-    t$.v('true.format()'            , true.format());
-    t$.ve();
-    t$.ve('<<<  NUMBER: j$.Ext.format(value, decimals, , decimals_char, sep) >>>');
-    t$.v('j$.Ext.format(1234.56)'              , j$.Ext.format(1234.56)); 
-    t$.v("j$.Ext.format(1234.56, 2, ',', ' ')" , j$.Ext.format(1234.56, 2, ',', ' '));   
-    t$.v("j$.Ext.format(1234.56, 2, ',', '')"  , j$.Ext.format(1234.56, 2, ',', ''));   
-    t$.v("j$.Ext.format(1234.56, 2, ',', '.')" , j$.Ext.format(1234.56, 2, '.', ','));    
-    t$.v('j$.Ext.format(1000)'                 , j$.Ext.format(1000));   
-    t$.v('j$.Ext.format(1000,0)'               , j$.Ext.format(1000,0)); 
-    t$.v('j$.Ext.format(1000,0,"","")'         , j$.Ext.format(1000,0,"",""));   
-    t$.v('j$.Ext.format(67.311)'               , j$.Ext.format(67.311));    
-    t$.ve("12","toMoney", "12".toMoney());
-    t$.ve("12.1","toMoney", "12.1".toMoney());       
-    return "";
+t$.init("accordion"); //"log"
+
+t$.apiExt = function(){              
+   let p=true 
+   ,  tx=t$.String(p)
+        +t$.Digit(p)
+        +t$.Date(p)
+        +t$.Format(p)
+   return t$.create(tx, 'sampleApi');     
 }
+
 
 t$.Object = function(){
 return{
     all(){
-        t$.ve(" "); t$.Object.preset();
-        t$.ve(" "); t$.Object.setIfExist();
-        t$.ve(" "); t$.Object.join();
-        t$.ve(" "); t$.Object.merge();
-        t$.ve(" "); t$.Object.getByValue();
-        t$.ve(" "); t$.Object.compare();
-        t$.ve(" "); t$.Object.contains();
-        t$.ve(" "); t$.Object.synonym();
-        t$.ve(" "); t$.Object.exists();
-        t$.ve(" "); t$.Object.identify();   
-        t$.ve(" "); t$.Object.label();  
-        t$.ve(" ");   
-        t$.ve("Object.mixin() => execute t$.Object.mixin()  e veja melhor");
-        return "";
+        let p=true 
+        ,  tx=t$.Object.preset(p)
+             +t$.Object.setIfExist(p)
+             +t$.Object.join(p)
+             +t$.Object.merge(p)
+             +t$.Object.getByValue(p)
+             +t$.Object.compare(p)
+             +t$.Object.contains(p)
+             +t$.Object.synonym(p)
+             +t$.Object.exists(p)
+             +t$.Object.identify(p)   
+             +t$.Object.label(p)                    
+             //+t$.ve("Object.mixin() => execute t$.Object.mixin()  e veja melhor");
+        return t$.create(tx, 'sampleObject');;
     }  
-    , preset(){ 
-        t$.ve('<<< Object.preset(receiver, properties, defaultvalue) >>>') 
-        t$.ve('Garantir a existencia dos atributos de properties no objeto receiver') 
-        t$.ve('Só copia de properties, se não existir') 
-        t$.Obj.preset({a:1,b:2},'c',{x:1, y:2});    
-        t$.Obj.preset({a:1,b:2},{x:1, y:2}); t$.Obj.preset({a:1,b:2,x:null,y:''},{x:1, y:2});                 
+    , preset(parent){ 
+        let tx = t$.Test.Obj.preset({a:1,b:2},'c',{x:1, y:2})
+                +t$.Test.Obj.preset({a:1,b:2},{x:1, y:2})
+                +t$.Test.Obj.preset({a:1,b:2,x:null,y:''},{x:1, y:2});                      
+        return t$.add({id:'samplePreset'
+                  ,header:'preset'
+                  ,  card:{title:'PRESET OBJECT', subtitle: 'Predefinir atributos de um objeto(Só copia de properties, se não existir)', text:'Object.preset(receiver, properties, [defaultvalue])'}
+                  ,  body:tx
+                  ,parent
+                });   
     }
-    , setIfExist(){
-        t$.ve('<<< Object.setIfExist(receiver, provider, properties) >>>') 
-        t$.ve('Definir as propriedades no receiver, se existirem no provider') 
-        t$.Obj.setIfExist({a:1,b:2},{a:2, c:4,d:'abc'},['a','c','d']);    
-        t$.Obj.setIfExist({a:1,b:2},{c:4,d:'abc'},'c'); t$.Obj.setIfExist({a:1,b:2},{c:4,d:'abc'},['c','d','g']);  
-        t$.Obj.setIfExist({a:1,b:2},{c:4,d:'abc'},'z'); t$.Obj.setIfExist({a:1,b:2},{c:4,d:'abc'})                
+    , setIfExist(parent){
+        let tx=t$.Test.Obj.setIfExist({a:1,b:2},{a:2, c:4,d:'abc'},['a','c','d'])
+              +t$.Test.Obj.setIfExist({a:1,b:2},{c:4,d:'abc'},'c')
+              +t$.Test.Obj.setIfExist({a:1,b:2},{c:4,d:'abc'},['c','d','g'])
+              +t$.Test.Obj.setIfExist({a:1,b:2},{c:4,d:'abc'},'z')
+              +t$.Test.Obj.setIfExist({a:1,b:2},{c:4,d:'abc'})                  
+        return t$.add({id:'sampleSetIfExist'
+                  ,header:'setIfExist'
+                  ,  card:{title:'SET SE EXISTE NO PROVIDER'
+                      , subtitle: 'Garantir no receiver, as propriedades que existem no provider (sobrepõe o receiver se existir no provider)'
+                      , text:'Object.setIfExist(receiver, provider, [properties])'}
+                  ,  body:tx
+                  ,parent
+                });    
     }
-    , join(){
-        t$.ve('<<< Object.join(receiver, provider, properties) >>>') 
-        t$.ve('Junta o objeto provider ao objeto receiver (retorna o receiver)') 
-        t$.Obj.join({a:1,b:2},{a:2, c:4,d:'abc'},['a','c','d']);  
-        t$.Obj.join({a:1,b:2},{x:1, y:2});  t$.Obj.join({a:1,b:2,x:null,y:''},{x:1, y:2});     
+    , join(parent){
+        let tx =t$.Test.Obj.join({a:1,b:2},{a:2, c:4,d:'abc'},['a','c','d'])
+               +t$.Test.Obj.join({a:1,b:2},{x:1, y:2})
+               +t$.Test.Obj.join({a:1,b:2,x:null,y:''},{x:1, y:2});     
+        return t$.add({  id:'sampleJoin'
+                    ,header:'join'
+                    ,  card:{title:'JUNTAR OBJETOS', subtitle: 'Junta o objeto provider ao objeto receiver (retorna o receiver)', text:'Object.join(receiver, provider, [properties])'}
+                    ,  body:tx
+                    ,parent
+            });   
     }  
-    , merge(){
-        t$.ve('<<< Object.merge(server, provider, properties) >>>') 
-        t$.ve('Retorna a junção de server e provider (retorna um novo objeto)') 
-        t$.Obj.merge({a:1,b:2},{a:2, c:4,d:'abc'},['a','c','d']);  
-        t$.Obj.merge({a:1,b:2},{x:1, y:2});  t$.Obj.merge({a:1,b:2,x:null,y:''},{x:1, y:2});  
-        t$.Obj.merge({},{a:1,b:2,x:null,y:''},['a','b']);      
+    , merge(parent){
+        let tx = t$.Test.Obj.merge({a:1,b:2},{a:2, c:4,d:'abc'},['a','c','d'])
+                +t$.Test.Obj.merge({a:1,b:2},{x:1, y:2})
+                +t$.Test.Obj.merge({a:1,b:2,x:null,y:''},{x:1, y:2})
+                +t$.Test.Obj.merge({},{a:1,b:2,x:null,y:''},['a','b']);         
+        return t$.add({id:'sampleMerge'
+                  ,header:'merge'
+                  ,  card:{title:'JUNTAR OBJETOS', subtitle: 'Retorna um novo objeto com a junção de server e provider', text:'Object.merge(server, provider, [properties])'}
+                  ,  body:tx
+                  ,parent
+                });   
     } 
-    , getByValue(){
-        t$.ve('<<< Object.getByValue(source, value, attribute="value") >>>') 
-        t$.ve('procura por valor no objeto e retorna array com as propriedades que contem o valor') 
-        t$.Obj.getByValue({a:1,b:2,c:1},1);  
-        t$.Obj.getByValue({a:{value:1},b:{value:2},c:{value:2}},2); 
-        t$.Obj.getByValue({a:{key:1},b:{key:2},c:{key:2}},2); 
-        t$.Obj.getByValue({a:{key:1},b:{key:2},c:{key:2}},2,"key");
-        t$.Obj.getByValue({a:{key:1},b:{key:2},c:{key:2}},3,"key");       
+    , getByValue(parent){
+        let tx = t$.Test.Obj.getByValue({a:1,b:2,c:1},1)  
+                +t$.Test.Obj.getByValue({a:{value:1},b:{value:2},c:{value:2}},2) 
+                +t$.Test.Obj.getByValue({a:{key:1},b:{key:2},c:{key:2}},2) 
+                +t$.Test.Obj.getByValue({a:{key:1},b:{key:2},c:{key:2}},2,"key")
+                +t$.Test.Obj.getByValue({a:{key:1},b:{key:2},c:{key:2}},3,"key")         
+        return t$.add({id:'sampleGetByValue'
+                  ,header:'getByValue'
+                  ,  card:{title:'PROCURAR POR VALOR NO OBJETO', subtitle: 'Procura por valor no objeto e retorna array com as propriedades que contêm este valor', text:'Object.getByValue(source, value, attribute="value") '}
+                  ,  body:tx
+                  ,parent
+                });    
     }
-    , compare(){
-        t$.ve('<<< Object.compare(source, target, properties) >>>') 
-        t$.ve('Comparar se as propriedades em target de são iguais em source)') 
-        t$.Obj.compare({a:1, b:3, x:'A'}, {a:1, b:3, x:'B'},['a','b']);  
-        t$.Obj.compare({a:1, b:3, x:'A'}, {a:1, b:2, x:'A'},'a');  
-        t$.Obj.compare({a:1, b:3, x:'A'}, {a:1, b:3, x:'A'});  
-        t$.Obj.compare({a:1, b:3, x:'A'}, {a:1, b:3, x:'B'}); 
-        t$.Obj.compare({a:1, b:3, x:'A'}, {a:1, b:3});    
-        t$.Obj.compare({a:1, b:3}, {a:1, b:3, x:'A'}); 
+    , compare(parent){
+        let tx = t$.Test.Obj.compare({a:1, b:3, x:'A'}, {a:1, b:3, x:'B'},['a','b'])  
+                +t$.Test.Obj.compare({a:1, b:3, x:'A'}, {a:1, b:2, x:'A'},'a')  
+                +t$.Test.Obj.compare({a:1, b:3, x:'A'}, {a:1, b:3, x:'A'})  
+                +t$.Test.Obj.compare({a:1, b:3, x:'A'}, {a:1, b:3, x:'B'}) 
+                +t$.Test.Obj.compare({a:1, b:3, x:'A'}, {a:1, b:3})    
+                +t$.Test.Obj.compare({a:1, b:3}, {a:1, b:3, x:'A'});   
+        return t$.add({id:'sampleCompare'
+                  ,header:'compare'
+                  ,  card:{title:'COMPARA OBJETOS', subtitle: 'Comparar se as propriedades em target de são iguais em source', text:'Object.compare(source, target, properties) '}
+                  ,  body:tx
+                  ,parent
+                });                    
     } 
-    , contains(){
-        t$.ve('<<< Object.contains(source, target, properties) >>>') 
-        t$.ve('Verifica se source contém target') 
-        t$.Obj.contains({a:1, b:3, x:'A'}, {a:1, b:3, x:'A'});  
-        t$.Obj.contains({a:1, b:3, x:'A'}, {a:1, b:3, y:'A'});  
-        t$.Obj.contains({a:1, b:3, x:'A'}, {a:1, b:3, x:'B'}); 
-        t$.Obj.contains({a:1, b:3, x:'A'}, {a:1, b:3}); 
-        t$.Obj.contains({a:1, b:3, x:'A'}, {a:1, b:2}); 
-        t$.Obj.contains({a:1, b:3, x:'A'}, 1,'a');      
+    , contains(parent){
+        let tx = t$.Test.Obj.contains({a:1, b:3, x:'A'}, {a:1, b:3, x:'A'})  
+                +t$.Test.Obj.contains({a:1, b:3, x:'A'}, {a:1, b:3, y:'A'})  
+                +t$.Test.Obj.contains({a:1, b:3, x:'A'}, {a:1, b:3, x:'B'}) 
+                +t$.Test.Obj.contains({a:1, b:3, x:'A'}, {a:1, b:3}) 
+                +t$.Test.Obj.contains({a:1, b:3, x:'A'}, {a:1, b:2}) 
+                +t$.Test.Obj.contains({a:1, b:3, x:'A'}, 1,'a');        
+        return t$.add({id:'sampleContains'
+                  ,header:'contains'
+                  ,  card:{title:'OBJETO CONTÉM OUTRO OBJETO', subtitle: 'Verifica se source contém target', text:'Object.contains(source, target, properties) '}
+                  ,  body:tx
+                  ,parent
+                });    
     }  
-    , exists(){
-        t$.ve('<<< Object.exists(source, properties) >>>') 
-        t$.ve('retorna true se encontrar uma das propriedades no objeto') 
-        t$.Obj.exists({title:"titulo", key:"a"},["id","key"]);  
-        t$.Obj.exists({title:"titulo", id:"a"},["id","key"]); 
-        t$.Obj.exists({title:"titulo"},["id","key"]);       
+    , exists(parent){
+        let tx = t$.Test.Obj.exists({title:"titulo", key:"a"},["id","key"])
+                +t$.Test.Obj.exists({title:"titulo", id:"a"},["id","key"]) 
+                +t$.Test.Obj.exists({title:"titulo"},["id","key"]);         
+        return t$.add({id:'sampleexists'
+                  ,header:'exists'
+                  ,  card:{title:'PROPRIEDADES NO OBJETO', subtitle: 'Retorna true se encontrar uma das propriedades no objeto', text:'Object.exists(source, properties)'}
+                  ,  body:tx
+                  ,parent
+                });    
     }   
-    , synonym(){
-        t$.ve('<<< Object.synonym(source, properties) >>>') 
-        t$.ve('retorna a primeira proprieda que encontrar no objeto que estah no array "keys"') 
-        t$.Obj.synonym({title:"titulo", key:"a"},["id","key"]);  
-        t$.Obj.synonym({title:"titulo", id:"a"},["id","key"]); 
-        t$.Obj.synonym({id:1, key:"a"}, ["key","id"]); 
-        t$.Obj.synonym({id:1, key:"a"}, ["id", "key"]); 
-        t$.Obj.synonym({title:"titulo"},["id","key"]);    
+    , synonym(parent){
+        let tx = t$.Test.Obj.synonym({title:"titulo", key:"a"},["id","key"])  
+                +t$.Test.Obj.synonym({title:"titulo", id:"a"},["id","key"]) 
+                +t$.Test.Obj.synonym({id:1, key:"a"}, ["key","id"]) 
+                +t$.Test.Obj.synonym({id:1, key:"a"}, ["id", "key"]) 
+                +t$.Test.Obj.synonym({title:"titulo"},["id","key"]);      
+        return t$.add({id:'sampleSynonym'
+                  ,header:'synonym'
+                  ,  card:{title:'ENCONTRAR UMA DAS PROPRIEDADES', subtitle: 'Retorna a primeira proprieda que encontrar no objeto que estah no array "keys"', text:'Object.synonym(source, properties) '}
+                  ,  body:tx
+                  ,parent
+                });    
     }  
-    , identify(){
-        t$.ve('<<< Object.identify(source, keys, labels) >>>') 
-        t$.ve('Formatar|garantir identificador definidos em keys') 
-        t$.Obj.identify({label:"a b"});  
-        t$.Obj.identify({id:"1"}); 
-        t$.Obj.identify({id:1, key:"a"}, ["key","id"]); 
-        t$.Obj.identify({key:"a"}, ["id", "key"]); 
-        t$.Obj.identify({title:"new titulo"},["id","key"],['title']); 
-        t$.Obj.identify({title:"new titulo"},["id"],["key",'title']);       
-        t$.Obj.identify({title:"new titulo",key:'ab'},["id"],["key",'title']);       
+    , identify(parent){
+        let tx = t$.Test.Obj.identify({label:"a b"})  
+                +t$.Test.Obj.identify({id:"1"}) 
+                +t$.Test.Obj.identify({id:1, key:"a"}, ["key","id"]) 
+                +t$.Test.Obj.identify({key:"a"}, ["id", "key"]) 
+                +t$.Test.Obj.identify({title:"new titulo"},["id","key"],['title']) 
+                +t$.Test.Obj.identify({title:"new titulo"},["id"],["key",'title'])       
+                +t$.Test.Obj.identify({title:"new titulo",key:'ab'},["id"],["key",'title']);         
+        return t$.add({id:'sampleidentify'
+                  ,header:'identify'
+                  ,  card:{title:'@TODO', subtitle: 'Formatar|garantir identificador definidos em keys(@todo)', text:'Object.identify(source, keys, labels) '}
+                  ,  body:tx
+                  ,parent
+                });    
     }   
-    , label(){
-        t$.ve('<<< Object.label = (receicer, labels=["label", "caption"], keys=["key","id"]) >>>') 
-        t$.ve('Formatar|garantir  as propriedades em labels') 
-        t$.Obj.label({caption:"titulo"});  
-        t$.Obj.label({label:"titulo"}); 
-        t$.Obj.label({title:"titulo"},["label","title"]);       
-        t$.Obj.label({title:"new titulo",key:'my_key'});  
+    , label(parent){
+        let tx = t$.Test.Obj.label({caption:"titulo"})  
+                +t$.Test.Obj.label({label:"titulo"}) 
+                +t$.Test.Obj.label({title:"titulo"},["label","title"])       
+                +t$.Test.Obj.label({title:"new titulo",key:'my_key'});    
+        return t$.add({id:'sampleLabel'
+                  ,header:'label'
+                  ,  card:{title:'FORMATAR LABEL NO OBJETO', subtitle: 'Formatar|garantir  as propriedades em labels(@todo)', text:' Object.label(receicer, labels=["label", "caption"], keys=["key","id"])'}
+                  ,  body:tx
+                  ,parent
+                });    
     }      
-    , mixin(){
-        t$.ve('<<< Object.mixin(receiver, provider, methods) >>>') 
-        t$.ve('Formatar|garantir identificador definidos em keys');t$.ve("");
+    , mixin(parent){
         let Car = function(modelo='Ford', cor='Blue'){this.modelo = modelo;  this.cor = cor}
           , carMixin = function(){};
-        
+      
         carMixin.prototype = {
-          acelerar(){return 'acelera.'}
+            acelerar(){return 'acelera.'}
             ,parar:()=>'para.'
         }
-        t$.ve(">>> Source: Car (veja abaixo)")  
-        t$.ve(Car); t$.ve("");
-        t$.ve(">>> Mixin Provider: carMixin.prototype (veja abaixo)")               
-        t$.ve(carMixin.prototype); t$.ve("");
-
-        t$.ve(">>> Fazendo o mixin:"); 
-        t$.ve("Object.mixin(Car,carMixin)"); 
-        t$.ve("ou... Object.mixin(Car,carMixin,['acelerar']) // para mixin apenas deste método");        
+        let tx =t$.ve(">>> Source: Car (veja abaixo)")  
+               +t$.ve(Car)
+               +t$.cr
+               +t$.ve(">>> Mixin Provider: carMixin.prototype (veja abaixo)")               
+               +t$.ve(carMixin.prototype)
+               +t$.cr
+               +t$.ve(">>> Fazendo o mixin:")
+               +t$.ve("Object.mixin(Car,carMixin)")
+               +t$.ve("ou... Object.mixin(Car,carMixin,['acelerar']) // para mixin apenas deste método");        
         Object.mixin(Car,carMixin);
 
-        t$.ve("");t$.ve(">>> Criando instancia do novo objeto:"); 
-        t$.ve("let fiat = new Car('Fiat','green')");
+            tx+=t$.cr
+               +t$.ve(">>> Criando instancia do novo objeto:")
+               +t$.ve("let fiat = new Car('Fiat','green')");
         let fiat = new Car('Fiat','green');
-        t$.ve(`fiat.cor => ${fiat.cor}`);  
-        t$.ve(`fiat.acelerar() => ${ fiat.acelerar()}`);  
-        t$.ve(`fiat.parar() => ${ fiat.parar()}`);   
-        fiat.parar();   
-        return "";             
+            tx+=t$.ve(`fiat.cor => ${fiat.cor}`)
+               +t$.ve(`fiat.acelerar() => ${ fiat.acelerar()}`)
+               +t$.ve(`fiat.parar() => ${ fiat.parar()}`)   
+               +fiat.parar();     
+        return t$.add({id:'sampleNew'
+                  ,header:'SAMPLE NEW'
+                  ,  card:{title:'MIXIN DE MÉTODOS', subtitle: 'Fazer mixin de métodos', text:'Object.mixin(receiver, provider, methods)'}
+                  ,  body:tx
+                  ,parent
+                });             
     }                      
 }}(); 
 
-t$.String = function(){             
-    t$.ve('<<< trim >>>') ;t$.Str.trim("   Geraldo    ");      
-    t$.ve('<<< noAccent >>>') ;t$.Str.noAccent("José Mané Baré");
-    t$.ve('<<< toCapitalize >>>') ;t$.Str.toCapitalize("José Mané Baré");
-    t$.ve('<<< toFirstLower >>>') ;t$.Str.toFirstLower("José Mané Baré");
-    t$.ve('<<< toFirstUpper >>>') ;t$.Str.toFirstUpper("josé mané baré");
-    t$.ve('<<< toSeparate >>>') ;t$.Str.toSeparate("José Mané Baré"); t$.Str.toSeparate("José-Mané Baré",'-'); t$.Str.toSeparate("José-Mané Baré.Fé",'-. ');
-    t$.ve('<<< toKey >>>') ;t$.Str.toKey("id_nome&mt.for-da$xxx&"); 
-    t$.ve('<<< String.preset >>>') ;t$.Str.stringPreset(null,1);t$.Str.stringPreset("A","vlDefault");
-    t$.ve('<<< repeat >>>') ;t$.Str.repeat("0",5); 
-    t$.ve('<<< toCaption >>>') ;t$.Str.toCaption("jose_geraldo.gomes-final","_.-"); t$.Str.toCaption("José-Mané Baré",'-');
-    t$.ve('<<< stripChar >>>') ;t$.Str.stripChar("04.150.945-5",['.','-']); t$.Str.stripChar("04 150.945-5",'.-');
-    t$.ve('<<< startsWith >>>') ;t$.Str.startsWith("geraldo","G"); t$.Str.startsWith("Geraldo",'G'); t$.Str.startsWith("Geraldo",'e');  
+t$.Format = function(parent){              
+    let id ='sampleFormat'
+    , Date = c$.NOW
+    ,  tx = t$.item(
+                t$.header('FORMATAR DADOS', id)
+               ,t$.body(t$.card('t$.Format()', 'FORMATAÇÃO', 'Para ver no log, pode executar o seguinte:')
+                     +t$.vd("USAR MÁSCARA")       
+                     +t$.Test.Str.Mask("1111222"   ,"9,99")
+                     +t$.Test.Str.Mask("11222"     ,"99.990,00")
+                     +t$.Test.Str.Mask("9281220911","(000)0000-0000")
+                     +t$.Test.Str.Mask("jgg1111"   ,"AAA-0000")
+                     +t$.Test.Str.Mask("JGG1111"   ,"aaa-0000")
+                     +t$.Test.Str.Mask("jgG1111"   ,"@@@-0000")
+                     +t$.Test.Str.Mask("11112011"  ,"##/##/####")
+                     +t$.Test.Str.Mask("1"         ,"000.000")
+                     +t$.Test.Str.Mask("jgg1111"   ,"AaA-0000")
+                     +t$.cr    
+                     +t$.vd("BOOLEAN") 
+                     +t$.ve('[ BOOLEAN: Boolean.format() ]')
+                     +t$.v('true.format()'            , true.format())
+                     +t$.v('false.format()'           , false.format())
+                     +t$.v('true.format("X")'         , true.format('X'))
+                     +t$.v('false.format("X")'        , false.format('X'))
+                     +t$.cr
+                     +t$.vd('NÚMERO: j$.Ext.format(value, decimals, , decimals_char, separator) ]')
+                     +t$.v('j$.Ext.format(1234.56)'              , j$.Ext.format(1234.56)) 
+                     +t$.v("j$.Ext.format(1234.56, 2, ',', ' ')" , j$.Ext.format(1234.56, 2, ',', ' '))   
+                     +t$.v("j$.Ext.format(1234.56, 2, ',', '')"  , j$.Ext.format(1234.56, 2, ',', ''))   
+                     +t$.v("j$.Ext.format(1234.56, 2, ',', '.')" , j$.Ext.format(1234.56, 2, '.', ','))    
+                     +t$.v('j$.Ext.format(1000)'                 , j$.Ext.format(1000))   
+                     +t$.v('j$.Ext.format(1000,0)'               , j$.Ext.format(1000,0)) 
+                     +t$.v('j$.Ext.format(1000,0,"","")'         , j$.Ext.format(1000,0,"",""))   
+                     +t$.v('j$.Ext.format(67.311)'               , j$.Ext.format(67.311))    
+                     +t$.cr
+                     +t$.vd("DINHEIRO") 
+                     +t$.ve("12","toMoney", "12".toMoney())
+                     +t$.ve("12.1","toMoney", "12.1".toMoney())                                 
+                    , id
+                )
+            )
+    return parent ?tx :t$.create(tx, `${id}Root`);
 }
-t$.Date = function(){              
-    let _Date = c$.NOW;
-    t$.ve('<<< DATE: Date.format() >>>');
-    t$.v('Date.format()'            , _Date.format());
-    t$.v('Date.format("dd/mm/yyyy")', _Date.format("dd/mm/yyyy"));
-    t$.v('Date.format("yyyymmdd")'  , _Date.format("yyyymmdd"));
-    t$.v('Date.format("HH:MM:ss")'  , _Date.format("HH:MM:ss"));
-    t$.v('Date.format("ddd mmm")'   , _Date.format("ddd mmm"));
-    t$.v('Date.format("dddd mmmm")' , _Date.format("dddd mmmm"));
-    t$.v('Date.format(c$.MASK.DATE.shortDate)'     , _Date.format(c$.MASK.DATE.shortDate));
-    t$.v('Date.format(c$.MASK.DATE.mediumDate)'    , _Date.format(c$.MASK.DATE.mediumDate));
-    t$.v('Date.format(c$.MASK.DATE.longDate)'      , _Date.format(c$.MASK.DATE.longDate));
-    t$.v('Date.format(c$.MASK.DATE.fullDate)'      , _Date.format(c$.MASK.DATE.fullDate));
-    t$.v('Date.format(c$.MASK.DATE.shortTime)'     , _Date.format(c$.MASK.DATE.shortTime));
-    t$.v('Date.format(c$.MASK.DATE.mediumTime)'    , _Date.format(c$.MASK.DATE.mediumTime));
-    t$.v('Date.format(c$.MASK.DATE.longTime)'      , _Date.format(c$.MASK.DATE.longTime));
-    t$.v('Date.format(c$.MASK.DATE.isoTime)'       , _Date.format(c$.MASK.DATE.isoTime));
-    t$.v('Date.format(c$.MASK.DATE.isoDateTime)'   , _Date.format(c$.MASK.DATE.isoDateTime));
-    t$.v('Date.format(c$.MASK.DATE.isoUtcDateTime)', _Date.format(c$.MASK.DATE.isoUtcDateTime));
-    t$.ve('<<< Validate: String.isDate() >>>');
-    t$.Type.date();
+
+t$.String = function(parent){              
+    let id = 'sampleString'
+    ,  tx =t$.item(
+                t$.header('MANIPULAR STRING', id)
+               ,t$.body(t$.card('t$.String()', 'TEXTO', 'Para ver no log, pode executar o seguinte:')
+                    +t$.vd('trim')         +t$.Test.Str.trim("   Geraldo    ")       
+                    +t$.vd('noAccent')     +t$.Test.Str.noAccent("José Mané Baré") 
+                    +t$.vd('toCapitalize') +t$.Test.Str.toCapitalize("José Mané Baré") 
+                    +t$.vd('toFirstLower') +t$.Test.Str.toFirstLower("José Mané Baré") 
+                    +t$.vd('toFirstUpper') +t$.Test.Str.toFirstUpper("josé mané baré") 
+                    +t$.vd('toKey')        +t$.Test.Str.toKey("id_nome&mt.for-da$xxx&")  
+                    +t$.vd('String.preset')+t$.Test.Str.preset(null,1) 
+                                           +t$.Test.Str.preset("A","vlDefault") 
+                    +t$.vd('repeat')       +t$.Test.Str.repeat("0",5)  
+                    +t$.vd('toCaption')    +t$.Test.Str.toCaption("jose_geraldo.gomes-final","_.-")  
+                                           +t$.Test.Str.toCaption("José-Mané Baré",'-') 
+                    +t$.vd('stripChar')    +t$.Test.Str.stripChar("04.150.945-5",['.','-']) 
+                                           +t$.Test.Str.stripChar("04 150.945-5",'.-') 
+                    +t$.vd('startsWith')   +t$.Test.Str.startsWith("geraldo","G")  
+                                           +t$.Test.Str.startsWith("Geraldo",'G')  
+                                           +t$.Test.Str.startsWith("Geraldo",'e')
+                    , id
+                )
+            )
+    return parent ?tx :t$.create(tx, `${id}Root`);
 }
-t$.Digit = function(){             
-    t$.ve('<<< CalcDigit >>>') ;t$.module11("04150945");t$.module11('417660402',2,12);t$.module11('073114610001',2,9);
-    t$.ve('<<< digitoCpf >>>') ;t$.digitoCpf("417660402");     
-    t$.ve('<<< digitoCnpj >>>');t$.digitoCnpj("073114610001");
-    t$.ve('<<< digitoCca >>>') ;t$.digitoCca("04150945");
+
+t$.Date = function(parent){              
+    let _date = c$.NOW
+      , id = 'sampleDate'
+      , tx =t$.item(
+                t$.header('FORMATAR DATA', id)
+               ,t$.body(t$.card('t$.Date()', 'DATA', 'Para ver no log, pode executar o seguinte:')                
+                    +t$.vd('DATE: Date.format()] OR [j$.Ext.format(date, mask)')
+                    +t$.v('Date.format()'            , _date.format())
+                    +t$.v('Date.format("dd/mm/yyyy")', _date.format("dd/mm/yyyy"))
+                    +t$.v('Date.format("yyyymmdd")'  , _date.format("yyyymmdd"))
+                    +t$.v('Date.format("HH:MM:ss")'  , _date.format("HH:MM:ss"))
+                    +t$.v('Date.format("ddd mmm")'   , _date.format("ddd mmm"))
+                    +t$.v('Date.format("dddd mmmm")' , _date.format("dddd mmmm"))
+                    +t$.v('Date.format(c$.MASK.DATE.shortDate)'     , _date.format(c$.MASK.DATE.shortDate))
+                    +t$.v('Date.format(c$.MASK.DATE.mediumDate)'    , _date.format(c$.MASK.DATE.mediumDate))
+                    +t$.v('Date.format(c$.MASK.DATE.longDate)'      , _date.format(c$.MASK.DATE.longDate))
+                    +t$.v('Date.format(c$.MASK.DATE.fullDate)'      , _date.format(c$.MASK.DATE.fullDate))
+                    +t$.v('Date.format(c$.MASK.DATE.shortTime)'     , _date.format(c$.MASK.DATE.shortTime))
+                    +t$.v('Date.format(c$.MASK.DATE.mediumTime)'    , _date.format(c$.MASK.DATE.mediumTime))
+                    +t$.v('Date.format(c$.MASK.DATE.longTime)'      , _date.format(c$.MASK.DATE.longTime))
+                    +t$.v('Date.format(c$.MASK.DATE.isoTime)'       , _date.format(c$.MASK.DATE.isoTime))
+                    +t$.v('Date.format(c$.MASK.DATE.isoDateTime)'   , _date.format(c$.MASK.DATE.isoDateTime))
+                    +t$.v('Date.format(c$.MASK.DATE.isoUtcDateTime)', _date.format(c$.MASK.DATE.isoUtcDateTime))
+                    //+t$.ve(' Validate: String.isDate() ')
+                    //+t$.Type.date()  
+                    , id
+                )
+            )
+    return parent ?tx :t$.create(tx, `${id}Root`);
+}
+t$.Digit = function(parent){              
+    let id = 'sampleDigit'
+    ,  tx =t$.item(
+                t$.header('CALCULAR DIGITO', id)
+               ,t$.body(t$.card('t$.Digit()', 'DÍGITO', 'Para ver no log, pode executar o seguinte:')   
+                   +t$.vd("Móudulo 11:")
+                    +t$.Test.Dig.module11("04150945")
+                    +t$.Test.Dig.module11('417660402',2,12)
+                    +t$.Test.Dig.module11('073114610001',2,9)
+                   +t$.vd("CPF")
+                   +t$.Test.Dig.digitoCpf("417660402")
+                   +t$.vd("CNPJ")
+                   +t$.Test.Dig.digitoCnpj("073114610001")
+                   +t$.vd("Inscrição Estadual")           
+                   +t$.Test.Dig.digitoCca("04150945")      
+                   , id
+                )
+            )
+    return parent ?tx :t$.create(tx, `${id}Root`);
+}
+t$.e$ = function(parent){              
+    return t$.add({    id:'sampleNew'
+                  ,header:'SAMPLE NEW'
+                  ,  card:{title:'Card Title', subtitle: 'Card subtitle', text:'Card Text', link:'card link'}
+                  ,  body:'Body sample New'
+                  ,parent
+                });
 }
 t$.Type = function(){             
 return{
     all(){
-        t$.ve(" "); t$.Type.numbers();        
-        t$.ve(" "); t$.Type.date();        
-        t$.ve(" "); t$.Type.text();        
-        t$.ve(" "); t$.Type.specials();        
-        t$.ve(" "); t$.Type.mask();        
-        t$.ve(" "); t$.Type.types();        
-        return "";
+        let p=true 
+        ,  tx=t$.Type.numbers(p)        
+             +t$.Type.date(p)        
+             +t$.Type.text(p)        
+             +t$.Type.specials(p)        
+             +t$.Type.mask(p)        
+             +t$.Type.types();        
+        return t$.create(tx, 'sampleType');
     }  
-    , numbers(){ 
-        t$.ve('NUMÉRICOS: t$.Type.numbers() >>>')            
-        t$.ve('<<< isDigit   >>>');t$.isDigit(''); t$.isDigit('A'); t$.isDigit('1');
-        t$.ve('<<< isInteger >>>');t$.isInteger(''); t$.isInteger('A'); t$.isInteger('1');t$.isInteger('1,2'); t$.isInteger('1.2');
-        t$.ve('<<< isNumeric >>>');t$.isNumeric(''); t$.isNumeric('A'); t$.isNumeric('1');t$.isNumeric('1,2'); t$.isNumeric('1.2');
-        t$.ve('<<< isMoney   >>>');t$.isMoney(''); t$.isMoney('A'); t$.isMoney('1');t$.isMoney('1,2'); t$.isMoney('1.2');                 
+    , numbers(parent){              
+        let id = 'sampleTypeNumbers'
+        ,  tx =t$.item(
+                    t$.header('NÚMEROS', id)
+                   ,t$.body(t$.card('t$.Type.numbers()', 'DADOS NUMÈRICOS', 'Para ver no log, pode executar o seguinte:')       
+                        +t$.vd('isDigit  ')+t$.Test.Chk.isDigit('')  +t$.Test.Chk.isDigit('A')  +t$.Test.Chk.isDigit('1') +t$.cr 
+                        +t$.vd('isInteger')+t$.Test.Chk.isInteger('')+t$.Test.Chk.isInteger('A')+t$.Test.Chk.isInteger('1')+t$.Test.Chk.isInteger('1,2')+t$.Test.Chk.isInteger('1.2') +t$.cr
+                        +t$.vd('isNumeric')+t$.Test.Chk.isNumeric('')+t$.Test.Chk.isNumeric('A')+t$.Test.Chk.isNumeric('1')+t$.Test.Chk.isNumeric('1,2')+t$.Test.Chk.isNumeric('1.2') +t$.cr
+                        +t$.vd('isMoney  ')+t$.Test.Chk.isMoney('')  +t$.Test.Chk.isMoney('A')  +t$.Test.Chk.isMoney('1')  +t$.Test.Chk.isMoney('1,2')  +t$.Test.Chk.isMoney('1.2')   +t$.cr                
+                        ,id
+                    )
+            )
+        return parent ?tx :t$.create(tx, `${id}Root`);
     }
-    , date(){                   
-        t$.ve('DATE | TIME: t$.Type.date() >>>')            
-        t$.ve('<<< isDate   >>>');t$.isDate('29/02/2011'); t$.isDate('28/02/2011'); t$.isDate('29/02/2008');
-        t$.isDate('31/04/2011'); t$.isDate('31/05/2011'); t$.isDate('31/08/2008');
-        t$.ve('<<< isHour >>>');t$.isHour('23:59'); t$.isHour('00:00'); t$.isHour('24:00');t$.isHour('12:00'); t$.isHour('12:60');
+    , date(parent){              
+        let id = 'sampleTypeDate'
+        ,  tx = t$.item(
+                t$.header('DATA', id)
+                , t$.body(   t$.card('t$.Type.date()', 'DADOS TIPO DATA', 'Para ver no log, pode executar o seguinte:')         
+                            +t$.vd('isDate') +t$.Test.Chk.isDate('29/02/2011') +t$.Test.Chk.isDate('28/02/2011') +t$.Test.Chk.isDate('29/02/2008')
+                                            +t$.Test.Chk.isDate('31/04/2011') +t$.Test.Chk.isDate('31/05/2011') +t$.Test.Chk.isDate('31/08/2008') +t$.cr
+                            +t$.vd('isHour') +t$.Test.Chk.isHour('23:59') +t$.Test.Chk.isHour('00:00') +t$.Test.Chk.isHour('24:00')+t$.Test.Chk.isHour('12:00') +t$.Test.Chk.isHour('12:60')
+                            , id
+                        )
+                )
+        return parent ?tx :t$.create(tx, `${id}Root`);
     }        
-    , text(){    
-        t$.ve('TEXTOS: t$.Type.alfa() >>>')            
-        t$.ve('<<< isLetter  >>>');t$.isLetter(' A '); t$.isLetter('1'); t$.isLetter('a'); t$.isLetter('�');t$.isLetter(' ');
-        // Obsert$.ver que n�o estah considerando espacos em branco
-        t$.ve('<<< isName    >>>');t$.isName(' Geraldo '); t$.isName(' Geraldo Gomes '); t$.isName(' Geraldo F. Gomes ');
-        t$.isName(' Joseh Geraldo Gomes '); t$.isName(' Geraldo A '); t$.isName(' A Gomes ');            
-        t$.ve('<<< isEmail   >>>');t$.isEmail('abc@xiba.com'); t$.isEmail('abc@xiba'); t$.isEmail('abc_xiba');               
+    , text(parent){              
+        let id = 'sampleTypeText'
+        ,  tx =t$.item(
+                    t$.header('TEXTO', id)
+                   ,t$.body( t$.card('t$.Type.text()', 'DADOS TIPO TEXTO', 'Para ver no log, pode executar o seguinte:')    
+                        +t$.vd('isLetter')+t$.Test.Chk.isLetter(' A ')+t$.Test.Chk.isLetter('1')+t$.Test.Chk.isLetter('a')+t$.Test.Chk.isLetter('�')+t$.Test.Chk.isLetter(' ')
+                        +t$.cr 
+                        +t$.vd('isName  ')+t$.Test.Chk.isName(' Geraldo ')+t$.Test.Chk.isName(' Geraldo Gomes ')+t$.Test.Chk.isName(' Geraldo F. Gomes ')
+                                          +t$.Test.Chk.isName(' Joseh Geraldo Gomes ')+t$.Test.Chk.isName(' Geraldo A ')+t$.Test.Chk.isName(' A Gomes ')
+                        +t$.cr                  
+                        +t$.vd('isEmail ')+t$.Test.Chk.isEmail('abc@xiba.com')+t$.Test.Chk.isEmail('abc@xiba')+t$.Test.Chk.isEmail('abc_xiba')
+                       , id
+                    )
+                )
+        return parent ?tx :t$.create(tx, `${id}Root`);
     }  
-    , specials(){   
-        t$.ve('ESPECIAIS: t$.Type.specials() >>>')            
-        t$.ve('<<< isPhone   >>>');t$.isPhone('(092)8122-0911'); t$.isPhone('(092)81220911'); 
-        t$.isPhone('(092) 8122-0911');t$.isPhone('8122-0911'); t$.isPhone('12:60');
-    
-        t$.ve('<<< ehCPF     >>>');t$.ehCPF('41766040268'); t$.ehCPF('41766040267');  
-        t$.ve('<<< ehCNPJ    >>>');t$.ehCNPJ(''); t$.ehCNPJ('07311461000125'); t$.ehCNPJ('07311461000124');
-        t$.ve('<<< ehCCA     >>>');t$.ehCCA(''); t$.ehCCA('041509455'); t$.ehCCA('041509456');t$.ehCCA('1');
-        t$.ve('<<< ehCEP     >>>');t$.ehCEP('69029-80'); t$.ehCEP('69029-080'); t$.ehCEP('6902-080'); t$.ehCEP('69029-0801'); t$.ehCEP('690219-080');
-        t$.ve('<<< ehPlaca   >>>');t$.ehPlaca('JXX-9999'); t$.ehPlaca('GG-1111'); t$.ehPlaca('JXG-10801');
-        t$.ehPlaca('JG1-1000'); t$.ehPlaca('JGG-G080');
+    , specials(parent){              
+        let id = 'sampleTypeSpecials'
+        ,  tx =t$.item(
+                    t$.header('ESPECÍFICOS', id)
+                   ,t$.body(  t$.card('t$.Type.specials()', 'DADOS ESPECÍFICOS', 'Para ver no log, pode executar o seguinte:')
+                        +t$.vd('Phone') +t$.Test.Chk.isPhone('(092)8122-0911') +t$.Test.Chk.isPhone('(092)81220911')
+                                          +t$.Test.Chk.isPhone('(092) 8122-0911')+t$.Test.Chk.isPhone('8122-0911') +t$.Test.Chk.isPhone('12:60')    
+                        +t$.cr
+                        +t$.vd('CPF  ') +t$.Test.Chk.ehCPF('41766040268') +t$.Test.Chk.ehCPF('41766040267')
+                        +t$.cr                        
+                        +t$.vd('CNPJ ') +t$.Test.Chk.ehCNPJ('') +t$.Test.Chk.ehCNPJ('07311461000125') +t$.Test.Chk.ehCNPJ('07311461000124')
+                        +t$.cr
+                        +t$.vd('CCA  ') +t$.Test.Chk.ehCCA('') +t$.Test.Chk.ehCCA('041509455') +t$.Test.Chk.ehCCA('041509456')+t$.Test.Chk.ehCCA('1')
+                        +t$.cr
+                        +t$.vd('CEP  ') +t$.Test.Chk.ehCEP('69029-80') +t$.Test.Chk.ehCEP('69029-080') +t$.Test.Chk.ehCEP('6902-080') +t$.Test.Chk.ehCEP('69029-0801') +t$.Test.Chk.ehCEP('690219-080')
+                        +t$.cr
+                        +t$.vd('Placa') +t$.Test.Chk.ehPlaca('JXX-9999') +t$.Test.Chk.ehPlaca('GG-1111') +t$.Test.Chk.ehPlaca('JXG-10801')
+                                          +t$.Test.Chk.ehPlaca('JG1-1000') +t$.Test.Chk.ehPlaca('JGG-G080')
+                       , id
+                    )
+                )
+        return parent ?tx :t$.create(tx, `${id}Root`);
     }  
-    , mask(){  
-        t$.ve('MASK: t$.Type.isValidInMask() >>>')                        
-        t$.ve('<<< isValidInMask >>>');t$.isValidInMask("1111","####");t$.isValidInMask("(92)111-abc","(99)999-aaa"); 
-        t$.isValidInMask("92111abc","(99)999-aaa");t$.isValidInMask("(92)111-a1c","(99)999-aaa");
-        t$.isValidInMask("1111","@###");t$.isValidInMask("A111","@###");         
+    , mask(parent){              
+        let id = 'sampleTypeMask'
+        ,  tx =t$.item(
+                    t$.header('MÁSCARA', id)
+                   ,t$.body(   
+                         t$.card('t$.Type.mask()', 'MASK', 'Para ver no log, pode executar o seguinte:')                         
+                        +t$.vd('isValidInMask') +t$.Test.Chk.isValidInMask("1111","####")+t$.Test.Chk.isValidInMask("(92)111-abc","(99)999-aaa")
+                        +t$.Test.Chk.isValidInMask("92111abc","(99)999-aaa")+t$.Test.Chk.isValidInMask("(92)111-a1c","(99)999-aaa")
+                        +t$.Test.Chk.isValidInMask("1111","@###")+t$.Test.Chk.isValidInMask("A111","@###")
+                       , id
+                    )
+            )
+        return parent ?tx :t$.create(tx, `${id}Root`);
     }    
-    , types(){  
-        t$.ve('DATA TYPES: t$.Type.types() >>>')     
-        t$.ve('<<< type >>>');t$.type("");t$.type("Nome");t$.type(1);t$.type();t$.type(null);
-        t$.type(["Nome",2]);t$.type({a:"alf", b:50});t$.type(()=>{});                    
-        t$.type(c$.NOW);t$.type(true);
-        t$.ve('<<< isString >>>');t$.isString("");t$.isString("Nome");t$.isString(1);t$.isString();t$.isString(null);
-        t$.isString(["Nome",2]);t$.isString({a:"alf", b:50});t$.isString(()=>{}); 
-        t$.ve('<<< isNumber >>>');t$.isNumber("12");t$.isNumber(123);
-        t$.ve('<<< isObject >>>');t$.isObject("123");t$.isObject({a:"alf", b:50});
-        t$.ve('<<< isFunction >>>');t$.isFunction("123");t$.isFunction(()=>{});
-        t$.ve('<<< isArray >>>');t$.isArray("123");t$.isArray(["Nome",2]);
-        t$.ve('<<< isValue >>>');t$.isValue();t$.isValue(null);t$.isValue("1");t$.isValue(1);t$.isValue(["Nome",2]);t$.isValue("Resource");
-        t$.ve('<<< isUndefined >>>');t$.isUndefined();t$.isUndefined(null);t$.isUndefined("1");t$.isUndefined(1);
-        t$.isUndefined(["Nome",2]);t$.isUndefined({a:"alf", b:50});t$.isUndefined(()=>{});
-        t$.ve('<<< isDefined >>>');t$.isDefined();t$.isDefined(null);t$.isDefined("1");t$.isDefined(1);
-        t$.isDefined(["Nome",2]);t$.isDefined({a:"alf", b:50});t$.isDefined(()=>{});       
-        t$.ve('<<< isEmpty >>>');t$.isEmpty('');t$.isEmpty(' '); t$.isEmpty('A');
+    , types(parent){              
+        let id = 'sampleTypeTypes'
+        ,  tx =t$.item(
+                    t$.header('TIPOS DE DADOS', id)
+                   ,t$.body(t$.card('t$.Type.types()', 'DATA TYPES', 'Para ver no log, pode executar o seguinte:')     
+                        +t$.vd('type '      )+t$.Test.Chk.type("")+t$.Test.Chk.type("Nome")+t$.Test.Chk.type(1)+t$.Test.Chk.type()+t$.Test.Chk.type(null)
+                                             +t$.Test.Chk.type(["Nome",2])+t$.Test.Chk.type({a:"alf", b:50})+t$.Test.Chk.type(()=>{return true})                    
+                                             +t$.Test.Chk.type(c$.NOW)+t$.Test.Chk.type(true)
+                        +t$.cr
+                        +t$.vd('isString'   )+t$.Test.Chk.isString("")+t$.Test.Chk.isString("Nome")+t$.Test.Chk.isString(1)+t$.Test.Chk.isString()+t$.Test.Chk.isString(null)
+                                             +t$.Test.Chk.isString(["Nome",2])+t$.Test.Chk.isString({a:"alf", b:50})+t$.Test.Chk.isString(()=>{}) 
+                        +t$.cr
+                        +t$.vd('isNumber'   )+t$.Test.Chk.isNumber("12")+t$.Test.Chk.isNumber(123)
+                        +t$.cr
+                        +t$.vd('isObject'   )+t$.Test.Chk.isObject("123")+t$.Test.Chk.isObject({a:"alf", b:50})
+                        +t$.cr
+                        +t$.vd('isFunction' )+t$.Test.Chk.isFunction("123")+t$.Test.Chk.isFunction(()=>{})
+                        +t$.cr
+                        +t$.vd('isArray'    )+t$.Test.Chk.isArray("123")+t$.Test.Chk.isArray(["Nome",2])
+                        +t$.cr
+                        +t$.vd('isValue'    )+t$.Test.Chk.isValue()+t$.Test.Chk.isValue(null)+t$.Test.Chk.isValue("1")+t$.Test.Chk.isValue(1)+t$.Test.Chk.isValue(["Nome",2])+t$.Test.Chk.isValue("Resource")
+                        +t$.cr
+                        +t$.vd('isUndefined')+t$.Test.Chk.isUndefined()+t$.Test.Chk.isUndefined(null)+t$.Test.Chk.isUndefined("1")+t$.Test.Chk.isUndefined(1)
+                                             +t$.Test.Chk.isUndefined(["Nome",2])+t$.Test.Chk.isUndefined({a:"alf", b:50})+t$.Test.Chk.isUndefined(()=>{})
+                        +t$.cr
+                        +t$.vd('isDefined'  )+t$.Test.Chk.isDefined()+t$.Test.Chk.isDefined(null)+t$.Test.Chk.isDefined("1")+t$.Test.Chk.isDefined(1)
+                                             +t$.Test.Chk.isDefined(["Nome",2])+t$.Test.Chk.isDefined({a:"alf", b:50})+t$.Test.Chk.isDefined(()=>{})       
+                        +t$.cr
+                        +t$.vd('isEmpty'    )+t$.Test.Chk.isEmpty('')+t$.Test.Chk.isEmpty(' ')+t$.Test.Chk.isEmpty('A')
+                        ,id
+                    )
+            )
+        return parent ?tx :t$.create(tx, `${id}Root`);
     }
 }}();
+
+const w$={urlPartial: CONFIG.SERVER.CONTEXT + 'sample/partial.html'
+        }

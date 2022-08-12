@@ -604,19 +604,6 @@ TYPE.Fieldset = function(){
             init();
         }
     
-/*         C$ = key=>{
-            try {
-                if (this.c$[key]==undefined)
-                    throw CONFIG.EXCEPTION.INVALID_FIELD;
-                else
-                    return this.c$[key];
-            } catch(exception){
-                   if (exception==CONFIG.EXCEPTION.INVALID_FIELD)
-                       console.log(exception.text +" '"+key+"'");
-                   return false;
-            }
-        } */
-    
         // varre fieldset devolve um registro dos campos que estão preenchidos
         // útil para consultas
         filled = action=>{

@@ -40,21 +40,10 @@ const j$ = function(){
     String.prototype.toFirstUpper = function (){
         return this.replace(/^[a-z]/,this[0].toUpperCase())
     };
-    String.prototype.toSeparate = function (delimiters){
-        let text='';
-        if (j$.Ext.isArray(delimiters)){
-            for (let i=0; delimiters.length > i;i++)
-                text += delimiters[i];
-        } else {
-            text += delimiters;
-        }
-        return this.split(eval('(/['+ text +']/gi)'));
-        // return r.join(' ');
-    };
     String.prototype.toCaption = function (delimiters){
         if (delimiters==undefined)
             delimiters = '_.-';
-        let ar =  this.toSeparate(delimiters);
+        let ar =  this.split(delimiters);
         for (let i=0; ar.length>i;i++)
             ar[i]=ar[i].stripChar('_.<>*!$&;:"\'@+#-%^)(').trim(); // Remove Caracteres
         return ar.join(' ').toCapitalize().trim();
@@ -248,8 +237,8 @@ const j$ = function(){
         return (value == null) ?vlDefault :String(value);
     }
     Boolean.prototype.isEmpty = function(){ return false}
-    Boolean.prototype.format = function(){
-        return j$.Ext.format(this);       
+    Boolean.prototype.format = function(mask){
+        return j$.Ext.format(this, mask);       
     };
     // For convenience...
     Date.prototype.format = function (mask, utc) {return j$.Ext.dateFormat(this, mask, utc)}
@@ -369,6 +358,15 @@ const j$ = function(){
     // let aux = {text:"texto", nro: 1, ar:[1,2], obj:{nm:1, nr:2}, fn:()=>"2", dt:c$.NOW, fnc: function(){}}
     // Object.show(aux)
 
+    Object.render = (source, title)=>{
+        let html = (title) ?`<h2>${title}</h2>` :"";
+        html += `<div>`;
+        for (let key in source){
+            html += `<h3><strong>${key}:</strong>${source[key]}</h3></br>`;            
+        }
+        return html+`</div>`;
+    }
+    
     //@note: copia metodos ou props de um objeto para outro
     Object.mixin=function(receiver, provider, methods){
         if (methods) { // Um Mixin fornecendo alguns métodos
@@ -745,7 +743,10 @@ j$.Ext = function(){
                 result=j$.Ext.dateFormat(value, mask, utc_decChar) // decChar or utc
                 break;
             case 'Boolean':      
-                result = CONFIG.BOOLEAN[String(value)].text;        
+                if (mask && mask.length==1)
+                    result = CONFIG.BOOLEAN[String(value)].short;
+                else
+                    result = CONFIG.BOOLEAN[String(value)].text;        
                 break;
             case 'Array':                            
                 break;    

@@ -577,11 +577,8 @@ j$.Resource = function(){ // Factory: Criar os recursos
       , parse:parseDefinition
       , Dataset: Dataset
       , Local:function(){return{Requester:LocalRequester}}()
-     // , Parser: function(){return{init:function(){return true}}}()
       , get(key){return items[key]}
-      //, Items:items
       , c$:items
-      , C$(key){return items[key]}
     };    
 }(); //j$.Resource 
 j$.$R =j$.Resource.c$;
@@ -757,7 +754,6 @@ j$.Resource.Parser=function(){
     return{
         Default: Parsers.Json
         ,    c$:Parsers
-        ,    C$:key=>{return Parsers[key]}
     }
 }() //j$.Resource.Parser
 
