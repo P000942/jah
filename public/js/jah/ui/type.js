@@ -299,7 +299,7 @@ const TYPE = function() {
                 let strip=mask.replace(/\w|[@]|[#]/g,""); // Pega somente caracteres especiais;
                 let prompt='|'+mask.replace(/\w|[@]|[#]/g,"_"); //Montar prompt para entrada de dados;
                 let dataType = (mask.replace(c$.MASK.DecimalCharacter,"").replace(/\d|[#]/g,"").length>0)? DATATYPE.CHAR : DATATYPE.NUMBER;
-                let validator = {handler:value=>{return value.isValidInMask(mask);},error: "campo preenchido com formato inválido"};
+                let validator = {handler:value=>{return value.isMatch(mask);},error: "campo preenchido com formato inválido"};
                 /* if (!Properties.align)
                     Properties.align = (dataType==DATATYPE.CHAR) ?c$.ALIGN.LEFT : c$.ALIGN.RIGHT; */
                 Properties = Object.preset(Properties,{align:(dataType==DATATYPE.CHAR) ?c$.ALIGN.LEFT : c$.ALIGN.RIGHT})    

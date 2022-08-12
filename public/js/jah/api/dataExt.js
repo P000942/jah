@@ -202,7 +202,7 @@ const j$ = function(){
     String.prototype.format = function(mask){
         return j$.Ext.format(this, mask);       
     };    
-    String.prototype.isValidInMask = function(mask){
+    String.prototype.isMatch = function(mask){
         mask =mask.replace(/[#]/g,'9'); // para adequar as mascaras usadas na edicaoo
         mask =mask.replace(/[@]/g,'X'); // para evitar que retira quando da remoca de todos os caracteres especiais;
         let value=this.stripChar(mask.replace(/\w|[@]/g,"")).trim() // Retira os separadores, caso estejam no valor;

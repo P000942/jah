@@ -38,51 +38,59 @@
 <script type="text/javascript">
 $(document).ready(function(){
     //CONFIG.MENU.PARSER = c$.MENU.TYPE.MENUBAR;
-    const urlPartial = CONFIG.SERVER.CONTEXT + 'sample/partial.html'
-        , urlPartial2 = CONFIG.SERVER.CONTEXT + 'sample/partial_1.html'
-        , tabs = j$.Dashboard.Tabs.create('tabs','content') // cria o tab no container "content" 
+    const tabs = j$.Dashboard.Tabs.create('tabs','content') // cria o tab no container "content" 
                                                             // 'tabs' é a chave de referencia a essa tab > j$.Dashboard.Tabs.c$.tabs
                                                             // sendo a primeira tab, tb pode ser j$.Dashboard.Tabs.root
-        , tabPartial ={key:"tab_Partial", caption:'Partial', url:urlPartial, title:'Title Partial Tab'
+        , tabPartial ={key:"tab_Partial", caption:'Partial', url:w$.urlPartial, title:'Title Partial Tab'
                       , onClick(opt, e){ tabs.open(opt)}}
        // , menu = j$.Dashboard.Menu.create("menubar")        // cria o menu no container "menubar"    
     j$.Dashboard.init()
     const menu = j$.Adapter.Menu;     
     menu.addMenu({caption:"Home", active:true});
     menu.addMenu("Tabs")
-        .add([{caption:'Link Externo',  url:urlPartial}
+        .add([{caption:'Link Externo',  url:w$.urlPartial}
               ,  // separador
-              ,{caption:'Menu Partial', url:urlPartial,
-                 onClick(opt_sel, event){
+              ,{caption:'Menu Partial', url:w$.urlPartial,
+                 onClick(menu, event){
                      tabs.open(
-                            {key:"tab_"+opt_sel.id
-                        , caption:opt_sel.caption
+                            {key:"tab_"+menu.id
+                        , caption:menu.caption
                         ,  onLoad(tab){
-                            tab.showURL(opt_sel.url)
+                            tab.showURL(menu.url)
                         }
                      })
                  }
               }
-             ,{caption:'Delegar abertura', url:urlPartial2,
-                 onClick(opt_sel, event){
-                    tabs.open({key:"tab_"+opt_sel.id
-                         , caption:opt_sel.caption
+             ,{caption:'Delegar abertura', url:w$.urlPartial2,
+                 onClick(menu, event){
+                    tabs.open({key:"tab_"+menu.id
+                         , caption:menu.caption
                          ,  onLoad(tab){
                             delagateTab(tab.idContent)
                         }
                     })
                  }
               }
-            ,{caption:'Menu Partial Simples', url:urlPartial,
-                onClick(opt_sel, event){tabs.open({key:'tab_'+opt_sel.key, caption:opt_sel.caption, url:opt_sel.url})}
+            ,{caption:'Abri tab no click', url:w$.urlPartial,
+                onClick(menu, event){
+                    tabs.open({key:'tab_'+menu.key, caption:menu.caption, url:menu.url})
+                }
              }
             ,tabPartial
-            ,{caption:'Eventos', onClick:criarTab}
+            ,{caption:'Eventos da tab', onClick:criarTab}
         ]);
+        t$.Menu.addFramework(menu,tabs);
+/*     menu.addMenu("Framework")    
+        .add([
+            {caption:'API Extend'
+                , onClick(menu, event){t$.Tabs.addExt(tabs)}
+            }
+           ,{caption:'Abrir...', onClick:criarTab}
+          ]);   */  
     menu.render();
     function criarTab(menu, event){
          tabs.open({key:"tab_eventos", caption:"Evento"
-           ,       onLoad(tab){tab.showURL(urlPartial)}
+           ,       onLoad(tab){tab.showURL(w$.urlPartial)}
            ,   onActivate(tab){console.log("onActivate."+tab.key)}
            , onDeactivate(tab){console.log("onDeactivate."+tab.key)}
            ,      onClose(tab){console.log("onClose."+tab.key)}
@@ -90,18 +98,13 @@ $(document).ready(function(){
     };
     // Cria a tab FIXA - 'Home'
     const loadHome= function (){
-         j$.Dashboard.Tabs.c$.tabs.open({key:"Home", caption:"Home", fixed:true, url: urlPartial});
+         j$.Dashboard.Tabs.c$.tabs.open({key:"Home", caption:"Home", fixed:true, url: w$.urlPartial});
     }();
     const delagateTab= function (idContent){
-        j$.Dashboard.Open.partial(urlPartial,idContent);
+        j$.Dashboard.Open.partial(w$.urlPartial,idContent);
     };
     // .add irá criar objeto visual no browser
-    j$.Dashboard.Tabs.c$.tabs.add({key:"tab_submenu", caption:'submenu', url:urlPartial});  
-    tabs.add({key:"apiExt" , caption:'Api Ext'      , content:t$.apiExt()});  
-    tabs.add({key:"Type"   , caption:'Data Validate', content:t$.Type.all()});  
-    tabs.add({key:"Object" , caption:'Object'       , content:t$.Object.all()});   
-    tabs.add({key:"Teste"  , caption:'Teste'        , content:t$.e$()});   
-/*     sbmenu.Menu.add("Álbun",["Album 1","Album 2", "Album 3"]);
-    sbmenu.Menu.render();  */
+    j$.Dashboard.Tabs.c$.tabs.add({key:"tab_submenu", caption:'submenu', url:w$.urlPartial});  
+    
 });
 </script>
