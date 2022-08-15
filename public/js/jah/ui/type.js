@@ -641,7 +641,7 @@ TYPE.Fieldset = function(){
             }
         }; 
          // varre as campos e devolve um registro com o conteúdo dos campos
-        sweep (action){
+         each (action){
             let record = {};
             for(let key in this.c$){
                 let field = this.c$[key];
@@ -653,16 +653,16 @@ TYPE.Fieldset = function(){
             return record;
         };
         createRecord = ()=>{
-           return this.sweep();
+           return this.each();
         };
-        each = this.sweep;
+        //each = this.sweep;
         reset (){
-           this.sweep(field=>{
+           this.each(field=>{
                 field.reset();
            });
         };
         bindColumns (Columns){
-           this.sweep(field=>{
+           this.each(field=>{
                if (Columns[field.key]===undefined)
                    field.persist=false;
            });

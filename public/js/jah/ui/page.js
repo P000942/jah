@@ -109,7 +109,7 @@ j$.Service = function(){
                 this.service = j$.Service.build(key,this);
         }    
         open(){
-            let record = this.Parent.service.Fieldset.sweep();            
+            let record = this.Parent.service.Fieldset.each();            
             j$.Dashboard.openItem(this, record);            
             // this.Parent.tabs.open({key:`tab_${this.id}`
             //                  , caption:this.caption
@@ -118,7 +118,7 @@ j$.Service = function(){
             // });
         }
         refresh(){
-            return  this.Parent.service.Fieldset.sweep();
+            return  this.Parent.service.Fieldset.each();
         }
         //#TODO: O que fazer aqui?
         //Se tiver editado, tem que atualizar o registro
@@ -890,7 +890,7 @@ j$.Page.Grid=function(page, btn_template=CONFIG.GRID.PRESET){
         return{
             update:function(row,Record){
                     _grid.Designer.getRow(row);
-                    page.service.Fieldset.sweep(function(field){
+                    page.service.Fieldset.each(function(field){
                         _grid.Designer.changeColumn(field);
                     });
             }

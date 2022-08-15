@@ -242,8 +242,7 @@ const j$ = function(){
     };
     // For convenience...
     Date.prototype.format = function (mask, utc) {return j$.Ext.dateFormat(this, mask, utc)}
-
-    //@note: procura por valor no objeto e retorna array com as propriedades que contem o valor
+     
     Object.isEmpty = function(source){
         for (let key in source)
             return false;
@@ -348,24 +347,6 @@ const j$ = function(){
         return receiver;
     };
     // let aux = Object.map({a:1, b:2, c:"Eu", d:4},{a:"a1", b:"b", c:"nome", f:"f"})
-
-    Object.show = source=>{
-        for (let key in source){
-            //let _t = source[key].constructor.name[0].toLowerCase();
-            console.log(`${key}:`,source[key]);
-        }
-    }
-    // let aux = {text:"texto", nro: 1, ar:[1,2], obj:{nm:1, nr:2}, fn:()=>"2", dt:c$.NOW, fnc: function(){}}
-    // Object.show(aux)
-
-    Object.render = (source, title)=>{
-        let html = (title) ?`<h2>${title}</h2>` :"";
-        html += `<div>`;
-        for (let key in source){
-            html += `<h3><strong>${key}:</strong>${source[key]}</h3></br>`;            
-        }
-        return html+`</div>`;
-    }
     
     //@note: copia metodos ou props de um objeto para outro
     Object.mixin=function(receiver, provider, methods){
@@ -416,11 +397,11 @@ const j$ = function(){
         return r;
     };
 
-    Object.build = (key, value)=>{
+/*     Object.build = (key, value)=>{
         let obj ={}
         obj[key]=value;
         return obj;
-    }
+    } */
     // console.log(Object.build("A",4))
     // ->Object {A: 4}
 
@@ -510,12 +491,14 @@ const j$ = function(){
     Array.prototype.has = Array.prototype.includes;
     // var aux = [1,'test',2]; aux.has(1);aux.has('test');aux.has(4)
     // Alias para o each
-    // #todo: remover sweep de todo o framework
-    Array.prototype.sweep = Array.prototype.forEach;
+    // @todo: remover sweep de todo o framework
+    //Array.prototype.sweep = Array.prototype.forEach;
 
     //var aux=[{a:1, b:2},{a:2, b:2},{a:3, b:2},{a:4, b:2}]
     //console.log(aux.select(item=>{ return (item.a<3)} ));
-    Array.prototype.select = function(callback /*, parms*/){
+    Array.prototype.select = Array.prototype.filter;
+
+/*     function(callback){
         let results = [];
         if (typeof callback != "function")
             throw new TypeError();
@@ -527,7 +510,7 @@ const j$ = function(){
             }
         }
         return results;
-    }; 
+    }  */
     return {
          ui:{}
     //    ,Adapter:{} 

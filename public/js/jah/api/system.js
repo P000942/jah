@@ -350,12 +350,12 @@ class Collection {
         for (let key in _node.c$)
             _node.c$[key].show();
     }
-     sweep = (action, param)=>{
+    each = (action, param)=>{
          for(let key in this.c$){
             action(this.c$[key], param);
          }
      }  
-     each = this.sweep;  
+    // each = this.sweep;  
 }
 System.Collection = Collection;
 class Observer extends System.Collection{
