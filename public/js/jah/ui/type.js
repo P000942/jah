@@ -655,7 +655,6 @@ TYPE.Fieldset = function(){
         createRecord = ()=>{
            return this.each();
         };
-        //each = this.sweep;
         reset (){
            this.each(field=>{
                 field.reset();

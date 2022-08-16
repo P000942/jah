@@ -336,7 +336,7 @@ const j$ = function(){
             Object.setIfExist(receiver, provider, Object.keys(provider));
         return receiver;
     };
-    //@note: retorna um objeto mapeado(de-para) conforme o objeto mapTo com os campos que existem no primeiro objeto
+    //@note: Retorna um novo objeto mapeado(de-para) conforme o objeto mapTo com os campos que existem no provider
     // Se exitir no provider, mapeia com o novo nome, se não existir, não irá no objeto
     Object.map = function(provider,  mapTo){
         let receiver = {};       
@@ -416,16 +416,6 @@ const j$ = function(){
         let key = keys.find(key => {return (source[key])});
         return (key) ?true :false;
     }
-    // retorna a primeira das chaves(keys) que encontrar  no objeto 
-    Object.firstKey = function(source, keys){
-        return keys.find(key => {return (source[key])});
-    }
-    // retorna a primeiro valor entre as chaves(key) que encontrar  no objeto 
-    Object.firstValue = function(source, keys){
-        let key = keys.find(key => {return (source[key])});
-        return (key) ?source[key] :null;
-    }
-
     Object.identify = (receicer, keys=['key','id'], labels=["label", "caption"])=>{
         function search(key, values){
             let vl = Object.synonym(receicer,values);
@@ -491,9 +481,7 @@ const j$ = function(){
     Array.prototype.has = Array.prototype.includes;
     // var aux = [1,'test',2]; aux.has(1);aux.has('test');aux.has(4)
     // Alias para o each
-    // @todo: remover sweep de todo o framework
-    //Array.prototype.sweep = Array.prototype.forEach;
-
+    
     //var aux=[{a:1, b:2},{a:2, b:2},{a:3, b:2},{a:4, b:2}]
     //console.log(aux.select(item=>{ return (item.a<3)} ));
     Array.prototype.select = Array.prototype.filter;
@@ -534,16 +522,20 @@ const j$ = function(){
 }();
 
 j$.Ext = function(){
-    const toRecord=(name, parent)=>{
-        if (parent){
-            parent.id   = 'id' +name.toFirstUpper();
-            parent.text = 'tx' +name.toFirstUpper();
-            return parent;
+    const toRecord=(name, prefixes)=>{
+        if (prefixes){
+            let model ={}; 
+            for (const [idx, item] of prefixes.entries()) {
+                 model[item] = item+name.toFirstUpper();
+            }
+            return model;
         } else {
             return {id: 'id'+name.toFirstUpper()
                 , text: 'tx'+name.toFirstUpper()}
         }
     }
+    //j$.Ext.toRecord("tabela")
+    //j$.Ext.toRecord("tabela", ['id','tx','dt','nm'])
     const toObject=(source, key="key")=>{
         if (j$.Ext.isObject(source))
            return source;
@@ -760,7 +752,7 @@ j$.Ext = function(){
                             if  (j$.Ext.isDefined(obj)){
                                 if (j$.Ext.isNumber(obj) ||
                                    (j$.Ext.isString(obj) && !obj.isEmpty()) ||
-                                   (j$.Ext.isArray (obj) && obj.length()>0) ||
+                                   (j$.Ext.isArray (obj) && obj.length>0) ||
                                    (j$.Ext.isObject(obj) && !Object.isEmpty(obj)))
                                 return true; 
                             }                            
@@ -769,6 +761,7 @@ j$.Ext = function(){
     }
 }();
 j$.Dom = function(){    
+    //@note: Retornar os elementos que existem na árvore do DOM HTML
     const exists = function(ids){
         let res=[];
         ids.forEach(id=>{
@@ -777,6 +770,7 @@ j$.Dom = function(){
         })  
         return res;      
     }
+    //@note: Remover elementos na lista de id(ids) que não sejam o que deve permanecer(keeped)
     const keep = function(keeped, ids){
         ids.forEach(id=>{
             if (id!=keeped && i$(id))

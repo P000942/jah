@@ -83,7 +83,23 @@ const t$ = function(){
             return {item, header:show, body:show, show, create, descr:show, cr, card:show, add}        
         }()
     }
-
+    Object.render = (source, title)=>{  
+        let html = (title) ?`<h2>${title}</h2>` :"";
+        html += `<div>`;
+        for (let key in source){
+            html += `<h3><strong>${key}:</strong>${source[key]}</h3></br>`;            
+        }
+        return html+`</div>`;
+    }
+    Object.show = source=>{
+        for (let key in source){
+            //let _t = source[key].constructor.name[0].toLowerCase();
+            console.log(`${key}:`,source[key]);
+        }
+    }
+    // let aux = {text:"texto", nro: 1, ar:[1,2], obj:{nm:1, nr:2}, fn:()=>"2", dt:c$.NOW, fnc: function(){}}
+    // Object.show(aux)
+    
     init = designer=>{
         Object.setIfExist(t$, designers[designer],['item', 'header', 'body', 'show', 'create', 'descr', 'card', 'add'])
         t$.cr = designers[designer].cr();
@@ -141,7 +157,7 @@ const t$ = function(){
         ,   vo(fn, receiver, provider, keys){ 
                 let vl = V.join([receiver, provider, keys])
                 ,tx= V.show(`Object.${fn}(${vl})=> `.padStart(50,' '))
-                    + V.show(Object[fn](receiver, provider, keys));
+                   + V.show(V.vlr(Object[fn](receiver, provider, keys)));
                 return tx;      
         }  
     }
@@ -173,6 +189,7 @@ const t$ = function(){
             ,       isValue:value=>{return V.v$(value,"isValue")} 
             ,     isDefined:value=>{return V.v$(value,"isDefined")} 
             ,   isUndefined:value=>{return V.v$(value,"isUndefined")} 
+            ,   hasAnyValue:value=>{return V.v$(value,"hasAnyValue")} 
             ,       isMatch:(value,mask)=> {return V.ve(value,"isMatch", value.isMatch(mask),[mask])}
             }
             , Dig:{
@@ -187,31 +204,33 @@ const t$ = function(){
                     ,  toCapitalize:(value)=>{return V.ve(value,"toCapitalize", value.toCapitalize())}
                     ,  toFirstLower:(value)=>{return V.ve(value,"toFirstLower", value.toFirstLower())}
                     ,  toFirstUpper:(value)=>{return V.ve(value,"toFirstUpper", value.toFirstUpper())}
-                    ,         toKey:(value)=>{return V.ve(value,"toKey"       , value.toKey())}
+                    ,         toKey:(value)=>{return V.ve(value,"toKey"       , value.toKey())}                   
                     ,        preset:(value, vlDefault)=>{return V.v$([value, vlDefault],"String.preset", String.preset(value, vlDefault),true)}
-                    ,        repeat:(value,times)     =>{return V.ve(value,"repeat"    , value.repeat(times),times)}
-                    ,     toCaption:(value,del)       =>{return V.ve(value,"toCaption" , value.toCaption(del),del)}
-                    ,     stripChar:(value,del)       =>{return V.ve(value,"stripChar" , value.stripChar(del),del)}
+                    ,        repeat:(value,times)     =>{return V.ve(value,"repeat"    , value.repeat(times)  ,times)}
+                    ,     toCaption:(value,del)       =>{return V.ve(value,"toCaption" , value.toCaption(del) ,del)}
+                    ,     stripChar:(value,del)       =>{return V.ve(value,"stripChar" , value.stripChar(del) ,del)}
                     ,    startsWith:(value,del)       =>{return V.ve(value,"startsWith", value.startsWith(del),del)}
-                    ,          Mask:(value,mask)      =>{return V.ve(value,"mask"      , value.format(mask), mask)}
+                    ,          Mask:(value,mask)      =>{return V.ve(value,"mask"      , value.format(mask)   ,mask)}                    
+                    ,        toggle:(value,values)    =>{return V.ve(value,"toggle"    , value.toggle(values) ,values)}
             }
             , Obj:{
-                        preset  (receiver, provider, keys){return V.vo("preset", receiver, provider, keys)}
+                        preset  (receiver, provider, keys){return V.vo("preset"    , receiver, provider, keys)}
                     , setIfExist(receiver, provider, keys){return V.vo("setIfExist", receiver, provider, keys)}
-                    , join      (receiver, provider, keys){return V.vo("join", receiver, provider, keys)} 
-                    , merge     (receiver, provider, keys){return V.vo("merge", receiver, provider, keys)} 
+                    , join      (receiver, provider, keys){return V.vo("join"      , receiver, provider, keys)} 
+                    , merge     (receiver, provider, keys){return V.vo("merge"     , receiver, provider, keys)} 
                     , getByValue(source, value, attribute){return V.vo("getByValue", source, value, attribute)} 
-                    , compare   (receiver, provider, keys){return V.vo("compare", receiver, provider, keys)} 
-                    , contains  (receiver, provider, keys){return V.vo("contains", receiver, provider, keys)} 
-                    , synonym   (receiver, keys)          {return V.vo("synonym", receiver, keys)} 
-                    , exists    (receiver, keys)          {return V.vo("exists", receiver, keys)} 
-                    , identify  (receiver, keys, labels)  {return V.vo("identify", receiver, keys, labels)} 
-                    , label     (receiver, labels, keys)  {return V.vo("label", receiver, labels, keys)} 
+                    , compare   (receiver, provider, keys){return V.vo("compare"   , receiver, provider, keys)} 
+                    , contains  (receiver, provider, keys){return V.vo("contains"  , receiver, provider, keys)} 
+                    , isEmpty   (source)                  {return V.vo("isEmpty"   , source)} 
+                    , synonym   (receiver, keys)          {return V.vo("synonym"   , receiver, keys)} 
+                    , exists    (receiver, keys)          {return V.vo("exists"    , receiver, keys)} 
+                    , identify  (receiver, keys, labels)  {return V.vo("identify"  , receiver, keys, labels)} 
+                    , label     (receiver, labels, keys)  {return V.vo("label"     , receiver, labels, keys)} 
+                    , map       (provider, mapTo)         {return V.vo("map"       , provider, mapTo)}  
             }
             , Arr:{
-                        preset  (receiver, provider, keys){return V.vo("preset", receiver, provider, keys)}
-                    , setIfExist(receiver, provider, keys){return V.vo("setIfExist", receiver, provider, keys)}     
-            }    
+                        select  (receiver, provider, keys){return V.vo("preset", receiver, provider, keys)}                    
+            }             
         }                                      
         , init
     }
@@ -274,15 +293,17 @@ t$.apiExt = function(){
                         +t$.vd('toFirstUpper') +t$.T.Str.toFirstUpper("josé mané baré") 
                         +t$.vd('toKey')        +t$.T.Str.toKey("id_nome&mt.for-da$xxx&")  
                         +t$.vd('String.preset')+t$.T.Str.preset(null,1) 
-                                            +t$.T.Str.preset("A","vlDefault") 
+                                               +t$.T.Str.preset("A","vlDefault") 
                         +t$.vd('repeat')       +t$.T.Str.repeat("0",5)  
                         +t$.vd('toCaption')    +t$.T.Str.toCaption("jose_geraldo.gomes-final","_.-")  
-                                            +t$.T.Str.toCaption("José-Mané Baré",'-') 
+                                               +t$.T.Str.toCaption("José-Mané Baré",'-') 
                         +t$.vd('stripChar')    +t$.T.Str.stripChar("04.150.945-5",['.','-']) 
-                                            +t$.T.Str.stripChar("04 150.945-5",'.-') 
+                                               +t$.T.Str.stripChar("04 150.945-5",'.-') 
                         +t$.vd('startsWith')   +t$.T.Str.startsWith("geraldo","G")  
-                                            +t$.T.Str.startsWith("Geraldo",'G')  
-                                            +t$.T.Str.startsWith("Geraldo",'e')
+                                               +t$.T.Str.startsWith("Geraldo",'G')  
+                                               +t$.T.Str.startsWith("Geraldo",'e')
+                        +t$.vd('toggle')       +t$.T.Str.toggle("A",["A","B"])
+                                               +t$.T.Str.toggle("B",["A","B"])
                         , id
                     )
                 )
@@ -364,9 +385,21 @@ return{
              +t$.Object.exists(p)
              +t$.Object.identify(p)   
              +t$.Object.label(p)                    
+             +t$.Object.isEmpty(p)                    
+             +t$.Object.map(p)                    
              //+t$.ve("Object.mixin() => execute t$.Object.mixin()  e veja melhor");
         return t$.create(tx, 'sampleObject');;
     }  
+    , isEmpty(parent){              
+        return t$.add({    id:'sampleisEmpty'
+                      ,header:'isEmpty'
+                      ,  card:{title:'OBEJTO VAZIO', subtitle: 'Verifica se tem alguma propriedade no objeto', text:' '}
+                      ,  body:t$.T.Obj.isEmpty()
+                             +t$.T.Obj.isEmpty({})
+                             +t$.T.Obj.isEmpty({a:1})
+                      ,parent
+                    });
+    }
     , preset(parent){ 
         let tx = t$.T.Obj.preset({a:1,b:2},'c',{x:1, y:2})
                 +t$.T.Obj.preset({a:1,b:2},{x:1, y:2})
@@ -489,9 +522,9 @@ return{
                 +t$.T.Obj.identify({title:"new titulo"},["id","key"],['title']) 
                 +t$.T.Obj.identify({title:"new titulo"},["id"],["key",'title'])       
                 +t$.T.Obj.identify({title:"new titulo",key:'ab'},["id"],["key",'title']);         
-        return t$.add({id:'sampleidentify'
+        return t$.add({id:'sampleIdentify'
                   ,header:'identify'
-                  ,  card:{title:'@TODO', subtitle: 'Formatar|garantir identificador definidos em keys(@todo)', text:'Object.identify(source, keys, labels) '}
+                  ,  card:{title:'IDENTIFY', subtitle: 'Formatar|garantir os campos de identificação definidos(id, key)', text:'Object.identify(source, keys, labels) '}
                   ,  body:tx
                   ,parent
                 });    
@@ -503,7 +536,18 @@ return{
                 +t$.T.Obj.label({title:"new titulo",key:'my_key'});    
         return t$.add({id:'sampleLabel'
                   ,header:'label'
-                  ,  card:{title:'FORMATAR LABEL NO OBJETO', subtitle: 'Formatar|garantir  as propriedades em labels(@todo)', text:' Object.label(receicer, labels=["label", "caption"], keys=["key","id"])'}
+                  ,  card:{title:'FORMATAR LABEL NO OBJETO', subtitle: 'Formatar|garantir  as propriedades em labels', text:' Object.label(receicer, labels=["label", "caption"], keys=["key","id"])'}
+                  ,  body:tx
+                  ,parent
+                });    
+    }      
+    , map(parent){
+        let tx = t$.T.Obj.map({a:1, b:'F', c:"Eu", d:40},{a:"cod", b:"sexo", c:"nome", f:"f"})  
+                ;                    
+        return t$.add({id:'sampleMap'
+                  ,header:'map'
+                  ,  card:{title:'RETORNAR NOVO OBJETO MAPEADO', subtitle: 'Retorna um novo objeto mapeado(de-para) conforme o objeto mapTo com os campos que existem no provider'
+                          , text:'Object.map(provider, MapTo)'}
                   ,  body:tx
                   ,parent
                 });    
@@ -672,6 +716,14 @@ return{
                         +t$.cr
                         +t$.vd('isDefined'  )+t$.T.Chk.isDefined()+t$.T.Chk.isDefined(null)+t$.T.Chk.isDefined("1")+t$.T.Chk.isDefined(1)
                                              +t$.T.Chk.isDefined(["Nome",2])+t$.T.Chk.isDefined({a:"alf", b:50})+t$.T.Chk.isDefined(()=>{})       
+                        +t$.vd('hasAnyValue') 
+                        +t$.T.Chk.hasAnyValue()
+                                             +t$.T.Chk.hasAnyValue(null)
+                                             +t$.T.Chk.hasAnyValue("")
+                                             +t$.T.Chk.hasAnyValue(1)
+                                             +t$.T.Chk.hasAnyValue(["Nome",2])
+                                             +t$.T.Chk.hasAnyValue({a:"alf", b:50})
+                                             +t$.T.Chk.hasAnyValue(()=>{})       
                         +t$.cr
                         +t$.vd('isEmpty'    )+t$.T.Chk.isEmpty('')+t$.T.Chk.isEmpty(' ')+t$.T.Chk.isEmpty('A')
                         ,id

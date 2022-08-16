@@ -111,58 +111,8 @@ const System = function(){
                 element.bind(event, callback);
             }
             Event.element=function(event){return event.target}
-        
-            window['Ajax']={
-                Request:function(url, properties){
-                    properties.method = properties.method ?properties.method.toUpperCase()
-                                                              :properties.method = 'GET';
-                    if (properties.postBody && (properties.method == 'POST' || properties.method == 'PUT')){
-                        properties.processData = false;
-                        properties.data = properties.postBody; 
-                    }else     
-                        properties.data = properties.parameters;
-                                                                                      
-                    //let options=Ajax.Adapter.jquery(url, properties);
-                   // let options=Ajax.Adapter.native(url, properties);
-                    let options = Object.map(properties, {data:"body", method :"method"});
-                    options.headers = {'content-type':properties.contentType};    
-                    options.mode = "cors";     
-                    fetch(url, options)
-                        .then(response=> {
-                            if (!response.ok){                        
-                                if (properties.onFailure)
-                                    propertiesonFailure(data); 
-                            }else{
-                                if (response.status == CONFIG.HTTP.STATUS.NO_CONTENT.VALUE)
-                                    properties.onSuccess(response);
-                                else{
-                                    response.json()
-                                    .then(data=> {
-                                        if (properties.onSuccess)
-                                            properties.onSuccess(data);
-                                    })
-                                }   
-                            } 
-                        })
-                        .catch((err)    => 
-                            console.log('erro:'+err.message)
-                            )
-                }
-            , Updater:function(idContent, url, parm){                   
-                    fetch(url)
-                        .then(response =>{return response.text()})
-                            .then(html=>{
-                                if (parm.onComplete)
-                                    parm.onComplete(html, url);
-                                $("#"+idContent).append(html);
-                            })
-                        .catch(err => 
-                            console.log('ERRO>> Ajax.Updater:' + err.message)
-                        )     
-                }
-            };
     
-        /* pega o valor de um elemento */
+            /* pega o valor de um elemento */
             Element.prototype.get= function(){
                 let value = '';
                 switch(j$.Ext.type(this)){
@@ -243,6 +193,55 @@ const System = function(){
             //alert("123451234512".point(10).width);
             //alert("123451234512".point(10).height);
             //===> fim
+            window['Ajax']={
+                Request:function(url, properties){
+                    properties.method = properties.method ?properties.method.toUpperCase()
+                                                              :properties.method = 'GET';
+                    if (properties.postBody && (properties.method == 'POST' || properties.method == 'PUT')){
+                        properties.processData = false;
+                        properties.data = properties.postBody; 
+                    }else     
+                        properties.data = properties.parameters;
+                                                                                      
+                    //let options=Ajax.Adapter.jquery(url, properties);
+                   // let options=Ajax.Adapter.native(url, properties);
+                    let options = Object.map(properties, {data:"body", method :"method"});
+                    options.headers = {'content-type':properties.contentType};    
+                    options.mode = "cors";     
+                    fetch(url, options)
+                        .then(response=> {
+                            if (!response.ok){                        
+                                if (properties.onFailure)
+                                    propertiesonFailure(data); 
+                            }else{
+                                if (response.status == CONFIG.HTTP.STATUS.NO_CONTENT.VALUE)
+                                    properties.onSuccess(response);
+                                else{
+                                    response.json()
+                                    .then(data=> {
+                                        if (properties.onSuccess)
+                                            properties.onSuccess(data);
+                                    })
+                                }   
+                            } 
+                        })
+                        .catch((err)    => 
+                            console.log('erro:'+err.message)
+                            )
+                }
+            ,   Updater:function(idContent, url, parm){                   
+                    fetch(url)
+                        .then(response =>{return response.text()})
+                            .then(html=>{
+                                if (parm.onComplete)
+                                    parm.onComplete(html, url);
+                                $("#"+idContent).append(html);
+                            })
+                        .catch(err => 
+                            console.log('ERRO>> Ajax.Updater:' + err.message)
+                        )     
+                }
+            };
             return true;
         }();
 
@@ -264,8 +263,7 @@ const System = function(){
             }
             return _QueryString;
         }
-      , result:function(){return result;}
-      , api:{prototype:false, jquery:false}
+      , result:function(){return result;}     
     };
 }();
 
