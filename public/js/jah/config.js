@@ -249,7 +249,7 @@ const CONFIG = {
               , COLUMN:{CLASS:"col-auto space"}}                           
     ,  BUTTON:{CLASS:'btn btn-default'}
     ,   PAGER:{CLASS:'pagination pagination-sm'}
-    ,    MENU:{PARSER:c$.MENU.TYPE.SIDEBAR // "MENUBAR" ou 'SIDEBAR' ou 'OFFCANVAS'
+    ,    MENU:{DESIGNER:c$.MENU.TYPE.SIDEBAR // "MENUBAR" ou 'SIDEBAR' ou 'OFFCANVAS'
             ,    TYPE:{SIDEBAR:{WRAP:{CLASS:"col-md-10 ml-sm-auto col-lg-10 px-md-2"}
                               , ITEM:{CLASS:"col-md-2 col-lg-2 d-md-block nav-side-menu"} 
                             }                            

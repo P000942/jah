@@ -734,15 +734,16 @@ return{
 }}();
 
 t$.Tabs = function(){
-    const
-    addExt=tab=>{
-        tab.add({key:"apiExt" , caption:'Api Ext'      , content:t$.apiExt.all()});  
-        tab.add({key:"Type"   , caption:'Data Validate', content:t$.Validate.all()});  
-        tab.add({key:"Object" , caption:'Object'       , content:t$.Object.all()});   
-        tab.add({key:"Teste"  , caption:'Teste'        , content:t$.e$()}); 
+    const 
+    C$={
+             api:{key:"apiExt" , caption:'Api Ext'      , content:t$.apiExt.all()}  
+        ,   type:{key:"Type"   , caption:'Data Validate', content:t$.Validate.all()}  
+        , object:{key:"Object" , caption:'Object'       , content:t$.Object.all()}   
+        
     }
+    
     return{
-        addExt
+         C$
     }
 }();
 t$.Menu = function(){
@@ -750,10 +751,9 @@ t$.Menu = function(){
     addFramework=(menu,tab)=>{
         menu.addMenu("Framework")    
         .add([
-            {caption:'API Extend'
-                , onClick(menu, event){t$.Tabs.addExt(tab)}
-            }
-           ,{caption:'Abrir...', url:w$.urlPartial}
+            {caption:'API Extend', onClick(menu, event){tab.add (t$.Tabs.C$.api)}} //t$.Tabs.addExt(tab)
+           ,{caption:'Type'      , onClick(menu, event){tab.open(t$.Tabs.C$.type)}}
+           ,{caption:'Object'    , onClick(menu, event){tab.open(t$.Tabs.C$.object)}}
           ]);  
     }
     return{
@@ -761,6 +761,12 @@ t$.Menu = function(){
     }
 }();
 
-const w$={ urlPartial: CONFIG.SERVER.CONTEXT + 'sample/partial.html'
-        , urlPartial1: CONFIG.SERVER.CONTEXT + 'sample/partial_1.html'
-        }
+const w$={
+        template:{services:{               
+                    Assunto:{caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto'}
+                ,     Tarefa:{caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa', local:true}
+                ,   Mensagem:{caption:'Mensagem' ,   crud:true, title:'Mensagem' , modal:true}
+        }} 
+    , urlPartial: CONFIG.SERVER.CONTEXT + 'sample/partial.html'
+    ,urlPartial1: CONFIG.SERVER.CONTEXT + 'sample/partial_1.html'
+    }

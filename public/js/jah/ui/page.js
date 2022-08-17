@@ -40,7 +40,7 @@ j$.Service = function(){
                         , maxpage:CONFIG.GRID.MAXPAGE
                         , Buttons:CONFIG.CRUD.GRID.preset()
                     }
-            };
+            }
             // DEFINIR O RESOURCE
             Object.setIfExist($i, adpater, ['resource']); // Primeiro procurar obter do serviço
             Object.setIfExist($i, service, ['resource','init','child','autoRequest','bindBy'
@@ -172,9 +172,8 @@ j$.Service = function(){
     , createChild: function(key, parent, service){
             return new Child(key, parent, service);
         }
-    ,     init: (source, adapter)=>{ // o cliente pode informador o adapter
-            j$.Adapter.createPage(source, adapter)
-            return j$.Adapter.Page;
+    ,     init: (template, adaptHandler)=>{ // o cliente pode informador o adaptHandler
+            return j$.Adapter.init(template, adaptHandler)           
         }   
     ,   create:(key, service)=>{
             if (!key)
@@ -198,8 +197,8 @@ j$.Service = function(){
     ,  adapter:function (){
             return{
                 get:function(key){
-                    return (j$.Adapter.Page)
-                         ? j$.Adapter.Page.getService(key)
+                    return (j$.Adapter.Handler)
+                         ? j$.Adapter.Handler.getService(key)
                          : {key:key};
                 }
             }
@@ -1456,14 +1455,12 @@ j$.Dashboard = function(){
     let idContent=CONFIG.LAYOUT.ID
         , Adapter={}        
     return{
-            init:(properties=j$.Adapter.Page, parser=CONFIG.MENU.PARSER)=>{ //@todo: onde é usado(faz sentido está aí?) esse factory
-                                                                            //@todo: Não tá legal ser apenas Factory e específico pro menu
-            Adapter.menu = (properties && properties.design && properties.design.menuAdapter) 
-                            ? j$.Dashboard[properties.design.menuAdapter] 
-                            : j$.Adapter.Menu                                                            
-            j$.Dashboard.Service.init();                    
-            Adapter.menu.init(properties, parser)                    
-            return Adapter;
+            init:(adaptHandler=j$.Adapter.Handler)=>{         // j$.Adapter.Handler é o adaptar default                                                                           
+                Adapter.menu = j$.Adapter.Menu;                                 
+                j$.Dashboard.Service.init();    
+                j$.Adapter.Tabs = j$.Dashboard.Tabs.c$.root;                             
+                Adapter.menu.init(adaptHandler, CONFIG.MENU.DESIGNER)                    
+                return Adapter;
         }
         , bindItem: item =>{
             if (!item.url && !item.onClick){
@@ -2003,10 +2000,10 @@ j$.Dashboard.Menu = function(){ // factory
         }
     }
     return{
-        create (idContent, parser){
-            if (!parser)
-                parser=CONFIG.MENU.PARSER
-            items[idContent] =new Navbar(idContent, Designers[parser]);
+        create (idContent, designer){
+            if (!designer)
+                designer=CONFIG.MENU.DESIGNER
+            items[idContent] =new Navbar(idContent, Designers[designer]);
             return items[idContent];
         }      
         ,   menubar: Designers.menubar
@@ -2017,34 +2014,31 @@ j$.Dashboard.Menu = function(){ // factory
 }(); //j$.Dashboard.Menu  
         
 j$.Adapter = function(){
-    class AdapterPage {
-        constructor(adapter) {
-            // Este é o adapter default do Page
+    class Handler {
+        constructor(template) {           
             // o cliente pode criar um próprio com a mesma assinatura 
             let $this = this;
-            Object.preset(this, adapter);
+            Object.preset(this, template);
             this.load = () => {
-                for (let key in adapter.services)
-                    j$.Service.load(key, adapter.services[key]);
+                for (let key in template.services)
+                    j$.Service.load(key, template.services[key]);
             };
             this.getService = key => {
                 if ($this.services[key])
                     return $this.services[key];
-
                 else
                     return { key: key };
             };
             this.load();
         }
     }
-    return {      
-        Menu:function(){ //Esse é um menuAdapter que faz a adptação do que está declaro no services para gerar o menu
+    const Menu=function(){ //Esse é um menuAdapter que faz a adptação do que está declaro no services para gerar o menu
             let menubar
-            , createMenu = function(parser=CONFIG.MENU.PARSER, properties){
-                let design = CONFIG.MENU.TYPE[parser.toUpperCase()]                  
+            , createMenu = function(designer=CONFIG.MENU.DESIGNER, properties){
+                let design = CONFIG.MENU.TYPE[designer.toUpperCase()]                  
                 i$(j$.Dashboard.idContent).className =design.WRAP.CLASS;
-                i$(parser).className = design.ITEM.CLASS;                      
-                menubar = j$.Dashboard.Menu.create(parser)
+                i$(designer).className = design.ITEM.CLASS;                      
+                menubar = j$.Dashboard.Menu.create(designer)
                 if (properties && properties.services && properties.design &&  properties.design.options){                                         
                     for (let key in properties.design.options)
                         addOption(key,properties.design.options, properties.services);                                                                                    
@@ -2063,18 +2057,20 @@ j$.Adapter = function(){
             }            
 
             return{
-            init(properties, parser){
-                    createMenu(parser, properties);
-                }
-                ,  create:parser=>{createMenu(parser)}
+                init(properties, designer){
+                        createMenu(designer, properties);
+                    }
+                ,  create:designer=>{createMenu(designer)}
                 , addMenu:  menu=>{return menubar.addMenu(menu)}
                 , getMenu:   key=>{return menubar.getMenu(key)}
                 ,  render:    ()=>{menubar.render()}
             }
-        }() // j$.Adapter.Menu
-        , createPage:(source, adapter=AdapterPage)=>{ // o cliente pode informador o adapter
-            j$.Adapter.Page = new adapter(source);             
-            return j$.Adapter.Page;
+        }() // j$.Adapter.Menu    
+    return {      
+          Menu
+        , init:(source, handler=Handler)=>{ // o cliente pode informador o handler
+            j$.Adapter.Handler = new handler(source);             
+            return j$.Adapter.Handler;
         }
     }
 }()

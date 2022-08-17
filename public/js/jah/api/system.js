@@ -201,10 +201,7 @@ const System = function(){
                         properties.processData = false;
                         properties.data = properties.postBody; 
                     }else     
-                        properties.data = properties.parameters;
-                                                                                      
-                    //let options=Ajax.Adapter.jquery(url, properties);
-                   // let options=Ajax.Adapter.native(url, properties);
+                        properties.data = properties.parameters;                                                                                      
                     let options = Object.map(properties, {data:"body", method :"method"});
                     options.headers = {'content-type':properties.contentType};    
                     options.mode = "cors";     
@@ -353,7 +350,6 @@ class Collection {
             action(this.c$[key], param);
          }
      }  
-    // each = this.sweep;  
 }
 System.Collection = Collection;
 class Observer extends System.Collection{
@@ -608,13 +604,13 @@ System.Init = function(){
     let sequence = {};
     return{
         menu:parserDefault=>{  
-            let parsers = j$.Dom.exists([c$.MENU.TYPE.MENUBAR, c$.MENU.TYPE.SIDEBAR,c$.MENU.TYPE.OFFCANVAS]);    
-            if (CONFIG.MENU.PARSER.isEmpty())
-               CONFIG.MENU.PARSER = parserDefault; // para garantir o parser
-            if (parsers.length>1)                  // vai permanecer apenas o parserDefault 
-               j$.Dom.keep(CONFIG.MENU.PARSER, parsers) 
+            let designers = j$.Dom.exists([c$.MENU.TYPE.MENUBAR, c$.MENU.TYPE.SIDEBAR,c$.MENU.TYPE.OFFCANVAS]);    
+            if (CONFIG.MENU.DESIGNER.isEmpty())
+               CONFIG.MENU.DESIGNER = parserDefault; // para garantir o parser
+            if (designers.length>1)                  // vai permanecer apenas o parserDefault 
+               j$.Dom.keep(CONFIG.MENU.DESIGNER, designers) 
             else                                   // vai prevalecer o id=parser que está declarado no html
-                CONFIG.MENU.PARSER = parsers[0];
+                CONFIG.MENU.DESIGNER = designers[0];
         }
     }
 }();

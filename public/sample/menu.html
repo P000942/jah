@@ -21,6 +21,7 @@
     <script src="../js/jah/ui/page.js"></script>
     <script src="../js/jah/resource/resource.js"></script>
     <script src="../js/helper/data.js"></script> 
+    <script src="../js/helper/sample.js"></script> 
 </head>
 <body>
         <header class="navbar navbar-expand navbar-light bg-light sticky-top flex-md-nowrap p-0 shadow">
@@ -36,21 +37,14 @@
 </html> 
 <script type="text/javascript">
     $(document).ready(function(){
-        const adapter={services:{               
-                            Assunto:{caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto'}
-                        ,     Tarefa:{caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa', local:true}
-                        ,   Mensagem:{caption:'Mensagem' ,   crud:true, title:'Mensagem' , modal:true}
-                        }}
-            ,  urlPartial = CONFIG.SERVER.CONTEXT + 'sample/partial.html'
-            , urlPartial1 = CONFIG.SERVER.CONTEXT + 'sample/partial_1.html'
-        j$.Service.init(adapter);
+        j$.Service.init(w$.template);
         j$.Dashboard.init() 
         const menu = j$.Adapter.Menu;
         menu.addMenu({caption:"Home", active:true});
 
         const menu_link = menu.addMenu("Link");
               menu_link.add({caption:'Link', icon:{CLASS:'bi bi-pencil'}
-                           ,     url:urlPartial
+                           ,     url:w$.urlPartial
                            ,    hint:'Conheça a história e a caminhada da Comunidade'});
               menu_link.add({caption:'onClick', icon:c$.ICON.OFF, onClick:function(){alert("onClick");}, hint:'Veja como estamos organizados'});
               menu_link.add(); 
@@ -58,13 +52,13 @@
                     menu_album.add({caption:'Album 01'});
                     menu_album.addMenu('Album 02');
                     j$.Dashboard.Menu.c$.sidebar.c$.Link.c$.Album.divider.add();
-                    menu_album.add({caption:'Album 03', url:urlPartial});
+                    menu_album.add({caption:'Album 03', url:w$.urlPartial});
                     menu_album.add();     // vai incluir um separador - também com ["" ou null ]
                     menu_album.addMenu(); // Vai incluir o menu 
                       
         const menu_partial = menu.addMenu({caption:"Partial", hint:"Exibe o link usando ajax."})
-                menu_partial.add([{caption:'Visão Geral' , partial:urlPartial, hint:'Conheça a história e a caminhada da Comunidade'}
-                                 ,{caption:'Semenentinha', partial:urlPartial1, hint:'Veja como estamos organizados'}
+                menu_partial.add([{caption:'Visão Geral' , partial:w$.urlPartial, hint:'Conheça a história e a caminhada da Comunidade'}
+                                 ,{caption:'Semenentinha', partial:w$.urlPartial1, hint:'Veja como estamos organizados'}
                                  ,{caption:'Assunto',       hint:'Veja um álbum de nosso trabalho de evagelização!',
                                     onClick:menu=>{j$.Dashboard.Service.open({key:menu.key
                                                                         , caption:menu.caption
@@ -72,8 +66,8 @@
                                                      })}
                                 }]);
         menu.addMenu("Tabela")
-            .add([{caption:'Sistemas', partial:urlPartial  , hint:'Veja os sistemas'}
-                 ,{caption:'Servico' , partial:urlPartial1, hint:'Veja os sistemas'}
+            .add([{caption:'Sistemas', partial:w$.urlPartial  , hint:'Veja os sistemas'}
+                 ,{caption:'Servico' , partial:w$.urlPartial1, hint:'Veja os sistemas'}
                  , //Um separador
                  ,{caption:'Progamas', items:["Pgm 1", {caption:"Pgm 2"}]}
                 ]);

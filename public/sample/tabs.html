@@ -37,13 +37,12 @@
 </html>
 <script type="text/javascript">
 $(document).ready(function(){
-    //CONFIG.MENU.PARSER = c$.MENU.TYPE.MENUBAR;
+    //CONFIG.MENU.DESIGNER = c$.MENU.TYPE.MENUBAR;
     const tabs = j$.Dashboard.Tabs.create('tabs','content') // cria o tab no container "content" 
                                                             // 'tabs' é a chave de referencia a essa tab > j$.Dashboard.Tabs.c$.tabs
                                                             // sendo a primeira tab, tb pode ser j$.Dashboard.Tabs.root
         , tabPartial ={key:"tab_Partial", caption:'Partial', url:w$.urlPartial, title:'Title Partial Tab'
                       , onClick(opt, e){ tabs.open(opt)}}
-       // , menu = j$.Dashboard.Menu.create("menubar")        // cria o menu no container "menubar"    
     j$.Dashboard.init()
     const menu = j$.Adapter.Menu;     
     menu.addMenu({caption:"Home", active:true});
@@ -80,13 +79,6 @@ $(document).ready(function(){
             ,{caption:'Eventos da tab', onClick:criarTab}
         ]);
         t$.Menu.addFramework(menu,tabs);
-/*     menu.addMenu("Framework")    
-        .add([
-            {caption:'API Extend'
-                , onClick(menu, event){t$.Tabs.addExt(tabs)}
-            }
-           ,{caption:'Abrir...', onClick:criarTab}
-          ]);   */  
     menu.render();
     function criarTab(menu, event){
          tabs.open({key:"tab_eventos", caption:"Evento"

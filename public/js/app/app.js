@@ -10,7 +10,7 @@ j$.$V() => Atalho para mostrar no log j$.$C, j$.$P, j$.$R, j$.$S
 
 const urlPartial   = CONFIG.SERVER.CONTEXT+ 'sample/partial.html';
 const urlPartial_1 = CONFIG.SERVER.CONTEXT+ 'sample/partial_1.html';
-const adapter={
+const template={
     services:{ // Desclaração dos serviços
                  Papel:{caption:'Papel'    ,   crud:true, title:'Cadastro de Papel', onClick:openPapel}
           ,    Usuario:{caption:'Usuário'  ,   crud:true, title:'Cadastro de Usuário'}
@@ -42,8 +42,8 @@ const adapter={
 }
 System.using("js/crud/modelo.js"); // Didatico para ver como carregar um arquivo javascript ou css
 $(document).ready(function(){
-    j$.Service.init(adapter); // Vai carregar os serviços (.js)
-    j$.Dashboard.init(); //(j$.Adapter.Page)
+    j$.Service.init(template); // Vai carregar os serviços (.js)
+    j$.Dashboard.init();  
     t$.sample.init(j$.Adapter.Menu);
 });
 
