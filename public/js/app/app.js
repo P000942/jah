@@ -42,8 +42,8 @@ const template={
 }
 System.using("js/crud/modelo.js"); // Didatico para ver como carregar um arquivo javascript ou css
 $(document).ready(function(){
-    j$.Service.init(template); // Vai carregar os serviços (.js)
-    j$.Dashboard.init();  
+    //j$.Adapter.init(template); // Vai carregar os serviços (.js)
+    j$.Dashboard.init(template);  
     t$.sample.init(j$.Adapter.Menu);
 });
 
@@ -76,18 +76,18 @@ t$.sample = function(menuAdapter){ // Para adicionar mais menus e submenus
              _menu.add({caption:'Partial 2', partial:urlPartial_1, title:'Serah insedrido na tba'});
              _menu.add({caption:'Assunto', icon:{CLASS:'bi bi-table', COLOR:'green'},    title:'Assunto - exemplo colocar um  form na tab',
                   onClick:(menu, event)=>{
-                      j$.Dashboard.Service.open({key:menu.key, caption:menu.caption
+                      j$.Adapter.Tabs.open({key:menu.key, caption:menu.caption
                           , onLoad: tab=>{
                                Assunto.init(tab.idContent)}
                               });
                   }
               });
              _menu.add({caption:'Partial', byPass:true,      partial:urlPartial
-                    , onClick:j$.Dashboard.Service.openPartial
+                    , onClick:j$.Adapter.Tabs.openPartial
              });
              _menu.add(); // vai adicionar uma linha
              _menu.add({key:'Tabela', caption:'Tabela', icon:'bi bi-table', title:'Tabela de Exemplo'
-                    , onClick:j$.Dashboard.Service.delegateTo
+                    , onClick:j$.Adapter.Tabs.delegateTo
              });
 
 //             _menu.add({key:'SituacaoAtividade', caption:'Situação',       title:'Cadastro de Situa��es da Atividade',
@@ -98,7 +98,7 @@ t$.sample = function(menuAdapter){ // Para adicionar mais menus e submenus
 
     const criarTab= ()=>{ // Criar uma tab inicial que já aperece quando inicia o dashboard
          let whenComplete = (htmlPartial, url)=>{console.log(`callback do load complete tab.showURL('${url}')`)};
-         j$.Dashboard.Service.open({key:"tab_inicial", caption:"Home", fixed:true
+         j$.Adapter.Tabs.open({key:"tab_inicial", caption:"Home", fixed:true
            , onLoad      (tab){tab.showURL("sample/partial_1.html", whenComplete)}
            , onActivate  (tab){console.log("onActivate."+tab.key)}
            , onDeactivate(tab){console.log("onDeactivate."+tab.key)}
@@ -121,7 +121,7 @@ t$.sample = function(menuAdapter){ // Para adicionar mais menus e submenus
 
 // Didático
 function openPapel(){ 
-    j$.Dashboard.Service.open({key:"Papel", caption:"Papel", onLoad: function(tab){Papel.init(tab.idContent);}});
+    j$.Adapter.Tabs.open({key:"Papel", caption:"Papel", onLoad: function(tab){Papel.init(tab.idContent);}});
 }
 
 //@note: Está presente aqui apenas para exemplificar o uso

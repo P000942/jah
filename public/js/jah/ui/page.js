@@ -172,9 +172,9 @@ j$.Service = function(){
     , createChild: function(key, parent, service){
             return new Child(key, parent, service);
         }
-    ,     init: (template, adaptHandler)=>{ // o cliente pode informador o adaptHandler
+/*     ,     init: (template, adaptHandler)=>{ // o cliente pode informador o adaptHandler
             return j$.Adapter.init(template, adaptHandler)           
-        }   
+        }    */
     ,   create:(key, service)=>{
             if (!key)
                 throw new TypeError(CONFIG.EXCEPTION.SERVICE_NULL.text);
@@ -1452,26 +1452,22 @@ j$.$C=j$.Controller.c$;
 */
 
 j$.Dashboard = function(){
-    let idContent=CONFIG.LAYOUT.ID
-        , Adapter={}        
+    let idContent=CONFIG.LAYOUT.ID     
     return{
-            init:(adaptHandler=j$.Adapter.Handler)=>{         // j$.Adapter.Handler é o adaptar default                                                                           
-                Adapter.menu = j$.Adapter.Menu;                                 
-                j$.Dashboard.Service.init();    
-                j$.Adapter.Tabs = j$.Dashboard.Tabs.c$.root;                             
-                Adapter.menu.init(adaptHandler, CONFIG.MENU.DESIGNER)                    
-                return Adapter;
+            init:(template, adaptHandler)=>{         // j$.Adapter.Handler é o adaptar default        
+                j$.Adapter.init(template, adaptHandler);                                                                                                              
+                return j$.Adapter;
         }
         , bindItem: item =>{
             if (!item.url && !item.onClick){
                 if (item.partial)
-                    item.onClick=j$.Dashboard.Service.openPartial;
+                    item.onClick=j$.Adapter.Tabs.openPartial;
                 else if (item.modal){
                     item.onClick=function(menu){
                         j$.Service.c$[menu.key].init(null, menu.modal);
                     }
                 } else
-                    item.onClick=j$.Dashboard.Service.delegateTo;
+                    item.onClick=j$.Adapter.Tabs.delegateTo;
                 item.byPass =true;
             } else if (item.onClick)
                 item.byPass =true;
@@ -1479,45 +1475,17 @@ j$.Dashboard = function(){
         , openItem: (item, record) => {
             if (!item.url && !item.onCLick){
                 if (item.partial)
-                    j$.Dashboard.Service.openPartial(item, null, record);  
+                    j$.Adapter.Tabs.openPartial(item, null, record);  
                 else if (item.modal){
                     j$.Service.c$[item.key].init(null, item.modal, record);
                 } else
-                    j$.Dashboard.Service.delegateTo(item, null, record); 
+                    j$.Adapter.Tabs.delegateTo(item, null, record); 
             }
         }
         , idContent
-        , Adapter
     }
 }(); // j$.Dashboard
         
-j$.Dashboard.Service=function(){
-    let tabs
-        , idContent='root'
-        , ftmKey = (service) =>{return "tab_"+service.Parent.key+'_'+service.key}
-    return{
-            init: ()=>{ tabs = j$.Dashboard.Tabs.create(j$.Dashboard.Service.idContent,j$.Dashboard.idContent) }
-        , open: properties =>{return tabs.open(properties)}
-        , delegateTo: (service, event, record)=>{
-                j$.Dashboard.Service.open({key:ftmKey(service)
-                    , caption:service.caption, title: service.title
-                    ,  onLoad: function(tab){
-                                j$.Service.c$[service.key].init(tab.idContent);
-                            }
-                });
-        }
-        , openPartial:(service, event, record)=>{
-                j$.Dashboard.Service.open({key:ftmKey(service)
-                    ,caption:service.caption
-                    , onLoad:function(tab){
-                            tab.showURL(service.url, tab.httpComplete); // httpComplete - callback quando acionado apos a carga
-                            }
-                });
-        }
-        , idContent:idContent
-    };
-}(); // j$.Dashboard.Service
-
 
 j$.Dashboard.Open = function(){
     return{
@@ -2020,8 +1988,9 @@ j$.Adapter = function(){
             let $this = this;
             Object.preset(this, template);
             this.load = () => {
-                for (let key in template.services)
-                    j$.Service.load(key, template.services[key]);
+                if (template)
+                    for (let key in template.services)
+                        j$.Service.load(key, template.services[key]);
             };
             this.getService = key => {
                 if ($this.services[key])
@@ -2065,11 +2034,41 @@ j$.Adapter = function(){
                 , getMenu:   key=>{return menubar.getMenu(key)}
                 ,  render:    ()=>{menubar.render()}
             }
-        }() // j$.Adapter.Menu    
+        }() // j$.Adapter.Menu  
+    , Tabs=function(){
+        let tabs
+            , idContent='root'
+            , ftmKey = (service) =>{return "tab_"+service.Parent.key+'_'+service.key}
+        return{
+                init: ()=>{ tabs = j$.Dashboard.Tabs.create(idContent,j$.Dashboard.idContent) }
+            ,   open: properties =>{return tabs.open(properties)}
+            ,    add: properties =>{return tabs.add(properties)}
+            , delegateTo: (service, event, record)=>{
+                    tabs.open({key:ftmKey(service)
+                        , caption:service.caption, title: service.title
+                        ,  onLoad: function(tab){
+                                    j$.Service.c$[service.key].init(tab.idContent);
+                                }
+                    });
+            }
+            , openPartial:(service, event, record)=>{
+                    tabs.open({key:ftmKey(service)
+                        ,caption:service.caption
+                        , onLoad:function(tab){
+                                    tab.showURL(service.url, tab.httpComplete); // httpComplete - callback quando acionado apos a carga
+                                }
+                    });
+            }
+            , idContent:idContent
+        };
+    }(); // Tabs
+
     return {      
-          Menu
+          Menu, Tabs
         , init:(source, handler=Handler)=>{ // o cliente pode informador o handler
-            j$.Adapter.Handler = new handler(source);             
+            j$.Adapter.Handler = new handler(source);   
+            j$.Adapter.Tabs.init();                               
+            j$.Adapter.Menu.init(j$.Adapter.Handler, CONFIG.MENU.DESIGNER)                          
             return j$.Adapter.Handler;
         }
     }

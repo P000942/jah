@@ -37,8 +37,7 @@
 </html> 
 <script type="text/javascript">
     $(document).ready(function(){
-        j$.Service.init(w$.template);
-        j$.Dashboard.init() 
+        j$.Dashboard.init(w$.template) 
         const menu = j$.Adapter.Menu;
         menu.addMenu({caption:"Home", active:true});
 
@@ -57,10 +56,10 @@
                     menu_album.addMenu(); // Vai incluir o menu 
                       
         const menu_partial = menu.addMenu({caption:"Partial", hint:"Exibe o link usando ajax."})
-                menu_partial.add([{caption:'Visão Geral' , partial:w$.urlPartial, hint:'Conheça a história e a caminhada da Comunidade'}
+                menu_partial.add([{caption:'Visão Geral' , partial:w$.urlPartial,  hint:'Conheça a história e a caminhada da Comunidade'}
                                  ,{caption:'Semenentinha', partial:w$.urlPartial1, hint:'Veja como estamos organizados'}
                                  ,{caption:'Assunto',       hint:'Veja um álbum de nosso trabalho de evagelização!',
-                                    onClick:menu=>{j$.Dashboard.Service.open({key:menu.key
+                                    onClick:menu=>{j$.Adapter.Tabs.open({key:menu.key
                                                                         , caption:menu.caption
                                                                           , onLoad: tab=>{Assunto.init(tab.idContent)}
                                                      })}
