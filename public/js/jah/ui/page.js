@@ -27,8 +27,29 @@
 
 //@note: Factory - para criar os servicos
 j$.Service = function(){
-    let items = {};
-    class CrudBase{
+    const items = {};
+/*     function  createBasic (key, service){
+        setType=(service,'basic');
+        return new Basic(j$.Service.get(key),service);
+    }   */      
+    function create(key, design, type){
+            if (!key)
+                throw new TypeError(CONFIG.EXCEPTION.SERVICE_NULL.text);
+            Basic.setType(design,type);    
+            let service = items[key];
+            if (!service){                
+                if (design.crud)
+                    service=new Crud(j$.Service.get(key), design);
+                else if (design.query)    
+                    service=new Query(j$.Service.get(key), design);
+                else //if (design.constructor.name=="Object") //para o servicos que sao criados manualmente
+                    service=new Basic(j$.Service.get(key),design);
+                items[key]=service;
+                window[key]=service;
+            }
+            return service;
+        }        
+    class Basic{
         constructor(adpater, service){
             let $i=this;
             this.id=adpater.key;
@@ -80,15 +101,29 @@ j$.Service = function(){
                 };
             }      
         }
-    }
-    class Crud extends CrudBase{
-        constructor(adpater, service){
-            super(adpater, service);
+        static setType(design,type='basic'){
+            if (!Object.exists(design,['crud','query','basic']))
+                design[type]=true;
+            if (design.crud) {
+                delete design.query;                
+                delete design.basic;                
+            } else if (design.query) {
+                delete design.crud;                
+                delete design.basic;  
+            } else{
+                delete design.crud;                
+                delete design.query;
+            }   
+        }
+    } //Basic
+    class Crud extends Basic{
+        constructor(adapter, service){
+            super(adapter, service);
         }
     }
-    class Query extends CrudBase{
-        constructor(adpater, service){
-            super(adpater, service);
+    class Query extends Basic{
+        constructor(adapter, service){
+            super(adapter, service);
             this.Interface.Buttons = CONFIG.QUERY.preset();
             this.Interface.List.Buttons =CONFIG.QUERY.GRID.preset();
         }
@@ -101,21 +136,17 @@ j$.Service = function(){
             let idService  = parent.service.id
                 , txGetValue = `j$.$S.${idService}.Fieldset.c$.${parent.service.resource.id}.value()`;
             this.id = idService +''+key.toFirstUpper();
-            Object.preset(this,j$.Service.adapter.get(key)) // Vai copiar todas as propriedades do adapter.services que não exite no service
+            Object.preset(this,j$.Service.get(key)) // Vai copiar todas as propriedades do adapter.services que não exite no service
             this.onclick = this.Parent.actionController+'.child("'+key+'",' + txGetValue+ ')';
             if (j$.Ext.isUndefined(this.modal))
                 this.modal = CONFIG.CHILD.MODAL;
             if (this.crud || this.query)
-                this.service = j$.Service.build(key,this);
-        }    
+                this.service = j$.Service.create(key, this);
+                //this.service = j$.Service.build(key,this);
+        }   
         open(){
             let record = this.Parent.service.Fieldset.each();            
-            j$.Dashboard.openItem(this, record);            
-            // this.Parent.tabs.open({key:`tab_${this.id}`
-            //                  , caption:this.caption
-            //                  ,   title: this.title
-            //                  ,  onLoad: tab=>{j$.Service.c$[this.key].init(tab.idContent)}
-            // });
+            j$.Dashboard.openItem(this, record);                
         }
         refresh(){
             return  this.Parent.service.Fieldset.each();
@@ -163,46 +194,23 @@ j$.Service = function(){
             }
         }
     ,  c$:items
-    ,  createCrud: function(key, service){
-            return this.create(key, new Crud(j$.Service.adapter.get(key), service));
+
+    ,  createCrud: function(key, design){
+            return this.create(key, design, 'crud')
         }
-    , createQuery: function(key, service){
-            return this.create(key, new Query(j$.Service.adapter.get(key), service));
+    , createQuery: function(key, design){                
+            return this.create(key, design,'query');
         }
-    , createChild: function(key, parent, service){
-            return new Child(key, parent, service);
+    , createChild: function(key, parent, design){
+            return new Child(key, parent, design);
         }
-/*     ,     init: (template, adaptHandler)=>{ // o cliente pode informador o adaptHandler
-            return j$.Adapter.init(template, adaptHandler)           
-        }    */
-    ,   create:(key, service)=>{
-            if (!key)
-                throw new TypeError(CONFIG.EXCEPTION.SERVICE_NULL.text);
-            if (service.constructor.name=="Object"){ //para o servicos que sao criados manualmente
-                items[key]=new CrudBase(j$.Service.adapter.get(key),service);
-            } else
-                items[key]=service;
-            window[key] = items[key];
-            return items[key];
-        }
-    ,    build:function(key, adapter){
-            let service = items[key];
-            if (!service){
-                service = (adapter.crud)
-                        ? this.createCrud(key,adapter)
-                        : this.createQuery(key,adapter);
-            }
-            return service;
-        }
-    ,  adapter:function (){
-            return{
-                get:function(key){
+    ,   create
+
+    ,  get:key=>{
                     return (j$.Adapter.Handler)
                          ? j$.Adapter.Handler.getService(key)
                          : {key:key};
                 }
-            }
-        }()
     }
 }() //j$.Service
 j$.$S = j$.Service.c$;
@@ -1454,7 +1462,7 @@ j$.$C=j$.Controller.c$;
 j$.Dashboard = function(){
     let idContent=CONFIG.LAYOUT.ID     
     return{
-            init:(template, adaptHandler)=>{         // j$.Adapter.Handler é o adaptar default        
+            init:(template, adaptHandler)=>{                
                 j$.Adapter.init(template, adaptHandler);                                                                                                              
                 return j$.Adapter;
         }
@@ -2001,7 +2009,8 @@ j$.Adapter = function(){
             this.load();
         }
     }
-    const Menu=function(){ //Esse é um menuAdapter que faz a adptação do que está declaro no services para gerar o menu
+    const 
+        Menu=function(){ //Esse é um menuAdapter que faz a adptação do que está declaro no services para gerar o menu
             let menubar
             , createMenu = function(designer=CONFIG.MENU.DESIGNER, properties){
                 let design = CONFIG.MENU.TYPE[designer.toUpperCase()]                  
@@ -2035,33 +2044,33 @@ j$.Adapter = function(){
                 ,  render:    ()=>{menubar.render()}
             }
         }() // j$.Adapter.Menu  
-    , Tabs=function(){
-        let tabs
-            , idContent='root'
-            , ftmKey = (service) =>{return "tab_"+service.Parent.key+'_'+service.key}
-        return{
-                init: ()=>{ tabs = j$.Dashboard.Tabs.create(idContent,j$.Dashboard.idContent) }
-            ,   open: properties =>{return tabs.open(properties)}
-            ,    add: properties =>{return tabs.add(properties)}
-            , delegateTo: (service, event, record)=>{
-                    tabs.open({key:ftmKey(service)
-                        , caption:service.caption, title: service.title
-                        ,  onLoad: function(tab){
-                                    j$.Service.c$[service.key].init(tab.idContent);
-                                }
-                    });
-            }
-            , openPartial:(service, event, record)=>{
-                    tabs.open({key:ftmKey(service)
-                        ,caption:service.caption
-                        , onLoad:function(tab){
-                                    tab.showURL(service.url, tab.httpComplete); // httpComplete - callback quando acionado apos a carga
-                                }
-                    });
-            }
-            , idContent:idContent
-        };
-    }(); // Tabs
+    ,   Tabs=function(){
+            let tabs
+                , idContent='root'
+                , ftmKey = (service) =>{return "tab_"+service.Parent.key+'_'+service.key}
+            return{
+                    init: ()=>{ tabs = j$.Dashboard.Tabs.create(idContent,j$.Dashboard.idContent) }
+                ,   open: properties =>{return tabs.open(properties)}
+                ,    add: properties =>{return tabs.add(properties)}
+                , delegateTo: (service, event, record)=>{
+                        tabs.open({key:ftmKey(service)
+                            , caption:service.caption, title: service.title
+                            ,  onLoad: function(tab){
+                                        j$.Service.c$[service.key].init(tab.idContent);
+                                    }
+                        });
+                }
+                , openPartial:(service, event, record)=>{
+                        tabs.open({key:ftmKey(service)
+                            ,caption:service.caption
+                            , onLoad:function(tab){
+                                        tab.showURL(service.url, tab.httpComplete); // httpComplete - callback quando acionado apos a carga
+                                    }
+                        });
+                }
+                , idContent:idContent
+            };
+        }(); // Tabs
 
     return {      
           Menu, Tabs
