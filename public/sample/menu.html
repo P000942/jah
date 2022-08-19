@@ -39,9 +39,9 @@
     $(document).ready(function(){
         j$.Adapter.init(w$.template) 
         const menu = j$.Adapter.Menu;
-        menu.addMenu({caption:"Home", active:true});
+        menu.add({caption:"Home", active:true});
 
-        const menu_link = menu.addMenu("Link");
+        const menu_link = menu.add("Link");
               menu_link.add({caption:'Link', icon:{CLASS:'bi bi-pencil'}
                            ,     url:w$.urlPartial
                            ,    hint:'Conheça a história e a caminhada da Comunidade'});
@@ -49,13 +49,13 @@
               menu_link.add(); 
               const menu_album = menu_link.submenu.add({key: 'Album', caption:'Álbum'});
                     menu_album.add({caption:'Album 01'});
-                    menu_album.addMenu('Album 02');
+                    menu_album.add('Album 02');
                     j$.ui.Menu.c$.sidebar.c$.Link.c$.Album.divider.add();
                     menu_album.add({caption:'Album 03', url:w$.urlPartial});
                     menu_album.add();     // vai incluir um separador - também com ["" ou null ]
-                    menu_album.addMenu(); // Vai incluir o menu 
+                    menu_album.add(); // Vai incluir o menu 
                       
-        const menu_partial = menu.addMenu({caption:"Partial", hint:"Exibe o link usando ajax."})
+        const menu_partial = menu.add({caption:"Partial", hint:"Exibe o link usando ajax."})
                 menu_partial.add([{caption:'Visão Geral' , partial:w$.urlPartial,  hint:'Conheça a história e a caminhada da Comunidade'}
                                  ,{caption:'Semenentinha', partial:w$.urlPartial1, hint:'Veja como estamos organizados'}
                                  ,{caption:'Assunto',       hint:'Veja um álbum de nosso trabalho de evagelização!',
@@ -64,7 +64,7 @@
                                                                           , onLoad: tab=>{Assunto.init(tab.idContent)}
                                                      })}
                                 }]);
-        menu.addMenu("Tabela")
+        menu.add("Tabela")
             .add([{caption:'Sistemas', partial:w$.urlPartial  , hint:'Veja os sistemas'}
                  ,{caption:'Servico' , partial:w$.urlPartial1, hint:'Veja os sistemas'}
                  , //Um separador

@@ -45,8 +45,8 @@ $(document).ready(function(){
                       , onClick(opt, e){ tabs.open(opt)}}
     j$.Adapter.init()
     const menu = j$.Adapter.Menu;     
-    menu.addMenu({caption:"Home", active:true});
-    menu.addMenu("Tabs")
+    menu.add({caption:"Home", active:true});
+    menu.add("Tabs")
         .add([{caption:'Link Externo',  url:w$.urlPartial}
               ,  // separador
               ,{caption:'Menu Partial', url:w$.urlPartial,

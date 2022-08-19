@@ -749,12 +749,12 @@ t$.Tabs = function(){
 t$.Menu = function(){
     const
     addFramework=(menu,tab)=>{
-        menu.addMenu("Framework")    
-        .add([
-            {caption:'API Extend', onClick(menu, event){tab.add (t$.Tabs.C$.api)}} //t$.Tabs.addExt(tab)
-           ,{caption:'Type'      , onClick(menu, event){tab.open(t$.Tabs.C$.type)}}
-           ,{caption:'Object'    , onClick(menu, event){tab.open(t$.Tabs.C$.object)}}
-          ]);  
+        menu.add("Framework")    
+            .add([
+                {caption:'API Extend', onClick(menu, event){tab.add (t$.Tabs.C$.api)}} //t$.Tabs.addExt(tab)
+            ,{caption:'Type'      , onClick(menu, event){tab.open(t$.Tabs.C$.type)}}
+            ,{caption:'Object'    , onClick(menu, event){tab.open(t$.Tabs.C$.object)}}
+            ]);  
     }
     return{
         addFramework

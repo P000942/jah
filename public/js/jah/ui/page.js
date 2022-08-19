@@ -1790,14 +1790,21 @@ j$.ui.Menu = function(){ // factory
             }
         }    
         this.submenu = function(){
+            function create(items){
+                if (j$.Ext.isObject(items))
+                    j$.Adapter.bindItem(items); // fazer a ligacao com o caminho de abertudo do item (tab, url)
+                let lastItem = new Subitem(_base, items, designer);
+                _base.put(lastItem.key, lastItem);
+                return lastItem;
+            } 
             return{
                 add:items=>{
                     if (j$.Ext.isObject(items) || (j$.Ext.isString(items) && !items.isEmpty())){
                         if (items.items)
-                            return _base.submenu.addMenu(items)   //adiciona o menu
+                            return create(items)   //adiciona o menu
                                                 .add(items.items);//adiciona o submenu
                         else
-                            return _base.submenu.addMenu(items);                  
+                            return create(items);                  
                     }else if (j$.Ext.isArray(items)){
                         let _items=[]
                         for (let idx=0; idx<items.length;idx++)
@@ -1806,13 +1813,6 @@ j$.ui.Menu = function(){ // factory
                     }else 
                         return _base.divider.add(items);         
                 }
-                , addMenu(items){
-                    if (j$.Ext.isObject(items))
-                        j$.Adapter.bindItem(items); // fazer a ligacao com o caminho de abertudo do item (tab, url)
-                    let lastItem = new Subitem(_base, items, designer);
-                    _base.put(lastItem.key, lastItem);
-                    return lastItem;
-                }  
                 , render:menu=>{
                     for (let key in _base.c$)
                         $('#'+_base.id).append(_base.c$[key].render())
@@ -1820,7 +1820,6 @@ j$.ui.Menu = function(){ // factory
         }
         }()
         this.add=_base.submenu.add;
-        this.addMenu=_base.submenu.addMenu;
         this.divider = function(){
             let ct = 0;
             return{
@@ -1888,7 +1887,7 @@ j$.ui.Menu = function(){ // factory
             this.inherit = System.Node;
             this.inherit({type: 'Dropdown', Root: this, Parent: null }, {key: idContent, id: create(), caption});
             //menu={key:'', caption:'', url:'', title:'', active:false} ou caption
-            this.addMenu = properties => {
+            this.add = properties => {
                 let menu = new iMenu(this, properties);
                 this.put(menu.key, menu);
                 return menu;
@@ -1905,21 +1904,21 @@ j$.ui.Menu = function(){ // factory
             }
         }
     }
-    class Navbar {
+    class Navbar { //é barra de navegação principal onde serão criadas as opções do meni.
         constructor(idContent, designer) {
             let create = () => {return designer.createContainer(idContent)};
             this.inherit = System.Node;
             this.inherit({ type: 'Navbar', Root: this, Parent: null }, { key: idContent, id: create() });
             //@note: menu={key:'', caption:'', url:'', title:'', active:false} ou caption
-            this.addMenu = properties => {
+            this.add = properties => {
                 let menu = new iMenu(this, properties, designer);
                 this.put(menu.key, menu);
                 return menu;
-            };
+            }            
             this.render = () => {
                 for (let key in this.c$)
                     this.c$[key].render();
-            };
+            }
         }
     }
     return{
@@ -1983,7 +1982,7 @@ j$.Adapter = function(idLayout){
                 if (j$.Ext.isArray(option))
                     option = {items:options[key]};
                 Object.preset(option, {key, caption:key});                
-                addService(menubar.addMenu(option), option, services);
+                addService(menubar.add(option), option, services);
             }          
             //@note: menu={key:'', caption:'', url:'', title:'', items:[]}
             , addService=(menu, option, services)=>{
@@ -1995,7 +1994,7 @@ j$.Adapter = function(idLayout){
                         createMenu(designer, properties);
                     }
                 ,  create:designer=>{createMenu(designer)}
-                , addMenu:  menu=>{return menubar.addMenu(menu)}
+                ,     add:  menu=>{return menubar.add(menu)}
                 , getMenu:   key=>{return menubar.getMenu(key)}
                 ,  render:    ()=>{menubar.render()}
             }

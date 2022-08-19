@@ -42,8 +42,8 @@ const template={
 }
 System.using("js/crud/modelo.js"); // Didatico para ver como carregar um arquivo javascript ou css
 $(document).ready(function(){
-    //j$.Adapter.init(template); // Vai carregar os serviços (.js)
-    j$.Adapter.init(template);  
+    j$.Adapter.init(template); // Vai carregar os serviços (.js)
+    //j$.Dashboard.init(template);  
     t$.sample.init(j$.Adapter.Menu);
 });
 
@@ -59,7 +59,7 @@ TYPE.Error.init({   show(field, msg,clas$){TYPE.Error.invalid(field, msg)} //qua
 t$.sample = function(menuAdapter){ // Para adicionar mais menus e submenus
     const criarMenu = menuAdapter=>{
              let _path = CONFIG.SERVER.CONTEXT
-               , _menu = menuAdapter.addMenu({caption:'Forms'});
+               , _menu = menuAdapter.add({caption:'Forms'});
 
              _menu.add([{caption:'Form basic' , url:_path+ 'sample/formBasic.html' , title:'Form com campos formatados e controller'}
                        ,{caption:'Form Inject', url:_path+ 'sample/formInject.html', title:'Maninuplar informações do form'}
@@ -67,11 +67,11 @@ t$.sample = function(menuAdapter){ // Para adicionar mais menus e submenus
                        , // se um item do array sem nada ou uma string, null - vai inserir uma linha
                        ,{caption:'Relatório'  , url:_path+ 'sample/reportTest.html', title:'Exemplo de relatório'}]);
 
-             menuAdapter.addMenu({caption:'Link Externo'})
+             menuAdapter.add({caption:'Link Externo'})
                                  .add([{caption:'Link 1 '   , url:urlPartial  , title:'Vai abri uma página web com a URL'}
                                       ,{caption:'Link 2'    , url:urlPartial_1, title:'Vai abri uma página web com a URL'}]);
 
-             _menu = menuAdapter.addMenu({caption:'Partial'});
+             _menu = menuAdapter.add({caption:'Partial'});
              //_menu.add({caption:'Partial',   partial:urlPartial  , title:'Serah insedrido na tba'});
              _menu.add({caption:'Partial 2', partial:urlPartial_1, title:'Serah insedrido na tba'});
              _menu.add({caption:'Assunto', icon:{CLASS:'bi bi-table', COLOR:'green'},    title:'Assunto - exemplo colocar um  form na tab',
