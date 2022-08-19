@@ -38,12 +38,12 @@
 <script type="text/javascript">
 $(document).ready(function(){
     //CONFIG.MENU.DESIGNER = c$.MENU.TYPE.MENUBAR;
-    const tabs = j$.Dashboard.Tabs.create('tabs','content') // cria o tab no container "content" 
-                                                            // 'tabs' é a chave de referencia a essa tab > j$.Dashboard.Tabs.c$.tabs
-                                                            // sendo a primeira tab, tb pode ser j$.Dashboard.Tabs.root
+    const tabs = j$.ui.Tabs.create('tabs','content') // cria o tab no container "content" 
+                                                            // 'tabs' é a chave de referencia a essa tab > j$.ui.Tabs.c$.tabs
+                                                            // sendo a primeira tab, tb pode ser j$.ui.Tabs.root
         , tabPartial ={key:"tab_Partial", caption:'Partial', url:w$.urlPartial, title:'Title Partial Tab'
                       , onClick(opt, e){ tabs.open(opt)}}
-    j$.Dashboard.init()
+    j$.Adapter.init()
     const menu = j$.Adapter.Menu;     
     menu.addMenu({caption:"Home", active:true});
     menu.addMenu("Tabs")
@@ -90,13 +90,13 @@ $(document).ready(function(){
     };
     // Cria a tab FIXA - 'Home'
     const loadHome= function (){
-         j$.Dashboard.Tabs.c$.tabs.open({key:"Home", caption:"Home", fixed:true, url: w$.urlPartial});
+         j$.ui.Tabs.c$.tabs.open({key:"Home", caption:"Home", fixed:true, url: w$.urlPartial});
     }();
     const delagateTab= function (idContent){
-        j$.Dashboard.Open.partial(w$.urlPartial,idContent);
+        j$.ui.Url.partial(w$.urlPartial,idContent);
     };
     // .add irá criar objeto visual no browser
-    j$.Dashboard.Tabs.c$.tabs.add({key:"tab_submenu", caption:'submenu', url:w$.urlPartial});  
+    j$.ui.Tabs.c$.tabs.add({key:"tab_submenu", caption:'submenu', url:w$.urlPartial});  
     
 });
 </script>

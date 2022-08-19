@@ -500,9 +500,7 @@ const j$ = function(){
         return results;
     }  */
     return {
-         ui:{}
-    //    ,Adapter:{} 
-        ,sample:{}
+         sample:{}
         ,$V:key =>{ //Exemplo: j$.$V() ou j$.$V("$R")
             //@note: util apenas em dsv para ver os objetos/colecoes e seus respectivos shortcut - que estão instanciados
             let shortCut = {"$C":"Controller:","$P":"Page:","$R":"Resource:","$S":"Service:", "$T":"Tabs:"};

@@ -445,6 +445,15 @@ System.util = function(){
         getId:getId
     };
 }();
+j$.ui = function(idLayoutContent){   
+    return{
+            init:(template, adaptHandler)=>{                
+                j$.Adapter.init(template, adaptHandler);                                                                                                              
+                return j$.Adapter;
+        }
+        , idLayoutContent
+    }
+}(CONFIG.LAYOUT.ID); // j$.ui
 
 j$.ui.Render= function(){
     return {

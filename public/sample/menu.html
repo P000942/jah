@@ -37,7 +37,7 @@
 </html> 
 <script type="text/javascript">
     $(document).ready(function(){
-        j$.Dashboard.init(w$.template) 
+        j$.Adapter.init(w$.template) 
         const menu = j$.Adapter.Menu;
         menu.addMenu({caption:"Home", active:true});
 
@@ -50,7 +50,7 @@
               const menu_album = menu_link.submenu.add({key: 'Album', caption:'Álbum'});
                     menu_album.add({caption:'Album 01'});
                     menu_album.addMenu('Album 02');
-                    j$.Dashboard.Menu.c$.sidebar.c$.Link.c$.Album.divider.add();
+                    j$.ui.Menu.c$.sidebar.c$.Link.c$.Album.divider.add();
                     menu_album.add({caption:'Album 03', url:w$.urlPartial});
                     menu_album.add();     // vai incluir um separador - também com ["" ou null ]
                     menu_album.addMenu(); // Vai incluir o menu 

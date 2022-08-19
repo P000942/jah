@@ -28,7 +28,7 @@
 <script type="text/javascript">
      $(document).ready(function(){
         TYPE.Error.init({callback:function(msg,field){TYPE.Error.on(msg, field);}});
-         ws.tabs = j$.Dashboard.Tabs.create('tabs','content');
+         ws.tabs = j$.ui.Tabs.create('tabs','content');
      });
 
      const ws={
@@ -148,12 +148,12 @@ const wizard = function(){
         }
        ,criarMenu:function(menu, event){  
             if (_criarMenu){          
-                gerar(j$.Dashboard.Menu.create("menux", c$.MENU.TYPE.MENUBAR));            
+                gerar(j$.ui.Menu.create("menux", c$.MENU.TYPE.MENUBAR));            
             } 
             _criarMenu =false;     
         }
         ,criarCanvas: function (idContent){
-            let menu = gerar(j$.Dashboard.Menu.create(idContent, c$.MENU.TYPE.OFFCANVAS), true);
+            let menu = gerar(j$.ui.Menu.create(idContent, c$.MENU.TYPE.OFFCANVAS), true);
         }
     };
 }();

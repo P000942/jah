@@ -28,10 +28,7 @@
 //@note: Factory - para criar os servicos
 j$.Service = function(){
     const items = {};
-/*     function  createBasic (key, service){
-        setType=(service,'basic');
-        return new Basic(j$.Service.get(key),service);
-    }   */      
+  
     function create(key, design, type){
             if (!key)
                 throw new TypeError(CONFIG.EXCEPTION.SERVICE_NULL.text);
@@ -54,7 +51,7 @@ j$.Service = function(){
             let $i=this;
             this.id=adpater.key;
             this.Interface= {
-                container:CONFIG.LAYOUT.ID
+                container:j$.ui.idLayoutContent
                 ,      id:$i.id.toFirstLower()
                 , Buttons:CONFIG.CRUD.preset()
                 ,    List:{limit:CONFIG.GRID.MAXLINE
@@ -146,7 +143,7 @@ j$.Service = function(){
         }   
         open(){
             let record = this.Parent.service.Fieldset.each();            
-            j$.Dashboard.openItem(this, record);                
+            j$.Adapter.openItem(this, record);                
         }
         refresh(){
             return  this.Parent.service.Fieldset.each();
@@ -184,17 +181,7 @@ j$.Service = function(){
     };  
     
     return {
-      load:(key,item)=>{
-            item.key = key;
-            if (!item.partial && !item.url && !item.local){
-                if (item.crud)
-                    System.using(CONFIG.CRUD.CONTEXT+key+".js");
-                else if (item.query)
-                    System.using(CONFIG.QUERY.CONTEXT+key+".js");
-            }
-        }
-    ,  c$:items
-
+     c$:items
     ,  createCrud: function(key, design){
             return this.create(key, design, 'crud')
         }
@@ -607,7 +594,7 @@ j$.Page.Form=function(service, modal) {
 
     Object.preset($i, {
                         actionController:(service.id) ?'j$.Service.c$.'+service.id+'.actionController' :''
-                        , container:(service.Interface.container) ?i$(service.Interface.container) :i$(CONFIG.LAYOUT.ID)
+                        , container:(service.Interface.container) ?i$(service.Interface.container) :i$(j$.ui.idLayoutContent)
     });
     Object.preset(service.Interface,{Buttons:false});
     Object.preset(service,{
@@ -643,7 +630,7 @@ j$.Page.Form=function(service, modal) {
         let wrapButtons  = (alignButtons==c$.ALIGN.TOP) ?$i.menu :$i.footer;
         $i.Buttons.create(wrapButtons);   // cria os buttoes html  
         // if (service.Child || service.Interface.List) // cria um tab para comportar o list e|ou child
-        //     $i.tabs = j$.Dashboard.Tabs.create(`${$i.form.id}Tabs`, $i.footer.id); 
+        //     $i.tabs = j$.ui.Tabs.create(`${$i.form.id}Tabs`, $i.footer.id); 
         // TYPE.Formatter.Init(service.Interface);              // inicializa as máscaras (já é inicializado qdo a mask é redenrizado em cada input)
         if (service.Interface.List){
             if (service.Interface.List===true){service.Interface.List={};}
@@ -771,7 +758,7 @@ j$.Page.Modal=function(id, service, actionCallback) {
         if (actionCallback)
             $i.callback =actionCallback;
 
-        $i.inherit(i$(CONFIG.LAYOUT.ID), {id:id}, fixed());
+        $i.inherit(i$(j$.ui.idLayoutContent), {id:id}, fixed());
 
         title();
         text();
@@ -1459,62 +1446,22 @@ j$.$C=j$.Controller.c$;
         - Assim, ficaria mais simples porque o cliente passaria apenas a atualizar o Dataset
 */
 
-j$.Dashboard = function(){
-    let idContent=CONFIG.LAYOUT.ID     
+j$.ui.Url = function(idLayout){
     return{
-            init:(template, adaptHandler)=>{                
-                j$.Adapter.init(template, adaptHandler);                                                                                                              
-                return j$.Adapter;
-        }
-        , bindItem: item =>{
-            if (!item.url && !item.onClick){
-                if (item.partial)
-                    item.onClick=j$.Adapter.Tabs.openPartial;
-                else if (item.modal){
-                    item.onClick=function(menu){
-                        j$.Service.c$[menu.key].init(null, menu.modal);
-                    }
-                } else
-                    item.onClick=j$.Adapter.Tabs.delegateTo;
-                item.byPass =true;
-            } else if (item.onClick)
-                item.byPass =true;
-        }
-        , openItem: (item, record) => {
-            if (!item.url && !item.onCLick){
-                if (item.partial)
-                    j$.Adapter.Tabs.openPartial(item, null, record);  
-                else if (item.modal){
-                    j$.Service.c$[item.key].init(null, item.modal, record);
-                } else
-                    j$.Adapter.Tabs.delegateTo(item, null, record); 
-            }
-        }
-        , idContent
-    }
-}(); // j$.Dashboard
-        
-
-j$.Dashboard.Open = function(){
-    return{
-        url: (url, idContent)=>{
+        open: (url, idContent)=>{
             if (idContent)
-                j$.Dashboard.Open.partial(url, idContent);
+                j$.ui.Url.partial(url, idContent);
             else
                 window.location = url;
         },
-        partial:(url, idContent, complete)=>{
-            if (!idContent)
-                idContent = CONFIG.LAYOUT.ID;
-                //let pars = '';
-            if (!url.isEmpty()) {
-                Ajax.Updater( idContent, url, {method: 'get', parameters: '', onComplete:complete});
-            }
+        partial:(url, idContent=idLayout, complete)=>{
+            if (!url.isEmpty()) 
+                Ajax.Updater( idContent, url, {method: 'get', parameters: '', onComplete:complete});            
         }
     };
-}(); // j$.Dashboard.Open
+}(j$.ui.idLayoutContent); // j$.Url
         
-j$.Dashboard.Tabs = function(){
+j$.ui.Tabs = function(){
     let tabs = {}, _root=null
         , Root=function(idTab, idContent){ 
             let _root = this   
@@ -1649,13 +1596,13 @@ j$.Dashboard.Tabs = function(){
                 }
                 function render(){			 
                     let linkClose =(_tab.fixed)?''
-                                    :`<a class='${CONFIG.TABS.LINK.CLOSE.CLASS}' href="javascript:j$.Dashboard.Tabs.c$.` 
+                                    :`<a class='${CONFIG.TABS.LINK.CLOSE.CLASS}' href="javascript:j$.ui.Tabs.c$.` 
                                     +`${_tab.parent.key}.close('${_tab.key}');">`
                                     +j$.ui.Render.icon(c$.ICON.CLOSE)                                          
                                     +"</a>";              
-                    return `<span class='${CONFIG.TABS.LINK.TITLE.CLASS}' onmouseover='j$.Dashboard.Tabs.HANDLE.onmouseover(this);' onmouseout='j$.Dashboard.Tabs.HANDLE.onmouseout(this);' id='tab_link_`+ this.key+"'>"
+                    return `<span class='${CONFIG.TABS.LINK.TITLE.CLASS}' onmouseover='j$.ui.Tabs.Handler.onmouseover(this);' onmouseout='j$.ui.Tabs.Handler.onmouseout(this);' id='tab_link_`+ this.key+"'>"
                         +`<a class='${CONFIG.TABS.LINK.TITLE.CLASS}' id='link_` + _tab.key +  "' " 
-                        + "href=\"javascript:j$.Dashboard.Tabs.c$." + _tab.parent.key + ".activate('" + _tab.key + "');\" >"
+                        + "href=\"javascript:j$.ui.Tabs.c$." + _tab.parent.key + ".activate('" + _tab.key + "');\" >"
                         + _tab.caption + "</a>"
                         + linkClose +"</span>";
                 }
@@ -1671,24 +1618,24 @@ j$.Dashboard.Tabs = function(){
                 function showURL(url, complete){
                     if (!url)
                         url=_tab.url;
-                    j$.Dashboard.Open.partial(url,_tab.idContent, complete);
+                    j$.ui.Url.partial(url,_tab.idContent, complete);
                     _tab.loaded = true;  		  
                 } 		  
             } //tab 	
         } // Root;
     return{           
-        open:(root,key)=>{tabs[root].open(key)}  
+            open:(root,key)=>{tabs[root].open(key)}  
         , create: (idTabs, idContent)=>{
             if (idTabs && idContent){
                 tabs[idTabs] = new Root(idTabs, idContent);
-                if (!j$.Dashboard.Tabs.root){
-                    j$.Dashboard.Tabs.root = tabs[idTabs]
-                    j$.$T = j$.Dashboard.Tabs.root.c$;
+                if (!j$.ui.Tabs.root){
+                    j$.ui.Tabs.root = tabs[idTabs]
+                    j$.$T = j$.ui.Tabs.root.c$;
                 }
                 return tabs[idTabs];
             }    
         }
-        , HANDLE:{
+        , Handler:{
                 onmouseover: obj=>{
                     if (obj.className.indexOf('active')>-1)
                         obj.className = CONFIG.TABS.LINK.HOVER_ACTIVE.CLASS;
@@ -1705,9 +1652,9 @@ j$.Dashboard.Tabs = function(){
         , c$:tabs
         , root: _root
     };   
-}(); // j$.Dashboard.Tabs 
+}(); // j$.ui.Tabs 
 
-j$.Dashboard.Menu = function(){ // factory
+j$.ui.Menu = function(){ // factory
     let items = {}
     , prepare = (properties, _class)=>{
         let ws ={icon:j$.ui.Render.icon(properties.icon)
@@ -1818,7 +1765,7 @@ j$.Dashboard.Menu = function(){ // factory
     , formatLink= properties =>{
         let attLink = '';
         if (properties.url && !properties.byPass){
-            attLink +=  'href=\'javascript:j$.Dashboard.Open.url("'+ properties.url + '"';
+            attLink +=  'href=\'javascript:j$.ui.Url.open("'+ properties.url + '"';
             if (properties.idContainer) // Container é usado para quando for partial
                 attLink += ',"'+ properties.idContainer + '"' ;
             attLink +=');';
@@ -1861,7 +1808,7 @@ j$.Dashboard.Menu = function(){ // factory
                 }
                 , addMenu(items){
                     if (j$.Ext.isObject(items))
-                        j$.Dashboard.bindItem(items); // fazer a ligacao com o caminho de abertudo do item (tab, url)
+                        j$.Adapter.bindItem(items); // fazer a ligacao com o caminho de abertudo do item (tab, url)
                     let lastItem = new Subitem(_base, items, designer);
                     _base.put(lastItem.key, lastItem);
                     return lastItem;
@@ -1910,10 +1857,10 @@ j$.Dashboard.Menu = function(){ // factory
         }()
         , initialized = function(){
             if (j$.Ext.isString(properties)){ // veio apenas o caption
-                Object.preset(_base, {idContainer:CONFIG.LAYOUT.ID});
+                Object.preset(_base, {idContainer:j$.ui.idLayoutContent});
             } else {
                 if (!properties){properties={}};
-                _base.idContainer = (properties.idContainer)?properties.idContainer:CONFIG.LAYOUT.ID;
+                _base.idContainer = (properties.idContainer)?properties.idContainer:j$.ui.idLayoutContent;
                 Object.setIfExist(_base, properties, ['icon','title','byPass','modal']);
                 _base.url=getUrl();
                 //_base.byPass=> para não formatar o evento padrão que chama o url. É útil para qdo o o próprio cliente vai realizar uma ação após a escolha da opção
@@ -1987,18 +1934,18 @@ j$.Dashboard.Menu = function(){ // factory
         , offcanvas: Designers.offcanvas
         , c$:items  
     };
-}(); //j$.Dashboard.Menu  
+}(); //j$.ui.Menu  
         
-j$.Adapter = function(){
+j$.Adapter = function(idLayout){
     class Handler {
         constructor(template) {           
             // o cliente pode criar um próprio com a mesma assinatura 
             let $this = this;
             Object.preset(this, template);
-            this.load = () => {
+            this.charge = () => {
                 if (template)
                     for (let key in template.services)
-                        j$.Service.load(key, template.services[key]);
+                    Handler.load(key, template.services[key]);
             };
             this.getService = key => {
                 if ($this.services[key])
@@ -2006,7 +1953,16 @@ j$.Adapter = function(){
                 else
                     return { key: key };
             };
-            this.load();
+            this.charge();
+        }
+        static load(key,service){
+            service.key = key;            
+            if (!service.partial && !service.url && !service.local){
+                if (service.crud)
+                    System.using(CONFIG.CRUD.CONTEXT+key+".js");
+                else if (service.query)
+                    System.using(CONFIG.QUERY.CONTEXT+key+".js");
+            }
         }
     }
     const 
@@ -2014,9 +1970,9 @@ j$.Adapter = function(){
             let menubar
             , createMenu = function(designer=CONFIG.MENU.DESIGNER, properties){
                 let design = CONFIG.MENU.TYPE[designer.toUpperCase()]                  
-                i$(j$.Dashboard.idContent).className =design.WRAP.CLASS;
+                i$(idLayout).className =design.WRAP.CLASS;
                 i$(designer).className = design.ITEM.CLASS;                      
-                menubar = j$.Dashboard.Menu.create(designer)
+                menubar = j$.ui.Menu.create(designer)
                 if (properties && properties.services && properties.design &&  properties.design.options){                                         
                     for (let key in properties.design.options)
                         addOption(key,properties.design.options, properties.services);                                                                                    
@@ -2049,7 +2005,7 @@ j$.Adapter = function(){
                 , idContent='root'
                 , ftmKey = (service) =>{return "tab_"+service.Parent.key+'_'+service.key}
             return{
-                    init: ()=>{ tabs = j$.Dashboard.Tabs.create(idContent,j$.Dashboard.idContent) }
+                    init: ()=>{ tabs = j$.ui.Tabs.create(idContent,idLayout) }
                 ,   open: properties =>{return tabs.open(properties)}
                 ,    add: properties =>{return tabs.add(properties)}
                 , delegateTo: (service, event, record)=>{
@@ -2070,10 +2026,34 @@ j$.Adapter = function(){
                 }
                 , idContent:idContent
             };
-        }(); // Tabs
+        }() // Tabs
+        , bindItem= item =>{
+            if (!item.url && !item.onClick){
+                if (item.partial)
+                    item.onClick=j$.Adapter.Tabs.openPartial;
+                else if (item.modal){
+                    item.onClick=function(menu){
+                        j$.Service.c$[menu.key].init(null, menu.modal);
+                    }
+                } else
+                    item.onClick=j$.Adapter.Tabs.delegateTo;
+                item.byPass =true;
+            } else if (item.onClick)
+                item.byPass =true;
+        } 
+        , openItem= (item, record) => {
+            if (!item.url && !item.onCLick){
+                if (item.partial)
+                    j$.Adapter.Tabs.openPartial(item, null, record);  
+                else if (item.modal){
+                    j$.Service.c$[item.key].init(null, item.modal, record);
+                } else
+                    j$.Adapter.Tabs.delegateTo(item, null, record); 
+            }
+        }
 
     return {      
-          Menu, Tabs
+          Menu, Tabs, openItem, bindItem
         , init:(source, handler=Handler)=>{ // o cliente pode informador o handler
             j$.Adapter.Handler = new handler(source);   
             j$.Adapter.Tabs.init();                               
@@ -2081,6 +2061,6 @@ j$.Adapter = function(){
             return j$.Adapter.Handler;
         }
     }
-}()
+}(j$.ui.idLayoutContent)
 
-//export {j$.Service, j$.Page, j$.Message, j$.Confirm, j$.Alert, j$.Controller, j$.Dashboard};
+//export {j$.Service, j$.Page, j$.Message, j$.Confirm, j$.Alert, j$.Controller, j$.Adapter};
