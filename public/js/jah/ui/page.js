@@ -1462,8 +1462,28 @@ j$.ui.Url = function(idLayout){
 }(j$.ui.idLayoutContent); // j$.Url
         
 j$.ui.Tabs = function(){
-    let tabs = {}, _root=null
-        , Root=function(idTab, idContent){ 
+    let tabs = {}
+    , exists=(_id)=>{
+        for (let tab in tabs){
+            if (Object.contains(tabs[tab], {id:_id}))
+               return tabs[tab];
+        }
+        return false;
+    }  
+    ,  create=(idTabs, idContent)=>{
+        if (idTabs && idContent){
+            let tab=exists(idContent)
+            if (!tab)
+                tab= new Root(idTabs, idContent);
+            tabs[idTabs] = tab;    
+            if (!j$.ui.Tabs.root){
+                j$.ui.Tabs.root = tabs[idTabs]
+                j$.$T = j$.ui.Tabs.root.c$;
+            }
+            return tab;
+        }    
+    }   
+    function Root(idTab, idContent){ 
             let _root = this   
             , active_tab=null
             , idWrap = "wrap_"+idTab;
@@ -1622,19 +1642,10 @@ j$.ui.Tabs = function(){
                     _tab.loaded = true;  		  
                 } 		  
             } //tab 	
-        } // Root;
+    } // Root;       
     return{           
             open:(root,key)=>{tabs[root].open(key)}  
-        , create: (idTabs, idContent)=>{
-            if (idTabs && idContent){
-                tabs[idTabs] = new Root(idTabs, idContent);
-                if (!j$.ui.Tabs.root){
-                    j$.ui.Tabs.root = tabs[idTabs]
-                    j$.$T = j$.ui.Tabs.root.c$;
-                }
-                return tabs[idTabs];
-            }    
-        }
+        , create
         , Handler:{
                 onmouseover: obj=>{
                     if (obj.className.indexOf('active')>-1)
@@ -1650,9 +1661,12 @@ j$.ui.Tabs = function(){
                 }    
         }  
         , c$:tabs
-        , root: _root
-    };   
-}(); // j$.ui.Tabs 
+       // , root: _root
+        , exists
+    };  
+}() // j$.ui.Tabs 
+
+
 
 j$.ui.Menu = function(){ // factory
     let items = {}
