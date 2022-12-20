@@ -589,14 +589,14 @@ return{
 }}(); 
 
 
-t$.e$ = function(parent){              
+/* t$.e$ = function(parent){              
     return t$.add({    id:'sampleNew'
                   ,header:'SAMPLE NEW'
                   ,  card:{title:'Card Title', subtitle: 'Card subtitle', text:'Card Text', link:'card link'}
                   ,  body:'Body sample New'
                   ,parent
                 });
-}
+} */
 t$.Validate = function(){             
 return{
     all(){
@@ -733,12 +733,24 @@ return{
     }
 }}();
 
+const w$={
+    template:{services:{               
+                Assunto:{caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto'}
+            ,     Tarefa:{caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa', local:true}
+            ,   Mensagem:{caption:'Mensagem' ,   crud:true, title:'Mensagem' , modal:true}
+    }} 
+, urlPartial: CONFIG.SERVER.CONTEXT + 'sample/partial.html'
+,urlPartial1: CONFIG.SERVER.CONTEXT + 'sample/partial_1.html'    
+}
+
 t$.Tabs = function(){
     const 
     C$={
              api:{key:"apiExt" , caption:'Api Ext'      , content:t$.apiExt.all()}  
         ,   type:{key:"Type"   , caption:'Data Validate', content:t$.Validate.all()}  
         , object:{key:"Object" , caption:'Object'       , content:t$.Object.all()}   
+        ,partial:{key:"partialOption", caption:'Partial', url:w$.urlPartial, title:'Title Partial Tab'
+                , onClick(opt, e){ tabs.open(opt)}}
         
     }
     
@@ -746,27 +758,44 @@ t$.Tabs = function(){
          C$
     }
 }();
-t$.Menu = function(){
+t$.Menu = function( _menu, _tab){
     const
-    addFramework=(menu,tab)=>{
-        menu.add("Framework")    
+    addFramework=()=>{
+        _menu.add("Framework")    
             .add([
-                {caption:'API Extend', onClick(menu, event){tab.add (t$.Tabs.C$.api)}} //t$.Tabs.addExt(tab)
-            ,{caption:'Type'      , onClick(menu, event){tab.open(t$.Tabs.C$.type)}}
-            ,{caption:'Object'    , onClick(menu, event){tab.open(t$.Tabs.C$.object)}}
-            ]);  
+                 {caption:'API Extend', onClick(menu, event){_tab.add (t$.Tabs.C$.api)}} //t$.Tabs.addExt(tab)
+                ,{caption:'Type'      , onClick(menu, event){_tab.open(t$.Tabs.C$.type)}}
+                ,{caption:'Object'    , onClick(menu, event){_tab.open(t$.Tabs.C$.object)}}
+            ]) 
+    }
+    ,abrirURL=()=>{
+        _menu.add("Abrir URL")    
+            .add([
+                 {partial:{key:"partialOption", caption:'Partial', url:w$.urlPartial, title:'Title Partial Tab'
+                        , onClick(menu, event){_tab.open(menu)}}
+                 }
+                ,{caption:'Link Externo',  url:w$.urlPartial}
+                ,  // separador
+                ,{caption:'Abrir Partial no evento', url:w$.urlPartial1,
+                        onClick(menu, event){
+                            _tab.open(
+                                    {key:"tab_"+menu.id
+                                , caption:menu.caption
+                                ,  onLoad(tab){
+                                    tab.showURL(menu.url)
+                                }
+                            })
+                        }
+                }
+            ]) 
     }
     return{
         addFramework
+        , init(menu, tab){
+            _menu=menu;
+            _tab=tab;
+        }
     }
-}();
+}(j$.Adapter.Menu, j$.Adapter.Tabs);
+ 
 
-const w$={
-        template:{services:{               
-                    Assunto:{caption:'Assunto'  ,   crud:true, title:'Cadastro de Assunto'}
-                ,     Tarefa:{caption:'Tarefa'   ,   crud:true, title:'Tarefa'         , resource:'tarefa', local:true}
-                ,   Mensagem:{caption:'Mensagem' ,   crud:true, title:'Mensagem' , modal:true}
-        }} 
-    , urlPartial: CONFIG.SERVER.CONTEXT + 'sample/partial.html'
-    ,urlPartial1: CONFIG.SERVER.CONTEXT + 'sample/partial_1.html'
-    }

@@ -447,11 +447,12 @@ System.util = function(){
 }();
 j$.ui = function(idLayoutContent){   
     return{
-            init:(template, adaptHandler)=>{                
+        /*     init:(template, adaptHandler)=>{                
                 j$.Adapter.init(template, adaptHandler);                                                                                                              
                 return j$.Adapter;
-        }
-        , idLayoutContent
+            }
+        ,  */
+        idLayoutContent
     }
 }(CONFIG.LAYOUT.ID); // j$.ui
 

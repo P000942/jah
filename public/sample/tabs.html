@@ -39,8 +39,8 @@
 $(document).ready(function(){
     //CONFIG.MENU.DESIGNER = c$.MENU.TYPE.MENUBAR;
     const tabs = j$.ui.Tabs.create('tabs','content') // cria o tab no container "content" 
-                                                            // 'tabs' é a chave de referencia a essa tab > j$.ui.Tabs.c$.tabs
-                                                            // sendo a primeira tab, tb pode ser j$.ui.Tabs.root
+                                                     // 'tabs' é a chave de referencia a essa tab > j$.ui.Tabs.c$.tabs
+                                                     // sendo a primeira tab, tb pode ser j$.ui.Tabs.root
         , tabPartial ={key:"tab_Partial", caption:'Partial', url:w$.urlPartial, title:'Title Partial Tab'
                       , onClick(opt, e){ tabs.open(opt)}}
     j$.Adapter.init()
@@ -49,14 +49,15 @@ $(document).ready(function(){
     menu.add("Tabs")
         .add([{caption:'Link Externo',  url:w$.urlPartial}
               ,  // separador
-              ,{caption:'Menu Partial', url:w$.urlPartial,
+              ,{caption:'Show Partial', url:w$.urlPartial,
                  onClick(menu, event){
                      tabs.open(
                             {key:"tab_"+menu.id
                         , caption:menu.caption
                         ,  onLoad(tab){
-                            tab.showURL(menu.url)
-                        }
+                                console.log("Open url usando método do tab")
+                                tab.showURL(menu.url)
+                           }
                      })
                  }
               }
@@ -65,8 +66,8 @@ $(document).ready(function(){
                     tabs.open({key:"tab_"+menu.id
                          , caption:menu.caption
                          ,  onLoad(tab){
-                            delagateTab(tab.idContent)
-                        }
+                                delagateTab(tab.idContent)
+                            }
                     })
                  }
               }
@@ -78,7 +79,7 @@ $(document).ready(function(){
             ,tabPartial
             ,{caption:'Eventos da tab', onClick:criarTab}
         ]);
-        t$.Menu.addFramework(menu,tabs);
+        t$.Menu.addFramework();
     menu.render();
     function criarTab(menu, event){
          tabs.open({key:"tab_eventos", caption:"Evento"
